@@ -1,4 +1,4 @@
-# AIHarmony
+# AiHarmony
 ArtInfuser Harmony - automatic real-time harmony exercises analysis
 
 Issues:
