@@ -15,7 +15,7 @@ require_once "css/style.php";
 ?>
 <body style='touch-action: pan-x pan-y;'>
 <?php
-$btnclass = "btn btn-outline-white p-1 disabled";
+$btnclass = "btn btn-outline-white p-1";
 //$btnclass = "btn btn-outline-secondary p-1";
 //$border = "1px solid black";
 $border = "0px";
@@ -43,7 +43,7 @@ echo "<div style='display: inline-block; height: 100%; vertical-align: middle;'>
 echo "<a id='down8' class='$btnclass' href=# onclick='return false;' role='button' style='font-family: sans-serif; font-size: 1.2em;'>-8ve</a>&nbsp;";
 echo "<a id='up8' class='$btnclass' href=# onclick='return false;' role='button' style='font-family: sans-serif; font-size: 1.2em;'>+8ve</a>&nbsp;";
 echo "<div style='display: inline-block; height: 100%; vertical-align: middle;'><img src=img/gray.png style='vertical-align: middle; opacity: 0.3' height=30 width=1></div>&nbsp;";
-echo "<a id='rest' class='$btnclass' href=# onclick='return false;' role='button'><img src=img/notes/rest.png height=35></a>&nbsp;";
+echo "<a id='pause' class='$btnclass' href=# onclick='return false;' role='button'><img src=img/notes/pause.png height=35></a>&nbsp;";
 echo "</div>";
 
 //echo "<div style='position: fixed; top: 60px; left: 0; z-index: 99; width: 100%; overflow: hidden; border:$border;padding: 10px;'>";
@@ -64,4 +64,3 @@ echo "</div>";
 <script type=module src=js/harmony.js></script>
 <script defer type='text/javascript' src='plugin/jquery-3.4.1/jquery-3.4.1.min.js'></script>
 <script defer src="plugin/bootstrap-4.3.1/js/bootstrap.bundle.min.js"></script>
-<script defer src='js/fix-tooltips.js'></script>
