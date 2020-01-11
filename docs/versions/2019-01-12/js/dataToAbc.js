@@ -1,5 +1,6 @@
 export function dataToAbc(nd) {
   let abc = '';
+  abc += '%%barnumbers 1\n';
   abc += 'M:' + nd.time.beats_per_measure + '/' + nd.time.beat_type + '\n';
   abc += 'K:C\n';
   abc += 'L:1/16\n';

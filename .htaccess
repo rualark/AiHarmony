@@ -7,3 +7,4 @@
      Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
   </ifModule>
 </filesMatch>
+DirectoryIndex index.html index.htm index.php

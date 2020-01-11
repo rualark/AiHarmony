@@ -10,3 +10,4 @@ body {padding-top:4.3rem; background-color:white}
 .disabled { opacity:0.3 !important;}
 .btn-lgray {color: black; background-color: #dddddd; border-color: #dddddd;}
 .btn-lblue {color: black; background-color: #bbdefb; border-color: #bbdefb; transition-duration: 0ms;}
+.tooltip{pointer-events:none}

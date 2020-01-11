@@ -7,6 +7,13 @@ export function nd_set_rest(notes, n) {
   }
 }
 
+export function nd_append_measure(notesData) {
+  for (let v=0; v<notesData.voices.length; ++v) {
+    let vc = notesData.voices[v];
+    vc.notes.push({abc_note: 'z', abc_alter: '', len: notesData.time.measure_len, startsTie: false});
+  }
+}
+
 export let notesData = {
   key: {
     mode: 9, // 0 - major, 2 - dorian, 9 - aeolian
