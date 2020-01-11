@@ -2,8 +2,13 @@ import {dataToAbc} from "./dataToAbc.js";
 import {notesData} from "./notesData.js";
 import {update_selection} from "./edit.js";
 
+export let MAX_ABC_NOTE = 60;
+export let MIN_ABC_NOTE = 1;
+
 let engraverParams = {};
 let parserParams = {};
+
+let abcjs = {};
 
 export let clicked = {
   element: {},
@@ -26,17 +31,20 @@ function getElementByStartChar(abcjs, startChar) {
   }
 }
 
+export function find_selection() {
+  let nt = notesData.voices[clicked.note.voice].notes[clicked.note.note];
+  let el = getElementByStartChar(abcjs, nt.abc_charStarts);
+  abcjs[0].engraver.rangeHighlight(nt.abc_charStarts, nt.abc_charEnds);
+  clicked.element = el.abcelem;
+  clicked.classes = "";
+  update_selection();
+}
+
 function notation_redraw() {
   parserParams.staffwidth = window.innerWidth - 60;
-  let abcjs = ABCJS.renderAbc('notation', dataToAbc(notesData), parserParams, engraverParams);
+  abcjs = ABCJS.renderAbc('notation', dataToAbc(notesData), parserParams, engraverParams);
   if (clicked.note) {
-    let nt = notesData.voices[clicked.note.voice].notes[clicked.note.note];
-    console.log('dr', nt);
-    let el = getElementByStartChar(abcjs, nt.abc_charStarts);
-    abcjs[0].engraver.rangeHighlight(nt.abc_charStarts, nt.abc_charEnds);
-    clicked.element = el.abcelem;
-    clicked.classes = "";
-    update_selection();
+    find_selection();
   }
   else {
     clicked.element = {};

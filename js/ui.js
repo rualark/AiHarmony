@@ -1,15 +1,15 @@
 import {notesData} from "./notesData.js";
-import {async_redraw, clicked, init_abcjs, notation_zoom} from "./abchelper.js";
+import {async_redraw, clicked, find_selection, init_abcjs, notation_zoom} from "./abchelper.js";
 import {
-  future,
+  future, move_to_next_note, move_to_previous_note,
   set_len,
   set_note,
-  set_octave,
+  increment_octave,
   set_rest,
   toggle_alteration,
   toggle_dot,
   toggle_tie,
-  update_selection
+  update_selection, increment_note
 } from "./edit.js";
 
 document.getElementById('zoom-in').onclick=function(){ notation_zoom(1.1); return false; };
@@ -25,8 +25,8 @@ document.getElementById('note_f').onclick=function(){ set_note(3); return false;
 document.getElementById('note_g').onclick=function(){ set_note(4); return false; };
 document.getElementById('note_a').onclick=function(){ set_note(5); return false; };
 document.getElementById('note_b').onclick=function(){ set_note(6); return false; };
-document.getElementById('up8').onclick=function(){ set_octave(1); return false; };
-document.getElementById('down8').onclick=function(){ set_octave(-1); return false; };
+document.getElementById('up8').onclick=function(){ increment_octave(1); return false; };
+document.getElementById('down8').onclick=function(){ increment_octave(-1); return false; };
 document.getElementById('tie').onclick=function(){ toggle_tie(); return false; };
 document.getElementById('len2').onclick=function(){ set_len(1); return false; };
 document.getElementById('len3').onclick=function(){ set_len(2); return false; };
@@ -68,9 +68,23 @@ let keymap = {
   105: () => { toggle_alteration('_') },
   187: () => { set_rest() },
   96: () => { set_rest() },
+  37: () => { move_to_previous_note(); find_selection(); },
+  39: () => { move_to_next_note(); find_selection(); },
+  38: () => { increment_note(1) },
+  40: () => { increment_note(-1) },
 };
 
 window.onkeydown = function (e) {
+  if (e.ctrlKey) {
+    if (e.keyCode === 38) {
+      increment_octave(1);
+      return false;
+    }
+    if (e.keyCode === 40) {
+      increment_octave(-1);
+      return false;
+    }
+  }
   if (e.keyCode in keymap) {
     keymap[e.keyCode]();
     return false;

@@ -1,6 +1,6 @@
 import {nd_append_measure, nd_set_rest, notesData} from "./notesData.js";
 import {abc2d, d2abc} from "./dataToAbc.js";
-import {async_redraw, clicked} from "./abchelper.js";
+import {async_redraw, clicked, MAX_ABC_NOTE, MIN_ABC_NOTE} from "./abchelper.js";
 import {button_enabled_active} from "./uilib.js";
 
 export let future = {
@@ -77,7 +77,7 @@ export function set_len(len) {
   async_redraw();
 }
 
-function move_to_next_note() {
+export function move_to_next_note() {
   if (!clicked.element || !clicked.element.duration) return;
   let el = notesData.abc_charStarts[clicked.element.startChar];
   let notes = notesData.voices[el.voice].notes;
@@ -85,6 +85,15 @@ function move_to_next_note() {
     nd_append_measure(notesData);
   }
   clicked.note.note++;
+}
+
+export function move_to_previous_note() {
+  if (!clicked.element || !clicked.element.duration) return;
+  let el = notesData.abc_charStarts[clicked.element.startChar];
+  let notes = notesData.voices[el.voice].notes;
+  if (el.note) {
+    clicked.note.note--;
+  }
 }
 
 export function set_note(dc) {
@@ -143,18 +152,53 @@ export function set_rest() {
   async_redraw();
 }
 
-function can_octave(doct) {
-  if (doct === 1) return clicked.element.pitches && clicked.element.pitches[0].pitch < 30;
-  else return clicked.element.pitches && clicked.element.pitches[0].pitch > -20;
-}
-
-export function set_octave(doct) {
+function can_increment_note(dnote) {
   if (!clicked.element || !clicked.element.duration) return;
   let el = notesData.abc_charStarts[clicked.element.startChar];
-  let d = abc2d(notesData.voices[el.voice].notes[el.note].abc_note);
-  let note = notesData.voices[el.voice].notes[el.note];
+  let n = el.note;
+  if (future.advancing && el.note) {
+    n = n - 1;
+  }
+  let note = notesData.voices[el.voice].notes[n];
+  let d = abc2d(note.abc_note);
+  return d + dnote < MAX_ABC_NOTE && d + dnote > MIN_ABC_NOTE;
+}
+
+export function increment_octave(doct) {
+  if (!clicked.element || !clicked.element.duration) return;
+  if (!can_increment_note(doct * 7)) return;
+  let el = notesData.abc_charStarts[clicked.element.startChar];
+  let n = el.note;
+  if (future.advancing && el.note) {
+    n = n - 1;
+  }
+  let notes = notesData.voices[el.voice].notes;
+  let note = notes[n];
+  let d = abc2d(note.abc_note);
   note.abc_note = d2abc(d + 7 * doct);
   note.startsTie = false;
+  if (n) {
+    notes[n - 1].startsTie = false;
+  }
+  async_redraw();
+}
+
+export function increment_note(dnote) {
+  if (!clicked.element || !clicked.element.duration) return;
+  if (!can_increment_note(dnote)) return;
+  let el = notesData.abc_charStarts[clicked.element.startChar];
+  let n = el.note;
+  if (future.advancing && el.note) {
+    n = n - 1;
+  }
+  let notes = notesData.voices[el.voice].notes;
+  let note = notes[n];
+  let d = abc2d(note.abc_note);
+  note.abc_note = d2abc(d + dnote);
+  note.startsTie = false;
+  if (n) {
+    notes[n - 1].startsTie = false;
+  }
   async_redraw();
 }
 
@@ -222,8 +266,8 @@ export function update_selection() {
   button_enabled_active('note_a', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 5);
   button_enabled_active('note_b', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 6);
   button_enabled_active('rest', clicked.element.duration, clicked.element.rest && clicked.element.rest.type === 'rest');
-  button_enabled_active('up8', can_octave(1), false);
-  button_enabled_active('down8', can_octave(-1), false);
+  button_enabled_active('up8', can_increment_note(7), false);
+  button_enabled_active('down8', can_increment_note(-7), false);
   if (clicked.element.rest && clicked.element.rest.type === 'rest' || future.advancing) {
     button_enabled_active('sharp', clicked.element.duration, future.alteration === '^');
     button_enabled_active('flat', clicked.element.duration, future.alteration === '_');
