@@ -1,5 +1,16 @@
 export function keyicon(key) {
-  return `<span class='rounded' style='display: flex; align-items: center; justify-content: center; width: 35px; height: 35px; background: #aaccee'><i><b>${key}</b></i></span>`;
+  let color = '#aaccee';
+  let tooltip = '';
+  if (key.startsWith('Numpad')) {
+    color='#aaeecc';
+    tooltip = 'data-toggle=tooltip data-placement=left title=Numpad';
+  }
+  return `<span ${tooltip} class='rounded' style='display: inline-flex; align-items: center; justify-content: center; width: 35px; height: 35px; background: ${color}'><i><b>${getKeyImage(key)}</b></i></span>`;
+}
+
+function getKeyImage(key) {
+  if (key in keyImages) return keyImages[key];
+  else return key;
 }
 
 export let keyCodes = {
@@ -104,3 +115,25 @@ export let keyCodes = {
   SingleQuote: 222
 };
 
+let keyImages = {
+  Multiply: '*',
+  NumpadAdd: '+',
+  NumpadSubtract: '-',
+  DecimalPoint: '.',
+  Divide: '/',
+  Semicolon: ';',
+  EqualSign: '=',
+  Comma: ',',
+  Dash: '-',
+  Period: '.',
+  ForwardSlash: '/',
+  GraveAccent: '`',
+  OpenBracket: '(',
+  Backslash: '\\',
+  CloseBracket: ')',
+  SingleQuote: "'",
+  LeftArrow: '<img src=img/keys/leftArrow.png height=20>',
+  RightArrow: '<img src=img/keys/rightArrow.png height=20>',
+  UpArrow: '<img src=img/keys/upArrow.png height=20>',
+  DownArrow: '<img src=img/keys/downArrow.png height=20>',
+};

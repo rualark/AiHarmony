@@ -5,6 +5,8 @@ import {
   update_selection
 } from "./edit.js";
 import {commandCtrlKeyCodes, commandKeyCodes, init_commands} from "./commands.js";
+import {getUrlParam} from "./urlparams.js";
+import {showShortcutsModal} from "./modal.js";
 
 window.onresize = function() {
   async_redraw();
@@ -41,6 +43,9 @@ function element_click(abcElem, tuneNumber, classes) {
 function init() {
   init_commands();
   init_abcjs(element_click);
+  if (getUrlParam('action') === 'shortcuts') {
+    setTimeout(showShortcutsModal, 0);
+  }
 }
 
 init();

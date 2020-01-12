@@ -28,14 +28,14 @@ export function init_commands() {
   for (let command of commands) {
     if (!command.toolbar) continue;
     if (!command.id) continue;
-    st += `<a id='${command.id}' class='btn btn-outline-white p-1' href=# role='button' style='width: 50px; ${command.toolbar.style || ''}'>`;
+    st += `<a id='${command.id}' class='btn btn-outline-white p-1' href=# role='button' style='min-width: 40px; ${command.toolbar.style || ''}'>`;
     if (command.toolbar.type === 'image') {
-      st += `<img src=img/toolbar/${command.id}.png height=35>`;
+      command.toolbar.html = `<img src=img/toolbar/${command.id}.png height=35>`;
     }
     if (command.toolbar.type === 'text') {
-      st += `${command.toolbar.text}`;
+      command.toolbar.html = `${command.toolbar.text}`;
     }
-    st += '</a>&nbsp;';
+    st += command.toolbar.html + '</a>&nbsp;';
   }
   console.log(st);
   document.getElementById("toolbar").innerHTML = st;
@@ -140,6 +140,7 @@ export let commands = [
   {
     id: 'note_g',
     toolbar: {type: 'text', text: 'G', style: 'font-family: sans-serif; font-size: 1.5em'},
+    keys: ['G'],
     command: () => { set_note(4) },
     name: 'Input note G',
   },
@@ -224,12 +225,14 @@ export let commands = [
   },
   {
     id: 'zoom-in',
-    keys: ['Add'],
+    keys: ['NumpadAdd'],
     command: () => { notation_zoom(1.1) },
+    name: 'Zoom in',
   },
   {
     id: 'zoom-out',
-    keys: ['Subtract'],
+    keys: ['NumpadSubtract'],
     command: () => { notation_zoom(0.9) },
+    name: 'Zoom out',
   },
 ];
