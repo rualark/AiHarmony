@@ -37,7 +37,7 @@ export function init_commands() {
     }
     st += command.toolbar.html + '</a>&nbsp;';
   }
-  console.log(st);
+  //console.log(st);
   document.getElementById("toolbar").innerHTML = st;
   for (let command of commands) {
     if (!command.id) continue;
@@ -97,7 +97,7 @@ export let commands = [
   {
     id: 'dot',
     toolbar: {type: 'image'},
-    keys: ['Period', 'DecimalPoint'],
+    keys: ['Period', 'NumpadDecimalPoint'],
     command: () => { toggle_dot() },
     name: 'Input dotted note',
   },

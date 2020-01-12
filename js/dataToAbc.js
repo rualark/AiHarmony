@@ -1,3 +1,5 @@
+import {clefs} from "./clefs.js";
+
 export function dataToAbc(nd) {
   let abc = '';
   abc += '%%barnumbers 1\n';
@@ -17,7 +19,11 @@ export function dataToAbc(nd) {
       nt.step = s;
       nd.abc_charStarts[abc.length] = {voice: v, note: n};
       nt.abc_charStarts = abc.length;
-      abc += nt.abc_alter + nt.abc_note + nt.len;
+      let abc_note = nt.abc_note;
+      if (abc_note !== 'z' && clefs[vc.clef].transpose) {
+        abc_note = abcTranspose(abc_note, -clefs[vc.clef].transpose);
+      }
+      abc += nt.abc_alter + abc_note + nt.len;
       s += nt.len;
       if (nt.startsTie) abc += '-';
       nt.abc_charEnds = abc.length;
@@ -55,4 +61,8 @@ export function d2abc(d) {
     st += ",";
   }
   return st;
+}
+
+function abcTranspose(st, dd) {
+  return d2abc(abc2d(st) + dd);
 }

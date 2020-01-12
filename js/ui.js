@@ -7,6 +7,7 @@ import {
 import {commandCtrlKeyCodes, commandKeyCodes, init_commands} from "./commands.js";
 import {getUrlParam} from "./urlparams.js";
 import {showShortcutsModal} from "./modal.js";
+import {showClefsModal} from "./clefs.js";
 
 window.onresize = function() {
   async_redraw();
@@ -31,6 +32,10 @@ function element_click(abcElem, tuneNumber, classes) {
   clicked.element = abcElem;
   clicked.classes = classes;
   clicked.note = undefined;
+  if (typeof clicked.clefPos !== undefined) {
+    console.log('cl', classes, classes[0].slice(-1));
+    showClefsModal(notesData.voices[Number(classes[0].slice(-1))]);
+  }
   if (clicked.element.duration != null) {
     clicked.note = notesData.abc_charStarts[clicked.element.startChar];
   }

@@ -298,7 +298,7 @@ export function update_selection() {
     button_enabled_active('flat', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'flat');
     button_enabled_active('natural', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'natural');
   }
-  console.log('nl', future.advancing, future.len);
+  //console.log('nl', future.advancing, future.len);
   if (future.advancing && future.len) {
     button_enabled_active('len2', clicked.element.duration, [1].includes(future.len));
     button_enabled_active('len3', can_len(2), [2, 3].includes(future.len));

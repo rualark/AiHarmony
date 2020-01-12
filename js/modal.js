@@ -14,16 +14,21 @@ export function showShortcutsModal() {
     if (!command.name) continue;
     st += '<tr>';
     st += `<td>${command.name}`;
-    st += '<td align=center>';
+    st += "<td style='text-align: center'>";
     if (command.toolbar) {
       st += `<div style='text-align: center; min-width: 40px; ${command.toolbar.style || ''}'>${command.toolbar.html}</div>`;
     }
-    st += '<td align=center>';
+    st += "<td style='text-align: center'>";
     if (command.keys) {
-      let keys_st = ''
-      for (let key of command.keys[0].split('+')) {
-        if (keys_st) keys_st += " <b>+</b> ";
-        keys_st += keyicon(key);
+      let keys_st = '';
+      for (let keys of command.keys) {
+        let key_st = '';
+        for (let key of keys.split('+')) {
+          if (key_st) key_st += " <b>+</b> ";
+          key_st += keyicon(key);
+        }
+        if (keys_st) keys_st += ' <b>or</b> ';
+        keys_st += key_st;
       }
       st += keys_st;
     }
