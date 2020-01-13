@@ -1,6 +1,7 @@
 import {clefs} from "./clefs.js";
+import {nd} from "./NotesData.js";
 
-export function dataToAbc(nd) {
+export function dataToAbc() {
   let abc = '';
   abc += '%%barnumbers 1\n';
   abc += 'M:' + nd.time.beats_per_measure + '/' + nd.time.beat_type + '\n';

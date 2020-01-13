@@ -1,7 +1,7 @@
-import {notesData} from "./notesData.js";
+import {nd} from "./NotesData.js";
 import {async_redraw, clicked, init_abcjs, notation_zoom} from "./abchelper.js";
 import {
-  future,
+  future, stop_advancing,
   update_selection
 } from "./edit.js";
 import {commandCtrlKeyCodes, commandKeyCodes, init_commands} from "./commands.js";
@@ -33,14 +33,12 @@ function element_click(abcElem, tuneNumber, classes) {
   clicked.classes = classes;
   clicked.note = undefined;
   if (typeof clicked.element.clefPos !== 'undefined') {
-    showClefsModal(notesData.voices[Number(classes[0].slice(-1))]);
+    showClefsModal(nd.voices[Number(classes[0].slice(-1))]);
   }
   if (clicked.element.duration != null) {
-    clicked.note = notesData.abc_charStarts[clicked.element.startChar];
+    clicked.note = nd.abc_charStarts[clicked.element.startChar];
   }
-  future.advancing = false;
-  future.alteration = '';
-  future.len = 0;
+  stop_advancing();
   update_selection();
 }
 

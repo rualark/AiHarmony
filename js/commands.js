@@ -4,7 +4,7 @@ import {
   prev_note,
   set_len,
   set_note,
-  set_rest,
+  set_rest, stop_advancing,
   toggle_alteration,
   toggle_dot,
   toggle_tie
@@ -234,5 +234,10 @@ export let commands = [
     keys: ['NumpadSubtract'],
     command: () => { notation_zoom(0.9) },
     name: 'Zoom out',
+  },
+  {
+    keys: ['Esc'],
+    command: () => { stop_advancing() },
+    name: 'Stop advancing edit',
   },
 ];

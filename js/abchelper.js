@@ -1,5 +1,5 @@
 import {dataToAbc} from "./dataToAbc.js";
-import {notesData} from "./notesData.js";
+import {nd} from "./NotesData.js";
 import {update_selection} from "./edit.js";
 
 export let MAX_ABC_NOTE = 60;
@@ -32,7 +32,7 @@ function getElementByStartChar(abcjs, startChar) {
 }
 
 export function find_selection() {
-  let nt = notesData.voices[clicked.note.voice].notes[clicked.note.note];
+  let nt = nd.voices[clicked.note.voice].notes[clicked.note.note];
   let el = getElementByStartChar(abcjs, nt.abc_charStarts);
   abcjs[0].engraver.rangeHighlight(nt.abc_charStarts, nt.abc_charEnds);
   clicked.element = el.abcelem;
@@ -42,7 +42,7 @@ export function find_selection() {
 
 function notation_redraw() {
   parserParams.staffwidth = window.innerWidth - 60;
-  abcjs = ABCJS.renderAbc('notation', dataToAbc(notesData), parserParams, engraverParams);
+  abcjs = ABCJS.renderAbc('notation', dataToAbc(nd), parserParams, engraverParams);
   if (clicked.note) {
     find_selection();
   }
