@@ -153,7 +153,7 @@ export function set_note(dc) {
   async_redraw();
 }
 
-export function set_rest() {
+export function set_rest(advance) {
   if (!clicked.element || !clicked.element.duration) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
   let notes = nd.voices[el.voice].notes;
@@ -166,11 +166,13 @@ export function set_rest() {
     future.advancing = false;
     set_len(future.len);
   }
-  // Advance
-  future.advancing = true;
-  future.alteration = '';
-  future.len = note.len;
-  move_to_next_note();
+  if (advance) {
+    // Advance
+    future.advancing = true;
+    future.alteration = '';
+    future.len = note.len;
+    move_to_next_note();
+  }
   async_redraw();
 }
 

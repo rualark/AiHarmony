@@ -206,8 +206,13 @@ export let commands = [
     id: 'rest',
     toolbar: {type: 'image'},
     keys: ['EqualSign', 'Numpad0'],
-    command: () => { set_rest() },
+    command: () => { set_rest(true) },
     name: 'Input rest',
+  },
+  {
+    keys: ['Delete'],
+    command: () => { set_rest(false) },
+    name: 'Delete note',
   },
   { separator: true },
   {
