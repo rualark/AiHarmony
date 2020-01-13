@@ -30,7 +30,7 @@ export let notesData = {
   voices: [
     {
       clef: 'treble',
-      name: 'Soprano',
+      name: 'Sop.',
       notes: [
         {abc_note: 'c', abc_alter: '', len: 4, startsTie: false},
         {abc_note: 'd', abc_alter: '', len: 4, startsTie: false},
@@ -136,7 +136,7 @@ export let notesData = {
     },
     {
       clef: 'treble',
-      name: 'Alto',
+      name: 'Alt.',
       notes: [
         {abc_note: 'D', abc_alter: '', len: 4, startsTie: false},
         {abc_note: 'C', abc_alter: '', len: 4, startsTie: false},
@@ -247,7 +247,7 @@ export let notesData = {
     },
     {
       clef: 'treble-8',
-      name: 'Tenor',
+      name: 'Ten.',
       notes: [
         {abc_note: 'C', abc_alter: '', len: 4, startsTie: false},
         {abc_note: 'D', abc_alter: '', len: 4, startsTie: false},
@@ -353,7 +353,7 @@ export let notesData = {
     },
     {
       clef: 'bass',
-      name: 'Bass',
+      name: 'Bas.',
       notes: [
         {abc_note: 'D', abc_alter: '', len: 4, startsTie: false},
         {abc_note: 'C', abc_alter: '', len: 4, startsTie: false},

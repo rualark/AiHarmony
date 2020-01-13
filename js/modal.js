@@ -2,9 +2,9 @@ import {keyicon} from "./keys.js";
 import {commands} from "./commands.js";
 
 export function showShortcutsModal() {
-  document.getElementById("shortcutsModalTitle").innerHTML = 'ArtInfuser Harmony';
+  document.getElementById("shortcutsModalTitle").innerHTML = 'Artinfuser Harmony';
   let st = '';
-  st += 'ArtInfuser Harmony allows to edit, play, import and export notes. Minimal supported note length is 1/16. Tuplets are not supported. Only single clef, key and time signature is supported per staff.<br><br>';
+  st += 'Artinfuser Harmony allows to edit, play, import and export notes. Minimal supported note length is 1/16. Tuplets are not supported. Only single clef, key and time signature is supported per staff.<br><br>';
   st += '<table class=table>';
   st += '<tr>';
   st += '<th>Function';

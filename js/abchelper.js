@@ -69,7 +69,27 @@ export function init_abcjs(clickListener) {
     clickListener: clickListener,
     add_classes: true,
     staffwidth: window.innerWidth - 60,
-    wrap: {minSpacing: 1.4, maxSpacing: 2.4, preferredMeasuresPerLine: 16}
+    wrap: {minSpacing: 1.4, maxSpacing: 2.4, preferredMeasuresPerLine: 16},
+    format: {
+      titlefont: "Verdana 9 italic bold",
+      gchordfont: "Verdana 9 italic bold",
+      composerfont: "Verdana 9 italic bold",
+      footerfont: "Verdana 9 italic bold",
+      headerfont: "Verdana 9 italic bold",
+      historyfont: "Verdana 9 italic bold",
+      infofont: "Verdana 9 italic bold",
+      measurefont: "Verdana 9 italic",
+      partsfont: "Verdana 9 italic bold",
+      repeatfont: "Verdana 9 italic bold",
+      subtitlefont: "Verdana 9 italic bold",
+      tempofont: "Verdana 9 italic bold",
+      textfont: "Verdana 9 italic bold",
+      voicefont: "Times New Roman 11 bold",
+      tripletfont: "Verdana 9 italic bold",
+      vocalfont: "Verdana 9 italic bold",
+      wordsfont: "Verdana 9 italic bold",
+      annotationfont: "Verdana 9 italic bold",
+    }
   };
 
   engraverParams = {scale: 1};
