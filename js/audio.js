@@ -11,7 +11,7 @@ export function play() {
   synth.init({
     audioContext: myContext,
     visualObj: abcjs[0],
-    millisecondsPerMeasure: 400
+    millisecondsPerMeasure: 2000
   }).then(() => {
     synth.prime(() => {
     }).then(() => {

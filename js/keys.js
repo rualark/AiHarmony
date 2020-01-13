@@ -5,7 +5,7 @@ export function keyicon(key) {
     color='#aaeecc';
     tooltip = 'data-toggle=tooltip data-placement=left title=Numpad';
   }
-  return `<span ${tooltip} class='rounded' style='display: inline-flex; align-items: center; justify-content: center; width: 35px; height: 35px; background: ${color}'><i><b>${getKeyImage(key)}</b></i></span>`;
+  return `<span ${tooltip} class='rounded p-1' style='margin-top: 5px; display: inline-flex; align-items: center; justify-content: center; vertical-align: center; min-width: 35px; height: 30px; background: ${color}'><i><b>${getKeyImage(key)}</b></i></span>`;
 }
 
 function getKeyImage(key) {

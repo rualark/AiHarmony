@@ -12,6 +12,7 @@ import {
 import {showShortcutsModal} from "./modal.js";
 import {notation_zoom} from "./abchelper.js";
 import {keyCodes} from './keys.js';
+import {play} from "./audio.js";
 
 export function init_commands() {
   for (let command of commands) {
@@ -202,6 +203,20 @@ export let commands = [
     keys: ['EqualSign', 'Numpad0'],
     command: () => { set_rest() },
     name: 'Input rest',
+  },
+  {
+    id: 'play',
+    toolbar: {type: 'image'},
+    keys: ['Space'],
+    command: () => { play() },
+    name: 'Playback',
+  },
+  {
+    id: 'play_hq',
+    toolbar: {type: 'image'},
+    keys: ['Ctrl+Space'],
+    command: () => { play() },
+    name: 'Playback (high quality)',
   },
   {
     keys: ['LeftArrow'],
