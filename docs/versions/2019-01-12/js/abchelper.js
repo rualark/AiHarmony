@@ -8,7 +8,7 @@ export let MIN_ABC_NOTE = 1;
 let engraverParams = {};
 let parserParams = {};
 
-let abcjs = {};
+export let abcjs = {};
 
 export let clicked = {
   element: {},
@@ -76,3 +76,4 @@ export function init_abcjs(clickListener) {
 
   async_redraw();
 }
+

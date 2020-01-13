@@ -32,8 +32,7 @@ function element_click(abcElem, tuneNumber, classes) {
   clicked.element = abcElem;
   clicked.classes = classes;
   clicked.note = undefined;
-  if (typeof clicked.clefPos !== undefined) {
-    console.log('cl', classes, classes[0].slice(-1));
+  if (typeof clicked.element.clefPos !== 'undefined') {
     showClefsModal(notesData.voices[Number(classes[0].slice(-1))]);
   }
   if (clicked.element.duration != null) {
