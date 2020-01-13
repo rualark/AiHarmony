@@ -13,7 +13,7 @@ export let abcjs = {};
 export let clicked = {
   element: {},
   classes: '',
-  note: undefined
+  note: {voice: 0, note: 0}
 };
 
 function getElementByStartChar(abcjs, startChar) {

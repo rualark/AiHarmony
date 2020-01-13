@@ -19,10 +19,11 @@ window.onkeydown = function (e) {
       commandCtrlKeyCodes[e.keyCode].command();
       return false;
     }
-  }
-  if (e.keyCode in commandKeyCodes) {
-    commandKeyCodes[e.keyCode].command();
-    return false;
+  } else {
+    if (e.keyCode in commandKeyCodes) {
+      commandKeyCodes[e.keyCode].command();
+      return false;
+    }
   }
   return true;
 };

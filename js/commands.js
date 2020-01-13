@@ -10,9 +10,10 @@ import {
   toggle_tie
 } from "./edit.js";
 import {showShortcutsModal} from "./modal.js";
-import {notation_zoom} from "./abchelper.js";
+import {async_redraw, notation_zoom} from "./abchelper.js";
 import {keyCodes} from './keys.js';
 import {play} from "./audio.js";
+import {nd} from "./NotesData.js";
 
 export function init_commands() {
   for (let command of commands) {
@@ -27,6 +28,9 @@ export function init_commands() {
   }
   let st = '';
   for (let command of commands) {
+    if (command.separator) {
+      st += "<div style='display: inline-block; height: 100%; vertical-align: middle;'><img src=img/gray.png style='vertical-align: middle; opacity: 0.3' height=30 width=1></div>&nbsp;";
+    }
     if (!command.toolbar) continue;
     if (!command.id) continue;
     st += `<a id='${command.id}' class='btn btn-outline-white p-1' href=# role='button' style='min-width: 40px; ${command.toolbar.style || ''}'>`;
@@ -60,6 +64,7 @@ export let commands = [
     command: () => { showShortcutsModal() },
     name: '',
   },
+  { separator: true },
   {
     id: 'len6',
     toolbar: {type: 'image'},
@@ -204,6 +209,15 @@ export let commands = [
     command: () => { set_rest() },
     name: 'Input rest',
   },
+  { separator: true },
+  {
+    id: 'add_bar',
+    toolbar: {type: 'image'},
+    keys: ['Ctrl+B'],
+    command: () => { nd.append_measure(); async_redraw(); },
+    name: 'Add bar at end',
+  },
+  { separator: true },
   {
     id: 'play',
     toolbar: {type: 'image'},
