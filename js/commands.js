@@ -230,6 +230,7 @@ export let commands = [
     command: () => { play() },
     name: 'Playback',
   },
+  /*
   {
     id: 'play_hq',
     toolbar: {type: 'image'},
@@ -237,6 +238,7 @@ export let commands = [
     command: () => { play() },
     name: 'Playback (high quality)',
   },
+   */
   {
     keys: ['LeftArrow'],
     command: () => { prev_note() },

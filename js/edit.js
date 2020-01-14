@@ -1,6 +1,6 @@
 import {NotesData, nd} from "./NotesData.js";
 import {abc2d, d2abc} from "./dataToAbc.js";
-import {async_redraw, clicked, find_selection, MAX_ABC_NOTE, MIN_ABC_NOTE} from "./abchelper.js";
+import {async_redraw, clicked, find_selection, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "./abchelper.js";
 import {button_enabled_active} from "./uilib.js";
 
 export let future = {
@@ -19,6 +19,7 @@ function can_dot() {
 }
 
 export function toggle_dot() {
+  if (state.state !== 'ready') return;
   if (!clicked.element || !clicked.element.duration) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
   let notes = nd.voices[el.voice].notes;
@@ -40,6 +41,7 @@ function can_len(len) {
 }
 
 export function set_len(len) {
+  if (state.state !== 'ready') return;
   if (!clicked.element || !clicked.element.duration) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
   let notes = nd.voices[el.voice].notes;
@@ -100,6 +102,7 @@ function move_to_previous_note() {
 }
 
 export function prev_note() {
+  if (state.state !== 'ready') return;
   move_to_previous_note();
   find_selection();
   future.advancing = false;
@@ -108,6 +111,7 @@ export function prev_note() {
 }
 
 export function next_note() {
+  if (state.state !== 'ready') return;
   if (move_to_next_note()) {
     async_redraw();
   } else {
@@ -119,6 +123,7 @@ export function next_note() {
 }
 
 export function set_note(dc) {
+  if (state.state !== 'ready') return;
   if (!clicked.element || !clicked.element.duration) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
   let notes = nd.voices[el.voice].notes;
@@ -154,6 +159,7 @@ export function set_note(dc) {
 }
 
 export function set_rest(advance) {
+  if (state.state !== 'ready') return;
   if (!clicked.element || !clicked.element.duration) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
   let notes = nd.voices[el.voice].notes;
@@ -189,6 +195,7 @@ function can_increment_note(dnote) {
 }
 
 export function increment_octave(doct) {
+  if (state.state !== 'ready') return;
   if (!clicked.element || !clicked.element.duration) return;
   if (!can_increment_note(doct * 7)) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
@@ -208,6 +215,7 @@ export function increment_octave(doct) {
 }
 
 export function increment_note(dnote) {
+  if (state.state !== 'ready') return;
   if (!clicked.element || !clicked.element.duration) return;
   if (!can_increment_note(dnote)) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
@@ -227,6 +235,7 @@ export function increment_note(dnote) {
 }
 
 export function toggle_alteration(alt) {
+  if (state.state !== 'ready') return;
   if (!clicked.element || !clicked.element.duration) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
   let note = nd.voices[el.voice].notes[el.note];
@@ -265,6 +274,7 @@ function is_pre_tie() {
 }
 
 export function toggle_tie() {
+  if (state.state !== 'ready') return;
   if (!clicked.element || !clicked.element.duration) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
   let notes = nd.voices[el.voice].notes;

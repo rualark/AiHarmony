@@ -9,6 +9,7 @@ let engraverParams = {};
 let parserParams = {};
 
 export let abcjs = {};
+export let state = {};
 
 export let clicked = {
   element: {},
@@ -51,9 +52,11 @@ function notation_redraw() {
     clicked.classes = "";
     update_selection();
   }
+  state.state = 'ready';
 }
 
 export function async_redraw() {
+  state.state = 'drawing';
   setTimeout(notation_redraw, 0);
 }
 
