@@ -38,7 +38,6 @@ export function find_selection() {
   abcjs[0].engraver.rangeHighlight(nt.abc_charStarts, nt.abc_charEnds);
   clicked.element = el.abcelem;
   clicked.classes = "";
-  update_selection();
 }
 
 function notation_redraw() {
@@ -50,8 +49,8 @@ function notation_redraw() {
   else {
     clicked.element = {};
     clicked.classes = "";
-    update_selection();
   }
+  update_selection();
   state.state = 'ready';
 }
 

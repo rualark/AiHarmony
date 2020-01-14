@@ -58,7 +58,7 @@ export function set_len(len) {
     let debt = len - note.len;
     for (let n = el.note + 1; n < notes.length; ++n) {
       if (debt < notes[n].len) {
-        NotesData.set_rest(notes, n);
+        nd.set_rest(el.voice, n);
         notes[n].len = notes[n].len - debt;
         notes[n].startsTie = false;
         break;
@@ -66,13 +66,14 @@ export function set_len(len) {
       else {
         debt -= notes[n].len;
         notes.splice(n, 1);
+        --n;
         if (!debt) break;
       }
     }
   }
   else {
     notes.splice(el.note + 1, 0, {abc_note: 'z', abc_alter: '', len: note.len - len, startsTie: false});
-    NotesData.set_rest(notes, el.note + 1);
+    nd.set_rest(el.voice, el.note + 1);
   }
   note.len = len;
   note.startsTie = false;
@@ -95,7 +96,6 @@ function move_to_next_note() {
 function move_to_previous_note() {
   if (!clicked.element || !clicked.element.duration) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
-  let notes = nd.voices[el.voice].notes;
   if (el.note) {
     clicked.note.note--;
   }
@@ -108,6 +108,7 @@ export function prev_note() {
   future.advancing = false;
   future.alteration = '';
   future.len = 0;
+  update_selection();
 }
 
 export function next_note() {
@@ -120,6 +121,7 @@ export function next_note() {
   future.advancing = false;
   future.alteration = '';
   future.len = 0;
+  update_selection();
 }
 
 export function set_note(dc) {
@@ -158,13 +160,36 @@ export function set_note(dc) {
   async_redraw();
 }
 
+export function repeat_element() {
+  if (state.state !== 'ready') return;
+  if (!clicked.element || !clicked.element.duration) return;
+  let el = nd.abc_charStarts[clicked.element.startChar];
+  let notes = nd.voices[el.voice].notes;
+  let n = el.note;
+  if (future.advancing) {
+    if (!n) return;
+  } else {
+    move_to_next_note();
+    find_selection();
+    future.advancing = true;
+    future.len = notes[n].len;
+    ++n;
+  }
+  future.alteration = notes[n-1].abc_alter;
+  if (notes[n - 1].abc_note === 'z') {
+    set_rest(true);
+  } else {
+    set_note(abc2d(notes[n - 1].abc_note) % 7);
+  }
+}
+
 export function set_rest(advance) {
   if (state.state !== 'ready') return;
   if (!clicked.element || !clicked.element.duration) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
-  NotesData.set_rest(notes, el.note);
+  nd.set_rest(el.voice, el.note);
   if (el.note) {
     notes[el.note - 1].startsTie = false;
   }

@@ -1,7 +1,7 @@
 import {
   increment_note,
   increment_octave, next_note,
-  prev_note,
+  prev_note, repeat_element,
   set_len,
   set_note,
   set_rest, stop_advancing,
@@ -209,11 +209,6 @@ export let commands = [
     command: () => { set_rest(true) },
     name: 'Input rest',
   },
-  {
-    keys: ['Delete'],
-    command: () => { set_rest(false) },
-    name: 'Delete note',
-  },
   { separator: true },
   {
     id: 'add_bar',
@@ -239,6 +234,16 @@ export let commands = [
     name: 'Playback (high quality)',
   },
    */
+  {
+    keys: ['Delete'],
+    command: () => { set_rest(false) },
+    name: 'Delete note',
+  },
+  {
+    keys: ['R'],
+    command: () => { repeat_element() },
+    name: 'Repeat element',
+  },
   {
     keys: ['LeftArrow'],
     command: () => { prev_note() },

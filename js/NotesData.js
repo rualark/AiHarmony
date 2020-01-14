@@ -1,10 +1,10 @@
 export class NotesData {
-  static set_rest(nt, n) {
-    nt[n].abc_note = 'z';
-    nt[n].abc_alter = '';
-    nt[n].startsTie = false;
+  set_rest(v, n) {
+    this.voices[v].notes[n].abc_note = 'z';
+    this.voices[v].notes[n].abc_alter = '';
+    this.voices[v].notes[n].startsTie = false;
     if (n) {
-      nt[n - 1].startsTie = false;
+      this.voices[v].notes[n - 1].startsTie = false;
     }
   }
 
