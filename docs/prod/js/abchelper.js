@@ -1,5 +1,5 @@
 import {dataToAbc} from "./dataToAbc.js";
-import {notesData} from "./notesData.js";
+import {nd} from "./NotesData.js";
 import {update_selection} from "./edit.js";
 
 export let MAX_ABC_NOTE = 60;
@@ -9,11 +9,12 @@ let engraverParams = {};
 let parserParams = {};
 
 export let abcjs = {};
+export let state = {};
 
 export let clicked = {
   element: {},
   classes: '',
-  note: undefined
+  note: {voice: 0, note: 0}
 };
 
 function getElementByStartChar(abcjs, startChar) {
@@ -32,28 +33,29 @@ function getElementByStartChar(abcjs, startChar) {
 }
 
 export function find_selection() {
-  let nt = notesData.voices[clicked.note.voice].notes[clicked.note.note];
+  let nt = nd.voices[clicked.note.voice].notes[clicked.note.note];
   let el = getElementByStartChar(abcjs, nt.abc_charStarts);
   abcjs[0].engraver.rangeHighlight(nt.abc_charStarts, nt.abc_charEnds);
   clicked.element = el.abcelem;
   clicked.classes = "";
-  update_selection();
 }
 
 function notation_redraw() {
   parserParams.staffwidth = window.innerWidth - 60;
-  abcjs = ABCJS.renderAbc('notation', dataToAbc(notesData), parserParams, engraverParams);
+  abcjs = ABCJS.renderAbc('notation', dataToAbc(nd), parserParams, engraverParams);
   if (clicked.note) {
     find_selection();
   }
   else {
     clicked.element = {};
     clicked.classes = "";
-    update_selection();
   }
+  update_selection();
+  state.state = 'ready';
 }
 
 export function async_redraw() {
+  state.state = 'drawing';
   setTimeout(notation_redraw, 0);
 }
 
@@ -69,7 +71,27 @@ export function init_abcjs(clickListener) {
     clickListener: clickListener,
     add_classes: true,
     staffwidth: window.innerWidth - 60,
-    wrap: {minSpacing: 1.4, maxSpacing: 2.4, preferredMeasuresPerLine: 16}
+    wrap: {minSpacing: 1.4, maxSpacing: 2.4, preferredMeasuresPerLine: 16},
+    format: {
+      titlefont: "Verdana 9 italic bold",
+      gchordfont: "Verdana 9 italic bold",
+      composerfont: "Verdana 9 italic bold",
+      footerfont: "Verdana 9 italic bold",
+      headerfont: "Verdana 9 italic bold",
+      historyfont: "Verdana 9 italic bold",
+      infofont: "Verdana 9 italic bold",
+      measurefont: "Verdana 9 italic",
+      partsfont: "Verdana 9 italic bold",
+      repeatfont: "Verdana 9 italic bold",
+      subtitlefont: "Verdana 9 italic bold",
+      tempofont: "Verdana 9 italic bold",
+      textfont: "Verdana 9 italic bold",
+      voicefont: "Times New Roman 11 bold",
+      tripletfont: "Verdana 9 italic bold",
+      vocalfont: "Verdana 9 italic bold",
+      wordsfont: "Verdana 9 italic bold",
+      annotationfont: "Verdana 9 italic bold",
+    }
   };
 
   engraverParams = {scale: 1};

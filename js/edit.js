@@ -37,7 +37,7 @@ function can_len(len) {
   let el = nd.abc_charStarts[clicked.element.startChar];
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
-  return note.step % nd.time.measure_len + len <= nd.time.measure_len;
+  return note.step % nd.timesig.measure_len + len <= nd.timesig.measure_len;
 }
 
 export function set_len(len) {
@@ -181,6 +181,10 @@ export function repeat_element() {
   } else {
     set_note(abc2d(notes[n - 1].abc_note) % 7);
   }
+  move_to_previous_note();
+  future.advancing = false;
+  future.len = 0;
+  future.alteration = '';
 }
 
 export function set_rest(advance) {
@@ -289,7 +293,8 @@ function can_tie() {
 function can_pre_tie() {
   if (!clicked.element || !clicked.element.duration) return false;
   let el = nd.abc_charStarts[clicked.element.startChar];
-  return el.note;
+  if (!el.note) return false;
+  return nd.voices[el.voice].notes[el.note - 1].abc_note !== 'z';
 }
 
 function is_pre_tie() {

@@ -1,17 +1,19 @@
 import {
   increment_note,
   increment_octave, next_note,
-  prev_note,
+  prev_note, repeat_element,
   set_len,
   set_note,
-  set_rest,
+  set_rest, stop_advancing,
   toggle_alteration,
   toggle_dot,
   toggle_tie
 } from "./edit.js";
 import {showShortcutsModal} from "./modal.js";
-import {notation_zoom} from "./abchelper.js";
+import {async_redraw, notation_zoom} from "./abchelper.js";
 import {keyCodes} from './keys.js';
+import {play} from "./audio.js";
+import {nd} from "./NotesData.js";
 
 export function init_commands() {
   for (let command of commands) {
@@ -26,6 +28,9 @@ export function init_commands() {
   }
   let st = '';
   for (let command of commands) {
+    if (command.separator) {
+      st += "<div style='display: inline-block; height: 100%; vertical-align: middle;'><img src=img/gray.png style='vertical-align: middle; opacity: 0.3' height=30 width=1></div>&nbsp;";
+    }
     if (!command.toolbar) continue;
     if (!command.id) continue;
     st += `<a id='${command.id}' class='btn btn-outline-white p-1' href=# role='button' style='min-width: 40px; ${command.toolbar.style || ''}'>`;
@@ -59,6 +64,7 @@ export let commands = [
     command: () => { showShortcutsModal() },
     name: '',
   },
+  { separator: true },
   {
     id: 'len6',
     toolbar: {type: 'image'},
@@ -200,8 +206,43 @@ export let commands = [
     id: 'rest',
     toolbar: {type: 'image'},
     keys: ['EqualSign', 'Numpad0'],
-    command: () => { set_rest() },
+    command: () => { set_rest(true) },
     name: 'Input rest',
+  },
+  { separator: true },
+  {
+    id: 'add_bar',
+    toolbar: {type: 'image'},
+    keys: ['Ctrl+B'],
+    command: () => { nd.append_measure(); async_redraw(); },
+    name: 'Add bar at end',
+  },
+  { separator: true },
+  {
+    id: 'play',
+    toolbar: {type: 'image'},
+    keys: ['Space'],
+    command: () => { play() },
+    name: 'Playback',
+  },
+  /*
+  {
+    id: 'play_hq',
+    toolbar: {type: 'image'},
+    keys: ['Ctrl+Space'],
+    command: () => { play() },
+    name: 'Playback (high quality)',
+  },
+   */
+  {
+    keys: ['Delete'],
+    command: () => { set_rest(false) },
+    name: 'Delete note',
+  },
+  {
+    keys: ['R'],
+    command: () => { repeat_element() },
+    name: 'Repeat element',
   },
   {
     keys: ['LeftArrow'],
@@ -234,5 +275,10 @@ export let commands = [
     keys: ['NumpadSubtract'],
     command: () => { notation_zoom(0.9) },
     name: 'Zoom out',
+  },
+  {
+    keys: ['Esc'],
+    command: () => { stop_advancing() },
+    name: 'Stop advancing edit',
   },
 ];

@@ -11,7 +11,37 @@ export class NotesData {
   append_measure() {
     for (let v=0; v<this.voices.length; ++v) {
       let vc = this.voices[v];
-      vc.notes.push({abc_note: 'z', abc_alter: '', len: this.time.measure_len, startsTie: false});
+      vc.notes.push({abc_note: 'z', abc_alter: '', len: this.timesig.measure_len, startsTie: false});
+    }
+  }
+
+  set_timesig(timesig) {
+    this.timesig = timesig;
+    let mlen = this.timesig.measure_len;
+    for (let v=0; v<this.voices.length; ++v) {
+      let vc = this.voices[v];
+      let s2 = 0;
+      for (let n = 0; n < vc.notes.length; ++n) {
+        let nt = vc.notes[n];
+        s2 = nt.step + nt.len;
+        if (nt.step % mlen + nt.len > mlen) {
+          let debt = nt.step % mlen + nt.len - mlen;
+          nt.len -= debt;
+          while (debt > 0) {
+            let len = debt > mlen ? mlen : debt;
+            debt -= len;
+            let new_note = {abc_note: nt.abc_note, abc_alter: nt.abc_alter, len: len};
+            console.log("Insert", v, n, nt.len, nt.step, len, debt, new_note);
+            vc.notes.splice(n + 1, 0, new_note);
+            vc.notes[n].startsTie = true;
+            ++n;
+          }
+        }
+      }
+      if (s2 % mlen) {
+        vc.notes.push({abc_note: 'z', abc_alter: '', len: mlen - s2 % mlen, startsTie: false});
+      }
+      console.log(vc.notes);
     }
   }
 
@@ -23,7 +53,7 @@ export class NotesData {
       maj_base_note: 0, // Base note if it was major (C - 0, Am - 0)
       base_note_alter: 0 // Alteration to achieve base tonic note
     };
-    this.time = {
+    this.timesig = {
       beats_per_measure: 4,
       beat_type: 4,
       measure_len: 16

@@ -14,6 +14,7 @@ import {async_redraw, notation_zoom} from "./abchelper.js";
 import {keyCodes} from './keys.js';
 import {play} from "./audio.js";
 import {nd} from "./NotesData.js";
+import {showTimesigModal} from "./timesig.js";
 
 export function init_commands() {
   for (let command of commands) {
@@ -29,7 +30,7 @@ export function init_commands() {
   let st = '';
   for (let command of commands) {
     if (command.separator) {
-      st += "<div style='display: inline-block; height: 100%; vertical-align: middle;'><img src=img/gray.png style='vertical-align: middle; opacity: 0.3' height=30 width=1></div>&nbsp;";
+      st += "<div style='display: inline-block; height: 100%; vertical-align: middle;'><img src=img/color/gray.png style='vertical-align: middle; opacity: 0.3' height=30 width=1></div>&nbsp;";
     }
     if (!command.toolbar) continue;
     if (!command.id) continue;
@@ -243,6 +244,11 @@ export let commands = [
     keys: ['R'],
     command: () => { repeat_element() },
     name: 'Repeat element',
+  },
+  {
+    keys: ['T'],
+    command: () => { showTimesigModal() },
+    name: 'Change time signature',
   },
   {
     keys: ['LeftArrow'],

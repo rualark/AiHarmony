@@ -1,5 +1,3 @@
-import {dataToAbc} from "./dataToAbc.js";
-import {nd} from "./NotesData.js";
 import {async_redraw} from "./abchelper.js";
 
 export let clefs = {
@@ -25,17 +23,17 @@ export function showClefsModal(voice) {
     ++i;
   }
   st += "</table></div>";
-  document.getElementById("clefsModalTitle").innerHTML = 'Choose clef';
-  document.getElementById("clefsModalBody").innerHTML = st;
+  document.getElementById("ModalTitle").innerHTML = 'Choose clef';
+  document.getElementById("ModalBody").innerHTML = st;
   i = 0;
   for (const clef in clefs) {
     ABCJS.renderAbc(`clef${i}`, `V: V0 clef=${clef}\n[V: V0]x`, {staffwidth: 110});
     document.getElementById('aclef' + i).onclick=function() {
-      $('#clefsModal').modal('hide');
+      $('#Modal').modal('hide');
       voice.clef = clef;
       async_redraw();
     };
     ++i;
   }
-  $('#clefsModal').modal();
+  $('#Modal').modal();
 }

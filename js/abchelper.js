@@ -66,6 +66,13 @@ export function notation_zoom(zoom) {
   async_redraw();
 }
 
+export function get_voice(classes) {
+  for (let cl in classes.split(' ')) {
+    if (!cl.startsWith('abcjs-v')) continue;
+    return Number(cl[7]);
+  }
+}
+
 export function init_abcjs(clickListener) {
   parserParams = {
     clickListener: clickListener,

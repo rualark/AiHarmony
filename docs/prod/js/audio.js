@@ -1,7 +1,7 @@
 import {abcjs} from "./abchelper.js";
 import {json_stringify_circular} from "./lib.js";
 import {dataToAbc} from "./dataToAbc.js";
-import {notesData} from "./notesData.js";
+import {nd} from "./NotesData.js";
 
 let synthControl = {};
 
@@ -11,7 +11,7 @@ export function play() {
   synth.init({
     audioContext: myContext,
     visualObj: abcjs[0],
-    millisecondsPerMeasure: 400
+    millisecondsPerMeasure: 2000
   }).then(() => {
     synth.prime(() => {
     }).then(() => {
@@ -21,7 +21,7 @@ export function play() {
 }
 
 export function play2() {
-  ABCJS.renderMidi("midi1", dataToAbc(notesData),
+  ABCJS.renderMidi("midi1", dataToAbc(nd),
     {
       qpm: 320,
       program: 52,

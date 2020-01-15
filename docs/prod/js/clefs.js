@@ -1,5 +1,5 @@
 import {dataToAbc} from "./dataToAbc.js";
-import {notesData} from "./notesData.js";
+import {nd} from "./NotesData.js";
 import {async_redraw} from "./abchelper.js";
 
 export let clefs = {

@@ -16,3 +16,12 @@ export function json_stringify_circular(obj) {
 String.prototype.count=function(s1) {
   return (this.length - this.replace(new RegExp(s1,"g"), '').length) / s1.length;
 };
+
+export function trigger_tooltips() {
+  let tts = $('[data-toggle="tooltip"]');
+  if (tts.length) {
+    tts.tooltip({
+      trigger: 'hover'
+    });
+  }
+}
