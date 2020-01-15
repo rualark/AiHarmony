@@ -67,7 +67,7 @@ export function notation_zoom(zoom) {
 }
 
 export function get_voice(classes) {
-  for (let cl in classes.split(' ')) {
+  for (let cl of classes[0].split(' ')) {
     if (!cl.startsWith('abcjs-v')) continue;
     return Number(cl[7]);
   }

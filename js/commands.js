@@ -189,6 +189,14 @@ export let commands = [
   },
   { separator: true },
   {
+    id: 'keysig',
+    toolbar: {type: 'image'},
+    keys: ['K'],
+    command: () => { showKeysigModal() },
+    name: 'Input flat',
+  },
+  { separator: true },
+  {
     id: 'up8',
     toolbar: {type: 'text', text: '+8ve', style: 'font-family: sans-serif; font-size: 1.2em'},
     keys: ['Ctrl+UpArrow'],
