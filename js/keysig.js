@@ -34,6 +34,7 @@ export let keysigs = {
   'Ebm': {fifths: -6, mode: 9, base_note: 3},
   'Abm': {fifths: -7, mode: 9, base_note: 8},
 
+  /*
   'G# mix': {fifths: 7, mode: 7, base_note: 8},
   'C# mix': {fifths: 6, mode: 7, base_note: 1},
   'F# mix': {fifths: 5, mode: 7, base_note: 6},
@@ -49,6 +50,7 @@ export let keysigs = {
   'Ab mix': {fifths: -5, mode: 7, base_note: 8},
   'Db mix': {fifths: -6, mode: 7, base_note: 1},
   'Gb mix': {fifths: -7, mode: 7, base_note: 6},
+   */
 };
 
 export function showKeysigModal() {
@@ -68,13 +70,15 @@ export function showKeysigModal() {
   st += '<th>Key signature';
   st += '<th style="vertical-align:middle; text-align: center">Major';
   st += '<th style="vertical-align:middle; text-align: center">Minor';
-  st += '<th style="vertical-align:middle; text-align: center">Mixolydian';
+  //st += '<th style="vertical-align:middle; text-align: center">Mixolydian';
+  let xlen = Object.keys(keysigs).length / 15;
+  console.log(xlen);
   for (let y=0; y<15; ++y) {
     st += '<tr>';
     if (y < 7) st += `<td>${7 - y} sharps`;
     if (y === 7) st += `<td>0 sharps/flats`;
     if (y > 7) st += `<td>${y - 7} flats`;
-    for (let x=0; x<3; ++x) {
+    for (let x=0; x<xlen; ++x) {
       st += '<td style="vertical-align:middle; text-align: center">';
       st += `<a id=akeysig${ksig[x][y].i} class='btn btn-outline-white p-1' href=# role='button'>`;
       st += ksig[x][y].name;
