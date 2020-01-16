@@ -5,7 +5,7 @@ export function dataToAbc() {
   let abc = '';
   abc += '%%barnumbers 1\n';
   abc += 'M:' + nd.timesig.beats_per_measure + '/' + nd.timesig.beat_type + '\n';
-  abc += 'K:C\n';
+  abc += 'K:' + nd.keysig.name + '\n';
   abc += 'L:1/16\n';
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];

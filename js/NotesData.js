@@ -15,6 +15,10 @@ class NotesData {
     }
   }
 
+  set_keysig(keysig) {
+    this.keysig = keysig;
+  }
+
   set_timesig(timesig) {
     this.timesig = timesig;
     let mlen = this.timesig.measure_len;
@@ -46,12 +50,11 @@ class NotesData {
   }
 
   constructor() {
-    this.key = {
+    this.keysig = {
+      name: 'Am',
       mode: 9, // 0 - major, 2 - dorian, 9 - aeolian
       fifths: 0, // Number of alterations near key
       base_note: 9, // Base tonic note (C - 0, Am - 9)
-      maj_base_note: 0, // Base note if it was major (C - 0, Am - 0)
-      base_note_alter: 0 // Alteration to achieve base tonic note
     };
     this.timesig = {
       beats_per_measure: 4,

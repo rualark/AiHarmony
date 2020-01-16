@@ -9,6 +9,7 @@ import {getUrlParam} from "./urlparams.js";
 import {showShortcutsModal} from "./modal.js";
 import {showClefsModal} from "./clefs.js";
 import {showTimesigModal} from "./timesig.js";
+import {showKeysigModal} from "./keysig.js";
 
 window.onresize = function() {
   async_redraw();
@@ -39,6 +40,9 @@ function element_click(abcElem, tuneNumber, classes) {
   }
   if (typeof clicked.element.value !== 'undefined') {
     showTimesigModal();
+  }
+  if (typeof clicked.element.mode !== 'undefined') {
+    showKeysigModal();
   }
   if (clicked.element.duration != null) {
     clicked.note = nd.abc_charStarts[clicked.element.startChar];

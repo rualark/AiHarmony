@@ -15,6 +15,7 @@ import {keyCodes} from './keys.js';
 import {play} from "./audio.js";
 import {nd} from "./NotesData.js";
 import {showTimesigModal} from "./timesig.js";
+import {showKeysigModal} from "./keysig.js";
 
 export function init_commands() {
   for (let command of commands) {
