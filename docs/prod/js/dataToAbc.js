@@ -4,8 +4,8 @@ import {nd} from "./NotesData.js";
 export function dataToAbc() {
   let abc = '';
   abc += '%%barnumbers 1\n';
-  abc += 'M:' + nd.time.beats_per_measure + '/' + nd.time.beat_type + '\n';
-  abc += 'K:C\n';
+  abc += 'M:' + nd.timesig.beats_per_measure + '/' + nd.timesig.beat_type + '\n';
+  abc += 'K:' + nd.keysig.name + '\n';
   abc += 'L:1/16\n';
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
@@ -28,7 +28,7 @@ export function dataToAbc() {
       s += nt.len;
       if (nt.startsTie) abc += '-';
       nt.abc_charEnds = abc.length;
-      if (s % nd.time.measure_len === 0) {
+      if (s % nd.timesig.measure_len === 0) {
         abc += '|';
       }
     }

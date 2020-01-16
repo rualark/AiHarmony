@@ -1,5 +1,5 @@
 import {nd} from "./NotesData.js";
-import {async_redraw, clicked, init_abcjs, notation_zoom} from "./abchelper.js";
+import {async_redraw, clicked, get_voice, init_abcjs, notation_zoom} from "./abchelper.js";
 import {
   future, stop_advancing,
   update_selection
@@ -8,6 +8,8 @@ import {commandCtrlKeyCodes, commandKeyCodes, init_commands} from "./commands.js
 import {getUrlParam} from "./urlparams.js";
 import {showShortcutsModal} from "./modal.js";
 import {showClefsModal} from "./clefs.js";
+import {showTimesigModal} from "./timesig.js";
+import {showKeysigModal} from "./keysig.js";
 
 window.onresize = function() {
   async_redraw();
@@ -34,7 +36,13 @@ function element_click(abcElem, tuneNumber, classes) {
   clicked.classes = classes;
   clicked.note = undefined;
   if (typeof clicked.element.clefPos !== 'undefined') {
-    showClefsModal(nd.voices[Number(classes[0].slice(-1))]);
+    showClefsModal(nd.voices[get_voice(classes)]);
+  }
+  if (typeof clicked.element.value !== 'undefined') {
+    showTimesigModal();
+  }
+  if (typeof clicked.element.mode !== 'undefined') {
+    showKeysigModal();
   }
   if (clicked.element.duration != null) {
     clicked.note = nd.abc_charStarts[clicked.element.startChar];

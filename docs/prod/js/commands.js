@@ -14,6 +14,8 @@ import {async_redraw, notation_zoom} from "./abchelper.js";
 import {keyCodes} from './keys.js';
 import {play} from "./audio.js";
 import {nd} from "./NotesData.js";
+import {showTimesigModal} from "./timesig.js";
+import {showKeysigModal} from "./keysig.js";
 
 export function init_commands() {
   for (let command of commands) {
@@ -29,7 +31,7 @@ export function init_commands() {
   let st = '';
   for (let command of commands) {
     if (command.separator) {
-      st += "<div style='display: inline-block; height: 100%; vertical-align: middle;'><img src=img/gray.png style='vertical-align: middle; opacity: 0.3' height=30 width=1></div>&nbsp;";
+      st += "<div style='display: inline-block; height: 100%; vertical-align: middle;'><img src=img/color/gray.png style='vertical-align: middle; opacity: 0.3' height=30 width=1></div>&nbsp;";
     }
     if (!command.toolbar) continue;
     if (!command.id) continue;
@@ -166,6 +168,20 @@ export let commands = [
   },
   { separator: true },
   {
+    id: 'dblflat',
+    toolbar: {type: 'image'},
+    keys: [],
+    command: () => { toggle_alteration('__') },
+    name: 'Input double flat',
+  },
+  {
+    id: 'flat',
+    toolbar: {type: 'image'},
+    keys: ['9', 'Numpad9'],
+    command: () => { toggle_alteration('_') },
+    name: 'Input flat',
+  },
+  {
     id: 'natural',
     toolbar: {type: 'image'},
     keys: ['7', 'Numpad7'],
@@ -180,10 +196,18 @@ export let commands = [
     name: 'Input sharp',
   },
   {
-    id: 'flat',
+    id: 'dblsharp',
     toolbar: {type: 'image'},
-    keys: ['9', 'Numpad9'],
-    command: () => { toggle_alteration('_') },
+    keys: [],
+    command: () => { toggle_alteration('^^') },
+    name: 'Input double sharp',
+  },
+  { separator: true },
+  {
+    id: 'keysig',
+    toolbar: {type: 'image'},
+    keys: ['K'],
+    command: () => { showKeysigModal() },
     name: 'Input flat',
   },
   { separator: true },
@@ -243,6 +267,11 @@ export let commands = [
     keys: ['R'],
     command: () => { repeat_element() },
     name: 'Repeat element',
+  },
+  {
+    keys: ['T'],
+    command: () => { showTimesigModal() },
+    name: 'Change time signature',
   },
   {
     keys: ['LeftArrow'],

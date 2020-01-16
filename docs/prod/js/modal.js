@@ -3,7 +3,7 @@ import {commands} from "./commands.js";
 import {trigger_tooltips} from "./lib.js";
 
 export function showShortcutsModal() {
-  document.getElementById("shortcutsModalTitle").innerHTML = 'Artinfuser Harmony';
+  document.getElementById("ModalTitle").innerHTML = 'Artinfuser Harmony';
   let st = '';
   st += 'Artinfuser Harmony allows to edit, play, import and export notes. Minimal supported note length is 1/16. Tuplets are not supported. Only single clef, key and time signature is supported per staff.<br><br>';
   st += '<table class=table>';
@@ -34,7 +34,7 @@ export function showShortcutsModal() {
       st += keys_st;
     }
   }
-  document.getElementById("shortcutsModalBody").innerHTML = st;
+  document.getElementById("ModalBody").innerHTML = st;
   trigger_tooltips();
-  $('#shortcutsModal').modal();
+  $('#Modal').modal();
 }
