@@ -333,13 +333,17 @@ export function update_selection() {
   button_enabled_active('up8', can_increment_note(7), false);
   button_enabled_active('down8', can_increment_note(-7), false);
   if (clicked.element.rest && clicked.element.rest.type === 'rest' || future.advancing) {
-    button_enabled_active('sharp', clicked.element.duration, future.alteration === '^');
+    button_enabled_active('dblflat', clicked.element.duration, future.alteration === '__');
     button_enabled_active('flat', clicked.element.duration, future.alteration === '_');
     button_enabled_active('natural', clicked.element.duration, future.alteration === '=');
+    button_enabled_active('sharp', clicked.element.duration, future.alteration === '^');
+    button_enabled_active('dblsharp', clicked.element.duration, future.alteration === '^^');
   } else {
-    button_enabled_active('sharp', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'sharp');
+    button_enabled_active('dblflat', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'dblflat');
     button_enabled_active('flat', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'flat');
     button_enabled_active('natural', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'natural');
+    button_enabled_active('sharp', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'sharp');
+    button_enabled_active('dblsharp', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'dblsharp');
   }
   //console.log('nl', future.advancing, future.len);
   if (future.advancing && future.len) {

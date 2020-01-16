@@ -167,7 +167,7 @@ export let commands = [
   },
   { separator: true },
   {
-    id: 'doubleflat',
+    id: 'dblflat',
     toolbar: {type: 'image'},
     keys: [],
     command: () => { toggle_alteration('__') },
@@ -195,7 +195,7 @@ export let commands = [
     name: 'Input sharp',
   },
   {
-    id: 'doublesharp',
+    id: 'dblsharp',
     toolbar: {type: 'image'},
     keys: [],
     command: () => { toggle_alteration('^^') },
