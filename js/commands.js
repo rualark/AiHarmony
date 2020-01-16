@@ -167,6 +167,20 @@ export let commands = [
   },
   { separator: true },
   {
+    id: 'doubleflat',
+    toolbar: {type: 'image'},
+    keys: [],
+    command: () => { toggle_alteration('__') },
+    name: 'Input double flat',
+  },
+  {
+    id: 'flat',
+    toolbar: {type: 'image'},
+    keys: ['9', 'Numpad9'],
+    command: () => { toggle_alteration('_') },
+    name: 'Input flat',
+  },
+  {
     id: 'natural',
     toolbar: {type: 'image'},
     keys: ['7', 'Numpad7'],
@@ -181,11 +195,11 @@ export let commands = [
     name: 'Input sharp',
   },
   {
-    id: 'flat',
+    id: 'doublesharp',
     toolbar: {type: 'image'},
-    keys: ['9', 'Numpad9'],
-    command: () => { toggle_alteration('_') },
-    name: 'Input flat',
+    keys: [],
+    command: () => { toggle_alteration('^^') },
+    name: 'Input double sharp',
   },
   { separator: true },
   {

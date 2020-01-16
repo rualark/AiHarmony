@@ -1,4 +1,4 @@
-import {NotesData, nd} from "./NotesData.js";
+import {nd} from "./NotesData.js";
 import {abc2d, d2abc} from "./dataToAbc.js";
 import {async_redraw, clicked, find_selection, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "./abchelper.js";
 import {button_enabled_active} from "./uilib.js";

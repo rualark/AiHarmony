@@ -1,4 +1,4 @@
-export class NotesData {
+class NotesData {
   set_rest(v, n) {
     this.voices[v].notes[n].abc_note = 'z';
     this.voices[v].notes[n].abc_alter = '';
