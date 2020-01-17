@@ -63,7 +63,7 @@ export function showKeysigModal() {
     ksig[Math.floor(i / 15)].push({name: keysig, i: i, value: keysigs[keysig]});
     ++i;
   }
-  console.log(ksig);
+  //console.log(ksig);
   let st = '';
   st += '<table class=table>';
   st += '<tr>';
@@ -72,7 +72,7 @@ export function showKeysigModal() {
   st += '<th style="vertical-align:middle; text-align: center">Minor';
   //st += '<th style="vertical-align:middle; text-align: center">Mixolydian';
   let xlen = Object.keys(keysigs).length / 15;
-  console.log(xlen);
+  //console.log(xlen);
   for (let y=0; y<15; ++y) {
     st += '<tr>';
     if (y < 7) st += `<td>${7 - y} sharps`;
