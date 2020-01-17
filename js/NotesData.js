@@ -10,6 +10,35 @@ class NotesData {
     }
   }
 
+  get_voice_len(v) {
+    let len = 0;
+    for (let n = 0; n < this.voices[v].notes.length; ++n) {
+      let nt = this.voices[v].notes[n];
+      len += nt.len;
+    }
+    return len;
+  }
+
+  add_voice(v) {
+    if (!v) return;
+    this.voices.splice(v, 0, []);
+    let vc = this.voices[v];
+    let mlen = this.timesig.measure_len;
+    vc.clef = this.voices[v - 1].clef;
+    vc.name = this.voices[v - 1].name;
+    vc.notes = [];
+    let len = this.get_voice_len(0);
+    let measures = Math.floor(len / mlen)
+    for (let m = 0; m < measures; ++m) {
+      vc.notes.push({d: 0, alter: 10, len: mlen, startsTie: false});
+    }
+  }
+
+  del_voice(v) {
+    if (v == null) return;
+    this.voices.splice(v, 1);
+  }
+
   append_measure() {
     for (let v=0; v<this.voices.length; ++v) {
       let vc = this.voices[v];

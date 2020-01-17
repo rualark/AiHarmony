@@ -22,8 +22,12 @@ export function dataToAbc() {
       nd.abc_charStarts[abc.length] = {voice: v, note: n};
       nt.abc_charStarts = abc.length;
       let d = nt.d;
-      let abc_note = d2abc(d - clefs[vc.clef].transpose);
-      abc += alter2abc(nt.alter) + abc_note + nt.len;
+      if (d) {
+        let abc_note = d2abc(d - clefs[vc.clef].transpose);
+        abc += alter2abc(nt.alter) + abc_note + nt.len;
+      } else {
+        abc += 'z' + nt.len;
+      }
       s += nt.len;
       if (nt.startsTie) abc += '-';
       nt.abc_charEnds = abc.length;

@@ -1,6 +1,6 @@
 import {nd} from "./NotesData.js";
 import {async_redraw, clicked, find_selection, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "./abchelper.js";
-import {button_enabled_active} from "./uilib.js";
+import {button_enabled, button_enabled_active} from "./uilib.js";
 
 export let future = {
   advancing: false,
@@ -320,7 +320,24 @@ export function toggle_tie() {
   async_redraw();
 }
 
+export function add_part() {
+  if (typeof clicked.element.abselem === 'undefined') return;
+  nd.add_voice(clicked.voice + 1);
+  async_redraw();
+}
+
+export function del_part() {
+  if (typeof clicked.element.abselem === 'undefined') return;
+  if (nd.voices.length === 1) return;
+  nd.del_voice(clicked.voice);
+  clicked.note = null;
+  clicked.element = {};
+  async_redraw();
+}
+
 export function update_selection() {
+  button_enabled('add_part', typeof clicked.element.abselem !== 'undefined');
+  button_enabled('del_part', typeof clicked.element.abselem !== 'undefined' && nd.voices.length > 1);
   button_enabled_active('note_c', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 0);
   button_enabled_active('note_d', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 1);
   button_enabled_active('note_e', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 2);

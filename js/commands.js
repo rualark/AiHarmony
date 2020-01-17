@@ -1,4 +1,5 @@
 import {
+  add_part, del_part,
   increment_note,
   increment_octave, next_note,
   prev_note, repeat_element,
@@ -240,6 +241,20 @@ export let commands = [
     keys: ['Ctrl+B'],
     command: () => { nd.append_measure(); async_redraw(); },
     name: 'Add bar at end',
+  },
+  {
+    id: 'add_part',
+    toolbar: {type: 'text', text: '+Part', style: 'font-family: sans-serif; font-size: 1.2em'},
+    keys: [],
+    command: () => { add_part() },
+    name: 'Add part below selected part',
+  },
+  {
+    id: 'del_part',
+    toolbar: {type: 'text', text: '-Part', style: 'font-family: sans-serif; font-size: 1.2em'},
+    keys: [],
+    command: () => { del_part() },
+    name: 'Delete selected part',
   },
   { separator: true },
   {

@@ -34,9 +34,10 @@ function element_click(abcElem, tuneNumber, classes) {
   console.log('Click', abcElem, tuneNumber, classes);
   clicked.element = abcElem;
   clicked.classes = classes;
+  clicked.voice = get_voice(classes);
   clicked.note = undefined;
   if (typeof clicked.element.clefPos !== 'undefined') {
-    showClefsModal(nd.voices[get_voice(classes)]);
+    showClefsModal(nd.voices[clicked.voice]);
   }
   if (typeof clicked.element.value !== 'undefined') {
     showTimesigModal();

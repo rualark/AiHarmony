@@ -14,7 +14,8 @@ export let state = {};
 export let clicked = {
   element: {},
   classes: '',
-  note: {voice: 0, note: 0}
+  note: {voice: 0, note: 0},
+  voice: 0
 };
 
 function getElementByStartChar(abcjs, startChar) {
