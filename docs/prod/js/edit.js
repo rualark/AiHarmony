@@ -1,11 +1,10 @@
 import {nd} from "./NotesData.js";
-import {abc2d, d2abc} from "./dataToAbc.js";
 import {async_redraw, clicked, find_selection, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "./abchelper.js";
-import {button_enabled_active} from "./uilib.js";
+import {button_enabled, button_enabled_active} from "./uilib.js";
 
 export let future = {
   advancing: false,
-  alteration: '',
+  alteration: 10,
   len: 0
 };
 
@@ -72,7 +71,7 @@ export function set_len(len) {
     }
   }
   else {
-    notes.splice(el.note + 1, 0, {abc_note: 'z', abc_alter: '', len: note.len - len, startsTie: false});
+    notes.splice(el.note + 1, 0, {d: 0, alter: 10, len: note.len - len, startsTie: false});
     nd.set_rest(el.voice, el.note + 1);
   }
   note.len = len;
@@ -106,7 +105,7 @@ export function prev_note() {
   move_to_previous_note();
   find_selection();
   future.advancing = false;
-  future.alteration = '';
+  future.alteration = 10;
   future.len = 0;
   update_selection();
 }
@@ -119,7 +118,7 @@ export function next_note() {
     find_selection();
   }
   future.advancing = false;
-  future.alteration = '';
+  future.alteration = 10;
   future.len = 0;
   update_selection();
 }
@@ -131,21 +130,21 @@ export function set_note(dc) {
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   let pd = 35;
-  if (note.abc_note !== 'z' && !future.advancing) {
-    pd = abc2d(note.abc_note);
+  if (note.d && !future.advancing) {
+    pd = note.d;
   }
-  else if (el.note && notes[el.note - 1].abc_note !== 'z') {
-    pd = abc2d(notes[el.note - 1].abc_note);
+  else if (el.note && notes[el.note - 1].d) {
+    pd = notes[el.note - 1].d;
   }
   let d = dc;
-  if (note.abc_note === 'z' || future.advancing) {
-    note.abc_alter = future.alteration;
+  if (!note.d || future.advancing) {
+    note.alter = future.alteration;
   }
   while (pd - d > 3) d += 7;
   while (d - pd > 3) d -= 7;
-  note.abc_note = d2abc(d);
+  nd.set_note(el.voice, el.note, d);
   note.startsTie = false;
-  if (el.note && notes[el.note - 1].abc_note !== note.abc_note) {
+  if (el.note && notes[el.note - 1].d !== note.d) {
     notes[el.note - 1].startsTie = false;
   }
   if (future.advancing && future.len) {
@@ -154,7 +153,7 @@ export function set_note(dc) {
   }
   // Advance
   future.advancing = true;
-  future.alteration = '';
+  future.alteration = 10;
   future.len = note.len;
   move_to_next_note();
   async_redraw();
@@ -175,16 +174,16 @@ export function repeat_element() {
     future.len = notes[n].len;
     ++n;
   }
-  future.alteration = notes[n-1].abc_alter;
-  if (notes[n - 1].abc_note === 'z') {
+  future.alteration = notes[n-1].alter;
+  if (!notes[n - 1].d) {
     set_rest(true);
   } else {
-    set_note(abc2d(notes[n - 1].abc_note) % 7);
+    set_note(notes[n - 1].d % 7);
   }
   move_to_previous_note();
   future.advancing = false;
   future.len = 0;
-  future.alteration = '';
+  future.alteration = 10;
 }
 
 export function set_rest(advance) {
@@ -204,7 +203,7 @@ export function set_rest(advance) {
   if (advance) {
     // Advance
     future.advancing = true;
-    future.alteration = '';
+    future.alteration = 10;
     future.len = note.len;
     move_to_next_note();
   }
@@ -219,7 +218,7 @@ function can_increment_note(dnote) {
     n = n - 1;
   }
   let note = nd.voices[el.voice].notes[n];
-  let d = abc2d(note.abc_note);
+  let d = note.d;
   return d + dnote < MAX_ABC_NOTE && d + dnote > MIN_ABC_NOTE;
 }
 
@@ -234,8 +233,8 @@ export function increment_octave(doct) {
   }
   let notes = nd.voices[el.voice].notes;
   let note = notes[n];
-  let d = abc2d(note.abc_note);
-  note.abc_note = d2abc(d + 7 * doct);
+  let d = note.d;
+  nd.set_note(el.voice, n, d + 7 * doct);
   note.startsTie = false;
   if (n) {
     notes[n - 1].startsTie = false;
@@ -254,8 +253,8 @@ export function increment_note(dnote) {
   }
   let notes = nd.voices[el.voice].notes;
   let note = notes[n];
-  let d = abc2d(note.abc_note);
-  note.abc_note = d2abc(d + dnote);
+  let d = note.d;
+  nd.set_note(el.voice, n, d + dnote);
   note.startsTie = false;
   if (n) {
     notes[n - 1].startsTie = false;
@@ -268,15 +267,15 @@ export function toggle_alteration(alt) {
   if (!clicked.element || !clicked.element.duration) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
   let note = nd.voices[el.voice].notes[el.note];
-  if (note.abc_note === 'z' || future.advancing) {
-    if (future.alteration === alt) future.alteration = "";
+  if (!note.d || future.advancing) {
+    if (future.alteration === alt) future.alteration = 10;
     else future.alteration = alt;
   }
   else {
-    if (note.abc_alter === alt) {
-      nd.voices[el.voice].notes[el.note].abc_alter = '';
+    if (note.alter === alt) {
+      nd.voices[el.voice].notes[el.note].alter = 10;
     } else {
-      nd.voices[el.voice].notes[el.note].abc_alter = alt;
+      nd.voices[el.voice].notes[el.note].alter = alt;
     }
   }
   async_redraw();
@@ -287,14 +286,14 @@ function can_tie() {
   let el = nd.abc_charStarts[clicked.element.startChar];
   let notes = nd.voices[el.voice].notes;
   if (notes.length === el.note + 1) return false;
-  return notes[el.note].abc_note === notes[el.note + 1].abc_note;
+  return notes[el.note].d === notes[el.note + 1].d;
 }
 
 function can_pre_tie() {
   if (!clicked.element || !clicked.element.duration) return false;
   let el = nd.abc_charStarts[clicked.element.startChar];
   if (!el.note) return false;
-  return nd.voices[el.voice].notes[el.note - 1].abc_note !== 'z';
+  return nd.voices[el.voice].notes[el.note - 1].d !== 0;
 }
 
 function is_pre_tie() {
@@ -321,7 +320,24 @@ export function toggle_tie() {
   async_redraw();
 }
 
+export function add_part() {
+  if (typeof clicked.element.abselem === 'undefined') return;
+  nd.add_voice(clicked.voice + 1);
+  async_redraw();
+}
+
+export function del_part() {
+  if (typeof clicked.element.abselem === 'undefined') return;
+  if (nd.voices.length === 1) return;
+  nd.del_voice(clicked.voice);
+  clicked.note = null;
+  clicked.element = {};
+  async_redraw();
+}
+
 export function update_selection() {
+  button_enabled('add_part', typeof clicked.element.abselem !== 'undefined');
+  button_enabled('del_part', typeof clicked.element.abselem !== 'undefined' && nd.voices.length > 1);
   button_enabled_active('note_c', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 0);
   button_enabled_active('note_d', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 1);
   button_enabled_active('note_e', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 2);
@@ -333,11 +349,11 @@ export function update_selection() {
   button_enabled_active('up8', can_increment_note(7), false);
   button_enabled_active('down8', can_increment_note(-7), false);
   if (clicked.element.rest && clicked.element.rest.type === 'rest' || future.advancing) {
-    button_enabled_active('dblflat', clicked.element.duration, future.alteration === '__');
-    button_enabled_active('flat', clicked.element.duration, future.alteration === '_');
-    button_enabled_active('natural', clicked.element.duration, future.alteration === '=');
-    button_enabled_active('sharp', clicked.element.duration, future.alteration === '^');
-    button_enabled_active('dblsharp', clicked.element.duration, future.alteration === '^^');
+    button_enabled_active('dblflat', clicked.element.duration, future.alteration === -2);
+    button_enabled_active('flat', clicked.element.duration, future.alteration === -1);
+    button_enabled_active('natural', clicked.element.duration, future.alteration === 0);
+    button_enabled_active('sharp', clicked.element.duration, future.alteration === 1);
+    button_enabled_active('dblsharp', clicked.element.duration, future.alteration === 2);
   } else {
     button_enabled_active('dblflat', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'dblflat');
     button_enabled_active('flat', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'flat');
@@ -371,6 +387,6 @@ export function update_selection() {
 
 export function stop_advancing() {
   future.advancing = false;
-  future.alteration = '';
+  future.alteration = 10;
   future.len = 0;
 }

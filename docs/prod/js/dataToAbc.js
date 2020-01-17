@@ -1,5 +1,6 @@
 import {clefs} from "./clefs.js";
 import {nd} from "./NotesData.js";
+import {alter2abc, d2abc} from "./noteshelper.js";
 
 export function dataToAbc() {
   let abc = '';
@@ -20,11 +21,13 @@ export function dataToAbc() {
       nt.step = s;
       nd.abc_charStarts[abc.length] = {voice: v, note: n};
       nt.abc_charStarts = abc.length;
-      let abc_note = nt.abc_note;
-      if (abc_note !== 'z' && clefs[vc.clef].transpose) {
-        abc_note = abcTranspose(abc_note, -clefs[vc.clef].transpose);
+      let d = nt.d;
+      if (d) {
+        let abc_note = d2abc(d - clefs[vc.clef].transpose);
+        abc += alter2abc(nt.alter) + abc_note + nt.len;
+      } else {
+        abc += 'z' + nt.len;
       }
-      abc += nt.abc_alter + abc_note + nt.len;
       s += nt.len;
       if (nt.startsTie) abc += '-';
       nt.abc_charEnds = abc.length;
@@ -36,34 +39,4 @@ export function dataToAbc() {
   }
   console.log(abc);
   return abc;
-}
-
-let abc_d = {c: 0, d: 1, e: 2, f: 3, g: 4, a: 5, b: 6};
-let d_abc = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
-
-export function abc2d(st) {
-  let lc = st[0].toLowerCase();
-  let d = abc_d[lc];
-  if (st[0] !== lc) d -= 7;
-  d += 7 * (st.split("'").length - 1);
-  d -= 7 * (st.split(",").length - 1);
-  return d + 35;
-}
-
-export function d2abc(d) {
-  let oct = d / 7;
-  let st;
-  if (d > 34) st = d_abc[d % 7];
-  else st = d_abc[d % 7].toUpperCase();
-  for (let o=42; o<=d; o += 7) {
-    st += "'";
-  }
-  for (let o=27; o>=d; o -= 7) {
-    st += ",";
-  }
-  return st;
-}
-
-function abcTranspose(st, dd) {
-  return d2abc(abc2d(st) + dd);
 }
