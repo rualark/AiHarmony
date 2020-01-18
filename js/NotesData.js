@@ -1,4 +1,4 @@
-import {abc2alter, abc2d, d2abc, keysig_imprint} from "./noteshelper.js";
+import {abc2alter, abc2d, d2abc, keysig_imprint} from "./notehelper.js";
 
 class NotesData {
   set_rest(v, n) {

@@ -1,4 +1,5 @@
 import {nd} from "./NotesData.js";
+import "./musicXmlToData.js";
 import {async_redraw, clicked, get_voice, init_abcjs, notation_zoom} from "./abchelper.js";
 import {
   future, stop_advancing,

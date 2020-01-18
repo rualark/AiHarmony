@@ -37,3 +37,4 @@ export function showClefsModal(voice) {
   }
   $('#Modal').modal();
 }
+
