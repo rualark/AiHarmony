@@ -11,12 +11,13 @@ import {
   toggle_tie
 } from "./edit.js";
 import {showShortcutsModal} from "./modal.js";
-import {async_redraw, notation_zoom} from "./abchelper.js";
+import {async_redraw, notation_zoom} from "../abc/abchelper.js";
 import {keyCodes} from './keys.js';
-import {play} from "./audio.js";
-import {nd} from "./NotesData.js";
+import {play} from "../audio/audio.js";
+import {nd} from "../notes/NotesData.js";
 import {showTimesigModal} from "./timesig.js";
 import {showKeysigModal} from "./keysig.js";
+import {showOpenMusicXmlModal} from "../MusicXml/readLocalMusicXml.js";
 
 export function init_commands() {
   for (let command of commands) {
@@ -66,6 +67,13 @@ export let commands = [
     keys: ['F1'],
     command: () => { showShortcutsModal() },
     name: '',
+  },
+  {
+    id: 'open',
+    toolbar: {type: 'image'},
+    keys: ['Ctrl+O'],
+    command: () => { showOpenMusicXmlModal() },
+    name: 'Open MusicXml file',
   },
   { separator: true },
   {

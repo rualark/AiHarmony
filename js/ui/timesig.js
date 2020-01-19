@@ -1,5 +1,5 @@
-import {async_redraw} from "./abchelper.js";
-import {nd} from "./NotesData.js";
+import {async_redraw} from "../abc/abchelper.js";
+import {nd} from "../notes/NotesData.js";
 
 export let timesigs = [
   {beats_per_measure: 2, beat_type: 4, measure_len: 8},

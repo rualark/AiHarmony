@@ -1,4 +1,4 @@
-import {async_redraw} from "./abchelper.js";
+import {async_redraw} from "../abc/abchelper.js";
 
 export let clefs = {
   'treble': {name: 'Treble', transpose: 0},

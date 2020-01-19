@@ -1,6 +1,6 @@
 import {keyicon} from "./keys.js";
 import {commands} from "./commands.js";
-import {trigger_tooltips} from "./lib.js";
+import {trigger_tooltips} from "../lib.js";
 
 export function showShortcutsModal() {
   document.getElementById("ModalTitle").innerHTML = 'Artinfuser Harmony';

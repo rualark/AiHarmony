@@ -1,6 +1,6 @@
-import {clefs} from "./clefs.js";
-import {nd} from "./NotesData.js";
-import {alter2abc, d2abc} from "./notehelper.js";
+import {clefs} from "../ui/clefs.js";
+import {nd} from "../notes/NotesData.js";
+import {alter2abc, d2abc} from "../notes/notehelper.js";
 
 export function dataToAbc() {
   let abc = '';

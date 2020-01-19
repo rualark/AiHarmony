@@ -1,6 +1,6 @@
 import {dataToAbc} from "./dataToAbc.js";
-import {nd} from "./NotesData.js";
-import {update_selection} from "./edit.js";
+import {nd} from "../notes/NotesData.js";
+import {update_selection} from "../ui/edit.js";
 
 export let MAX_ABC_NOTE = 60;
 export let MIN_ABC_NOTE = 1;

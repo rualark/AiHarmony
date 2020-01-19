@@ -1,11 +1,10 @@
-import {test_xml_string} from "./test-xml.js";
 import {MusicXmlParser} from "./MusicXmlParser.js";
-import {nd} from "./NotesData.js";
-import {timesigs} from "./timesig.js";
-import {getBestClef} from "./bestClef.js";
-import {d2c} from "./notehelper.js";
+import {nd} from "../notes/NotesData.js";
+import {timesigs} from "../ui/timesig.js";
+import {getBestClef} from "../notes/bestClef.js";
+import {d2c} from "../notes/notehelper.js";
 
-export let warnings = new Set();
+export let xmlLoadWarnings = new Set();
 
 let keysigMusicXml2Abc = {
   '7': 'C#', '6': 'F#', '5': 'B', '4': 'E', '3': 'A', '2': 'D', '1': 'G', '0': 'C',
@@ -29,13 +28,13 @@ export function musicXmlToData(txt) {
     nd.voices[vi].notes = [];
     for (let m=1; m<mxp.notes[vi].length; ++m) {
       if (nd.timesig.beats_per_measure !== mxp.mea[m].beats_per_measure) {
-        warnings.add("Time signature changes is MusicXml: ignoring");
+        return "Time signature changes in MusicXml: cannot load";
       }
       if (nd.timesig.beat_type !== mxp.mea[m].beat_type) {
-        warnings.add("Time signature changes is MusicXml: ignoring");
+        return "Time signature changes in MusicXml: cannot load";
       }
-      if (nd.timesig.measure_len !== mxp.mea[m].measure_len) {
-        warnings.add("Time signature changes is MusicXml: ignoring");
+      if (nd.timesig.measure_len !== mxp.mea[m].measure_len * 16) {
+        return "Time signature changes in MusicXml: cannot load";
       }
       for (const ni in mxp.notes[vi][m]) {
         let note = mxp.notes[vi][m][ni];
@@ -45,7 +44,7 @@ export function musicXmlToData(txt) {
             nd.keysig.name = keysigMusicXml2Abc[note.fifths];
             //console.log(note.fifths, keysigMusicXml2Abc[note.fifths]);
           } else if (nd.keysig.fifths !== note.fifths) {
-            warnings.add("Key signature changes is MusicXml: ignoring");
+            xmlLoadWarnings.add("Key signature changes is MusicXml: ignoring");
           }
         }
         if (note.clef_line) {
@@ -59,13 +58,13 @@ export function musicXmlToData(txt) {
             nd.voices[vi].clef_line !== note.clef_line ||
             nd.voices[vi].clef_octave_change !== note.clef_octave_change
           ) {
-            warnings.add("Clef changes is MusicXml: ignoring");
+            xmlLoadWarnings.add("Clef changes is MusicXml: ignoring");
           }
         }
         nd.voices[vi].notes.push({
           d: note.d,
           alter: accidental2alter(note.accidental),
-          len: note.dur * 4 / note.dur_div,
+          len: Math.floor(note.dur * 4 / note.dur_div),
           startsTie: note.tie_start
         });
       }
@@ -91,27 +90,27 @@ function clefMusicXml2Abc(sign, line, oct, voice) {
   if (line === 4 && oct === 1) return 'bass+8';
   if (line === 4 && oct === -1) return 'bass-8';
   if (line === 3) return 'alto';
-  warnings.add("Unknown clef " + sign + "/" + line + "/" + oct + ": choosing best clef automatically");
+  xmlLoadWarnings.add("Unknown clef " + sign + "/" + line + "/" + oct + ": choosing best clef automatically");
   return getBestClefForVoice(voice);
 }
 
 function checkSupportedTimesig(mxp) {
   let found = 0;
   for (const timesig of timesigs) {
-    if (timesig.beats_per_measure !== mxp.mea[0].beats_per_measure) continue;
-    if (timesig.beat_type !== mxp.mea[0].beat_type) continue;
-    if (timesig.measure_len !== mxp.mea[0].measure_len * 16) {
-      warnings.add(
-        "Measure length in MusicXml (" + mxp.mea[0].measure_len +
-        ") seems wrong for time signature " + mxp.mea[0].beats_per_measure +
-        "/" + mxp.mea[0].beat_type);
+    if (timesig.beats_per_measure !== mxp.mea[1].beats_per_measure) continue;
+    if (timesig.beat_type !== mxp.mea[1].beat_type) continue;
+    if (timesig.measure_len !== mxp.mea[1].measure_len * 16) {
+      xmlLoadWarnings.add(
+        "Measure length in MusicXml (" + mxp.mea[1].measure_len +
+        ") seems wrong for time signature " + mxp.mea[1].beats_per_measure +
+        "/" + mxp.mea[1].beat_type);
     }
     found = 1;
   }
   if (!found) {
-    warnings.add(
-      "Unsupported time signature in MusicXml: " + mxp.mea[0].beats_per_measure +
-      "/" + mxp.mea[0].beat_type);
+    xmlLoadWarnings.add(
+      "Unsupported time signature in MusicXml: " + mxp.mea[1].beats_per_measure +
+      "/" + mxp.mea[1].beat_type);
   }
 }
 
@@ -158,6 +157,3 @@ function assignBestClefs(mxp) {
   }
 }
 
-let error = musicXmlToData(test_xml_string);
-if (error) console.error(error);
-if (warnings.length) console.log(warnings);

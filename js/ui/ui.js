@@ -1,12 +1,12 @@
-import {nd} from "./NotesData.js";
-import "./musicXmlToData.js";
-import {async_redraw, clicked, get_voice, init_abcjs, notation_zoom} from "./abchelper.js";
+import {nd} from "../notes/NotesData.js";
+import "../MusicXml/musicXmlToData.js";
+import {async_redraw, clicked, get_voice, init_abcjs, notation_zoom} from "../abc/abchelper.js";
 import {
   future, stop_advancing,
   update_selection
 } from "./edit.js";
 import {commandCtrlKeyCodes, commandKeyCodes, init_commands} from "./commands.js";
-import {getUrlParam} from "./urlparams.js";
+import {getUrlParam} from "../urlparams.js";
 import {showShortcutsModal} from "./modal.js";
 import {showClefsModal} from "./clefs.js";
 import {showTimesigModal} from "./timesig.js";

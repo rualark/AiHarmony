@@ -1,5 +1,5 @@
-import {nd} from "./NotesData.js";
-import {async_redraw, clicked, find_selection, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "./abchelper.js";
+import {nd} from "../notes/NotesData.js";
+import {async_redraw, clicked, find_selection, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "../abc/abchelper.js";
 import {button_enabled, button_enabled_active} from "./uilib.js";
 
 export let future = {
@@ -219,7 +219,7 @@ function can_increment_note(dnote) {
   }
   let note = nd.voices[el.voice].notes[n];
   let d = note.d;
-  return d + dnote < MAX_ABC_NOTE && d + dnote > MIN_ABC_NOTE;
+  return d && d + dnote < MAX_ABC_NOTE && d + dnote > MIN_ABC_NOTE;
 }
 
 export function increment_octave(doct) {

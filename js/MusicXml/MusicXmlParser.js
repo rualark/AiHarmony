@@ -179,6 +179,7 @@ export class MusicXmlParser {
         // Do not fill measures with notes
         if (this.notes[vi].length > m &&
           this.notes[vi][m].length) continue;
+        while (this.notes[vi].length <= m) this.notes[vi].push([]);
         this.notes[vi][m].push(Object.assign({}, emptyNote));
         this.notes[vi][m][0].dur_div = 1024 / this.mea[m].beat_type;
         this.notes[vi][m][0].dur = 1024 * this.mea[m].beats_per_measure / this.mea[m].beat_type;

@@ -1,7 +1,6 @@
-import {abcjs} from "./abchelper.js";
-import {json_stringify_circular} from "./lib.js";
-import {dataToAbc} from "./dataToAbc.js";
-import {nd} from "./NotesData.js";
+import {abcjs} from "../abc/abchelper.js";
+import {dataToAbc} from "../abc/dataToAbc.js";
+import {nd} from "../notes/NotesData.js";
 
 let synthControl = {};
 
