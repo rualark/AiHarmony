@@ -1,25 +1,4 @@
-import {musicXmlToData, xmlLoadWarnings} from "./musicXmlToData.js";
-import {nd} from "../notes/NotesData.js";
-import {async_redraw} from "../abc/abchelper.js";
-
-export function load_test_musicXml() {
-  try {
-    let error = musicXmlToData(test_xml_string);
-    if (error) {
-      nd.reset();
-      alert(error);
-    }
-    else if (xmlLoadWarnings.size) alert([...xmlLoadWarnings].join('\n'));
-  }
-  catch (e) {
-    nd.reset();
-    alert(e);
-    throw e;
-  }
-  async_redraw();
-}
-
-let test_xml_string =
+export let test_xml_string =
 `<?xml version="1.0" encoding='UTF-8' standalone='no' ?>
 <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
 <score-partwise version="3.0">
@@ -183,7 +162,7 @@ let test_xml_string =
  </part-list>
  <part id="P1">
   <!--============== Part: P1, Measure: 1 ==============-->
-  <measure number="1" width="190">
+  <measure number="1" width="193">
    <print new-page="yes">
     <system-layout>
      <system-margins>
@@ -239,7 +218,7 @@ let test_xml_string =
    </note>
   </measure>
   <!--============== Part: P1, Measure: 2 ==============-->
-  <measure number="2" width="279">
+  <measure number="2" width="267">
    <attributes />
    <note default-x="15">
     <rest />
@@ -258,35 +237,19 @@ let test_xml_string =
     <voice>1</voice>
     <staff>1</staff>
    </direction>
-   <note color="#000000" default-x="45" default-y="-49">
+   <note color="#000000" default-x="46" default-y="-45">
     <pitch>
      <step>D</step>
      <octave>5</octave>
     </pitch>
-    <duration>64</duration>
+    <duration>128</duration>
     <instrument id="P1-I1" />
     <voice>1</voice>
-    <type>16th</type>
+    <type>eighth</type>
     <stem>down</stem>
     <staff>1</staff>
-    <beam number="1">begin</beam>
-    <beam number="2">begin</beam>
    </note>
-   <note color="#000000" default-x="69" default-y="-49">
-    <pitch>
-     <step>B</step>
-     <octave>4</octave>
-    </pitch>
-    <duration>64</duration>
-    <instrument id="P1-I1" />
-    <voice>1</voice>
-    <type>16th</type>
-    <stem>down</stem>
-    <staff>1</staff>
-    <beam number="1">end</beam>
-    <beam number="2">end</beam>
-   </note>
-   <note color="#000000" default-x="93" default-y="-49">
+   <note color="#000000" default-x="78" default-y="-49">
     <pitch>
      <step>C</step>
      <alter>1</alter>
@@ -300,7 +263,7 @@ let test_xml_string =
     <staff>1</staff>
     <beam number="1">begin</beam>
    </note>
-   <note color="#000000" default-x="124" default-y="-49">
+   <note color="#000000" default-x="109" default-y="-49">
     <pitch>
      <step>B</step>
      <octave>4</octave>
@@ -313,7 +276,7 @@ let test_xml_string =
     <staff>1</staff>
     <beam number="1">end</beam>
    </note>
-   <note color="#000000" default-x="154" default-y="10">
+   <note color="#000000" default-x="140" default-y="10">
     <pitch>
      <step>A</step>
      <octave>4</octave>
@@ -325,7 +288,7 @@ let test_xml_string =
     <stem>up</stem>
     <staff>1</staff>
    </note>
-   <note default-x="185">
+   <note default-x="172">
     <rest />
     <duration>128</duration>
     <instrument id="P1-I1" />
@@ -333,7 +296,7 @@ let test_xml_string =
     <type>eighth</type>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="217" default-y="-5">
+   <note color="#000000" default-x="204" default-y="-5">
     <pitch>
      <step>F</step>
      <octave>4</octave>
@@ -347,7 +310,7 @@ let test_xml_string =
     <staff>1</staff>
     <beam number="1">begin</beam>
    </note>
-   <note color="#000000" default-x="248" default-y="-5">
+   <note color="#000000" default-x="235" default-y="-5">
     <pitch>
      <step>E</step>
      <octave>4</octave>
@@ -376,7 +339,7 @@ let test_xml_string =
    </note>
   </measure>
   <!--============== Part: P1, Measure: 3 ==============-->
-  <measure number="3" width="267">
+  <measure number="3" width="272">
    <attributes />
    <note color="#000000" default-x="15" default-y="9">
     <pitch>
@@ -393,7 +356,7 @@ let test_xml_string =
     <staff>1</staff>
     <beam number="1">begin</beam>
    </note>
-   <note color="#000000" default-x="46" default-y="9">
+   <note color="#000000" default-x="47" default-y="9">
     <pitch>
      <step>G</step>
      <alter>-1</alter>
@@ -408,7 +371,7 @@ let test_xml_string =
     <staff>1</staff>
     <beam number="1">continue</beam>
    </note>
-   <note color="#000000" default-x="82" default-y="9">
+   <note color="#000000" default-x="83" default-y="9">
     <pitch>
      <step>A</step>
      <alter>-2</alter>
@@ -423,7 +386,7 @@ let test_xml_string =
     <staff>1</staff>
     <beam number="1">continue</beam>
    </note>
-   <note color="#000000" default-x="113" default-y="9">
+   <note color="#000000" default-x="115" default-y="9">
     <pitch>
      <step>B</step>
      <alter>2</alter>
@@ -438,7 +401,7 @@ let test_xml_string =
     <staff>1</staff>
     <beam number="1">end</beam>
    </note>
-   <note color="#000000" default-x="144" default-y="-50">
+   <note color="#000000" default-x="146" default-y="-50">
     <pitch>
      <step>C</step>
      <alter>1</alter>
@@ -451,7 +414,7 @@ let test_xml_string =
     <stem>down</stem>
     <staff>1</staff>
    </note>
-   <note default-x="175">
+   <note default-x="178">
     <rest />
     <duration>128</duration>
     <instrument id="P1-I1" />
@@ -459,7 +422,7 @@ let test_xml_string =
     <type>eighth</type>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="205" default-y="-34">
+   <note color="#000000" default-x="209" default-y="-34">
     <pitch>
      <step>E</step>
      <octave>5</octave>
@@ -472,7 +435,7 @@ let test_xml_string =
     <staff>1</staff>
     <beam number="1">begin</beam>
    </note>
-   <note color="#000000" default-x="236" default-y="-34">
+   <note color="#000000" default-x="241" default-y="-34">
     <pitch>
      <step>F</step>
      <alter>1</alter>
@@ -503,7 +466,7 @@ let test_xml_string =
    </note>
   </measure>
   <!--============== Part: P1, Measure: 4 ==============-->
-  <measure number="4" width="185">
+  <measure number="4" width="189">
    <attributes />
    <note color="#000000" default-x="15">
     <pitch>
@@ -532,7 +495,7 @@ let test_xml_string =
     <stem>up</stem>
     <staff>2</staff>
    </note>
-   <note color="#000000" default-x="57" default-y="27">
+   <note color="#000000" default-x="58" default-y="27">
     <pitch>
      <step>A</step>
      <octave>3</octave>
@@ -544,7 +507,7 @@ let test_xml_string =
     <stem>up</stem>
     <staff>2</staff>
    </note>
-   <note color="#000000" default-x="100" default-y="32">
+   <note color="#000000" default-x="102" default-y="32">
     <pitch>
      <step>B</step>
      <octave>3</octave>
@@ -556,7 +519,7 @@ let test_xml_string =
     <stem>up</stem>
     <staff>2</staff>
    </note>
-   <note color="#000000" default-x="142" default-y="27">
+   <note color="#000000" default-x="145" default-y="27">
     <pitch>
      <step>A</step>
      <octave>3</octave>
@@ -926,7 +889,7 @@ let test_xml_string =
  </part>
  <part id="P3">
   <!--============== Part: P3, Measure: 1 ==============-->
-  <measure number="1" width="190">
+  <measure number="1" width="193">
    <print new-page="yes">
     <system-layout>
      <system-margins>
@@ -966,7 +929,7 @@ let test_xml_string =
    </note>
   </measure>
   <!--============== Part: P3, Measure: 2 ==============-->
-  <measure number="2" width="279">
+  <measure number="2" width="267">
    <note color="#000000" default-x="15">
     <pitch>
      <step>A</step>
@@ -984,7 +947,7 @@ let test_xml_string =
    </note>
   </measure>
   <!--============== Part: P3, Measure: 3 ==============-->
-  <measure number="3" width="267">
+  <measure number="3" width="272">
    <note color="#000000" default-x="15">
     <pitch>
      <step>A</step>
@@ -1004,7 +967,7 @@ let test_xml_string =
    </note>
   </measure>
   <!--============== Part: P3, Measure: 4 ==============-->
-  <measure number="4" width="185">
+  <measure number="4" width="189">
    <note color="#000000" default-x="15">
     <pitch>
      <step>A</step>
@@ -1244,7 +1207,7 @@ let test_xml_string =
  </part>
  <part id="P4">
   <!--============== Part: P4, Measure: 1 ==============-->
-  <measure number="1" width="190">
+  <measure number="1" width="193">
    <print new-page="yes">
     <system-layout>
      <system-margins>
@@ -1283,7 +1246,7 @@ let test_xml_string =
    </note>
   </measure>
   <!--============== Part: P4, Measure: 2 ==============-->
-  <measure number="2" width="279">
+  <measure number="2" width="267">
    <note color="#000000" default-x="15" default-y="-55">
     <pitch>
      <step>C</step>
@@ -1312,7 +1275,7 @@ let test_xml_string =
     <type>quarter</type>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="93" default-y="-57">
+   <note color="#000000" default-x="78" default-y="-57">
     <pitch>
      <step>B</step>
      <octave>3</octave>
@@ -1324,7 +1287,7 @@ let test_xml_string =
     <stem>down</stem>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="93">
+   <note color="#000000" default-x="78">
     <chord />
     <pitch>
      <step>F</step>
@@ -1336,7 +1299,7 @@ let test_xml_string =
     <type>quarter</type>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="154" default-y="-60">
+   <note color="#000000" default-x="140" default-y="-60">
     <pitch>
      <step>A</step>
      <octave>3</octave>
@@ -1348,7 +1311,7 @@ let test_xml_string =
     <stem>down</stem>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="154">
+   <note color="#000000" default-x="140">
     <chord />
     <pitch>
      <step>E</step>
@@ -1359,7 +1322,7 @@ let test_xml_string =
     <type>quarter</type>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="217" default-y="17">
+   <note color="#000000" default-x="204" default-y="17">
     <pitch>
      <step>G</step>
      <octave>3</octave>
@@ -1371,7 +1334,7 @@ let test_xml_string =
     <stem>up</stem>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="217">
+   <note color="#000000" default-x="204">
     <chord />
     <pitch>
      <step>D</step>
@@ -1384,7 +1347,7 @@ let test_xml_string =
    </note>
   </measure>
   <!--============== Part: P4, Measure: 3 ==============-->
-  <measure number="3" width="267">
+  <measure number="3" width="272">
    <note color="#000000" default-x="15" default-y="-60">
     <pitch>
      <step>A</step>
@@ -1408,7 +1371,7 @@ let test_xml_string =
     <type>quarter</type>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="82" default-y="-57">
+   <note color="#000000" default-x="83" default-y="-57">
     <pitch>
      <step>B</step>
      <octave>3</octave>
@@ -1420,7 +1383,7 @@ let test_xml_string =
     <stem>down</stem>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="82">
+   <note color="#000000" default-x="83">
     <chord />
     <pitch>
      <step>F</step>
@@ -1432,7 +1395,7 @@ let test_xml_string =
     <type>quarter</type>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="144" default-y="-55">
+   <note color="#000000" default-x="146" default-y="-55">
     <pitch>
      <step>C</step>
      <alter>1</alter>
@@ -1445,7 +1408,7 @@ let test_xml_string =
     <stem>down</stem>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="144">
+   <note color="#000000" default-x="146">
     <chord />
     <pitch>
      <step>G</step>
@@ -1456,7 +1419,7 @@ let test_xml_string =
     <type>quarter</type>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="205" default-y="-57">
+   <note color="#000000" default-x="209" default-y="-57">
     <pitch>
      <step>B</step>
      <octave>3</octave>
@@ -1468,7 +1431,7 @@ let test_xml_string =
     <stem>down</stem>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="205">
+   <note color="#000000" default-x="209">
     <chord />
     <pitch>
      <step>F</step>
@@ -1482,7 +1445,7 @@ let test_xml_string =
    </note>
   </measure>
   <!--============== Part: P4, Measure: 4 ==============-->
-  <measure number="4" width="185">
+  <measure number="4" width="189">
    <note color="#000000" default-x="15" default-y="-60">
     <pitch>
      <step>A</step>
@@ -1506,7 +1469,7 @@ let test_xml_string =
     <type>quarter</type>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="57" default-y="-57">
+   <note color="#000000" default-x="58" default-y="-57">
     <pitch>
      <step>B</step>
      <octave>3</octave>
@@ -1518,7 +1481,7 @@ let test_xml_string =
     <stem>down</stem>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="57">
+   <note color="#000000" default-x="58">
     <chord />
     <pitch>
      <step>F</step>
@@ -1530,7 +1493,7 @@ let test_xml_string =
     <type>quarter</type>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="100" default-y="-55">
+   <note color="#000000" default-x="102" default-y="-55">
     <pitch>
      <step>C</step>
      <alter>1</alter>
@@ -1543,7 +1506,7 @@ let test_xml_string =
     <stem>down</stem>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="100">
+   <note color="#000000" default-x="102">
     <chord />
     <pitch>
      <step>G</step>
@@ -1554,7 +1517,7 @@ let test_xml_string =
     <type>quarter</type>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="142" default-y="-57">
+   <note color="#000000" default-x="145" default-y="-57">
     <pitch>
      <step>B</step>
      <octave>3</octave>
@@ -1566,7 +1529,7 @@ let test_xml_string =
     <stem>down</stem>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="142">
+   <note color="#000000" default-x="145">
     <chord />
     <pitch>
      <step>F</step>
@@ -2240,7 +2203,7 @@ let test_xml_string =
  </part>
  <part id="P5">
   <!--============== Part: P5, Measure: 1 ==============-->
-  <measure number="1" width="190">
+  <measure number="1" width="193">
    <print new-page="yes">
     <system-layout>
      <system-margins>
@@ -2280,7 +2243,7 @@ let test_xml_string =
    </note>
   </measure>
   <!--============== Part: P5, Measure: 2 ==============-->
-  <measure number="2" width="279">
+  <measure number="2" width="267">
    <note default-x="15">
     <rest />
     <duration>1024</duration>
@@ -2291,7 +2254,7 @@ let test_xml_string =
    </note>
   </measure>
   <!--============== Part: P5, Measure: 3 ==============-->
-  <measure number="3" width="267">
+  <measure number="3" width="272">
    <note default-x="15">
     <rest />
     <duration>1024</duration>
@@ -2302,7 +2265,7 @@ let test_xml_string =
    </note>
   </measure>
   <!--============== Part: P5, Measure: 4 ==============-->
-  <measure number="4" width="185">
+  <measure number="4" width="189">
    <note default-x="15">
     <rest />
     <duration>1024</duration>

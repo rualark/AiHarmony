@@ -10,14 +10,15 @@ import {
   toggle_dot,
   toggle_tie
 } from "./edit.js";
-import {showShortcutsModal} from "./modal.js";
+import {showShortcutsModal} from "./modal/modal.js";
 import {async_redraw, notation_zoom} from "../abc/abchelper.js";
-import {keyCodes} from './keys.js';
+import {keyCodes} from './lib/keys.js';
 import {play} from "../audio/audio.js";
 import {nd} from "../notes/NotesData.js";
-import {showTimesigModal} from "./timesig.js";
-import {showKeysigModal} from "./keysig.js";
+import {showTimesigModal} from "./modal/timesig.js";
+import {showKeysigModal} from "./modal/keysig.js";
 import {showOpenMusicXmlModal} from "../MusicXml/readLocalMusicXml.js";
+import {showDownloadModal} from "./modal/download.js";
 
 export function init_commands() {
   for (let command of commands) {
@@ -74,6 +75,13 @@ export let commands = [
     keys: ['Ctrl+O'],
     command: () => { showOpenMusicXmlModal() },
     name: 'Open MusicXml file',
+  },
+  {
+    id: 'download',
+    toolbar: {type: 'image'},
+    keys: ['Ctrl+S'],
+    command: () => { showDownloadModal() },
+    name: 'Download music',
   },
   { separator: true },
   {
@@ -250,6 +258,7 @@ export let commands = [
     command: () => { nd.append_measure(); async_redraw(); },
     name: 'Add bar at end',
   },
+  { separator: true },
   {
     id: 'add_part',
     toolbar: {type: 'text', text: '+Part', style: 'font-family: sans-serif; font-size: 1.2em'},

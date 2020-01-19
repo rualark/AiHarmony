@@ -97,8 +97,8 @@ export class MusicXmlParser {
         //console.log("Pos:", m_pos);
       }
       if (el.nodeName === "note") {
-        v = Number(this.xml.xpathFirstInner('voice', el) || v);
-        staff = Number( this.xml.xpathFirstInner('staff', el) || staff);
+        v = this.xml.xpathFirstInner('voice', el) || v;
+        staff = this.xml.xpathFirstInner('staff', el) || staff;
         part_id = el.parentNode.parentNode.getAttribute('id');
         m = Number(el.parentNode.getAttribute('number'));
         if (m > max_mea) max_mea = m;
@@ -135,16 +135,16 @@ export class MusicXmlParser {
         this.notes[vi][m][ni].fifths = fifths;
         this.notes[vi][m][ni].mode = mode;
         if (this.xml.xpathFirstInner('../attributes/clef', el) != null) {
-          clef_sign[staff] = this.xml.xpathFirstInner(`../attributes/clef[@number="${staff}"]/sign`, el);
-          clef_line[staff] = Number(this.xml.xpathFirstInner(`../attributes/clef[@number="${staff}"]/line`, el));
-          clef_octave_change[staff] = Number(this.xml.xpathFirstInner(`../attributes/clef[@number="${staff}"]/clef-octave-change`, el) || 0);
+          clef_sign[staff] = this.xml.xpathFirstInner(`../attributes/clef[@number=${staff}]/sign`, el);
+          clef_line[staff] = Number(this.xml.xpathFirstInner(`../attributes/clef[@number=${staff}]/line`, el));
+          clef_octave_change[staff] = Number(this.xml.xpathFirstInner(`../attributes/clef[@number=${staff}]/clef-octave-change`, el) || 0);
         }
         this.notes[vi][m][ni].clef_sign = clef_sign[staff];
         this.notes[vi][m][ni].clef_line = clef_line[staff];
         this.notes[vi][m][ni].clef_octave_change = clef_octave_change[staff];
         //console.log(vi, m, ni, staff, this.notes[vi][m][ni].clef_sign, this.notes[vi][m][ni].clef_line, this.notes[vi][m][ni].clef_octave_change);
-        if (this.xml.xpathFirstInner('tie[@type="stop"]', el) != null) this.notes[vi][m][ni].tie_stop = true;
-        if (this.xml.xpathFirstInner('tie[@type="start"]', el) != null) this.notes[vi][m][ni].tie_start = true;
+        if (this.xml.xpathFirstInner('tie[type=stop]', el) != null) this.notes[vi][m][ni].tie_stop = true;
+        if (this.xml.xpathFirstInner('tie[type=start]', el) != null) this.notes[vi][m][ni].tie_start = true;
         if (this.xml.xpathFirstInner('grace', el) != null) this.notes[vi][m][ni].grace = true;
         if (this.xml.xpathFirstInner('rest', el) != null) this.notes[vi][m][ni].rest = true;
         else {
@@ -179,7 +179,6 @@ export class MusicXmlParser {
         // Do not fill measures with notes
         if (this.notes[vi].length > m &&
           this.notes[vi][m].length) continue;
-        while (this.notes[vi].length <= m) this.notes[vi].push([]);
         this.notes[vi][m].push(Object.assign({}, emptyNote));
         this.notes[vi][m][0].dur_div = 1024 / this.mea[m].beat_type;
         this.notes[vi][m][0].dur = 1024 * this.mea[m].beats_per_measure / this.mea[m].beat_type;

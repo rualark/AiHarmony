@@ -1,5 +1,5 @@
-import {async_redraw} from "../abc/abchelper.js";
-import {nd} from "../notes/NotesData.js";
+import {async_redraw} from "../../abc/abchelper.js";
+import {nd} from "../../notes/NotesData.js";
 
 export let timesigs = [
   {beats_per_measure: 2, beat_type: 4, measure_len: 8},
@@ -26,7 +26,7 @@ function timesig_html(beats, value, id) {
   st += '';
   //st += `<div id=timesig${id} class='color:black; rounded p-1' style='display: inline-block; margin: 5px; align-items: center; justify-content: center; vertical-align: center; min-width: 35px; background: ${color}'>`;
   st += `<div style='font-family: sans-serif; font-size: 1.5em'>${beats}</div>`;
-  st += `<div><img style='margin-left: auto; margin-right: auto; display: block' src=img/color/black.png width=16 height=1></div>`;
+  st += `<div><img style='margin-left: auto; margin-right: auto; display: block' src=../../../img/color/black.png width=16 height=1></div>`;
   st += `<div style='font-family: sans-serif; font-size: 1.5em'>${value}</div>`;
   st += '</a>&nbsp;&nbsp;&nbsp;&nbsp;';
   return st;

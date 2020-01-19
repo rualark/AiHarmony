@@ -1,0 +1,3597 @@
+Array
+(
+    [0] => XMLMeasure Object
+        (
+            [beats] => 0
+            [beat_type] => 0
+            [len] => 0
+            [barline] =>
+        )
+
+    [1] => XMLMeasure Object
+        (
+            [beats] => 4
+            [beat_type] => 4
+            [len] => 1
+            [barline] =>
+        )
+
+    [2] => XMLMeasure Object
+        (
+            [beats] => 4
+            [beat_type] => 4
+            [len] => 1
+            [barline] =>
+        )
+
+    [3] => XMLMeasure Object
+        (
+            [beats] => 4
+            [beat_type] => 4
+            [len] => 1
+            [barline] =>
+        )
+
+    [4] => XMLMeasure Object
+        (
+            [beats] => 4
+            [beat_type] => 4
+            [len] => 1
+            [barline] =>
+        )
+
+    [5] => XMLMeasure Object
+        (
+            [beats] => 4
+            [beat_type] => 4
+            [len] => 1
+            [barline] =>
+        )
+
+    [6] => XMLMeasure Object
+        (
+            [beats] => 4
+            [beat_type] => 4
+            [len] => 1
+            [barline] =>
+        )
+
+    [7] => XMLMeasure Object
+        (
+            [beats] => 4
+            [beat_type] => 4
+            [len] => 1
+            [barline] =>
+        )
+
+    [8] => XMLMeasure Object
+        (
+            [beats] => 4
+            [beat_type] => 4
+            [len] => 1
+            [barline] =>
+        )
+
+    [9] => XMLMeasure Object
+        (
+            [beats] => 4
+            [beat_type] => 4
+            [len] => 1
+            [barline] =>
+        )
+
+    [10] => XMLMeasure Object
+        (
+            [beats] => 4
+            [beat_type] => 4
+            [len] => 1
+            [barline] => light-heavy
+        )
+
+)
+Array
+(
+    [0] => XMLVoice Object
+        (
+            [id] => P1
+            [name] => Piano
+            [display] => Piano
+            [staff] => 1
+            [v] => 1
+            [chord] => 0
+            [average_pitch] => 68.415384615385
+        )
+
+    [1] => XMLVoice Object
+        (
+            [id] => P3
+            [name] => Violin
+            [display] => Violin
+            [staff] => 1
+            [v] => 1
+            [chord] => 0
+            [average_pitch] => 68.2
+        )
+
+    [2] => XMLVoice Object
+        (
+            [id] => P4
+            [name] => Viola
+            [display] => Viola
+            [staff] => 1
+            [v] => 1
+            [chord] => 2
+            [average_pitch] => 67.217391304348
+        )
+
+    [3] => XMLVoice Object
+        (
+            [id] => P4
+            [name] => Viola
+            [display] => Viola
+            [staff] => 1
+            [v] => 1
+            [chord] => 1
+            [average_pitch] => 64.6
+        )
+
+    [4] => XMLVoice Object
+        (
+            [id] => P1
+            [name] => Piano
+            [display] => Piano
+            [staff] => 2
+            [v] => 3
+            [chord] => 0
+            [average_pitch] => 55.5
+        )
+
+    [5] => XMLVoice Object
+        (
+            [id] => P4
+            [name] => Viola
+            [display] => Viola
+            [staff] => 1
+            [v] => 1
+            [chord] => 0
+            [average_pitch] => 58
+        )
+
+    [6] => XMLVoice Object
+        (
+            [id] => P1
+            [name] => Piano
+            [display] => Piano
+            [staff] => 2
+            [v] => 2
+            [chord] => 0
+            [average_pitch] => 52.685714285714
+        )
+
+    [7] => XMLVoice Object
+        (
+            [id] => P5
+            [name] => Violoncello
+            [display] => Violoncello
+            [staff] => 1
+            [v] => 1
+            [chord] => 0
+            [average_pitch] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [1] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [2] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.125
+                            [pitch] => 74
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] => some text more text another text
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 73
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.375
+                            [pitch] => 71
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [4] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 69
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [5] => XMLNote Object
+                        (
+                            [pos] => 0.625
+                            [pitch] => 0
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [6] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 65
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [7] => XMLNote Object
+                        (
+                            [pos] => 0.875
+                            [pitch] => 64
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [3] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 66
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.125
+                            [pitch] => 66
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => -1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 67
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => -2
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.375
+                            [pitch] => 73
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => 2
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [4] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 73
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [5] => XMLNote Object
+                        (
+                            [pos] => 0.625
+                            [pitch] => 0
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [6] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 76
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [7] => XMLNote Object
+                        (
+                            [pos] => 0.875
+                            [pitch] => 78
+                            [dur] => 128
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [4] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 73
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [5] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 74
+                            [dur] => 512
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 76
+                            [dur] => 512
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [6] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 67
+                            [dur] => 768
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] => 1
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] => 1
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [7] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 0
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 0
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [8] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 67
+                            [dur] => 768
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [9] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 62
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [10] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 64
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+        )
+
+    [1] => Array
+        (
+            [1] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [2] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 69
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] => 1
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [3] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 69
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] => 1
+                            [tie_stop] => 1
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [4] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 69
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] => 1
+                            [tie_stop] => 1
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [5] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 69
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] => 1
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [6] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 69
+                            [dur] => 768
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] => 1
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 69
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] => 1
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [7] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 69
+                            [dur] => 512
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] => 1
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 69
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] => 1
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 69
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] => 1
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [8] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 69
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] => 1
+                            [tie_stop] => 1
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 69
+                            [dur] => 512
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] => 1
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 69
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] => 1
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [9] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 69
+                            [dur] => 768
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] => 1
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 0
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [10] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 62
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+        )
+
+    [2] => Array
+        (
+            [5] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 69
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 66
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [6] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 66
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [7] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [8] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [9] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 67
+                            [dur] => 768
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 0
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [10] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 69
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [1] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [2] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [3] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [4] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+        )
+
+    [3] => Array
+        (
+            [2] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 66
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 62
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [3] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 66
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 66
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [4] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 66
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 67
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 66
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [5] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 66
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 63
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 61
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [6] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 62
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [7] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [8] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 64
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [9] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 64
+                            [dur] => 768
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 0
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [10] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 66
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [1] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+        )
+
+    [4] => Array
+        (
+            [4] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 52
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [10] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 59
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [1] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [2] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [3] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [5] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [6] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [7] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [8] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [9] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+        )
+
+    [5] => Array
+        (
+            [1] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [2] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 61
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] => sp5555555
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 59
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 55
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [3] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 59
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 61
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 59
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [4] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 59
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 61
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 59
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [5] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 59
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 55
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 54
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [6] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 55
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [7] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [8] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [9] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 57
+                            [dur] => 768
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 0
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 100
+                            [mode] =>
+                        )
+
+                )
+
+            [10] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 62
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+        )
+
+    [6] => Array
+        (
+            [1] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [2] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 50
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [3] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 52
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [4] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 55
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [2] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 59
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [3] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 57
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [5] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 54
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [6] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 52
+                            [dur] => 768
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 50
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] => 1
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [7] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 50
+                            [dur] => 512
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] => 1
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.5
+                            [pitch] => 50
+                            [dur] => 512
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] => 1
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [8] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 50
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] => 1
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.25
+                            [pitch] => 49
+                            [dur] => 768
+                            [dur_div] => 256
+                            [alter] => 1
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [9] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 47
+                            [dur] => 768
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                    [1] => XMLNote Object
+                        (
+                            [pos] => 0.75
+                            [pitch] => 0
+                            [dur] => 256
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [10] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 62
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] =>
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+        )
+
+    [7] => Array
+        (
+            [1] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [2] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [3] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [4] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [5] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [6] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [7] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [8] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [9] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+            [10] => Array
+                (
+                    [0] => XMLNote Object
+                        (
+                            [pos] => 0
+                            [pitch] => 0
+                            [dur] => 1024
+                            [dur_div] => 256
+                            [alter] => 0
+                            [rest] => 1
+                            [tie_start] =>
+                            [tie_stop] =>
+                            [grace] =>
+                            [tempo] => 0
+                            [lyric] =>
+                            [words] =>
+                            [fifths] => 2
+                            [mode] => major
+                        )
+
+                )
+
+        )
+
+)

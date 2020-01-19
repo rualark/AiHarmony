@@ -1,5 +1,7 @@
 import {abc2alter, abc2d, d2abc, keysig_imprint} from "./notehelper.js";
 
+// alter = 0 is natural. alter = 10 is no accidental (inherits key)
+
 class NotesData {
   set_rest(v, n) {
     this.set_note(v, n, 0);
@@ -108,6 +110,7 @@ class NotesData {
   }
 
   reset() {
+    this.name = "New exercise";
     this.keysig = {
       name: 'Am',
       mode: 9, // 0 - major, 2 - dorian, 9 - aeolian

@@ -25,3 +25,39 @@ export function trigger_tooltips() {
     });
   }
 }
+
+Date.prototype.yyyymmdd = function(div = '') {
+  let mm = this.getMonth() + 1; // getMonth() is zero-based
+  let dd = this.getDate();
+
+  return [this.getFullYear(),
+    (mm>9 ? '' : '0') + mm,
+    (dd>9 ? '' : '0') + dd
+  ].join(div);
+};
+
+Date.prototype.ymd_his = function() {
+  let mm = this.getMonth() + 1; // getMonth() is zero-based
+  let dd = this.getDate();
+  let hh = this.getHours();
+  let ii = this.getMinutes();
+  let ss = this.getSeconds();
+
+  return this.getFullYear() + '-' +
+    (mm>9 ? '' : '0') + mm + '-' +
+    (dd>9 ? '' : '0') + dd + ' ' +
+    (hh>9 ? '' : '0') + hh + ':' +
+    (ii>9 ? '' : '0') + ii + ':' +
+    (ss>9 ? '' : '0') + ss;
+};
+
+export function name2filename(name) {
+  let now = new Date();
+  let fname = name;
+  fname = fname.replace(/[^\w.]/g, '-');
+  for (let i=0; i<6; ++i)
+    fname = fname.replace('--', '-');
+  if (fname.length > 30) fname = fname.substr(0, 30);
+  if (fname.length < 4) fname = now.yyyymmdd('-') + ' ' + fname;
+  return fname;
+}

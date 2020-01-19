@@ -7,10 +7,11 @@ import {
 } from "./edit.js";
 import {commandCtrlKeyCodes, commandKeyCodes, init_commands} from "./commands.js";
 import {getUrlParam} from "../urlparams.js";
-import {showShortcutsModal} from "./modal.js";
-import {showClefsModal} from "./clefs.js";
-import {showTimesigModal} from "./timesig.js";
-import {showKeysigModal} from "./keysig.js";
+import {showShortcutsModal} from "./modal/modal.js";
+import {showClefsModal} from "./modal/clefs.js";
+import {showTimesigModal} from "./modal/timesig.js";
+import {showKeysigModal} from "./modal/keysig.js";
+import {load_test_musicXml} from "../MusicXml/test-xml.js";
 
 window.onresize = function() {
   async_redraw();
@@ -59,6 +60,7 @@ function init() {
   if (getUrlParam('action') === 'shortcuts') {
     setTimeout(showShortcutsModal, 0);
   }
+  setTimeout(load_test_musicXml, 0);
 }
 
 init();

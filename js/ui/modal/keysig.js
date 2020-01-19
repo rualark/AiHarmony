@@ -1,5 +1,5 @@
-import {async_redraw} from "../abc/abchelper.js";
-import {nd} from "../notes/NotesData.js";
+import {async_redraw} from "../../abc/abchelper.js";
+import {nd} from "../../notes/NotesData.js";
 
 export let keysigs = {
   'C#': {fifths: 7, mode: 0, base_note: 1},

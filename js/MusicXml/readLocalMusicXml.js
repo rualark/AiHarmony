@@ -16,7 +16,6 @@ function readLocalMusicXmlFile(e) {
         alert(error);
       }
       else if (xmlLoadWarnings.size) alert([...xmlLoadWarnings].join('\n'));
-      console.log([...xmlLoadWarnings].join('\n'));
     }
     catch (e) {
       nd.reset();

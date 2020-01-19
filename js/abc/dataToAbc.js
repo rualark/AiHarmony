@@ -1,4 +1,4 @@
-import {clefs} from "../ui/clefs.js";
+import {clefs} from "../ui/modal/clefs.js";
 import {nd} from "../notes/NotesData.js";
 import {alter2abc, d2abc} from "../notes/notehelper.js";
 

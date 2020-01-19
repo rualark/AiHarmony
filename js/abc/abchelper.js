@@ -43,6 +43,7 @@ export function find_selection() {
 
 function notation_redraw() {
   parserParams.staffwidth = window.innerWidth - 60;
+  $('#filename').html('&nbsp;&nbsp;' + nd.name);
   abcjs = ABCJS.renderAbc('notation', dataToAbc(nd), parserParams, engraverParams);
   if (clicked.note) {
     find_selection();
