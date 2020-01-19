@@ -139,12 +139,20 @@ export class MusicXmlParser {
         this.notes[vi][m].push(Object.assign({}, emptyNote));
         let ni = this.notes[vi][m].length - 1;
         this.notes[vi][m][ni].pos = m_pos;
+        //console.log('Fifths', vi, part_id, staff, chord, m, fifths);
         this.notes[vi][m][ni].fifths = fifths;
         this.notes[vi][m][ni].mode = mode;
         if (this.xml.xpathFirstInner('../attributes/clef', el) != null) {
-          clef_sign[staff] = this.xml.xpathFirstInner(`../attributes/clef[@number="${staff}"]/sign`, el);
-          clef_line[staff] = Number(this.xml.xpathFirstInner(`../attributes/clef[@number="${staff}"]/line`, el));
-          clef_octave_change[staff] = Number(this.xml.xpathFirstInner(`../attributes/clef[@number="${staff}"]/clef-octave-change`, el) || 0);
+          clef_sign[staff] =
+            this.xml.xpathFirstInner(`../attributes/clef[@number="${staff}"]/sign`, el) ||
+            this.xml.xpathFirstInner(`../attributes/clef[not(@number)]/sign`, el);
+          clef_line[staff] = Number(
+            this.xml.xpathFirstInner(`../attributes/clef[@number="${staff}"]/line`, el) ||
+            this.xml.xpathFirstInner(`../attributes/clef[not(@number)]/line`, el));
+          clef_octave_change[staff] = Number(
+            this.xml.xpathFirstInner(`../attributes/clef[@number="${staff}"]/clef-octave-change`, el) ||
+            this.xml.xpathFirstInner(`../attributes/clef[not(@number)]/clef-octave-change`, el) ||
+            0);
         }
         this.notes[vi][m][ni].clef_sign = clef_sign[staff];
         this.notes[vi][m][ni].clef_line = clef_line[staff];
@@ -180,17 +188,41 @@ export class MusicXmlParser {
         m_pos += this.notes[vi][m][ni].dur * 0.25 / divisions;
       }
     }
-    for (vi = 0; vi < this.voices.length; ++vi) {
+    this.appendRests();
+    this.removeEmptyVoices();
+  }
+
+  appendRests() {
+    for (let vi = 0; vi < this.voices.length; ++vi) {
       // Fill empty measures with pause
-      for (m = 1; m < this.mea.length; ++m) {
+      for (let m = 1; m < this.mea.length; ++m) {
         // Do not fill measures with notes
         if (this.notes[vi].length > m &&
           this.notes[vi][m].length) continue;
         while (this.notes[vi].length <= m) this.notes[vi].push([]);
-        this.notes[vi][m].push(Object.assign({}, emptyNote));
-        this.notes[vi][m][0].dur_div = 1024 / this.mea[m].beat_type;
-        this.notes[vi][m][0].dur = 1024 * this.mea[m].beats_per_measure / this.mea[m].beat_type;
+        this.append_pause(vi, m, 0, 0, this.mea[m].beats_per_measure / this.mea[m].beat_type, 1024);
         //console.log("Added rest to empty measure vi/m");
+      }
+    }
+  }
+
+  removeEmptyVoices() {
+    for (let vi = 0; vi < this.voices.length; ++vi) {
+      let empty = 1;
+      for (let m = 1; m < this.mea.length; ++m) {
+        for (let ni = 0; ni < this.notes[vi][m].length; ++ni) {
+          if (this.notes[vi][m][ni].rest === false) {
+            //console.log('Not empty', vi, this.notes[vi][m][ni]);
+            empty = 0;
+            break;
+          }
+        }
+        if (!empty) break;
+      }
+      if (empty) {
+        this.voices.splice(vi, 1);
+        this.notes.splice(vi, 1);
+        --vi;
       }
     }
   }
@@ -209,6 +241,9 @@ export class MusicXmlParser {
     new_voice.chord = chord;
     new_voice.name = this.xml.xpathFirstInner("//score-partwise/part-list/score-part[@id = '" + part_id + "']/part-name");
     new_voice.display = this.xml.xpathFirstInner("//score-partwise/part-list/score-part[@id = '" + part_id + "']/part-name-display/display-text");
+    if (new_voice.name === 'MusicXML Part') {
+      new_voice.name = part_id;
+    }
     // For chords search for previous voice
     if (chord) {
       for (let i = 0; i < this.voices.length; ++i) {
@@ -251,13 +286,13 @@ export class MusicXmlParser {
   }
 
   getErrPrefix(vi, m, ni) {
-    return "Measure m, vi vi, part id " + this.voices[vi].id + 
+    return `Measure ${m}, vi ${vi}, part id ` + this.voices[vi].id +
       ", part name " + this.voices[vi].name + 
       ", staff " + this.voices[vi].staff + 
       ", voice " + this.voices[vi].v + 
       ", chord " + this.voices[vi].chord + 
       ", beat " + this.mea[m].beats_per_measure + "/" + this.mea[m].beat_type +
-      ": note " + (ni + 1) +
+      ": note " + ni +
       " of " + this.notes[vi][m].length + ".";
   }
 
@@ -271,11 +306,8 @@ export class MusicXmlParser {
         for (let ni = 0; ni < this.notes[vi][m].length; ++ni) {
           // Detect hidden pause
           if (ni && this.notes[vi][m][ni].pos > stack) {
-            let new_pause = Object.assign({}, emptyNote);
-            new_pause.pos = stack;
-            new_pause.dur_div = this.notes[vi][m][ni - 1].dur_div;
-            new_pause.dur = (this.notes[vi][m][ni].pos - stack) * 4 * new_pause.dur_div;
-            this.notes[vi][m].splice(ni, 0, new_pause);
+            this.append_pause(vi, m, ni, stack, this.notes[vi][m][ni].pos - stack,
+              this.notes[vi][m][ni - 1].dur_div);
             //echo "Added hidden pause vi/m/ni<br>";
           }
           // Detect length error
@@ -382,11 +414,8 @@ export class MusicXmlParser {
         //if (this.voices[vi].chord) continue;
         // Add pause if measure is not full
         if (stack < this.mea[m].measure_len) {
-          let new_pause = Object.assign({}, emptyNote);
-          new_pause.pos = stack;
-          new_pause.dur_div = this.notes[vi][m][this.notes[vi][m].length - 1].dur_div;
-          new_pause.dur = (this.mea[m].measure_len - stack) * 4 * new_pause.dur_div;
-          this.notes[vi][m].push(new_pause);
+          this.append_pause(vi, m, this.notes[vi][m].length, stack, this.mea[m].measure_len - stack,
+            this.notes[vi][m][this.notes[vi][m].length - 1].dur_div);
           //echo "Added hidden pause to the end of measure vi/m<br>";
         }
         // Detect length error
@@ -397,6 +426,31 @@ export class MusicXmlParser {
         }
       }
     }
+  }
+
+  append_pause(vi, m, ni, pos, len, dur_div) {
+    let len16 = len * 16;
+    for (const dur of this.sliceLen(len16)) {
+      let new_pause = Object.assign({}, emptyNote);
+      new_pause.pos = pos;
+      new_pause.dur_div = dur_div;
+      new_pause.dur = dur * 0.25 * dur_div;
+      this.notes[vi][m].splice(ni, 0, new_pause);
+      pos += dur / 16;
+    }
+  }
+
+  sliceLen(dur) {
+    if (dur > 16) return this.sliceLen(dur - 16).concat([16]);
+    if (dur === 5) return [1, 4];
+    if (dur === 7) return [1, 6];
+    if (dur === 9) return [1, 8];
+    if (dur === 10) return [2, 8];
+    if (dur === 11) return [3, 8];
+    if (dur === 13) return [1, 12];
+    if (dur === 14) return [2, 12];
+    if (dur === 15) return [3, 12];
+    return [dur];
   }
 }
 

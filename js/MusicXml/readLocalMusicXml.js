@@ -21,12 +21,14 @@ function readLocalMusicXmlFile(e) {
       } else {
         nd.filename = file.name;
       }
+      if (!nd.name) nd.name = nd.filename;
     }
     catch (e) {
       nd.reset();
       alert(e);
       throw e;
     }
+    console.log(nd);
     async_redraw();
   };
   reader.readAsText(file);
@@ -38,10 +40,11 @@ export function showOpenMusicXmlModal() {
   //st += 'Please select MusicXML file from your computer<br><br>';
   //st += '<input type=file id="mxml-file-input" />';
   st += "<div class='custom-file'>";
-  st += "<input type=file class='custom-file-input' id='mxml-file-input' name='mxml-file-input' />";
+  st += "<input type=file accept='.xml' class='custom-file-input' id='mxml-file-input' name='mxml-file-input' />";
   st += "<label class='custom-file-label' for='mxml-file-input'>Choose file</label>";
   st += "</div>";
   document.getElementById("ModalBody").innerHTML = st;
   document.getElementById('mxml-file-input').addEventListener('change', readLocalMusicXmlFile, false);
   $('#Modal').modal();
+  $('#mxml-file-input').click();
 }
