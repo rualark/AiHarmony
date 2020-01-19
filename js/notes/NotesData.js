@@ -1,5 +1,7 @@
 import {abc2alter, abc2d, d2abc, keysig_imprint} from "./notehelper.js";
 
+export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 24]);
+
 // alter = 0 is natural. alter = 10 is no accidental (inherits key)
 
 class NotesData {
@@ -51,7 +53,7 @@ class NotesData {
   set_keysig(keysig) {
     let ki1 = keysig_imprint(this.keysig.fifths);
     let ki2 = keysig_imprint(keysig.fifths);
-    console.log(ki1, ki2);
+    //console.log(ki1, ki2);
     for (let v=0; v<this.voices.length; ++v) {
       let vc = this.voices[v];
       for (let n = 0; n < vc.notes.length; ++n) {
@@ -95,7 +97,7 @@ class NotesData {
             let len = debt > mlen ? mlen : debt;
             debt -= len;
             let new_note = {d: nt.d, alter: nt.alter, len: len};
-            console.log("Insert", v, n, nt.len, nt.step, len, debt, new_note);
+            //console.log("Insert", v, n, nt.len, nt.step, len, debt, new_note);
             vc.notes.splice(n + 1, 0, new_note);
             vc.notes[n].startsTie = true;
             ++n;
@@ -105,12 +107,13 @@ class NotesData {
       if (s2 % mlen) {
         vc.notes.push({d: 0, alter: 10, len: mlen - s2 % mlen, startsTie: false});
       }
-      console.log(vc.notes);
+      //console.log(vc.notes);
     }
   }
 
   reset() {
     this.name = "New exercise";
+    this.filename = "";
     this.keysig = {
       name: 'Am',
       mode: 9, // 0 - major, 2 - dorian, 9 - aeolian

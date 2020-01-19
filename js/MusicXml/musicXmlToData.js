@@ -1,8 +1,8 @@
 import {MusicXmlParser} from "./MusicXmlParser.js";
-import {nd} from "../notes/NotesData.js";
+import {nd, supportedNoteLen} from "../notes/NotesData.js";
 import {timesigs} from "../ui/modal/timesig.js";
 import {getBestClef} from "../notes/bestClef.js";
-import {d2c} from "../notes/notehelper.js";
+import {d2c, keysig_imprint} from "../notes/notehelper.js";
 
 export let xmlLoadWarnings = new Set();
 
@@ -15,10 +15,12 @@ export function musicXmlToData(txt) {
   let mxp = new MusicXmlParser(txt);
   let error = checkImportableMusicXml(mxp);
   if (error) return error;
+  importWorkTitle(mxp);
   nd.timesig.beats_per_measure = mxp.mea[1].beats_per_measure;
   nd.timesig.beat_type = mxp.mea[1].beat_type;
   nd.timesig.measure_len = mxp.mea[1].measure_len * 16;
   nd.voices = [];
+  let ki;
   for (const vi in mxp.notes) {
     nd.voices.push({
       name: mxp.voices[vi].name,
@@ -42,6 +44,7 @@ export function musicXmlToData(txt) {
           if (nd.keysig.fifths == null) {
             nd.keysig.fifths = note.fifths;
             nd.keysig.name = keysigMusicXml2Abc[note.fifths];
+            ki = keysig_imprint(nd.keysig.fifths);
             //console.log(note.fifths, keysigMusicXml2Abc[note.fifths]);
           } else if (nd.keysig.fifths !== note.fifths) {
             xmlLoadWarnings.add("Key signature changes is MusicXml: ignoring");
@@ -61,15 +64,22 @@ export function musicXmlToData(txt) {
             xmlLoadWarnings.add("Clef changes is MusicXml: ignoring");
           }
         }
+        //accidental2alter(note.accidental)
         nd.voices[vi].notes.push({
           d: note.d,
-          alter: accidental2alter(note.accidental),
+          alter: note.alter === ki[note.d % 7] && !note.accidental ? 10 : note.alter,
           len: Math.floor(note.dur * 4 / note.dur_div),
           startsTie: note.tie_start
         });
       }
     }
   }
+}
+
+function importWorkTitle(mxp) {
+  let st = mxp.work_title;
+  if (!st) st = 'Exercise';
+  nd.name = st;
 }
 
 function accidental2alter(st) {
@@ -121,10 +131,15 @@ function checkImportableMusicXml(mxp) {
   if (mxp.error) return mxp.error;
   if (mxp.mea.length < 2) return "No measures detected in MusicXML";
   checkSupportedTimesig(mxp);
-  console.log(mxp.mea, mxp.voices, mxp.notes);
+  console.log(mxp);
+  //console.log(mxp.mea, mxp.voices, mxp.notes);
   for (const vi in mxp.notes) {
     for (let m=1; m<mxp.notes[vi].length; ++m) {
       for (const ni in mxp.notes[vi][m]) {
+        let note = mxp.notes[vi][m][ni];
+        if (!supportedNoteLen.has(note.dur * 4 / note.dur_div)) {
+          return "Unsupported note duration: " + note.dur + '/' + note.dur_div + ' at voice ' + vi + ', measure ' + m;
+        }
       }
     }
   }
@@ -141,20 +156,5 @@ function getBestClefForVoice(notes) {
     }
   }
   return getBestClef(d2c(dmin), d2c(dmax));
-}
-
-function assignBestClefs(mxp) {
-  for (const vi in mxp.notes) {
-    let dmin = 10000;
-    let dmax = 0;
-    for (let m=1; m<mxp.notes[vi].length; ++m) {
-      for (const ni in mxp.notes[vi][m]) {
-        let note = mxp.notes[vi][m][ni];
-        if (note.d > dmax) dmax = note.d;
-        if (note.d < dmin) dmin = note.d;
-      }
-    }
-    mxp.voices[vi].clef = getBestClef(d2c(dmin), d2c(dmax));
-  }
 }
 

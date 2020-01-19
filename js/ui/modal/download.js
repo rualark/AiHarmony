@@ -26,7 +26,7 @@ function downloadAsMusicXml() {
     alert(e);
     return;
   }
-  fileSave(name2filename(nd.name) + '.xml', xml);
+  fileSave(name2filename(nd.name, nd.filename) + '.xml', xml);
 }
 
 function saveSvg(svgEl, name) {
@@ -44,17 +44,17 @@ function saveSvg(svgEl, name) {
 }
 
 function downloadAsSvg() {
-  saveSvg($('#notation').children()[0], name2filename(nd.name) + '.svg');
+  saveSvg($('#notation').children()[0], name2filename(nd.name, nd.filename) + '.svg');
 }
 
 function downloadAsAbc() {
-  fileSave(name2filename(nd.name) + '.abc', dataToAbc(nd));
+  fileSave(name2filename(nd.name, nd.filename) + '.abc', dataToAbc(nd));
 }
 
 function downloadAsMidi() {
   ABCJS.renderMidi("midi-download", dataToAbc(nd), { generateDownload: true, generateInline: false });
   let el = $('.abcjs-download-midi > a');
-  el.attr('download', name2filename(nd.name) + '.mid');
+  el.attr('download', name2filename(nd.name, nd.filename) + '.mid');
   el[0].click();
 }
 

@@ -16,6 +16,11 @@ function readLocalMusicXmlFile(e) {
         alert(error);
       }
       else if (xmlLoadWarnings.size) alert([...xmlLoadWarnings].join('\n'));
+      if (file.name.endsWith('.xml')) {
+        nd.filename = file.name.slice(0, -4);
+      } else {
+        nd.filename = file.name;
+      }
     }
     catch (e) {
       nd.reset();

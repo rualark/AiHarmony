@@ -51,11 +51,13 @@ Date.prototype.ymd_his = function() {
     (ss>9 ? '' : '0') + ss;
 };
 
-export function name2filename(name) {
+export function name2filename(name, filename) {
+  console.log(name, filename);
+  if (filename) return filename;
   let now = new Date();
   let fname = name;
   fname = fname.replace(/[^\w.]/g, '-');
-  for (let i=0; i<6; ++i)
+  for (let i=0; i<10; ++i)
     fname = fname.replace('--', '-');
   if (fname.length > 30) fname = fname.substr(0, 30);
   if (fname.length < 4) fname = now.yyyymmdd('-') + ' ' + fname;

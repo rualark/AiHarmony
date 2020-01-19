@@ -35,7 +35,8 @@ export class XmlParser {
       let nodes = this.xmlDoc.evaluate(path, node, null, XPathResult.ANY_TYPE, null);
       let result = nodes.iterateNext();
       while (result) {
-        res.push(result.childNodes[0].nodeValue);
+        if (result.childNodes != null && result.childNodes[0] != null)
+          res.push(result.childNodes[0].nodeValue);
         result = nodes.iterateNext();
       }
     }
@@ -47,7 +48,7 @@ export class XmlParser {
     if (this.xmlDoc.evaluate) {
       let nodes = this.xmlDoc.evaluate(path, this.xmlDoc, null, XPathResult.ANY_TYPE, null);
       let result = nodes.iterateNext();
-      if (result) {
+      if (result && result.childNodes != null && result.childNodes[0] != null) {
         return result.childNodes[0].nodeValue;
       }
     }

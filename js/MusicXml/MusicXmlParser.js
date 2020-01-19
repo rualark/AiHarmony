@@ -50,13 +50,20 @@ export class MusicXmlParser {
       this.error = this.xml.error;
       return;
     }
-    //console.log(this.xml.xpathFirstValue("/score-partwise/identification/encoding/encoder"));
+    this.encoder = this.xml.xpathFirstValue("/score-partwise/identification/encoding/encoder");
+    this.encoding_date = this.xml.xpathFirstValue("/score-partwise/identification/encoding/encoding-date");
+    this.software = this.xml.xpathFirstValue("/score-partwise/identification/encoding/software");
+    this.encoding_description = this.xml.xpathFirstValue("/score-partwise/identification/encoding/encoding-description");
+    this.work_title = this.xml.xpathFirstValue("/score-partwise/work/work-title");
+    this.composer = this.xml.xpathFirstValue("/score-partwise/identification/creator[@type='composer']");
+    this.arranger = this.xml.xpathFirstValue("/score-partwise/identification/creator[@type='arranger']");
+    this.rights = this.xml.xpathFirstValue("/score-partwise/identification/rights");
     let elements = this.xml.xpath("/score-partwise/part/measure/*");
     if (!elements) {
       this.error = "Cannot find notes in XML";
       return;
     }
-    console.log(elements);
+    //console.log(elements);
     let divisions = 2;
     let staff = 0;
     let m_pos = 0;
