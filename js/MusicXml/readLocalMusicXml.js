@@ -1,6 +1,38 @@
 import {musicXmlToData, xmlLoadWarnings} from "./musicXmlToData.js";
-import {async_redraw} from "../abc/abchelper.js";
+import {async_redraw, clicked} from "../abc/abchelper.js";
 import {nd} from "../notes/NotesData.js";
+import {start_counter, stop_counter} from "../lib.js";
+
+export function readMusicXml(xml, filename) {
+  try {
+    start_counter('musicXmlToData');
+    let error = musicXmlToData(xml);
+    stop_counter();
+    if (error) {
+      nd.reset();
+      alertify.alert('Error loading MusicXML', error);
+    }
+    else if (xmlLoadWarnings.size) {
+      alertify.notify( [...xmlLoadWarnings].join('<br>'), 'custom', 10);
+    }
+    if (filename.endsWith('.xml')) {
+      nd.filename = filename.slice(0, -4);
+    } else {
+      nd.filename = filename;
+    }
+    if (!nd.name) nd.name = nd.filename;
+    if (!nd.filename) nd.filename = nd.name;
+    clicked.note = {voice: 0, note: 0};
+  }
+  catch (e) {
+    nd.reset();
+    console.log(e);
+    alertify.alert('Error loading MusicXML', e.toString());
+    throw e;
+  }
+  console.log(nd);
+  async_redraw();
+}
 
 function readLocalMusicXmlFile(e) {
   $('#Modal').modal('hide');
@@ -8,28 +40,7 @@ function readLocalMusicXmlFile(e) {
   if (!file) return;
   let reader = new FileReader();
   reader.onload = function(e) {
-    let contents = e.target.result;
-    try {
-      let error = musicXmlToData(contents);
-      if (error) {
-        nd.reset();
-        alert(error);
-      }
-      else if (xmlLoadWarnings.size) alert([...xmlLoadWarnings].join('\n'));
-      if (file.name.endsWith('.xml')) {
-        nd.filename = file.name.slice(0, -4);
-      } else {
-        nd.filename = file.name;
-      }
-      if (!nd.name) nd.name = nd.filename;
-    }
-    catch (e) {
-      nd.reset();
-      alert(e);
-      throw e;
-    }
-    console.log(nd);
-    async_redraw();
+    readMusicXml(e.target.result, file.name);
   };
   reader.readAsText(file);
 }

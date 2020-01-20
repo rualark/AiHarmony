@@ -4,7 +4,12 @@ export class XmlParser {
       let parser = new DOMParser();
       this.xmlDoc = parser.parseFromString(txt, "text/xml");
       if (this.xmlDoc.getElementsByTagName("parsererror")[0]) {
-        this.error = this.xmlDoc.getElementsByTagName("parsererror")[0].innerHTML;
+        if (!txt.trim().startsWith('<?xml')) {
+          this.error = "This file does not seem to be an uncompressed MusicXML document. Compressed MusicXML files are not supported. " +
+            this.xmlDoc.getElementsByTagName("parsererror")[0].innerHTML;
+        } else {
+          this.error = this.xmlDoc.getElementsByTagName("parsererror")[0].innerHTML;
+        }
       }
     } else // Internet Explorer
     {

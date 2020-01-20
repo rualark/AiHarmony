@@ -1,6 +1,6 @@
 import {abc2alter, abc2d, d2abc, keysig_imprint} from "./notehelper.js";
 
-export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 24]);
+export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
 
 // alter = 0 is natural. alter = 10 is no accidental (inherits key)
 

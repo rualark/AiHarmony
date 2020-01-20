@@ -1,22 +1,7 @@
-import {musicXmlToData, xmlLoadWarnings} from "./musicXmlToData.js";
-import {nd} from "../notes/NotesData.js";
-import {async_redraw} from "../abc/abchelper.js";
+import {readMusicXml} from "./readLocalMusicXml.js";
 
 export function load_test_musicXml() {
-  try {
-    let error = musicXmlToData(test_xml_string);
-    if (error) {
-      nd.reset();
-      alert(error);
-    }
-    else if (xmlLoadWarnings.size) alert([...xmlLoadWarnings].join('\n'));
-  }
-  catch (e) {
-    nd.reset();
-    alert(e);
-    throw e;
-  }
-  async_redraw();
+  readMusicXml(test_xml_string, '');
 }
 
 let test_xml_string =

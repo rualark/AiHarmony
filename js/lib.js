@@ -63,3 +63,26 @@ export function name2filename(name, filename) {
   if (fname.length < 4) fname = now.yyyymmdd('-') + ' ' + fname;
   return fname;
 }
+
+let global_start_counter;
+let local_start_counter;
+let counter_name;
+
+export function start_counter(name, global_start=false) {
+  let now = new Date();
+  counter_name = name;
+  if (!global_start_counter || global_start) {
+    global_start_counter = now;
+  }
+  local_start_counter = now;
+}
+
+export function stop_counter() {
+  if (!global_start_counter) return;
+  let now = new Date();
+  let st = `${counter_name} took ${(now - local_start_counter) / 1000} s`;
+  if (global_start_counter !== local_start_counter) {
+    st += ` (total ${(now - global_start_counter) / 1000} s)`;
+  }
+  console.log(st);
+}

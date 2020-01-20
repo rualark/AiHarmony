@@ -23,8 +23,8 @@ function downloadAsMusicXml() {
     xml = dataToMusicXml();
   }
   catch (e) {
-    alert(e);
-    return;
+    alertify.alert("Error exporting MusicXML", e.toString());
+    throw e;
   }
   fileSave(name2filename(nd.name, nd.filename) + '.xml', xml);
 }

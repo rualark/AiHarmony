@@ -6,6 +6,7 @@ export let xmlExportWarnings = new Set();
 export function dataToMusicXml() {
   let st = '';
   let now = new Date();
+  xmlExportWarnings.clear();
   st += `<?xml version="1.0" encoding='UTF-8' standalone='no' ?>
 <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
 <score-partwise version="3.0">
@@ -105,24 +106,24 @@ export function dataToMusicXml() {
         let xmlClef = clefAbc2MusicXml(nd.voices[v].clef);
         st += `  <measure number="${Math.floor(s / nd.timesig.measure_len) + 1}">\n`;
         if (!s) {
-          st += `   <attributes>
-    <divisions>256</divisions>
-    <key color="#000000">
-     <fifths>${nd.keysig.fifths}</fifths>
-     <mode>major</mode>
-    </key>
-    <time color="#000000">
-     <beats>${nd.timesig.beats_per_measure}</beats>
-     <beat-type>${nd.timesig.beat_type}</beat-type>
-    </time>
-    <staves>1</staves>
-    <clef number="1" color="#000000">
-     <sign>${xmlClef.sign}</sign>
-     <line>${xmlClef.line}</line>
-     <clef-octave-change>${xmlClef.oct}</clef-octave-change>
-    </clef>
-    <staff-details number="1" print-object="yes" />
-   </attributes>\n`;
+          st += `   <attributes>\n`;
+          st += `    <divisions>256</divisions>\n`;
+          st += `    <key color="#000000">\n`;
+          st += `     <fifths>${nd.keysig.fifths}</fifths>\n`;
+          st += `     <mode>major</mode>\n`;
+          st += `    </key>\n`;
+          st += `    <time color="#000000">\n`;
+          st += `     <beats>${nd.timesig.beats_per_measure}</beats>\n`;
+          st += `     <beat-type>${nd.timesig.beat_type}</beat-type>\n`;
+          st += `    </time>\n`;
+          st += `    <staves>1</staves>\n`;
+          st += `    <clef number="1" color="#000000">\n`;
+          st += `     <sign>${xmlClef.sign}</sign>\n`;
+          st += `     <line>${xmlClef.line}</line>\n`;
+          st += `     <clef-octave-change>${xmlClef.oct}</clef-octave-change>\n`;
+          st += `    </clef>\n`;
+          st += `    <staff-details number="1" print-object="yes" />\n`;
+          st += `   </attributes>\n`;
         } else {
           st += `   <attributes />\n`;
         }
@@ -142,7 +143,8 @@ export function dataToMusicXml() {
       }
       st += `    <duration>${Math.floor(note.len * 256 / 4)}</duration>\n`;
       if (note.d) {
-        if (n && nd.voices[v].notes[n - 1].startsTie) {
+        //console.log('Pre-startsTie', n, n > 0, nd.voices[v].notes[n]);
+        if (n > 0 && nd.voices[v].notes[n - 1].startsTie) {
           st += `    <tie type="stop" />\n`;
         }
         if (note.startsTie) {
@@ -161,9 +163,9 @@ export function dataToMusicXml() {
       }
       st += `    <staff>1</staff>\n`;
       if (note.d) {
-        if (note.startsTie || (n && nd.voices[v].notes[n - 1].startsTie)) {
+        if (note.startsTie || (n > 0 && nd.voices[v].notes[n - 1].startsTie)) {
           st += `    <notations>\n`;
-          if (n && nd.voices[v].notes[n - 1].startsTie) {
+          if (n > 0 && nd.voices[v].notes[n - 1].startsTie) {
             st += `     <tied type="stop" />\n`;
           }
           if (note.startsTie) {

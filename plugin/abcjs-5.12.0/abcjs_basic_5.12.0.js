@@ -863,8 +863,11 @@ function resizeOuter() {
   }
 }
 
-window.addEventListener("resize", resizeOuter);
-window.addEventListener("orientationChange", resizeOuter);
+try {
+  window.addEventListener("resize", resizeOuter);
+  window.addEventListener("orientationChange", resizeOuter);
+} catch (e) {// if we aren't in a browser, this code will crash, but it is not needed then either.
+}
 
 function renderOne(div, tune, params, tuneNumber) {
   if (params.viewportHorizontal) {
@@ -2651,20 +2654,23 @@ var SynthController = __webpack_require__(/*! ../synth/synth-controller */ "./sr
 var supportsAudio = __webpack_require__(/*! ../synth/supports-audio */ "./src/synth/supports-audio.js"); // Polyfill for CustomEvent for old IE versions
 
 
-if (typeof window.CustomEvent !== "function") {
-  var CustomEvent = function CustomEvent(event, params) {
-    params = params || {
-      bubbles: false,
-      cancelable: false,
-      detail: undefined
+try {
+  if (typeof window.CustomEvent !== "function") {
+    var CustomEvent = function CustomEvent(event, params) {
+      params = params || {
+        bubbles: false,
+        cancelable: false,
+        detail: undefined
+      };
+      var evt = document.createEvent('CustomEvent');
+      evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+      return evt;
     };
-    var evt = document.createEvent('CustomEvent');
-    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-    return evt;
-  };
 
-  CustomEvent.prototype = window.Event.prototype;
-  window.CustomEvent = CustomEvent;
+    CustomEvent.prototype = window.Event.prototype;
+    window.CustomEvent = CustomEvent;
+  }
+} catch (e) {// if we aren't in a browser, this code will crash, but it is not needed then either.
 }
 
 var EditArea = function EditArea(textareaid) {
@@ -5058,22 +5064,25 @@ parseCommon.detect = function (arr, iterator) {
 // from:https://github.com/jserz/js_piece/blob/master/DOM/ChildNode/remove()/remove().md
 
 
-(function (arr) {
-  arr.forEach(function (item) {
-    if (item.hasOwnProperty('remove')) {
-      return;
-    }
-
-    Object.defineProperty(item, 'remove', {
-      configurable: true,
-      enumerable: true,
-      writable: true,
-      value: function remove() {
-        if (this.parentNode !== null) this.parentNode.removeChild(this);
+try {
+  (function (arr) {
+    arr.forEach(function (item) {
+      if (item.hasOwnProperty('remove')) {
+        return;
       }
+
+      Object.defineProperty(item, 'remove', {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value: function remove() {
+          if (this.parentNode !== null) this.parentNode.removeChild(this);
+        }
+      });
     });
-  });
-})([Element.prototype, CharacterData.prototype, DocumentType.prototype]);
+  })([Element.prototype, CharacterData.prototype, DocumentType.prototype]);
+} catch (e) {// if we aren't in a browser, this code will crash, but it is not needed then either.
+}
 
 module.exports = parseCommon;
 
@@ -14866,25 +14875,6 @@ AbsoluteElement.prototype.draw = function (renderer, bartop) {
   if (g) this.elemset.push(g);
   if (this.klass) this.setClass("mark", "", "#00ff00");
   if (this.hint) this.setClass("abcjs-hint", "", null);
-  var opacity =
-  /*ABCJS.write.debugPlacement*/
-  false ? undefined : 0; // Create transparent box that encompasses the element, and not so transparent to debug it.
-
-  var target = renderer.printShadedBox(this.x, renderer.calcY(this.top), this.w, renderer.calcY(this.bottom) - renderer.calcY(this.top), "#000000", opacity);
-  var self = this;
-  var controller = renderer.controller;
-  target.addEventListener('mouseup', function () {
-    var classes = [];
-
-    if (self.elemset) {
-      for (var j = 0; j < self.elemset.length; j++) {
-        var es = self.elemset[j];
-        if (es) classes.push(es.getAttribute("class"));
-      }
-    }
-
-    controller.notifySelect(self, self.tuneNumber, classes);
-  });
   this.abcelem.abselem = this;
   var step = spacing.STEP;
 };
@@ -16619,7 +16609,8 @@ var BeamElem;
       path: pathString,
       stroke: "none",
       fill: "#000000",
-      'class': renderer.addClasses(klass)
+      'class': renderer.addClasses(klass),
+      notSelectable: true
     });
   }
 
@@ -16841,7 +16832,7 @@ var createClef;
   createClef = function createClef(elem, tuneNumber) {
     var clef;
     var octave = 0;
-    var abselem = new AbsoluteElement(elem, 0, 10, 'staff-extra', tuneNumber);
+    var abselem = new AbsoluteElement(elem, 0, 10, 'staff-extra clef', tuneNumber);
     abselem.isClef = true;
 
     switch (elem.type) {
@@ -16933,7 +16924,15 @@ var createClef;
       if (octave !== 0) {
         var scale = 2 / 3;
         var adjustspacing = (glyphs.getSymbolWidth(clef) - glyphs.getSymbolWidth("8") * scale) / 2;
-        abselem.addRight(new RelativeElement("8", dx + adjustspacing, glyphs.getSymbolWidth("8") * scale, octave > 0 ? abselem.top + 3 : abselem.bottom - 1, {
+        var pitch = octave > 0 ? abselem.top + 3 : abselem.bottom - 1;
+
+        if (elem.type === "bass-8") {
+          // The placement for bass octave is a little different. It should hug the clef.
+          pitch = 3;
+          adjustspacing = 0;
+        }
+
+        abselem.addRight(new RelativeElement("8", dx + adjustspacing, glyphs.getSymbolWidth("8") * scale, pitch, {
           scalex: scale,
           scaley: scale
         }));
@@ -16986,7 +16985,7 @@ var createKeySignature;
 
   createKeySignature = function createKeySignature(elem, tuneNumber) {
     if (!elem.accidentals || elem.accidentals.length === 0) return null;
-    var abselem = new AbsoluteElement(elem, 0, 10, 'staff-extra', tuneNumber);
+    var abselem = new AbsoluteElement(elem, 0, 10, 'staff-extra key-signature', tuneNumber);
     abselem.isKeySig = true;
     var dx = 0;
     parseCommon.each(elem.accidentals, function (acc) {
@@ -17064,7 +17063,7 @@ var createTimeSignature;
   "use strict";
 
   createTimeSignature = function createTimeSignature(elem, tuneNumber) {
-    var abselem = new AbsoluteElement(elem, 0, 10, 'staff-extra', tuneNumber);
+    var abselem = new AbsoluteElement(elem, 0, 10, 'staff-extra time-signature', tuneNumber);
 
     if (elem.type === "specified") {
       var x = 0;
@@ -17191,6 +17190,9 @@ CrescendoElem.prototype.draw = function (renderer) {
   var y = renderer.calcY(this.pitch) + 4; // This is the top pixel to use (it is offset a little so that it looks good with the volume marks.)
 
   var height = 8;
+  renderer.createElemSet({
+    klass: "dynamics"
+  });
 
   if (this.dir === "<") {
     this.drawLine(renderer, y + height / 2, y);
@@ -17199,6 +17201,9 @@ CrescendoElem.prototype.draw = function (renderer) {
     this.drawLine(renderer, y, y + height / 2);
     this.drawLine(renderer, y + height, y + height / 2);
   }
+
+  var g = renderer.closeElemSet();
+  renderer.controller.recordHistory(g);
 };
 
 CrescendoElem.prototype.drawLine = function (renderer, y1, y2) {
@@ -17807,6 +17812,9 @@ var Renderer = __webpack_require__(/*! ./abc_renderer */ "./src/write/abc_render
 
 var EngraverController = function EngraverController(paper, params) {
   params = params || {};
+  this.selectionColor = params.selectionColor;
+  this.dragColor = params.dragColor ? params.dragColor : params.selectionColor;
+  this.dragging = params.dragging;
   this.responsive = params.responsive;
   this.space = 3 * spacing.SPACE;
   this.scale = params.scale ? parseFloat(params.scale) : 0;
@@ -17841,6 +17849,14 @@ EngraverController.prototype.reset = function () {
   if (this.engraver) this.engraver.reset();
   this.engraver = null;
   this.renderer.reset();
+  this.history = [];
+  this.currentAbsEl = null;
+  this.dragTarget = null;
+  this.dragMouseStart = {
+    x: -1,
+    y: -1
+  };
+  this.dragYStep = 0;
 };
 /**
  * run the engraving process
@@ -18045,6 +18061,106 @@ EngraverController.prototype.engraveTune = function (abctune, tuneNumber) {
 
   this.renderer.engraveExtraText(this.width, abctune);
   this.renderer.setPaperSize(maxWidth, scale, this.responsive);
+  this.renderer.paper.svg.addEventListener('mousedown', mouseDown.bind(this));
+  this.renderer.paper.svg.addEventListener('mousemove', mouseMove.bind(this));
+  this.renderer.paper.svg.addEventListener('mouseup', mouseUp.bind(this));
+};
+
+function mouseDown(ev) {
+  // "this" is the EngraverController because of the bind(this) when setting the event listener.
+  //	console.log(this.history)
+  var x = ev.offsetX;
+  var y = ev.offsetY;
+  var minDistance = 9999999;
+  var closestIndex = -1;
+
+  for (var i = 0; i < this.history.length && minDistance > 0; i++) {
+    var el = this.history[i];
+    if (!el.selectable) continue; // See if it is a direct hit on an element - if so, definitely take it (there are no overlapping elements)
+
+    if (el.dim.left < x && el.dim.right > x && el.dim.top < y && el.dim.bottom > y) {
+      closestIndex = i;
+      minDistance = 0;
+    } else {
+      // figure out the distance to this element.
+      var dx = Math.abs(x - el.dim.left) > Math.abs(x - el.dim.right) ? Math.abs(x - el.dim.right) : Math.abs(x - el.dim.left);
+      var dy = Math.abs(y - el.dim.top) > Math.abs(y - el.dim.bottom) ? Math.abs(y - el.dim.bottom) : Math.abs(y - el.dim.top);
+      var hypotenuse = Math.sqrt(dx * dx + dy * dy);
+
+      if (hypotenuse < minDistance) {
+        minDistance = hypotenuse;
+        closestIndex = i;
+      }
+    }
+  }
+
+  if (closestIndex >= 0) {
+    this.dragTarget = this.history[closestIndex];
+    this.dragMouseStart = {
+      x: x,
+      y: y
+    };
+    if (this.dragging && this.dragTarget.isDraggable) this.dragTarget.absEl.highlight(undefined, this.dragColor);
+  }
+}
+
+function mouseMove(ev) {
+  if (!this.dragTarget || !this.dragging || !this.dragTarget.isDraggable) return;
+  var yDist = Math.round((ev.offsetY - this.dragMouseStart.y) / spacing.STEP);
+
+  if (yDist !== this.dragYStep) {
+    this.dragStep = yDist;
+    this.dragTarget.svgEl.setAttribute("transform", "translate(0," + yDist * spacing.STEP + ")");
+  }
+}
+
+function mouseUp(ev) {
+  if (!this.dragTarget) return;
+  this.clearSelection();
+
+  if (this.dragTarget.absEl && this.dragTarget.absEl.highlight) {
+    this.selected = [this.dragTarget.absEl];
+    this.dragTarget.absEl.highlight(undefined, this.selectionColor);
+  }
+
+  this.notifySelect(this.dragTarget, this.dragStep);
+  this.dragTarget = null;
+}
+
+EngraverController.prototype.recordHistory = function (svgEl, notSelectable) {
+  var isNote = this.currentAbsEl && this.currentAbsEl.abcelem && this.currentAbsEl.abcelem.el_type === "note" && !this.currentAbsEl.abcelem.rest;
+  var box = svgEl.getBBox();
+  this.history.push({
+    absEl: this.currentAbsEl,
+    svgEl: svgEl,
+    dim: {
+      left: Math.round(box.x),
+      top: Math.round(box.y),
+      right: Math.round(box.x + box.width),
+      bottom: Math.round(box.y + box.height)
+    },
+    selectable: notSelectable !== true,
+    isDraggable: isNote
+  });
+};
+
+EngraverController.prototype.combineHistory = function (len, svgEl) {
+  if (len < 2) return;
+  var items = [];
+
+  for (var i = 0; i < len; i++) {
+    items.push(this.history.pop());
+  }
+
+  for (i = 1; i < items.length; i++) {
+    items[0].dim.left = Math.min(items[0].dim.left, items[i].dim.left);
+    items[0].dim.top = Math.min(items[0].dim.top, items[i].dim.top);
+    items[0].dim.right = Math.max(items[0].dim.right, items[i].dim.right);
+    items[0].dim.bottom = Math.max(items[0].dim.bottom, items[i].dim.bottom);
+  }
+
+  items[0].svgEl = svgEl;
+  this.history.push(items[0]);
 };
 
 function calcHorizontalSpacing(isLastLine, stretchLast, targetWidth, lineWidth, spacing, spacingUnits, minSpace) {
@@ -18116,18 +18232,31 @@ EngraverController.prototype.engraveStaffLine = function (staffGroup) {
  */
 
 
-EngraverController.prototype.notifySelect = function (abselem, tuneNumber, classes) {
-  this.clearSelection();
+EngraverController.prototype.notifySelect = function (target, dragStep) {
+  var classes = [];
 
-  if (abselem.highlight) {
-    this.selected = [abselem];
-    abselem.highlight();
+  if (target.absEl.elemset) {
+    var classObj = {};
+
+    for (var j = 0; j < target.absEl.elemset.length; j++) {
+      var es = target.absEl.elemset[j];
+
+      if (es) {
+        var klass = es.getAttribute("class").split(' ');
+
+        for (var k = 0; k < klass.length; k++) {
+          classObj[klass[k]] = true;
+        }
+      }
+    }
+
+    for (var kk = 0; kk < Object.keys(classObj).length; kk++) {
+      classes.push(Object.keys(classObj)[kk]);
+    }
   }
 
-  var abcelem = abselem.abcelem || {};
-
   for (var i = 0; i < this.listeners.length; i++) {
-    this.listeners[i](abcelem, tuneNumber, classes);
+    this.listeners[i](target.absEl.abcelem, target.absEl.tuneNumber, classes, dragStep);
   }
 };
 /**
@@ -18189,7 +18318,7 @@ EngraverController.prototype.rangeHighlight = function (start, end) {
         if (end > elStart && start < elEnd || end === start && end === elEnd) {
           //		if (elems[elem].abcelem.startChar>=start && elems[elem].abcelem.endChar<=end) {
           this.selected[this.selected.length] = elems[elem];
-          elems[elem].highlight();
+          elems[elem].highlight(undefined, this.selectionColor);
         }
       }
     }
@@ -19002,11 +19131,11 @@ RelativeElement.prototype.draw = function (renderer, bartop) {
       break;
 
     case "debug":
-      this.graphelem = renderer.renderText(this.x, renderer.calcY(15), "" + this.c, "debugfont", 'debug-msg', 'start');
+      this.graphelem = renderer.renderText(this.x, renderer.calcY(15), "" + this.c, "debugfont", 'debug-msg', 'start', false, true);
       break;
 
     case "barNumber":
-      this.graphelem = renderer.renderText(this.x, y, "" + this.c, "measurefont", 'bar-number', "middle");
+      this.graphelem = renderer.renderText(this.x, y, "" + this.c, "measurefont", 'bar-number', "middle", false, true);
       break;
 
     case "lyric":
@@ -19136,8 +19265,8 @@ Renderer.prototype.newTune = function (abcTune) {
   this.setPadding(abcTune);
 };
 
-Renderer.prototype.createElemSet = function () {
-  return this.paper.openGroup();
+Renderer.prototype.createElemSet = function (options) {
+  return this.paper.openGroup(options);
 };
 
 Renderer.prototype.closeElemSet = function () {
@@ -19365,6 +19494,8 @@ Renderer.prototype.addStaffPadding = function (lastStaffGroup, thisStaffGroup) {
 
 
 Renderer.prototype.engraveTopText = function (width, abctune) {
+  var el;
+
   if (abctune.metaText.header && this.isPrint) {
     // Note: whether there is a header or not doesn't change any other positioning, so this doesn't change the Y-coordinate.
     // This text goes above the margin, so we'll temporarily move up.
@@ -19377,18 +19508,73 @@ Renderer.prototype.engraveTopText = function (width, abctune) {
   }
 
   if (this.isPrint) this.moveY(this.spacing.top);
-  this.outputTextIf(this.padding.left + width / 2, abctune.metaText.title, 'titlefont', 'title meta-top', this.spacing.title, 0, 'middle');
-  if (abctune.lines[0]) this.outputTextIf(this.padding.left + width / 2, abctune.lines[0].subtitle, 'subtitlefont', 'text meta-top', this.spacing.subtitle, 0, 'middle');
+
+  if (abctune.metaText.title) {
+    this.controller.currentAbsEl = {
+      tuneNumber: this.controller.engraver.tuneNumber,
+      elemset: [],
+      abcelem: {
+        el_type: "title",
+        startChar: -1,
+        endChar: -1,
+        text: abctune.metaText.title
+      }
+    };
+    el = this.outputTextIf(this.padding.left + width / 2, abctune.metaText.title, 'titlefont', 'title meta-top', this.spacing.title, 0, 'middle');
+    this.controller.currentAbsEl.elemset.push(el[2]);
+  }
+
+  if (abctune.lines[0] && abctune.lines[0].subtitle) {
+    this.controller.currentAbsEl = {
+      tuneNumber: this.controller.engraver.tuneNumber,
+      elemset: [],
+      abcelem: {
+        el_type: "subtitle",
+        startChar: -1,
+        endChar: -1,
+        text: abctune.lines[0].subtitle
+      }
+    };
+    el = this.outputTextIf(this.padding.left + width / 2, abctune.lines[0].subtitle, 'subtitlefont', 'text meta-top subtitle', this.spacing.subtitle, 0, 'middle');
+    this.controller.currentAbsEl.elemset.push(el[2]);
+  }
 
   if (abctune.metaText.rhythm || abctune.metaText.origin || abctune.metaText.composer) {
     this.moveY(this.spacing.composer);
-    var rSpace = this.outputTextIf(this.padding.left, abctune.metaText.rhythm, 'infofont', 'meta-top', 0, null, "start");
+    var rSpace;
+
+    if (abctune.metaText.rhythm && abctune.metaText.rhythm.length > 0) {
+      this.controller.currentAbsEl = {
+        tuneNumber: this.controller.engraver.tuneNumber,
+        elemset: [],
+        abcelem: {
+          el_type: "rhythm",
+          startChar: -1,
+          endChar: -1,
+          text: abctune.metaText.rhythm
+        }
+      };
+      rSpace = this.outputTextIf(this.padding.left, abctune.metaText.rhythm, 'infofont', 'meta-top rhythm', 0, null, "start");
+      this.controller.currentAbsEl.elemset.push(rSpace[2]);
+    }
+
     var composerLine = "";
     if (abctune.metaText.composer) composerLine += abctune.metaText.composer;
     if (abctune.metaText.origin) composerLine += ' (' + abctune.metaText.origin + ')';
 
     if (composerLine.length > 0) {
-      var space = this.outputTextIf(this.padding.left + width, composerLine, 'composerfont', 'meta-top', 0, null, "end");
+      this.controller.currentAbsEl = {
+        tuneNumber: this.controller.engraver.tuneNumber,
+        elemset: [],
+        abcelem: {
+          el_type: "composer",
+          startChar: -1,
+          endChar: -1,
+          text: composerLine
+        }
+      };
+      var space = this.outputTextIf(this.padding.left + width, composerLine, 'composerfont', 'meta-top composer', 0, null, "end");
+      this.controller.currentAbsEl.elemset.push(space[2]);
       this.moveY(space[1]);
     } else {
       this.moveY(rSpace[1]);
@@ -19402,9 +19588,35 @@ Renderer.prototype.engraveTopText = function (width, abctune) {
     //	this.moveY(space2.height);
   }
 
-  this.outputTextIf(this.padding.left + width, abctune.metaText.author, 'composerfont', 'meta-top', 0, 0, "end"); //this.skipSpaceY();
+  if (abctune.metaText.author && abctune.metaText.author.length > 0) {
+    this.controller.currentAbsEl = {
+      tuneNumber: this.controller.engraver.tuneNumber,
+      elemset: [],
+      abcelem: {
+        el_type: "author",
+        startChar: -1,
+        endChar: -1,
+        text: abctune.metaText.author
+      }
+    };
+    var space3 = this.outputTextIf(this.padding.left + width, abctune.metaText.author, 'composerfont', 'meta-top author', 0, 0, "end");
+    this.controller.currentAbsEl.elemset.push(space3[2]);
+  }
 
-  this.outputTextIf(this.padding.left, abctune.metaText.partOrder, 'partsfont', 'meta-bottom', 0, 0, "start");
+  if (abctune.metaText.partOrder && abctune.metaText.partOrder.length > 0) {
+    this.controller.currentAbsEl = {
+      tuneNumber: this.controller.engraver.tuneNumber,
+      elemset: [],
+      abcelem: {
+        el_type: "partOrder",
+        startChar: -1,
+        endChar: -1,
+        text: abctune.metaText.partOrder
+      }
+    };
+    var space4 = this.outputTextIf(this.padding.left, abctune.metaText.partOrder, 'partsfont', 'meta-top part-order', 0, 0, "start");
+    this.controller.currentAbsEl.elemset.push(space4[2]);
+  }
 };
 /**
  * Text that goes below the score
@@ -19420,13 +19632,29 @@ Renderer.prototype.engraveExtraText = function (width, abctune) {
   this.voiceNumber = null;
 
   if (abctune.metaText.unalignedWords) {
-    var hash = this.getFontAndAttr("wordsfont", 'meta-bottom');
-    var space = this.getTextSize("i", 'wordsfont', 'meta-bottom');
+    this.controller.currentAbsEl = {
+      tuneNumber: this.controller.engraver.tuneNumber,
+      elemset: [],
+      abcelem: {
+        el_type: "unalignedWords",
+        startChar: -1,
+        endChar: -1,
+        text: abctune.metaText.unalignedWords
+      }
+    };
+    var hash = this.getFontAndAttr("wordsfont", 'meta-bottom unaligned-words');
+    var space = this.getTextSize("i", 'wordsfont', 'meta-bottom unaligned-words');
     if (abctune.metaText.unalignedWords.length > 0) this.moveY(this.spacing.words, 1);
+    var el;
+    var historyLen = this.controller.history.length;
+    if (abctune.metaText.unalignedWords.length > 0) this.createElemSet({
+      klass: "abcjs-unaligned-words"
+    });
 
     for (var j = 0; j < abctune.metaText.unalignedWords.length; j++) {
       if (abctune.metaText.unalignedWords[j] === '') this.moveY(hash.font.size, 1);else if (typeof abctune.metaText.unalignedWords[j] === 'string') {
-        this.outputTextIf(this.padding.left + spacing.INDENT, abctune.metaText.unalignedWords[j], 'wordsfont', 'meta-bottom', 0, 0, "start");
+        el = this.outputTextIf(this.padding.left + spacing.INDENT, abctune.metaText.unalignedWords[j], 'wordsfont', 'meta-bottom unaligned-words', 0, 0, "start");
+        if (el[2]) this.controller.currentAbsEl.elemset.push(el[2]);
       } else {
         var largestY = 0;
         var offsetX = 0;
@@ -19434,8 +19662,9 @@ Renderer.prototype.engraveExtraText = function (width, abctune) {
         for (var k = 0; k < abctune.metaText.unalignedWords[j].length; k++) {
           var thisWord = abctune.metaText.unalignedWords[j][k];
           var type = thisWord.font ? thisWord.font : "wordsfont";
-          var el = this.renderText(this.padding.left + spacing.INDENT + offsetX, this.y, thisWord.text, type, 'meta-bottom', false);
-          var size = this.getTextSize(thisWord.text, type, 'meta-bottom');
+          var el = this.renderText(this.padding.left + spacing.INDENT + offsetX, this.y, thisWord.text, type, 'meta-bottom unaligned-words', false);
+          this.controller.currentAbsEl.elemset.push(el);
+          var size = this.getTextSize(thisWord.text, type, 'meta-bottom unaligned-words');
           largestY = Math.max(largestY, size.height);
           offsetX += size.width; // If the phrase ends in a space, then that is not counted in the width, so we need to add that in ourselves.
 
@@ -19448,9 +19677,23 @@ Renderer.prototype.engraveExtraText = function (width, abctune) {
       }
     }
 
-    if (abctune.metaText.unalignedWords.length > 0) this.moveY(hash.font.size, 2);
+    if (abctune.metaText.unalignedWords.length > 0) {
+      this.moveY(hash.font.size, 2);
+      var unalignedGroup = this.closeElemSet();
+      this.controller.combineHistory(this.controller.history.length - historyLen, unalignedGroup);
+    }
   }
 
+  this.controller.currentAbsEl = {
+    tuneNumber: this.controller.engraver.tuneNumber,
+    elemset: [],
+    abcelem: {
+      el_type: "extraText",
+      startChar: -1,
+      endChar: -1,
+      text: ""
+    }
+  };
   var extraText = "";
   if (abctune.metaText.book) extraText += "Book: " + abctune.metaText.book + "\n";
   if (abctune.metaText.source) extraText += "Source: " + abctune.metaText.source + "\n";
@@ -19461,13 +19704,32 @@ Renderer.prototype.engraveExtraText = function (width, abctune) {
   if (abctune.metaText['abc-copyright']) extraText += "Copyright: " + abctune.metaText['abc-copyright'] + "\n";
   if (abctune.metaText['abc-creator']) extraText += "Creator: " + abctune.metaText['abc-creator'] + "\n";
   if (abctune.metaText['abc-edited-by']) extraText += "Edited By: " + abctune.metaText['abc-edited-by'] + "\n";
-  this.outputTextIf(this.padding.left, extraText, 'historyfont', 'meta-bottom', this.spacing.info, 0, "start");
+
+  if (extraText.length > 0) {
+    this.controller.currentAbsEl.abcelem.text = extraText;
+  }
+
+  el = this.outputTextIf(this.padding.left, extraText, 'historyfont', 'meta-bottom extra-text', this.spacing.info, 0, "start");
+  if (el[2]) this.controller.currentAbsEl.elemset.push(el[2]);
 
   if (abctune.metaText.footer && this.isPrint) {
-    // Note: whether there is a footer or not doesn't change any other positioning, so this doesn't change the Y-coordinate.
-    this.outputTextIf(this.padding.left, abctune.metaText.footer.left, 'footerfont', 'header meta-bottom', 0, null, 'start');
-    this.outputTextIf(this.padding.left + width / 2, abctune.metaText.footer.center, 'footerfont', 'header meta-bottom', 0, null, 'middle');
-    this.outputTextIf(this.padding.left + width, abctune.metaText.footer.right, 'footerfont', 'header meta-bottom', 0, null, 'end');
+    this.controller.currentAbsEl = {
+      tuneNumber: this.controller.engraver.tuneNumber,
+      elemset: [],
+      abcelem: {
+        el_type: "footer",
+        startChar: -1,
+        endChar: -1,
+        text: ""
+      }
+    }; // Note: whether there is a footer or not doesn't change any other positioning, so this doesn't change the Y-coordinate.
+
+    el = this.outputTextIf(this.padding.left, abctune.metaText.footer.left, 'footerfont', 'header meta-bottom', 0, null, 'start');
+    if (el[2]) this.controller.currentAbsEl.elemset.push(el[2]);
+    el = this.outputTextIf(this.padding.left + width / 2, abctune.metaText.footer.center, 'footerfont', 'header meta-bottom', 0, null, 'middle');
+    if (el[2]) this.controller.currentAbsEl.elemset.push(el[2]);
+    el = this.outputTextIf(this.padding.left + width, abctune.metaText.footer.right, 'footerfont', 'header meta-bottom', 0, null, 'end');
+    if (el[2]) this.controller.currentAbsEl.elemset.push(el[2]);
   }
 };
 /**
@@ -19515,7 +19777,7 @@ Renderer.prototype.outputSeparator = function (separator) {
 
 
 Renderer.prototype.outputSubtitle = function (width, subtitle) {
-  this.outputTextIf(this.padding.left + width / 2, subtitle, 'subtitlefont', 'text meta-top', this.spacing.subtitle, 0, 'middle');
+  this.outputTextIf(this.padding.left + width / 2, subtitle, 'subtitlefont', 'text subtitle', this.spacing.subtitle, 0, 'middle');
 };
 /**
  * Begin a group of glyphs that will always be moved, scaled and highlighted together
@@ -19573,6 +19835,7 @@ Renderer.prototype.endGroup = function (klass) {
     fill: "#000000",
     'class': this.addClasses(klass)
   });
+  this.controller.recordHistory(ret);
   this.path = [];
   if (this.doRegression) this.addToRegression(ret);
   return ret;
@@ -19691,6 +19954,7 @@ Renderer.prototype.printSymbol = function (x, offset, symbol, scalex, scaley, kl
       var s = symbol.charAt(i);
       ycorr = glyphs.getYCorr(s);
       el = glyphs.printSymbol(x + dx, this.calcY(offset + ycorr), s, this.paper, klass);
+      this.controller.recordHistory(el);
 
       if (el) {
         if (this.doRegression) this.addToRegression(el); //elemset.push(el);
@@ -19701,6 +19965,7 @@ Renderer.prototype.printSymbol = function (x, offset, symbol, scalex, scaley, kl
       }
     }
 
+    this.controller.recordHistory(el.parentNode);
     return this.paper.closeGroup();
   } else {
     ycorr = glyphs.getYCorr(symbol);
@@ -19709,6 +19974,7 @@ Renderer.prototype.printSymbol = function (x, offset, symbol, scalex, scaley, kl
       this.addPath(glyphs.getPathForSymbol(x, this.calcY(offset + ycorr), symbol, scalex, scaley));
     } else {
       el = glyphs.printSymbol(x, this.calcY(offset + ycorr), symbol, this.paper, klass);
+      this.controller.recordHistory(el);
 
       if (el) {
         if (this.doRegression) this.addToRegression(el);
@@ -19728,6 +19994,7 @@ Renderer.prototype.scaleExistingElem = function (elem, scaleX, scaleY, x, y) {
 
 Renderer.prototype.printPath = function (attrs) {
   var ret = this.paper.path(attrs);
+  if (!attrs.notSelectable) this.controller.recordHistory(ret, true);else this.controller.recordHistory(ret);
   if (this.doRegression) this.addToRegression(ret);
   return ret;
 };
@@ -19737,6 +20004,18 @@ Renderer.prototype.drawBrace = function (xLeft, yTop, yBottom) {
   var yHeight = yBottom - yTop;
   var xCurve = [7.5, -8, 21, 0, 18.5, -10.5, 7.5];
   var yCurve = [0, yHeight / 5.5, yHeight / 3.14, yHeight / 2, yHeight / 2.93, yHeight / 4.88, 0];
+  this.controller.currentAbsEl = {
+    tuneNumber: this.controller.engraver.tuneNumber,
+    elemset: [],
+    abcelem: {
+      el_type: "brace",
+      startChar: -1,
+      endChar: -1
+    }
+  };
+  this.createElemSet({
+    klass: 'brace'
+  });
   var pathString = sprintf("M %f %f C %f %f %f %f %f %f C %f %f %f %f %f %f z", xLeft + xCurve[0], yTop + yCurve[0], xLeft + xCurve[1], yTop + yCurve[1], xLeft + xCurve[2], yTop + yCurve[2], xLeft + xCurve[3], yTop + yCurve[3], xLeft + xCurve[4], yTop + yCurve[4], xLeft + xCurve[5], yTop + yCurve[5], xLeft + xCurve[6], yTop + yCurve[6]);
   var ret1 = this.paper.path({
     path: pathString,
@@ -19753,6 +20032,9 @@ Renderer.prototype.drawBrace = function (xLeft, yTop, yBottom) {
     fill: "#000000",
     'class': this.addClasses('brace')
   });
+  var g = this.closeElemSet();
+  this.controller.recordHistory(g);
+  this.controller.currentAbsEl.elemset.push(g);
 
   if (this.doRegression) {
     this.addToRegression(ret1);
@@ -19794,6 +20076,7 @@ Renderer.prototype.drawArc = function (x1, x2, pitch1, pitch2, above, klass, isT
     fill: "#000000",
     'class': this.addClasses(klass)
   });
+  this.controller.recordHistory(ret);
   if (this.doRegression) this.addToRegression(ret);
   return ret;
 };
@@ -19827,7 +20110,8 @@ Renderer.prototype.printStave = function (startx, endx, numLines) {
     klass = undefined;
   }
 
-  this.paper.closeGroup();
+  var ret = this.paper.closeGroup();
+  this.controller.recordHistory(ret, true);
 };
 /**
  *
@@ -19915,7 +20199,7 @@ Renderer.prototype.getTextSize = function (text, type, klass, el) {
   return size;
 };
 
-Renderer.prototype.renderText = function (x, y, text, type, klass, anchor, centerVertically) {
+Renderer.prototype.renderText = function (x, y, text, type, klass, anchor, centerVertically, notSelectable) {
   var hash = this.getFontAndAttr(type, klass);
   if (anchor) hash.attr["text-anchor"] = anchor;
   hash.attr.x = x;
@@ -19934,9 +20218,11 @@ Renderer.prototype.renderText = function (x, y, text, type, klass, anchor, cente
   if (hash.font.box) {
     hash.attr.x += 2;
     hash.attr.y += 4;
+    this.createElemSet();
   }
 
   var el = this.paper.text(text, hash.attr);
+  var elem = el;
 
   if (hash.font.box) {
     var size = this.getTextSize(text, type, klass);
@@ -19949,9 +20235,11 @@ Renderer.prototype.renderText = function (x, y, text, type, klass, anchor, cente
       height: size.height + padding * 2 - margin,
       stroke: "#888888",
       fill: "transparent"
-    }); //size.height += 8;
+    });
+    elem = this.closeElemSet();
   }
 
+  this.controller.recordHistory(elem, notSelectable);
   if (this.doRegression) this.addToRegression(el);
   return el;
 };
@@ -19987,7 +20275,7 @@ Renderer.prototype.outputTextIf = function (x, str, kind, klass, marginTop, marg
       if (!isNaN(bb.height)) this.moveY(height / numLines, numLines + marginBottom);
     }
 
-    return [width, height];
+    return [width, height, el];
   }
 
   return [0, 0];
@@ -20813,6 +21101,10 @@ var TempoElement;
   TempoElement.prototype.draw = function (renderer) {
     var x = this.x;
     if (this.pitch === undefined) window.console.error("Tempo Element y-coordinate not set.");
+    var historyLen = renderer.controller.history.length;
+    renderer.createElemSet({
+      klass: "abcjs-tempo"
+    });
     var y = renderer.calcY(this.pitch);
     var text;
 
@@ -20845,6 +21137,9 @@ var TempoElement;
     if (this.tempo.postString) {
       renderer.renderText(x, y, this.tempo.postString, 'tempofont', 'tempo', "start");
     }
+
+    var tempoGroup = renderer.closeElemSet();
+    renderer.controller.combineHistory(renderer.controller.history.length - historyLen, tempoGroup);
   };
 })();
 
@@ -21473,6 +21768,7 @@ VoiceElement.prototype.draw = function (renderer, bartop) {
       justInitializedMeasureNumber = true;
     }
 
+    renderer.controller.currentAbsEl = child;
     child.draw(renderer, this.barto || i === ii - 1 ? bartop : 0);
     if (child.type === 'note' || isNonSpacerRest(child)) renderer.noteNumber++;
 
@@ -21872,6 +22168,7 @@ Svg.prototype.getTextSize = function (text, attr, el) {
 Svg.prototype.openGroup = function (options) {
   options = options ? options : {};
   var el = document.createElementNS(svgNS, "g");
+  if (options.klass) el.setAttribute("class", options.klass);
   if (options.prepend) this.svg.insertBefore(el, this.svg.firstChild);else this.svg.appendChild(el);
   this.currentGroup = el;
   return el;

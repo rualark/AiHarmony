@@ -79,6 +79,9 @@ export function init_abcjs(clickListener) {
   parserParams = {
     clickListener: clickListener,
     add_classes: true,
+    dragging: true,
+    selectionColor: "#33AAFF",
+    dragColor: "#3399FF",
     staffwidth: window.innerWidth - 60,
     wrap: {minSpacing: 1.4, maxSpacing: 2.4, preferredMeasuresPerLine: 16},
     format: {

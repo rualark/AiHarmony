@@ -11,3 +11,13 @@ body {padding-top:4.3rem; background-color:white}
 .btn-lgray {color: black; background-color: #dddddd; border-color: #dddddd;}
 .btn-lblue {color: black; background-color: #bbdefb; border-color: #bbdefb; transition-duration: 0ms;}
 .tooltip{pointer-events:none}
+.alertify-notifier.ajs-right  .ajs-message.ajs-custom.ajs-visible {
+    right: 0;
+    transform: translateX(-100%);
+}
+.ajs-message.ajs-custom {
+    width: calc(100vw - 40px);
+    overflow-wrap:break-word;
+    word-wrap: break-word;
+    color: #4f2f04;  background-color: #eda74c;  border-color: #bf781b;
+}

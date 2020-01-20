@@ -2,7 +2,7 @@ import {nd} from "../notes/NotesData.js";
 import "../MusicXml/musicXmlToData.js";
 import {async_redraw, clicked, get_voice, init_abcjs, notation_zoom} from "../abc/abchelper.js";
 import {
-  future, stop_advancing,
+  future, increment_note, stop_advancing,
   update_selection
 } from "./edit.js";
 import {commandCtrlKeyCodes, commandKeyCodes, init_commands} from "./commands.js";
@@ -32,8 +32,8 @@ window.onkeydown = function (e) {
   return true;
 };
 
-function element_click(abcElem, tuneNumber, classes) {
-  console.log('Click', abcElem, tuneNumber, classes);
+function element_click(abcElem, tuneNumber, classes, move) {
+  console.log('Click', abcElem, tuneNumber, classes, move);
   clicked.element = abcElem;
   clicked.classes = classes;
   clicked.voice = get_voice(classes);
@@ -51,6 +51,11 @@ function element_click(abcElem, tuneNumber, classes) {
     clicked.note = nd.abc_charStarts[clicked.element.startChar];
   }
   stop_advancing();
+  if (move) {
+    increment_note(-move);
+    async_redraw();
+    return;
+  }
   update_selection();
 }
 
@@ -60,7 +65,11 @@ function init() {
   if (getUrlParam('action') === 'shortcuts') {
     setTimeout(showShortcutsModal, 0);
   }
-  setTimeout(load_test_musicXml, 0);
+  setTimeout(after_init, 0);
+}
+
+function after_init() {
+  load_test_musicXml();
 }
 
 init();
