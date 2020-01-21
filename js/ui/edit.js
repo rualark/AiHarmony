@@ -1,6 +1,7 @@
 import {nd} from "../notes/NotesData.js";
 import {async_redraw, clicked, find_selection, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "../abc/abchelper.js";
 import {button_enabled, button_enabled_active} from "./lib/uilib.js";
+import {save_state} from "../state.js";
 
 export let future = {
   advancing: false,
@@ -53,29 +54,7 @@ export function set_len(len) {
     return;
   }
   if (len === note.len) return;
-  if (len > note.len) {
-    let debt = len - note.len;
-    for (let n = el.note + 1; n < notes.length; ++n) {
-      if (debt < notes[n].len) {
-        nd.set_rest(el.voice, n);
-        notes[n].len = notes[n].len - debt;
-        notes[n].startsTie = false;
-        break;
-      }
-      else {
-        debt -= notes[n].len;
-        notes.splice(n, 1);
-        --n;
-        if (!debt) break;
-      }
-    }
-  }
-  else {
-    notes.splice(el.note + 1, 0, {d: 0, alter: 10, len: note.len - len, startsTie: false});
-    nd.set_rest(el.voice, el.note + 1);
-  }
-  note.len = len;
-  note.startsTie = false;
+  nd.set_len(el.voice, el.note, len);
   async_redraw();
 }
 
@@ -107,6 +86,7 @@ export function prev_note() {
   future.advancing = false;
   future.alteration = 10;
   future.len = 0;
+  save_state();
   update_selection();
 }
 
@@ -120,6 +100,7 @@ export function next_note() {
   future.advancing = false;
   future.alteration = 10;
   future.len = 0;
+  save_state();
   update_selection();
 }
 
@@ -273,9 +254,9 @@ export function toggle_alteration(alt) {
   }
   else {
     if (note.alter === alt) {
-      nd.voices[el.voice].notes[el.note].alter = 10;
+      nd.set_alter(el.voice, el.note, 10);
     } else {
-      nd.voices[el.voice].notes[el.note].alter = alt;
+      nd.set_alter(el.voice, el.note, alt);
     }
   }
   async_redraw();
@@ -389,4 +370,11 @@ export function stop_advancing() {
   future.advancing = false;
   future.alteration = 10;
   future.len = 0;
+}
+
+export function new_file() {
+  nd.reset();
+  clicked.note = {voice: 0, note: 0};
+  save_state();
+  async_redraw();
 }

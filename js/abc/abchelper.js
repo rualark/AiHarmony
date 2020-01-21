@@ -1,11 +1,13 @@
 import {dataToAbc} from "./dataToAbc.js";
 import {nd} from "../notes/NotesData.js";
 import {update_selection} from "../ui/edit.js";
+import {save_state} from "../state.js";
+import {start_counter, stop_counter} from "../lib.js";
 
 export let MAX_ABC_NOTE = 60;
 export let MIN_ABC_NOTE = 1;
 
-let engraverParams = {};
+export let engraverParams = {};
 let parserParams = {};
 
 export let abcjs = {};
@@ -44,7 +46,9 @@ export function find_selection() {
 function notation_redraw() {
   parserParams.staffwidth = window.innerWidth - 60;
   $('#filename').html('&nbsp;&nbsp;' + nd.name);
+  start_counter('renderAbc');
   abcjs = ABCJS.renderAbc('notation', dataToAbc(nd), parserParams, engraverParams);
+  stop_counter();
   if (clicked.note) {
     find_selection();
   }
@@ -65,6 +69,8 @@ export function notation_zoom(zoom) {
   engraverParams.scale *= zoom;
   if (engraverParams.scale > 3) engraverParams.scale = 3;
   if (engraverParams.scale < 0.5) engraverParams.scale = 0.5;
+  console.log('Zoom scale', engraverParams.scale);
+  save_state();
   async_redraw();
 }
 

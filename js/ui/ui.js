@@ -12,6 +12,9 @@ import {showClefsModal} from "./modal/clefs.js";
 import {showTimesigModal} from "./modal/timesig.js";
 import {showKeysigModal} from "./modal/keysig.js";
 import {load_test_musicXml} from "../MusicXml/test-xml.js";
+import {init_base64, load_state, load_state_url, save_state} from "../state.js";
+import {readRemoteMusicXmlFile} from "../MusicXml/readRemoteMusicXml.js";
+import {cleanUrl} from "../lib.js";
 
 window.onresize = function() {
   async_redraw();
@@ -55,6 +58,8 @@ function element_click(abcElem, tuneNumber, classes, move) {
     increment_note(-move);
     async_redraw();
     return;
+  } else {
+    save_state();
   }
   update_selection();
 }
@@ -62,14 +67,24 @@ function element_click(abcElem, tuneNumber, classes, move) {
 function init() {
   init_commands();
   init_abcjs(element_click);
-  if (getUrlParam('action') === 'shortcuts') {
-    setTimeout(showShortcutsModal, 0);
-  }
   setTimeout(after_init, 0);
 }
 
 function after_init() {
-  load_test_musicXml();
+  init_base64();
+  if (getUrlParam('state')) {
+    load_state_url(getUrlParam('state'));
+    window.history.pushState("", "", cleanUrl());
+    return;
+  }
+  load_state();
+  if (getUrlParam('action') === 'shortcuts') {
+    setTimeout(showShortcutsModal, 0);
+  }
+  if (getUrlParam('load')) {
+    readRemoteMusicXmlFile('musicxml/' + getUrlParam('load').replace('/', '') + '.xml');
+    window.history.pushState("", "", cleanUrl());
+  }
 }
 
 init();

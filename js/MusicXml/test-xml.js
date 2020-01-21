@@ -1,4 +1,4 @@
-import {readMusicXml} from "./readLocalMusicXml.js";
+import {readMusicXml} from "./musicXmlToData.js";
 
 export function load_test_musicXml() {
   readMusicXml(test_xml_string, '');

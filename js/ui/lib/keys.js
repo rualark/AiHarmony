@@ -142,8 +142,8 @@ let keyImages = {
   Backslash: '\\',
   CloseBracket: ')',
   SingleQuote: "'",
-  LeftArrow: '<img src=../../../img/keys/leftArrow.png height=20>',
-  RightArrow: '<img src=../../../img/keys/rightArrow.png height=20>',
-  UpArrow: '<img src=../../../img/keys/upArrow.png height=20>',
-  DownArrow: '<img src=../../../img/keys/downArrow.png height=20>',
+  LeftArrow: '<img src=img/keys/leftArrow.png height=20>',
+  RightArrow: '<img src=img/keys/rightArrow.png height=20>',
+  UpArrow: '<img src=img/keys/upArrow.png height=20>',
+  DownArrow: '<img src=img/keys/downArrow.png height=20>',
 };

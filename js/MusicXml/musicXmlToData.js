@@ -3,6 +3,9 @@ import {nd, supportedNoteLen} from "../notes/NotesData.js";
 import {timesigs} from "../ui/modal/timesig.js";
 import {getBestClef} from "../notes/bestClef.js";
 import {d2c, keysig_imprint} from "../notes/notehelper.js";
+import {start_counter, stop_counter} from "../lib.js";
+import {load_state, save_state} from "../state.js";
+import {async_redraw, clicked} from "../abc/abchelper.js";
 
 export let xmlLoadWarnings = new Set();
 
@@ -10,6 +13,38 @@ let keysigMusicXml2Abc = {
   '7': 'C#', '6': 'F#', '5': 'B', '4': 'E', '3': 'A', '2': 'D', '1': 'G', '0': 'C',
   '-1': 'F', '-2': 'Bb', '-3': 'Eb', '-4': 'Ab', '-5': 'Db', '-6': 'Gb', '-7': 'Cb'
 };
+
+export function readMusicXml(xml, filename) {
+  try {
+    start_counter('musicXmlToData');
+    let error = musicXmlToData(xml);
+    stop_counter();
+    if (error) {
+      load_state();
+      alertify.alert('Error loading MusicXML', error);
+    } else if (xmlLoadWarnings.size) {
+      alertify.notify([...xmlLoadWarnings].join('<br>'), 'custom', 10);
+    }
+    if (filename) {
+      if (filename.endsWith('.xml')) {
+        nd.filename = filename.slice(0, -4);
+      } else {
+        nd.filename = filename;
+      }
+    }
+    if (!nd.name) nd.name = nd.filename;
+    if (!nd.filename) nd.filename = nd.name;
+    clicked.note = {voice: 0, note: 0};
+    save_state();
+  } catch (e) {
+    load_state();
+    console.log(e);
+    alertify.alert('Error loading MusicXML', e.toString());
+    throw e;
+  }
+  console.log(nd);
+  async_redraw();
+}
 
 export function musicXmlToData(txt) {
   xmlLoadWarnings.clear();
@@ -181,4 +216,3 @@ function getBestClefForVoice(notes) {
   }
   return getBestClef(d2c(dmin), d2c(dmax));
 }
-

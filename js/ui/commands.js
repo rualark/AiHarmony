@@ -1,7 +1,7 @@
 import {
   add_part, del_part,
   increment_note,
-  increment_octave, next_note,
+  increment_octave, new_file, next_note,
   prev_note, repeat_element,
   set_len,
   set_note,
@@ -19,6 +19,7 @@ import {showTimesigModal} from "./modal/timesig.js";
 import {showKeysigModal} from "./modal/keysig.js";
 import {showOpenMusicXmlModal} from "../MusicXml/readLocalMusicXml.js";
 import {showDownloadModal} from "./modal/download.js";
+import {showShareModal} from "./modal/share.js";
 
 export function init_commands() {
   for (let command of commands) {
@@ -70,6 +71,13 @@ export let commands = [
     name: '',
   },
   {
+    id: 'new',
+    toolbar: {type: 'image'},
+    keys: [],
+    command: () => { new_file() },
+    name: 'New file',
+  },
+  {
     id: 'open',
     toolbar: {type: 'image'},
     keys: ['Ctrl+O'],
@@ -82,6 +90,13 @@ export let commands = [
     keys: ['Ctrl+S'],
     command: () => { showDownloadModal() },
     name: 'Download music',
+  },
+  {
+    id: 'share',
+    toolbar: {type: 'image'},
+    keys: [],
+    command: () => { showShareModal() },
+    name: 'Share music',
   },
   { separator: true },
   {

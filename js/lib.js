@@ -68,7 +68,7 @@ let global_start_counter;
 let local_start_counter;
 let counter_name;
 
-export function start_counter(name, global_start=false) {
+export function start_counter(name, global_start=true) {
   let now = new Date();
   counter_name = name;
   if (!global_start_counter || global_start) {
@@ -85,4 +85,8 @@ export function stop_counter() {
     st += ` (total ${(now - global_start_counter) / 1000} s)`;
   }
   console.log(st);
+}
+
+export function cleanUrl() {
+  return window.location.href.split('?')[0].replace('#', '');
 }

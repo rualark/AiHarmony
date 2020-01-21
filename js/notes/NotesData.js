@@ -1,10 +1,25 @@
 import {abc2alter, abc2d, d2abc, keysig_imprint} from "./notehelper.js";
+import {save_state} from "../state.js";
 
 export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
 
 // alter = 0 is natural. alter = 10 is no accidental (inherits key)
 
 class NotesData {
+  save_state() {
+    save_state();
+  }
+
+  set_note(v, n, d) {
+    this.voices[v].notes[n].d = d;
+    this.save_state();
+  }
+
+  set_alter(v, n, alt) {
+    this.voices[v].notes[n].alter = alt;
+    this.save_state();
+  }
+
   set_rest(v, n) {
     this.set_note(v, n, 0);
     this.voices[v].notes[n].alter = 10;
@@ -12,15 +27,36 @@ class NotesData {
     if (n) {
       this.voices[v].notes[n - 1].startsTie = false;
     }
+    this.save_state();
   }
 
-  get_voice_len(v) {
-    let len = 0;
-    for (let n = 0; n < this.voices[v].notes.length; ++n) {
-      let nt = this.voices[v].notes[n];
-      len += nt.len;
+  set_len(v, ni, len) {
+    let notes = this.voices[v].notes;
+    let note = notes[ni];
+    if (len > note.len) {
+      let debt = len - note.len;
+      for (let n = ni + 1; n < notes.length; ++n) {
+        if (debt < notes[n].len) {
+          nd.set_rest(v, n);
+          notes[n].len = notes[n].len - debt;
+          notes[n].startsTie = false;
+          break;
+        }
+        else {
+          debt -= notes[n].len;
+          notes.splice(n, 1);
+          --n;
+          if (!debt) break;
+        }
+      }
     }
-    return len;
+    else {
+      notes.splice(ni + 1, 0, {d: 0, alter: 10, len: note.len - len, startsTie: false});
+      nd.set_rest(v, ni + 1);
+    }
+    note.len = len;
+    note.startsTie = false;
+    this.save_state();
   }
 
   add_voice(v) {
@@ -36,11 +72,13 @@ class NotesData {
     for (let m = 0; m < measures; ++m) {
       vc.notes.push({d: 0, alter: 10, len: mlen, startsTie: false});
     }
+    this.save_state();
   }
 
   del_voice(v) {
     if (v == null) return;
     this.voices.splice(v, 1);
+    this.save_state();
   }
 
   append_measure() {
@@ -48,6 +86,7 @@ class NotesData {
       let vc = this.voices[v];
       vc.notes.push({d: 0, alter: 10, len: this.timesig.measure_len, startsTie: false});
     }
+    this.save_state();
   }
 
   set_keysig(keysig) {
@@ -79,6 +118,7 @@ class NotesData {
       }
     }
     this.keysig = keysig;
+    this.save_state();
   }
 
   set_timesig(timesig) {
@@ -109,6 +149,7 @@ class NotesData {
       }
       //console.log(vc.notes);
     }
+    this.save_state();
   }
 
   reset() {
@@ -170,13 +211,17 @@ class NotesData {
     this.abc_charStarts = [];
   }
 
-  constructor() {
-    this.reset();
+  get_voice_len(v) {
+    let len = 0;
+    for (let n = 0; n < this.voices[v].notes.length; ++n) {
+      let nt = this.voices[v].notes[n];
+      len += nt.len;
+    }
+    return len;
   }
 
-  set_note(v, n, d) {
-    //this.voices[v].notes[n].abc_note = d2abc(d);
-    this.voices[v].notes[n].d = d;
+  constructor() {
+    this.reset();
   }
 }
 
