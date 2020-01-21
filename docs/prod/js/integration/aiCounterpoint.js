@@ -47,7 +47,7 @@ export function sendToAic() {
       waitForAic();
     },
     error: function (error) {
-      alertify.error('Error connecting to Artinfuser Counterpoint: ' + error.status);
+      alertify.alert('Error connecting to Artinfuser Counterpoint', 'Error ' + error.status);
       setAicState('ready');
     }
   });
@@ -55,9 +55,8 @@ export function sendToAic() {
 
 function getAicData(data) {
   let spl = data.split('\n');
-  //console.log(spl, spl.length < 3, spl[0] !== 'Upload successful', spl[1] !== 'Start successful', isNaN(Number(spl[2])));
+  console.log(spl, spl.length < 3, spl[0] !== 'Upload successful', spl[1] !== 'Start successful', isNaN(Number(spl[2])));
   if (spl.length < 3 || spl[0] !== 'Upload successful' || spl[1] !== 'Start successful' || isNaN(Number(spl[2]))) {
-    alertify.error(data);
     aic.f_id = 0;
     setAicState('ready');
     return;
@@ -90,9 +89,9 @@ function waitForAic() {
     },
     dataType: 'html',
     success: function (data) {
-      //console.log('Aic update', data);
+      console.log('Aic update', data);
       getAicUpdate(data);
-      //console.log(aic);
+      console.log(aic);
       if (aic.j_state === 3) {
         finishAic();
         return;
@@ -100,7 +99,7 @@ function waitForAic() {
       setTimeout(waitForAic, 1000);
     },
     error: function (error) {
-      alertify.error('Error connecting to Artinfuser Counterpoint: ' + error.status);
+      alertify.error('Error connecting to Artinfuser Counterpoint' + error.status);
       setTimeout(waitForAic, 1000);
     }
   });

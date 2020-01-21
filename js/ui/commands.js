@@ -67,7 +67,11 @@ export function init_commands() {
     }
     if (!command.toolbar) continue;
     if (!command.id) continue;
-    st += `<a id='${command.id}' class='btn btn-outline-white ${command.toolbar.disabled ? "disabled " : ""}p-1' href=# role='button' style='min-width: ${mobileOpt[mobileOrTablet].toolbar_button_width}px; font-size: ${command.toolbar.fontSize * mobileOpt[mobileOrTablet].toolbar_font_scale || '1'}em'>`;
+    let tooltip = '';
+    if (!mobileOrTablet) {
+      tooltip = `data-toggle=tooltip data-container=body data-bondary=window data-placement=bottom title="${command.name}"`;
+    }
+    st += `<a ${tooltip} id='${command.id}' class='btn btn-outline-white ${command.toolbar.disabled ? "disabled " : ""}p-1' href=# role='button' style='min-width: ${mobileOpt[mobileOrTablet].toolbar_button_width}px; font-size: ${command.toolbar.fontSize * mobileOpt[mobileOrTablet].toolbar_font_scale || '1'}em'>`;
     if (command.toolbar.type === 'image') {
       command.toolbar.html = `<img id='${command.id}i' src=img/toolbar/${command.id}.png height=${mobileOpt[mobileOrTablet].toolbar_img_height}>`;
     }
