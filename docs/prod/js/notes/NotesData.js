@@ -173,7 +173,7 @@ class NotesData {
 
   reset() {
     this.name = "New exercise";
-    this.filename = "";
+    this.filename = "New-exercise";
     this.keysig = {
       name: 'Am',
       mode: 9, // 0 - major, 2 - dorian, 9 - aeolian
