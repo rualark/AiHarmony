@@ -3,6 +3,7 @@ import {nd} from "../notes/NotesData.js";
 import {update_selection} from "../ui/edit.js";
 import {save_state} from "../state.js";
 import {start_counter, stop_counter} from "../lib.js";
+import {saveState} from "../history.js";
 
 export let MAX_ABC_NOTE = 60;
 export let MIN_ABC_NOTE = 1;
@@ -70,7 +71,7 @@ export function notation_zoom(zoom) {
   if (engraverParams.scale > 3) engraverParams.scale = 3;
   if (engraverParams.scale < 0.5) engraverParams.scale = 0.5;
   console.log('Zoom scale', engraverParams.scale);
-  save_state();
+  saveState();
   async_redraw();
 }
 

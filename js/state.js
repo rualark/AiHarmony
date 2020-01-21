@@ -40,7 +40,7 @@ function b64_ui(st, pos, chars) {
     pow *= 64;
   }
   pos[0] += chars;
-  console.log('b64_ui', pos[0] - chars, chars, st.substr(pos[0] - chars, chars), res);
+  //console.log('b64_ui', pos[0] - chars, chars, st.substr(pos[0] - chars, chars), res);
   return res;
 }
 
@@ -130,39 +130,45 @@ function string2data(st, pos) {
   engraverParams.scale = b64_ui(st, pos, 4) / 1000;
 }
 
-export function save_state() {
-  start_counter('save_state');
-  let st = '';
-  st += data2string();
-  //console.log(st, st.length);
-  let utf16 = LZString.compressToUTF16(st);
-  //console.log(utf16, utf16.length);
+export function save_state_utf16(utf16) {
   localStorage.setItem('aih', utf16);
   stop_counter();
   console.log(`Saved state: ${utf16.length} bytes`);
-  //let b64 = LZString.compressToBase64(st);
-  //console.log(b64, b64.length);
+}
+
+export function save_state() {
+  start_counter('save_state');
+  let plain = '';
+  plain += data2string();
+  let utf16 = LZString.compressToUTF16(plain);
+  save_state_utf16(utf16);
+  return {plain: plain, utf16: utf16};
+}
+
+export function load_state_utf16(utf16) {
+  let plain = LZString.decompressFromUTF16(utf16);
+  string2data(plain, [0]);
+  async_redraw();
+  return plain;
 }
 
 export function load_state() {
   try {
     let utf16 = localStorage.getItem('aih');
-    let st = LZString.decompressFromUTF16(utf16);
-    //console.log(st);
-    string2data(st, [0]);
+    let plain = load_state_utf16(utf16);
+    return {plain: plain, utf16: utf16};
   }
   catch (e) {
     nd.reset();
     async_redraw();
     throw e;
   }
-  async_redraw();
 }
 
 export function save_state_url() {
-  let st = '';
-  st += data2string();
-  let b64 = LZString.compressToBase64(st);
+  let plain = '';
+  plain += data2string();
+  let b64 = LZString.compressToBase64(plain);
   let url = b64.replace(/\//g, '.').replace(/=/g, '_').replace(/\+/g, '-');
   console.log(url);
   return url;
@@ -173,8 +179,8 @@ export function load_state_url(url) {
     console.log(url);
     b64 = url.replace(/\./g, '/').replace(/_/g, '=').replace(/-/g, '+');
     console.log(b64);
-    let st = LZString.decompressFromBase64(b64);
-    string2data(st, [0]);
+    let plain = LZString.decompressFromBase64(b64);
+    string2data(plain, [0]);
   }
   catch (e) {
     nd.reset();

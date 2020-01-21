@@ -15,6 +15,7 @@ import {load_test_musicXml} from "../MusicXml/test-xml.js";
 import {init_base64, load_state, load_state_url, save_state} from "../state.js";
 import {readRemoteMusicXmlFile} from "../MusicXml/readRemoteMusicXml.js";
 import {cleanUrl} from "../lib.js";
+import {loadState, saveState} from "../history.js";
 
 window.onresize = function() {
   async_redraw();
@@ -74,16 +75,17 @@ function after_init() {
   init_base64();
   if (getUrlParam('state')) {
     load_state_url(getUrlParam('state'));
-    window.history.pushState("", "", cleanUrl());
+    saveState();
+    window.history.replaceState("", "", cleanUrl());
     return;
   }
-  load_state();
+  loadState();
   if (getUrlParam('action') === 'shortcuts') {
     setTimeout(showShortcutsModal, 0);
   }
   if (getUrlParam('load')) {
     readRemoteMusicXmlFile('musicxml/' + getUrlParam('load').replace('/', '') + '.xml');
-    window.history.pushState("", "", cleanUrl());
+    window.history.replaceState("", "", cleanUrl());
   }
 }
 

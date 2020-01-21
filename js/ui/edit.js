@@ -2,6 +2,7 @@ import {nd} from "../notes/NotesData.js";
 import {async_redraw, clicked, find_selection, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "../abc/abchelper.js";
 import {button_enabled, button_enabled_active} from "./lib/uilib.js";
 import {save_state} from "../state.js";
+import {saveState} from "../history.js";
 
 export let future = {
   advancing: false,
@@ -83,10 +84,7 @@ export function prev_note() {
   if (state.state !== 'ready') return;
   move_to_previous_note();
   find_selection();
-  future.advancing = false;
-  future.alteration = 10;
-  future.len = 0;
-  save_state();
+  stop_advancing();
   update_selection();
 }
 
@@ -97,10 +95,7 @@ export function next_note() {
   } else {
     find_selection();
   }
-  future.advancing = false;
-  future.alteration = 10;
-  future.len = 0;
-  save_state();
+  stop_advancing();
   update_selection();
 }
 
@@ -162,9 +157,7 @@ export function repeat_element() {
     set_note(notes[n - 1].d % 7);
   }
   move_to_previous_note();
-  future.advancing = false;
-  future.len = 0;
-  future.alteration = 10;
+  stop_advancing();
 }
 
 export function set_rest(advance) {
@@ -373,8 +366,14 @@ export function stop_advancing() {
 }
 
 export function new_file() {
-  nd.reset();
-  clicked.note = {voice: 0, note: 0};
-  save_state();
-  async_redraw();
+  alertify.confirm('New empty file', 'This will delete current file. Download or share file before deleting if needed.',
+    function() {
+      nd.reset();
+      clicked.note = {voice: 0, note: 0};
+      saveState();
+      async_redraw();
+    },
+    function() {
+    }
+  );
 }

@@ -9,7 +9,7 @@ export function showShareModal() {
   st += `<input onClick="this.setSelectionRange(0, this.value.length)" id=shareurl type="text" class="form-control" value="${url}">`;
   st += `<div class="input-group-append">`;
   st += `<button style='margin-top:0px !important; margin-bottom:0px !important' data-clipboard-target=#shareurl class="btn btn-outline-secondary" type="button">`;
-  st += `<img height=15 src=img/clipboard.svg alt='Copy to clipboard'>`;
+  st += `<img height=20 src=img/clipboard.svg alt='Copy to clipboard'>`;
   st += `</button>`;
   st += `</div>`;
   st += `</div>`;

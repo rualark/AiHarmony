@@ -20,6 +20,7 @@ import {showKeysigModal} from "./modal/keysig.js";
 import {showOpenMusicXmlModal} from "../MusicXml/readLocalMusicXml.js";
 import {showDownloadModal} from "./modal/download.js";
 import {showShareModal} from "./modal/share.js";
+import {redoState, undoState} from "../history.js";
 
 export function init_commands() {
   for (let command of commands) {
@@ -39,7 +40,7 @@ export function init_commands() {
     }
     if (!command.toolbar) continue;
     if (!command.id) continue;
-    st += `<a id='${command.id}' class='btn btn-outline-white p-1' href=# role='button' style='min-width: 40px; ${command.toolbar.style || ''}'>`;
+    st += `<a id='${command.id}' class='btn btn-outline-white ${command.toolbar.disabled ? "disabled " : ""}p-1' href=# role='button' style='min-width: 40px; ${command.toolbar.style || ''}'>`;
     if (command.toolbar.type === 'image') {
       command.toolbar.html = `<img src=img/toolbar/${command.id}.png height=35>`;
     }
@@ -97,6 +98,21 @@ export let commands = [
     keys: [],
     command: () => { showShareModal() },
     name: 'Share music',
+  },
+  { separator: true },
+  {
+    id: 'undo',
+    toolbar: {type: 'image', disabled: true},
+    keys: ['Ctrl+Z'],
+    command: () => { undoState() },
+    name: 'Undo',
+  },
+  {
+    id: 'redo',
+    toolbar: {type: 'image', disabled: true},
+    keys: ['Ctrl+Y'],
+    command: () => { redoState() },
+    name: 'Redo',
   },
   { separator: true },
   {
