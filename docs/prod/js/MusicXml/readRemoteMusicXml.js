@@ -4,7 +4,7 @@ function httpGetAsync(theUrl, callback) {
   let xmlHttp = new XMLHttpRequest();
   xmlHttp.onreadystatechange = function() {
     if (xmlHttp.readyState === 4 && xmlHttp.status === 200)
-      callback(xmlHttp.responseText);
+      callback(xmlHttp.responseText, theUrl.split('/').pop());
   };
   xmlHttp.open("GET", theUrl, true); // true for asynchronous
   xmlHttp.send(null);

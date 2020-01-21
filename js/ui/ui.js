@@ -25,11 +25,18 @@ import {loadState, saveState} from "../history.js";
 import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
 import {sendToAic} from "../integration/aiCounterpoint.js";
 
+let keysEnabled = true;
+
+export function enableKeys(enable=true) {
+  keysEnabled = enable;
+}
+
 window.onresize = function() {
   async_redraw();
 };
 
 window.onkeydown = function (e) {
+  if (!keysEnabled) return true;
   if (e.ctrlKey || e.metaKey) {
     if (e.keyCode in commandCtrlKeyCodes) {
       commandCtrlKeyCodes[e.keyCode].command();

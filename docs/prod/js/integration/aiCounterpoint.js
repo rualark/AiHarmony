@@ -107,6 +107,6 @@ function waitForAic() {
 }
 
 function finishAic() {
-  setAicState('success');
+  setAicState('ready');
   window.open('https://artinfuser.com/counterpoint/' + aic.j_url, '_blank');
 }

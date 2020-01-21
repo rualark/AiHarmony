@@ -83,7 +83,6 @@ function data2string() {
   st += ui_b64(nd.timesig.beats_per_measure, 1);
   st += ui_b64(nd.timesig.beat_type, 1);
   st += ui_b64(nd.voices.length, 1);
-  console.log(st);
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
     st += string_b64(nd.voices[v].clef);
@@ -199,17 +198,17 @@ export function state2url() {
   //console.log(plain);
   let b64 = LZString.compressToBase64(plain);
   let url = b64.replace(/\//g, '.').replace(/=/g, '_').replace(/\+/g, '-');
-  console.log(url);
+  //console.log(url);
   return url;
 }
 
 export function url2state(url) {
   try {
-    console.log(url);
+    //console.log(url);
     let b64 = url.replace(/\./g, '/').replace(/_/g, '=').replace(/-/g, '+');
-    console.log(b64);
+    //console.log(b64);
     let plain = LZString.decompressFromBase64(b64);
-    console.log('url2state plain', plain);
+    //console.log('url2state plain', plain);
     string2data(plain, [0]);
   }
   catch (e) {

@@ -37,6 +37,6 @@ export function dataToAbc() {
     }
     abc += '\n';
   }
-  console.log(abc);
+  //console.log(abc);
   return abc;
 }

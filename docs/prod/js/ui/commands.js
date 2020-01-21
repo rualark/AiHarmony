@@ -6,7 +6,7 @@ import {
   set_len,
   set_note,
   set_rest, stop_advancing,
-  toggle_alteration,
+  toggle_alter,
   toggle_dot,
   toggle_tie, voiceChange
 } from "./edit.js";
@@ -23,6 +23,7 @@ import {showShareModal} from "./modal/share.js";
 import {redoState, undoState} from "../history.js";
 import {mobileOrTablet} from "../mobileCheck.js";
 import {sendToAic} from "../integration/aiCounterpoint.js";
+import {enableKeys} from "./ui.js";
 
 let mobileOpt = {
   true: {
@@ -37,21 +38,27 @@ let mobileOpt = {
   },
 };
 
+function setKeyCode(struct, key, command) {
+  if (!(key in keyCodes)) console.error('Unknown key:', key);
+  if (struct[keyCodes[key]] != null) console.error('Duplicate key command:', key);
+  struct[keyCodes[key]] = command;
+}
+
 export function init_commands() {
   for (let command of commands) {
     if (command.keys === undefined) continue;
     for (let key of command.keys) {
       if (key.startsWith('Ctrl+')) {
-        commandCtrlKeyCodes[keyCodes[key.substr(5)]] = command;
+        setKeyCode(commandCtrlKeyCodes, key.substr(5), command);
       }
       else if (key.startsWith('Alt+')) {
-        commandAltKeyCodes[keyCodes[key.substr(4)]] = command;
+        setKeyCode(commandAltKeyCodes, key.substr(4), command);
       }
       else if (key.startsWith('Shift+')) {
-        commandShiftKeyCodes[keyCodes[key.substr(6)]] = command;
+        setKeyCode(commandShiftKeyCodes, key.substr(6), command);
       }
       else {
-        commandKeyCodes[keyCodes[key]] = command;
+        setKeyCode(commandKeyCodes, key, command);
       }
     }
   }
@@ -93,6 +100,20 @@ export function init_commands() {
       return false;
     };
   }
+  document.getElementById('filename').onclick=function(){
+    enableKeys(false);
+    alertify.prompt('Exercise name', '', nd.name,
+      function(evt, value) {
+        enableKeys(true);
+        nd.name = value;
+        $('#filename').html('&nbsp;&nbsp;' + nd.name);
+      },
+      function() {
+        enableKeys(true);
+      }
+    );
+    return false;
+  };
 }
 
 export let commandKeyCodes = {};
@@ -111,7 +132,7 @@ export let commands = [
   {
     id: 'new',
     toolbar: {type: 'image'},
-    keys: ['Ctrl+N'],
+    keys: ['Alt+N'],
     command: () => { new_file() },
     name: 'New file',
   },
@@ -132,7 +153,7 @@ export let commands = [
   {
     id: 'share',
     toolbar: {type: 'image'},
-    keys: [],
+    keys: ['Ctrl+R'],
     command: () => { showShareModal() },
     name: 'Share music',
   },
@@ -162,14 +183,14 @@ export let commands = [
   {
     id: 'len6',
     toolbar: {type: 'image'},
-    keys: ['6', 'Numpad6'],
+    keys: ['1', 'Numpad1'],
     command: () => { set_len(16) },
     name: 'Input whole note',
   },
   {
     id: 'len5',
     toolbar: {type: 'image'},
-    keys: ['5', 'Numpad5'],
+    keys: ['2', 'Numpad2'],
     command: () => { set_len(8) },
     name: 'Input half note',
   },
@@ -183,14 +204,14 @@ export let commands = [
   {
     id: 'len3',
     toolbar: {type: 'image'},
-    keys: ['3', 'Numpad3'],
+    keys: ['8', 'Numpad8'],
     command: () => { set_len(2) },
     name: 'Input 1/8 note',
   },
   {
     id: 'len2',
     toolbar: {type: 'image'},
-    keys: ['2', 'Numpad2'],
+    keys: ['6', 'Numpad6'],
     command: () => { set_len(1) },
     name: 'Input 1/16 note',
   },
@@ -204,7 +225,7 @@ export let commands = [
   {
     id: 'tie',
     toolbar: {type: 'image'},
-    keys: ['Dash'],
+    keys: ['Backslash', 'NumpadDivide'],
     command: () => { toggle_tie() },
     name: 'Input tie between notes',
   },
@@ -263,35 +284,35 @@ export let commands = [
     id: 'dblflat',
     toolbar: {type: 'image'},
     keys: [],
-    command: () => { toggle_alteration(-2) },
+    command: () => { toggle_alter(-2) },
     name: 'Input double flat',
   },
   {
     id: 'flat',
     toolbar: {type: 'image'},
-    keys: ['9', 'Numpad9'],
-    command: () => { toggle_alteration(-1) },
+    keys: ['Dash', 'NumpadSubtract'],
+    command: () => { toggle_alter(-1) },
     name: 'Input flat',
   },
   {
     id: 'natural',
     toolbar: {type: 'image'},
-    keys: ['7', 'Numpad7'],
-    command: () => { toggle_alteration(0) },
+    keys: ['N', 'EqualSign'],
+    command: () => { toggle_alter(0) },
     name: 'Input natural',
   },
   {
     id: 'sharp',
     toolbar: {type: 'image'},
-    keys: ['8', 'Numpad8'],
-    command: () => { toggle_alteration(1) },
+    keys: ['Shift+EqualSign', 'NumpadAdd'],
+    command: () => { toggle_alter(1) },
     name: 'Input sharp',
   },
   {
     id: 'dblsharp',
     toolbar: {type: 'image'},
     keys: [],
-    command: () => { toggle_alteration(2) },
+    command: () => { toggle_alter(2) },
     name: 'Input double sharp',
   },
   { separator: true },
@@ -306,14 +327,14 @@ export let commands = [
   {
     id: 'up8',
     toolbar: {type: 'text', text: '+8ve', fontSize: 1.2},
-    keys: ['Ctrl+UpArrow', 'Shift+UpArrow'],
+    keys: ['Shift+UpArrow'],
     command: () => { increment_octave(1) },
     name: 'Move note up an octave',
   },
   {
     id: 'down8',
     toolbar: {type: 'text', text: '-8ve', fontSize: 1.2},
-    keys: ['Ctrl+DownArrow', 'Shift+DownArrow'],
+    keys: ['Shift+DownArrow'],
     command: () => { increment_octave(-1) },
     name: 'Move note down an octave',
   },
@@ -321,7 +342,7 @@ export let commands = [
   {
     id: 'rest',
     toolbar: {type: 'image'},
-    keys: ['EqualSign', 'Numpad0'],
+    keys: ['0', 'Numpad0'],
     command: () => { set_rest(true) },
     name: 'Input rest',
   },
@@ -373,12 +394,12 @@ export let commands = [
   },
    */
   {
-    keys: ['Alt+UpArrow'],
+    keys: ['Ctrl+UpArrow'],
     command: () => { voiceChange(-1) },
     name: 'Move to higher voice',
   },
   {
-    keys: ['Alt+DownArrow'],
+    keys: ['Ctrl+DownArrow'],
     command: () => { voiceChange(1) },
     name: 'Move to lower voice',
   },
@@ -419,13 +440,13 @@ export let commands = [
   },
   {
     id: 'zoom-in',
-    keys: ['NumpadAdd'],
+    keys: ['Ctrl+NumpadAdd'],
     command: () => { notation_zoom(1.1) },
     name: 'Zoom in',
   },
   {
     id: 'zoom-out',
-    keys: ['NumpadSubtract'],
+    keys: ['Ctrl+NumpadSubtract'],
     command: () => { notation_zoom(0.9) },
     name: 'Zoom out',
   },

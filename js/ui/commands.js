@@ -6,7 +6,7 @@ import {
   set_len,
   set_note,
   set_rest, stop_advancing,
-  toggle_alteration,
+  toggle_alter,
   toggle_dot,
   toggle_tie, voiceChange
 } from "./edit.js";
@@ -23,6 +23,7 @@ import {showShareModal} from "./modal/share.js";
 import {redoState, undoState} from "../history.js";
 import {mobileOrTablet} from "../mobileCheck.js";
 import {sendToAic} from "../integration/aiCounterpoint.js";
+import {enableKeys} from "./ui.js";
 
 let mobileOpt = {
   true: {
@@ -99,6 +100,20 @@ export function init_commands() {
       return false;
     };
   }
+  document.getElementById('filename').onclick=function(){
+    enableKeys(false);
+    alertify.prompt('Exercise name', '', nd.name,
+      function(evt, value) {
+        enableKeys(true);
+        nd.name = value;
+        $('#filename').html('&nbsp;&nbsp;' + nd.name);
+      },
+      function() {
+        enableKeys(true);
+      }
+    );
+    return false;
+  };
 }
 
 export let commandKeyCodes = {};
@@ -269,35 +284,35 @@ export let commands = [
     id: 'dblflat',
     toolbar: {type: 'image'},
     keys: [],
-    command: () => { toggle_alteration(-2) },
+    command: () => { toggle_alter(-2) },
     name: 'Input double flat',
   },
   {
     id: 'flat',
     toolbar: {type: 'image'},
     keys: ['Dash', 'NumpadSubtract'],
-    command: () => { toggle_alteration(-1) },
+    command: () => { toggle_alter(-1) },
     name: 'Input flat',
   },
   {
     id: 'natural',
     toolbar: {type: 'image'},
     keys: ['N', 'EqualSign'],
-    command: () => { toggle_alteration(0) },
+    command: () => { toggle_alter(0) },
     name: 'Input natural',
   },
   {
     id: 'sharp',
     toolbar: {type: 'image'},
     keys: ['Shift+EqualSign', 'NumpadAdd'],
-    command: () => { toggle_alteration(1) },
+    command: () => { toggle_alter(1) },
     name: 'Input sharp',
   },
   {
     id: 'dblsharp',
     toolbar: {type: 'image'},
     keys: [],
-    command: () => { toggle_alteration(2) },
+    command: () => { toggle_alter(2) },
     name: 'Input double sharp',
   },
   { separator: true },

@@ -34,11 +34,11 @@ export function readMusicXml(xml, filename) {
     saveState();
   } catch (e) {
     storage2state();
-    console.log(e);
+    //console.log(e);
     alertify.alert('Error loading MusicXML', e.toString());
     throw e;
   }
-  console.log(nd);
+  //console.log(nd);
   async_redraw();
 }
 
@@ -181,7 +181,7 @@ function checkSupportedTimesig(mxp) {
 function checkImportableMusicXml(mxp) {
   if (mxp.error) return mxp.error;
   mxp.validateMusicXml();
-  console.log(mxp);
+  //console.log(mxp);
   if (mxp.error) return mxp.error;
   if (mxp.mea.length < 2) return "No measures detected in MusicXML";
   let error = checkSupportedTimesig(mxp);

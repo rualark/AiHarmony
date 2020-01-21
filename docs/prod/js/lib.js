@@ -52,7 +52,7 @@ Date.prototype.ymd_his = function() {
 };
 
 export function name2filename(name, filename) {
-  console.log(name, filename);
+  //console.log(name, filename);
   if (filename) return filename;
   let now = new Date();
   let fname = name;
@@ -84,7 +84,7 @@ export function stop_counter() {
   if (global_start_counter !== local_start_counter) {
     st += ` (total ${(now - global_start_counter) / 1000} s)`;
   }
-  console.log(st);
+  //console.log(st);
 }
 
 export function cleanUrl() {

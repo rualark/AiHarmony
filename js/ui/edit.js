@@ -29,7 +29,8 @@ export function toggle_dot() {
   if (future.advancing) {
     len = future.len;
   }
-  if (note.len % 3 === 0) set_len(Math.round(len * 2 / 3));
+  //console.log(len, note.len % 3 === 0);
+  if (len % 3 === 0) set_len(Math.round(len * 2 / 3));
   else set_len(Math.round(len * 1.5));
 }
 
@@ -228,12 +229,13 @@ export function increment_note(dnote) {
   async_redraw();
 }
 
-export function toggle_alteration(alt) {
+export function toggle_alter(alt) {
   if (state.state !== 'ready') return;
   if (!clicked.element || !clicked.element.duration) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
   let note = nd.voices[el.voice].notes[el.note];
-  if (!note.d || future.advancing) {
+  if (!note.d) {
+    future.advancing = true;
     if (future.alteration === alt) future.alteration = 10;
     else future.alteration = alt;
   }
@@ -405,3 +407,4 @@ export function del_bar() {
   saveState();
   async_redraw();
 }
+
