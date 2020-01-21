@@ -5,29 +5,50 @@ import {
   future, increment_note, stop_advancing,
   update_selection
 } from "./edit.js";
-import {commandCtrlKeyCodes, commandKeyCodes, init_commands} from "./commands.js";
+import {
+  commandAltKeyCodes,
+  commandCtrlKeyCodes,
+  commandKeyCodes,
+  commandShiftKeyCodes,
+  init_commands
+} from "./commands.js";
 import {getUrlParam} from "../urlparams.js";
 import {showShortcutsModal} from "./modal/modal.js";
 import {showClefsModal} from "./modal/clefs.js";
 import {showTimesigModal} from "./modal/timesig.js";
 import {showKeysigModal} from "./modal/keysig.js";
 import {load_test_musicXml} from "../MusicXml/test-xml.js";
-import {init_base64, load_state, load_state_url, save_state} from "../state.js";
+import {init_base64, storage2state, url2state, state2storage} from "../state.js";
 import {readRemoteMusicXmlFile} from "../MusicXml/readRemoteMusicXml.js";
 import {cleanUrl} from "../lib.js";
 import {loadState, saveState} from "../history.js";
+import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
+import {sendToAic} from "../integration/aiCounterpoint.js";
 
 window.onresize = function() {
   async_redraw();
 };
 
 window.onkeydown = function (e) {
-  if (e.ctrlKey) {
+  if (e.ctrlKey || e.metaKey) {
     if (e.keyCode in commandCtrlKeyCodes) {
       commandCtrlKeyCodes[e.keyCode].command();
       return false;
     }
-  } else {
+  }
+  else if (e.altKey) {
+    if (e.keyCode in commandAltKeyCodes) {
+      commandAltKeyCodes[e.keyCode].command();
+      return false;
+    }
+  }
+  else if (e.shiftKey) {
+    if (e.keyCode in commandShiftKeyCodes) {
+      commandShiftKeyCodes[e.keyCode].command();
+      return false;
+    }
+  }
+  else {
     if (e.keyCode in commandKeyCodes) {
       commandKeyCodes[e.keyCode].command();
       return false;
@@ -74,7 +95,7 @@ function init() {
 function after_init() {
   init_base64();
   if (getUrlParam('state')) {
-    load_state_url(getUrlParam('state'));
+    url2state(getUrlParam('state'));
     saveState();
     window.history.replaceState("", "", cleanUrl());
     return;

@@ -3,7 +3,7 @@ import {b64_unicode, unicode_b64} from "./base64.js";
 import {async_redraw, clicked, engraverParams} from "./abc/abchelper.js";
 import {start_counter, stop_counter} from "./lib.js";
 
-const ENCODING_VERSION = 3;
+const ENCODING_VERSION = 4;
 export const STATE_VOLATILE_SUFFIX = 6;
 
 let b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -17,6 +17,7 @@ function ui_b64(num, chars) {
   let st = '';
   for (let c=0; c<chars; ++c) {
     let data = i % 64;
+    //console.log(num, i, c, data, b64[data], b64);
     st = b64[data] + st;
     i = Math.floor(i / 64);
   }
@@ -74,9 +75,15 @@ function contig2alter(con) {
 function data2string() {
   let st = '';
   st += ui_b64(ENCODING_VERSION, 2);
+  //console.log(ENCODING_VERSION);
   st += string_b64(nd.name);
   st += string_b64(nd.filename);
-  st += ui_b64(nd.voices.length, 2);
+  st += ui_b64(nd.keysig.fifths + 10, 1);
+  st += ui_b64(nd.keysig.mode, 1);
+  st += ui_b64(nd.timesig.beats_per_measure, 1);
+  st += ui_b64(nd.timesig.beat_type, 1);
+  st += ui_b64(nd.voices.length, 1);
+  console.log(st);
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
     st += string_b64(nd.voices[v].clef);
@@ -110,7 +117,13 @@ function string2data(st, pos) {
   }
   nd.name = b64_string(st, pos);
   nd.filename = b64_string(st, pos);
-  let vcount = b64_ui(st, pos, 2);
+  let fifths = b64_ui(st, pos, 1) - 10;
+  let mode = b64_ui(st, pos, 1);
+  nd.build_keysig(fifths, mode);
+  let beats_per_measure = b64_ui(st, pos, 1);
+  let beat_type = b64_ui(st, pos, 1);
+  nd.build_timesig(beats_per_measure, beat_type);
+  let vcount = b64_ui(st, pos, 1);
   nd.voices = [];
   for (let v=0; v<vcount; ++v) {
     let clef = b64_string(st, pos);
@@ -136,39 +149,41 @@ function string2data(st, pos) {
     }
   }
   engraverParams.scale = b64_ui(st, pos, 4) / 1000;
-  clicked.note.voice = b64_ui(st, pos, 2);
-  clicked.note.note = b64_ui(st, pos, 4);
+  let v = b64_ui(st, pos, 2);
+  let n = b64_ui(st, pos, 4);
+  clicked.note = {voice: v, note: n};
   if (clicked.note.voice === 64*64 - 1) {
     clicked.note = undefined;
   }
 }
 
-export function save_state_utf16(utf16) {
+export function utf16_storage(utf16) {
   localStorage.setItem('aih', utf16);
   stop_counter();
   console.log(`Saved state: ${utf16.length} bytes`);
 }
 
-export function save_state() {
+export function state2storage() {
   start_counter('save_state');
   let plain = '';
   plain += data2string();
+  //console.log('state2storage plain', plain);
   let utf16 = LZString.compressToUTF16(plain);
-  save_state_utf16(utf16);
+  utf16_storage(utf16);
   return {plain: plain, utf16: utf16};
 }
 
-export function load_state_utf16(utf16) {
+export function storage_utf16(utf16) {
   let plain = LZString.decompressFromUTF16(utf16);
   string2data(plain, [0]);
   async_redraw();
   return plain;
 }
 
-export function load_state() {
+export function storage2state() {
   try {
     let utf16 = localStorage.getItem('aih');
-    let plain = load_state_utf16(utf16);
+    let plain = storage_utf16(utf16);
     return {plain: plain, utf16: utf16};
   }
   catch (e) {
@@ -178,21 +193,23 @@ export function load_state() {
   }
 }
 
-export function save_state_url() {
+export function state2url() {
   let plain = '';
   plain += data2string();
+  //console.log(plain);
   let b64 = LZString.compressToBase64(plain);
   let url = b64.replace(/\//g, '.').replace(/=/g, '_').replace(/\+/g, '-');
   console.log(url);
   return url;
 }
 
-export function load_state_url(url) {
+export function url2state(url) {
   try {
     console.log(url);
-    b64 = url.replace(/\./g, '/').replace(/_/g, '=').replace(/-/g, '+');
+    let b64 = url.replace(/\./g, '/').replace(/_/g, '=').replace(/-/g, '+');
     console.log(b64);
     let plain = LZString.decompressFromBase64(b64);
+    console.log('url2state plain', plain);
     string2data(plain, [0]);
   }
   catch (e) {

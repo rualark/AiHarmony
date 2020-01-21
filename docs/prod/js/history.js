@@ -1,4 +1,4 @@
-import {load_state, load_state_utf16, save_state, save_state_utf16, STATE_VOLATILE_SUFFIX} from "./state.js";
+import {storage2state, storage_utf16, state2storage, utf16_storage, STATE_VOLATILE_SUFFIX} from "./state.js";
 import {stop_advancing} from "./ui/edit.js";
 import {nd} from "./notes/NotesData.js";
 import {async_redraw} from "./abc/abchelper.js";
@@ -38,7 +38,7 @@ function compilePlain(pos) {
     let res1 = h.p1 ? res.slice(0, h.p1) : '';
     let res2 = h.p2 ? res.slice(res.length - h.p2) : '';
     res = res1 + h.patch + res2;
-    console.log('compilePlain', chain, res1, h.patch, res2, res);
+    //console.log('compilePlain', chain, res1, h.patch, res2, res);
   }
   return res + history[pos].suffix;
 }
@@ -64,12 +64,12 @@ function makePatch(st1, st2) {
     else break;
   }
   let patch = st2.slice(p1, st2.length - p2);
-  console.log('Patch', p1, p2, st1.length, st2.length, patch, st1, st2);
+  //console.log('Patch', p1, p2, st1.length, st2.length, patch, st1, st2);
   return {p1: p1, p2: p2, patch: patch};
 }
 
 function newHist(state) {
-  console.log('newHist', history_pos, state);
+  //console.log('newHist', history_pos, state);
   if (history_pos < 0) return {chain: 0, utf16: state.utf16};
   if (history[history_pos].chain > MAX_HISTORY_CHAIN) return {chain: 0, utf16: state.utf16};
   let plain = compilePlain(history_pos);
@@ -97,11 +97,11 @@ function pushState(state) {
 }
 
 export function loadState() {
-  pushState(load_state());
+  pushState(storage2state());
 }
 
 export function saveState() {
-  pushState(save_state());
+  pushState(state2storage());
 }
 
 export function undoState() {
@@ -111,8 +111,8 @@ export function undoState() {
   try {
     history_pos--;
     let utf16 = getHistoryUtf16(history_pos);
-    load_state_utf16(utf16);
-    save_state_utf16(utf16);
+    storage_utf16(utf16);
+    utf16_storage(utf16);
     stop_advancing();
     updateUndoRedoButtons();
     console.log('History', history, history_pos, historySize());
@@ -130,7 +130,9 @@ export function redoState() {
     return false;
   }
   history_pos++;
-  load_state_utf16(getHistoryUtf16(history_pos));
+  let utf16 = getHistoryUtf16(history_pos);
+  storage_utf16(utf16);
+  utf16_storage(utf16);
   stop_advancing();
   updateUndoRedoButtons();
   console.log('History', history, history_pos, historySize());

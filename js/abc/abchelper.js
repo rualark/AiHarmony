@@ -1,7 +1,7 @@
 import {dataToAbc} from "./dataToAbc.js";
 import {nd} from "../notes/NotesData.js";
 import {update_selection} from "../ui/edit.js";
-import {save_state} from "../state.js";
+import {state2storage} from "../state.js";
 import {start_counter, stop_counter} from "../lib.js";
 import {saveState} from "../history.js";
 
@@ -76,9 +76,11 @@ export function notation_zoom(zoom) {
 }
 
 export function get_voice(classes) {
-  for (let cl of classes[0].split(' ')) {
-    if (!cl.startsWith('abcjs-v')) continue;
-    return Number(cl[7]);
+  for (let cla of classes) {
+    for (let cl of cla.split(' ')) {
+      if (!cl.startsWith('abcjs-v')) continue;
+      return Number(cl[7]);
+    }
   }
 }
 

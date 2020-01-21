@@ -2,18 +2,13 @@ import {MusicXmlParser} from "./MusicXmlParser.js";
 import {nd, supportedNoteLen} from "../notes/NotesData.js";
 import {timesigs} from "../ui/modal/timesig.js";
 import {getBestClef} from "../notes/bestClef.js";
-import {d2c, keysig_imprint} from "../notes/notehelper.js";
+import {d2c, fifths2keysig, keysig_imprint} from "../notes/notehelper.js";
 import {start_counter, stop_counter} from "../lib.js";
-import {load_state, save_state} from "../state.js";
+import {storage2state} from "../state.js";
 import {async_redraw, clicked} from "../abc/abchelper.js";
 import {saveState} from "../history.js";
 
 export let xmlLoadWarnings = new Set();
-
-let keysigMusicXml2Abc = {
-  '7': 'C#', '6': 'F#', '5': 'B', '4': 'E', '3': 'A', '2': 'D', '1': 'G', '0': 'C',
-  '-1': 'F', '-2': 'Bb', '-3': 'Eb', '-4': 'Ab', '-5': 'Db', '-6': 'Gb', '-7': 'Cb'
-};
 
 export function readMusicXml(xml, filename) {
   try {
@@ -21,7 +16,7 @@ export function readMusicXml(xml, filename) {
     let error = musicXmlToData(xml);
     stop_counter();
     if (error) {
-      load_state();
+      storage2state();
       alertify.alert('Error loading MusicXML', error);
     } else if (xmlLoadWarnings.size) {
       alertify.notify([...xmlLoadWarnings].join('<br>'), 'custom', 10);
@@ -38,7 +33,7 @@ export function readMusicXml(xml, filename) {
     clicked.note = {voice: 0, note: 0};
     saveState();
   } catch (e) {
-    load_state();
+    storage2state();
     console.log(e);
     alertify.alert('Error loading MusicXML', e.toString());
     throw e;
@@ -81,10 +76,9 @@ export function musicXmlToData(txt) {
         let note = mxp.notes[vi][m][ni];
         if (note.fifths !== 100) {
           if (nd.keysig.fifths == null) {
-            nd.keysig.fifths = note.fifths;
-            nd.keysig.name = keysigMusicXml2Abc[note.fifths];
+            nd.build_keysig(note.fifths, 0);
             ki = keysig_imprint(nd.keysig.fifths);
-            //console.log(note.fifths, keysigMusicXml2Abc[note.fifths]);
+            //console.log(note.fifths, fifths2keysig[note.fifths]);
           } else if (nd.keysig.fifths !== note.fifths) {
             xmlLoadWarnings.add("Key signature changes in MusicXml: ignoring");
           }

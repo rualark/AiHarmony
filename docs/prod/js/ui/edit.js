@@ -1,7 +1,7 @@
 import {nd} from "../notes/NotesData.js";
 import {async_redraw, clicked, find_selection, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "../abc/abchelper.js";
 import {button_enabled, button_enabled_active} from "./lib/uilib.js";
-import {save_state} from "../state.js";
+import {state2storage} from "../state.js";
 import {saveState} from "../history.js";
 
 export let future = {
@@ -287,12 +287,15 @@ export function toggle_tie() {
 }
 
 export function add_part() {
+  if (state.state !== 'ready') return;
+  if (nd.voices.length > 62) return;
   if (typeof clicked.element.abselem === 'undefined') return;
   nd.add_voice(clicked.voice + 1);
   async_redraw();
 }
 
 export function del_part() {
+  if (state.state !== 'ready') return;
   if (typeof clicked.element.abselem === 'undefined') return;
   if (nd.voices.length === 1) return;
   nd.del_voice(clicked.voice);
@@ -302,7 +305,7 @@ export function del_part() {
 }
 
 export function update_selection() {
-  button_enabled('add_part', typeof clicked.element.abselem !== 'undefined');
+  button_enabled('add_part', typeof clicked.element.abselem !== 'undefined' && nd.voices.length < 63);
   button_enabled('del_part', typeof clicked.element.abselem !== 'undefined' && nd.voices.length > 1);
   button_enabled_active('note_c', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 0);
   button_enabled_active('note_d', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 1);
@@ -358,6 +361,7 @@ export function stop_advancing() {
 }
 
 export function new_file() {
+  if (state.state !== 'ready') return;
   nd.reset();
   clicked.note = {voice: 0, note: 0};
   saveState();
@@ -370,4 +374,34 @@ export function new_file() {
     }
   );
   */
+}
+
+export function voiceChange(dv) {
+  if (state.state !== 'ready') return;
+  if (!clicked.element || !clicked.element.duration) return false;
+  if (clicked.note == null) return false;
+  if (clicked.note.voice + dv < 0 || clicked.note.voice + dv >= nd.voices.length) return false;
+  let note = nd.voices[clicked.note.voice].notes[clicked.note.note];
+  clicked.note.voice += dv;
+  clicked.note.note = nd.getClosestNote(clicked.note.voice, note.step);
+  find_selection();
+  stop_advancing();
+  saveState();
+  update_selection();
+}
+
+export function del_bar() {
+  if (state.state !== 'ready') return;
+  if (!clicked.element || !clicked.element.duration) return false;
+  if (clicked.note == null) return false;
+  let el = nd.abc_charStarts[clicked.element.startChar];
+  let nt = nd.voices[el.voice].notes.slice(-1)[0];
+  if (nt.step + nt.len <= nd.timesig.measure_len) return false;
+  nd.delBar(el.voice, el.note);
+  if (el.note >= nd.voices[el.voice].notes.length) {
+    clicked.note.note = nd.voices[el.voice].notes.length - 1;
+  }
+  stop_advancing();
+  saveState();
+  async_redraw();
 }

@@ -62,3 +62,8 @@ export function abc2alter(abc) {
   if (abc === '^^') return 2;
   if (abc === '__') return -2;
 }
+
+export let fifths2keysig = {
+  '7': 'C#', '6': 'F#', '5': 'B', '4': 'E', '3': 'A', '2': 'D', '1': 'G', '0': 'C',
+  '-1': 'F', '-2': 'Bb', '-3': 'Eb', '-4': 'Ab', '-5': 'Db', '-6': 'Gb', '-7': 'Cb'
+};

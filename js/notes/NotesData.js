@@ -1,5 +1,5 @@
-import {abc2alter, abc2d, d2abc, keysig_imprint} from "./notehelper.js";
-import {save_state} from "../state.js";
+import {abc2alter, abc2d, d2abc, fifths2keysig, keysig_imprint} from "./notehelper.js";
+import {state2storage} from "../state.js";
 import {saveState} from "../history.js";
 
 export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
@@ -94,6 +94,18 @@ class NotesData {
       vc.notes.push({d: 0, alter: 10, len: this.timesig.measure_len, startsTie: false});
     }
     if (saveState) this.saveState();
+  }
+
+  build_keysig(fifths, mode) {
+    this.keysig.fifths = fifths;
+    this.keysig.mode = mode;
+    this.keysig.name = fifths2keysig[fifths];
+  }
+
+  build_timesig(beats_per_measure, beat_type) {
+    this.timesig.beats_per_measure = beats_per_measure;
+    this.timesig.beat_type = beat_type;
+    this.timesig.measure_len = this.timesig.beats_per_measure * 16 / this.timesig.beat_type;
   }
 
   set_keysig(keysig) {
@@ -225,6 +237,29 @@ class NotesData {
       len += nt.len;
     }
     return len;
+  }
+
+  getClosestNote(v, pos) {
+    for (let n = 0; n < this.voices[v].notes.length; ++n) {
+      let nt = this.voices[v].notes[n];
+      if (nt.step <= pos && nt.step + nt.len > pos) return n;
+    }
+    return 0;
+  }
+
+  delBar(v, n) {
+    let p1 = Math.floor(this.voices[v].notes[n].step / this.timesig.measure_len) * this.timesig.measure_len;
+    let p2 = p1 + this.timesig.measure_len;
+    for (let v=0; v<this.voices.length; ++v) {
+      let vc = this.voices[v];
+      for (let n = 0; n < vc.notes.length; ++n) {
+        let nt = vc.notes[n];
+        if (nt.step >= p1 && nt.step + nt.len <= p2) {
+          vc.notes.splice(n, 1);
+          --n;
+        }
+      }
+    }
   }
 
   constructor() {

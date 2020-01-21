@@ -1,9 +1,9 @@
-import {save_state_url} from "../../state.js";
+import {state2url} from "../../state.js";
 import {cleanUrl} from "../../lib.js";
 
 export function showShareModal() {
   let st = '';
-  let url = cleanUrl() + '?state=' + save_state_url();
+  let url = cleanUrl() + '?state=' + state2url();
   st += `Copy link below to share:<br><br>`;
   st += `<div class="input-group mb-3">`;
   st += `<input onClick="this.setSelectionRange(0, this.value.length)" id=shareurl type="text" class="form-control" value="${url}">`;

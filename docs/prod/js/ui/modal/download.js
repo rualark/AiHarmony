@@ -8,7 +8,7 @@ let exportFormats = [
   {name: 'Download as MusicXML', func: downloadAsMusicXml },
   {name: 'Download as SVG', func: downloadAsSvg },
   {name: 'Download as ABC', func: downloadAsAbc },
-  {name: 'Download as MIDI', func: downloadAsMidi },
+  // {name: 'Download as MIDI', func: downloadAsMidi },
   {name: 'Download as PDF', func: downloadAsPdf },
   // {name: 'Download as WAV', func: downloadAsABC },
 ];
