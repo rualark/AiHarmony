@@ -1,7 +1,6 @@
 import {dataToAbc} from "./dataToAbc.js";
 import {nd} from "../notes/NotesData.js";
 import {update_selection} from "../ui/edit.js";
-import {state2storage} from "../state.js";
 import {start_counter, stop_counter} from "../lib.js";
 import {saveState} from "../history.js";
 

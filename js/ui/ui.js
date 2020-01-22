@@ -1,8 +1,8 @@
 import {nd} from "../notes/NotesData.js";
 import "../MusicXml/musicXmlToData.js";
-import {async_redraw, clicked, get_voice, init_abcjs, notation_zoom} from "../abc/abchelper.js";
+import {async_redraw, clicked, get_voice, init_abcjs} from "../abc/abchelper.js";
 import {
-  future, increment_note, stop_advancing,
+  increment_note, stop_advancing,
   update_selection
 } from "./edit.js";
 import {
@@ -17,13 +17,10 @@ import {showShortcutsModal} from "./modal/shortcutsModal.js";
 import {showClefsModal} from "./modal/clefs.js";
 import {showTimesigModal} from "./modal/timesig.js";
 import {showKeysigModal} from "./modal/keysig.js";
-import {load_test_musicXml} from "../MusicXml/test-xml.js";
 import {init_base64, storage2state, url2state, state2storage} from "../state.js";
 import {readRemoteMusicXmlFile} from "../MusicXml/readRemoteMusicXml.js";
 import {urlNoParams} from "../lib.js";
 import {loadState, saveState} from "../history.js";
-import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
-import {sendToAic} from "../integration/aiCounterpoint.js";
 
 let keysEnabled = true;
 
