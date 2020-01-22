@@ -1,5 +1,5 @@
 import {fifths2keysig, keysig_imprint} from "./notehelper.js";
-import {saveState} from "../history.js";
+import {saveState} from "../state/history.js";
 
 export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
 

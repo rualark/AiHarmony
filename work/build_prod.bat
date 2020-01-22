@@ -1,6 +1,6 @@
 set pth=..\docs\prod
 
-rmdir /s /q "%pth%"
+rem rmdir /s /q "%pth%"
 
 robocopy /e /mir "..\js" "%pth%\js" *
 robocopy /e /mir "..\img" "%pth%\img" *

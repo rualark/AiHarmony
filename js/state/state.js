@@ -1,7 +1,7 @@
-import {nd} from "./notes/NotesData.js";
+import {nd} from "../notes/NotesData.js";
 import {b64_unicode, unicode_b64} from "./base64.js";
-import {async_redraw, clicked, engraverParams} from "./abc/abchelper.js";
-import {currentTimestamp, start_counter, stop_counter, timestamp2date} from "./lib.js";
+import {async_redraw, clicked, engraverParams} from "../abc/abchelper.js";
+import {currentTimestamp, start_counter, stop_counter, timestamp2date} from "../core/time.js";
 
 const ENCODING_VERSION = 5;
 export const STATE_VOLATILE_SUFFIX = 12;

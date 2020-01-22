@@ -76,7 +76,11 @@ export function init_commands() {
     if (!command.id) continue;
     let tooltip = '';
     if (!mobileOrTablet) {
-      tooltip = `data-toggle=tooltip data-container=body data-bondary=window data-placement=bottom title="${command.name}"`;
+      let title = command.name;
+      if (command.keys != null && command.keys.length) {
+        title += '<br>(shortcut ' + command.keys[0] + ')';
+      }
+      tooltip = `data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${title}"`;
     }
     st += `<a ${tooltip} id='${command.id}' class='btn btn-outline-white ${command.toolbar.disabled ? "disabled " : ""}p-1' href=# role='button' style='min-width: ${mobileOpt[mobileOrTablet].toolbar_button_width}px; font-size: ${command.toolbar.fontSize * mobileOpt[mobileOrTablet].toolbar_font_scale || '1'}em'>`;
     if (command.toolbar.type === 'image') {
@@ -85,7 +89,7 @@ export function init_commands() {
     if (command.toolbar.type === 'text') {
       command.toolbar.html = `${command.toolbar.text}`;
     }
-    st += command.toolbar.html + '</a>&nbsp;';
+    st += command.toolbar.html + '</a>';
   }
   //console.log(st);
   document.getElementById("toolbar").innerHTML = st;

@@ -3,3 +3,7 @@ export function getUrlParam(par) {
   let url = new URL(url_string);
   return url.searchParams.get(par);
 }
+
+export function urlNoParams() {
+  return window.location.href.split('?')[0].replace('#', '');
+}

@@ -1,5 +1,4 @@
-import {abc2alter, abc2d, d2abc, fifths2keysig, keysig_imprint} from "./notehelper.js";
-import {state2storage} from "../state.js";
+import {fifths2keysig, keysig_imprint} from "./notehelper.js";
 import {saveState} from "../history.js";
 
 export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);

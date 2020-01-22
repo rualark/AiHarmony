@@ -1,6 +1,6 @@
 import {dataToMusicXml} from "../../MusicXml/dataToMusicXml.js";
-import {fileSave} from "../../fileSave.js";
-import {name2filename} from "../../lib.js";
+import {fileSave} from "../lib/fileSave.js";
+import {name2filename} from "../../core/string.js";
 import {nd} from "../../notes/NotesData.js";
 import {dataToAbc} from "../../abc/dataToAbc.js";
 

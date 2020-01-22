@@ -1,8 +1,8 @@
 import {nd} from "../notes/NotesData.js";
 import {async_redraw, clicked, find_selection, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "../abc/abchelper.js";
 import {button_enabled, button_enabled_active} from "./lib/uilib.js";
-import {state2storage} from "../state.js";
-import {saveState} from "../history.js";
+import {state2storage} from "../state/state.js";
+import {saveState} from "../state/history.js";
 
 export let future = {
   advancing: false,

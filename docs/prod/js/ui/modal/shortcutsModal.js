@@ -1,6 +1,7 @@
 import {keyicon} from "../lib/keys.js";
 import {commands} from "../commands.js";
 import {trigger_tooltips} from "../../lib.js";
+import {initTooltips} from "../lib/tooltips.js";
 
 export function showShortcutsModal() {
   document.getElementById("ModalTitle").innerHTML = 'Artinfuser Harmony';
@@ -36,6 +37,6 @@ export function showShortcutsModal() {
     }
   }
   document.getElementById("ModalBody").innerHTML = st;
-  trigger_tooltips();
+  initTooltips(200, 100);
   $('#Modal').modal();
 }
