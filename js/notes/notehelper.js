@@ -28,7 +28,6 @@ export function abc2d(st) {
 
 export function d2abc(d) {
   if (!d) return 'z';
-  let oct = d / 7;
   let st;
   if (d >= 42) st = d_abc[d % 7];
   else st = d_abc[d % 7].toUpperCase();

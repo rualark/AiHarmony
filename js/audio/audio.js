@@ -20,7 +20,7 @@ export function play() {
 }
 
 export function play2() {
-  ABCJS.renderMidi("midi1", dataToAbc(nd),
+  ABCJS.renderMidi("midi1", dataToAbc(),
     {
       qpm: 320,
       program: 52,

@@ -48,11 +48,11 @@ function downloadAsSvg() {
 }
 
 function downloadAsAbc() {
-  fileSave(name2filename(nd.name, nd.filename) + '.abc', dataToAbc(nd));
+  fileSave(name2filename(nd.name, nd.filename) + '.abc', dataToAbc());
 }
 
 function downloadAsMidi() {
-  ABCJS.renderMidi("midi-download", dataToAbc(nd), { generateDownload: true, generateInline: false });
+  ABCJS.renderMidi("midi-download", dataToAbc(), { generateDownload: true, generateInline: false });
   let el = $('.abcjs-download-midi > a');
   el.attr('download', name2filename(nd.name, nd.filename) + '.mid');
   el[0].click();

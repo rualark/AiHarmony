@@ -14,6 +14,7 @@ export let timesigs = [
 ];
 
 function timesig_html(beats, value, id) {
+  /*
   let color = '#aaccee';
   if (value === 8) {
     color='#aaeecc';
@@ -21,6 +22,7 @@ function timesig_html(beats, value, id) {
   if (value === 2) {
     color='#eeaacc';
   }
+  */
   let st = '';
   st += `<a id=atimesig${id} class='btn btn-outline-white p-1' href=# role='button' style='min-width: 30px;'>`;
   st += '';

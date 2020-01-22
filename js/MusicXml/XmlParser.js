@@ -51,7 +51,7 @@ export class XmlParser {
   xpathFirstValue(path, node=null) {
     if (!node) node = this.xmlDoc;
     if (this.xmlDoc.evaluate) {
-      let nodes = this.xmlDoc.evaluate(path, this.xmlDoc, null, XPathResult.ANY_TYPE, null);
+      let nodes = this.xmlDoc.evaluate(path, node, null, XPathResult.ANY_TYPE, null);
       let result = nodes.iterateNext();
       if (result && result.childNodes != null && result.childNodes[0] != null) {
         return result.childNodes[0].nodeValue;

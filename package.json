@@ -1,0 +1,28 @@
+{
+  "name": "aiharmony",
+  "version": "1.0.0",
+  "description": "AiHarmony",
+  "main": "js/init.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "test"
+  },
+  "dependencies": {
+    "logrocket": "^1.0.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rualark/aiharmony.git"
+  },
+  "author": "Rualark",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/rualark/aiharmony/issues"
+  },
+  "homepage": "https://github.com/rualark/aiharmony#readme"
+}

@@ -2,7 +2,7 @@ import {MusicXmlParser} from "./MusicXmlParser.js";
 import {nd, supportedNoteLen} from "../notes/NotesData.js";
 import {timesigs} from "../ui/modal/timesig.js";
 import {getBestClef} from "../notes/bestClef.js";
-import {d2c, fifths2keysig, keysig_imprint} from "../notes/notehelper.js";
+import {d2c, keysig_imprint} from "../notes/notehelper.js";
 import {storage2state} from "../state/state.js";
 import {async_redraw, clicked} from "../abc/abchelper.js";
 import {saveState} from "../state/history.js";
