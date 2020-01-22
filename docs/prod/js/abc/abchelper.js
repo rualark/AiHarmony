@@ -1,8 +1,8 @@
 import {dataToAbc} from "./dataToAbc.js";
 import {nd} from "../notes/NotesData.js";
-import {update_selection} from "../ui/edit.js";
-import {start_counter, stop_counter} from "../lib.js";
-import {saveState} from "../history.js";
+import {saveState} from "../state/history.js";
+import {start_counter, stop_counter} from "../core/time.js";
+import {update_selection} from "../ui/notation.js";
 
 export let MAX_ABC_NOTE = 60;
 export let MIN_ABC_NOTE = 1;
@@ -47,7 +47,7 @@ function notation_redraw() {
   parserParams.staffwidth = window.innerWidth - 60;
   $('#filename').html('&nbsp;&nbsp;' + nd.name);
   start_counter('renderAbc');
-  abcjs = ABCJS.renderAbc('notation', dataToAbc(nd), parserParams, engraverParams);
+  abcjs = ABCJS.renderAbc('abc', dataToAbc(), parserParams, engraverParams);
   stop_counter();
   if (clicked.note) {
     find_selection();

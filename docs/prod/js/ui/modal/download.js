@@ -1,6 +1,6 @@
 import {dataToMusicXml} from "../../MusicXml/dataToMusicXml.js";
-import {fileSave} from "../fileSave.js";
-import {name2filename} from "../../lib.js";
+import {fileSave} from "../lib/fileSave.js";
+import {name2filename} from "../../core/string.js";
 import {nd} from "../../notes/NotesData.js";
 import {dataToAbc} from "../../abc/dataToAbc.js";
 
@@ -44,15 +44,15 @@ function saveSvg(svgEl, name) {
 }
 
 function downloadAsSvg() {
-  saveSvg($('#notation').children()[0], name2filename(nd.name, nd.filename) + '.svg');
+  saveSvg($('#abc').children()[0], name2filename(nd.name, nd.filename) + '.svg');
 }
 
 function downloadAsAbc() {
-  fileSave(name2filename(nd.name, nd.filename) + '.abc', dataToAbc(nd));
+  fileSave(name2filename(nd.name, nd.filename) + '.abc', dataToAbc());
 }
 
 function downloadAsMidi() {
-  ABCJS.renderMidi("midi-download", dataToAbc(nd), { generateDownload: true, generateInline: false });
+  ABCJS.renderMidi("midi-download", dataToAbc(), { generateDownload: true, generateInline: false });
   let el = $('.abcjs-download-midi > a');
   el.attr('download', name2filename(nd.name, nd.filename) + '.mid');
   el[0].click();

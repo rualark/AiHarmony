@@ -29,7 +29,7 @@ import {showDownloadModal} from "./modal/download.js";
 import {showShareModal} from "./modal/share.js";
 import {redoState, undoState} from "../state/history.js";
 import {mobileOrTablet} from "../core/mobileCheck.js";
-import {sendToAic} from "../integration/aiCounterpoint.js";
+import {aic, sendToAic} from "../integration/aiCounterpoint.js";
 
 let mobileOpt = {
   true: {
@@ -428,6 +428,14 @@ export let commands = [
     keys: ['Space'],
     command: () => { play() },
     name: 'Playback',
+  },
+  { separator: true },
+  {
+    id: 'support',
+    toolbar: {type: 'image'},
+    keys: [],
+    command: () => { window.open('https://github.com/rualark/AiHarmony/issues', '_blank') },
+    name: 'Create support request',
   },
   /*
   {

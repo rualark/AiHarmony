@@ -2,11 +2,11 @@ import {MusicXmlParser} from "./MusicXmlParser.js";
 import {nd, supportedNoteLen} from "../notes/NotesData.js";
 import {timesigs} from "../ui/modal/timesig.js";
 import {getBestClef} from "../notes/bestClef.js";
-import {d2c, fifths2keysig, keysig_imprint} from "../notes/notehelper.js";
-import {start_counter, stop_counter} from "../lib.js";
-import {storage2state} from "../state.js";
+import {d2c, keysig_imprint} from "../notes/notehelper.js";
+import {storage2state} from "../state/state.js";
 import {async_redraw, clicked} from "../abc/abchelper.js";
-import {saveState} from "../history.js";
+import {saveState} from "../state/history.js";
+import {start_counter, stop_counter} from "../core/time.js";
 
 export let xmlLoadWarnings = new Set();
 

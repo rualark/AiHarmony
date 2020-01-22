@@ -36,4 +36,3 @@ function after_init() {
 
 init();
 
-undefined_func();

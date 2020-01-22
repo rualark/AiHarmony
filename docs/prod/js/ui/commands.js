@@ -1,14 +1,21 @@
 import {
-  add_part, del_bar, del_part,
+  add_part,
+  del_bar,
+  del_part,
   increment_note,
-  increment_octave, new_file, next_note,
-  prev_note, repeat_element,
+  increment_octave,
+  new_file,
+  next_note,
+  prev_note,
+  repeat_element,
   set_len,
   set_note,
-  set_rest, stop_advancing,
+  set_rest,
+  stop_advancing,
   toggle_alter,
   toggle_dot,
-  toggle_tie, voiceChange
+  toggle_tie,
+  voiceChange
 } from "./edit.js";
 import {showShortcutsModal} from "./modal/shortcutsModal.js";
 import {async_redraw, notation_zoom} from "../abc/abchelper.js";
@@ -20,10 +27,9 @@ import {showKeysigModal} from "./modal/keysig.js";
 import {showOpenMusicXmlModal} from "../MusicXml/readLocalMusicXml.js";
 import {showDownloadModal} from "./modal/download.js";
 import {showShareModal} from "./modal/share.js";
-import {redoState, undoState} from "../history.js";
-import {mobileOrTablet} from "../mobileCheck.js";
-import {sendToAic} from "../integration/aiCounterpoint.js";
-import {enableKeys} from "./ui.js";
+import {redoState, undoState} from "../state/history.js";
+import {mobileOrTablet} from "../core/mobileCheck.js";
+import {aic, sendToAic} from "../integration/aiCounterpoint.js";
 
 let mobileOpt = {
   true: {
@@ -38,15 +44,50 @@ let mobileOpt = {
   },
 };
 
+export let keysEnabled = true;
+
+window.onkeydown = function (e) {
+  if (!keysEnabled) return true;
+  if (e.ctrlKey || e.metaKey) {
+    if (e.keyCode in commandCtrlKeyCodes) {
+      commandCtrlKeyCodes[e.keyCode].command();
+      return false;
+    }
+  }
+  else if (e.altKey) {
+    if (e.keyCode in commandAltKeyCodes) {
+      commandAltKeyCodes[e.keyCode].command();
+      return false;
+    }
+  }
+  else if (e.shiftKey) {
+    if (e.keyCode in commandShiftKeyCodes) {
+      commandShiftKeyCodes[e.keyCode].command();
+      return false;
+    }
+  }
+  else {
+    if (e.keyCode in commandKeyCodes) {
+      commandKeyCodes[e.keyCode].command();
+      return false;
+    }
+  }
+  return true;
+};
+
 function setKeyCode(struct, key, command) {
   if (!(key in keyCodes)) console.error('Unknown key:', key);
   if (struct[keyCodes[key]] != null) console.error('Duplicate key command:', key);
   struct[keyCodes[key]] = command;
 }
 
+export function enableKeys(enable = true) {
+  keysEnabled = enable;
+}
+
 export function init_commands() {
   for (let command of commands) {
-    if (command.keys === undefined) continue;
+    if (command.keys == null) continue;
     for (let key of command.keys) {
       if (key.startsWith('Ctrl+')) {
         setKeyCode(commandCtrlKeyCodes, key.substr(5), command);
@@ -387,6 +428,14 @@ export let commands = [
     keys: ['Space'],
     command: () => { play() },
     name: 'Playback',
+  },
+  { separator: true },
+  {
+    id: 'support',
+    toolbar: {type: 'image'},
+    keys: [],
+    command: () => { window.open('https://github.com/rualark/AiHarmony/issues', '_blank') },
+    name: 'Create support request',
   },
   /*
   {
