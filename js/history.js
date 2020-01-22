@@ -88,7 +88,6 @@ function pushState(state) {
     history.splice(history_pos + 1, history.length - history_pos - 1);
   }
   let hist = newHist(state);
-  hist.time = Date.now();
   history.push(hist);
   history_pos++;
   limitHistory();
@@ -97,11 +96,26 @@ function pushState(state) {
 }
 
 export function loadState() {
-  pushState(storage2state());
+  try {
+    pushState(storage2state());
+  }
+  catch (e) {
+    if (e === 'version') {
+      alertify.error('You previous session was reset because new version of application does not support previous format. Please save your files before exiting to minimize this risk.', 20);
+      nd.reset();
+      saveState();
+    }
+    else console.log(e);
+  }
 }
 
 export function saveState() {
-  pushState(state2storage());
+  try {
+    pushState(state2storage());
+  }
+  catch (e) {
+    console.error(e);
+  }
 }
 
 export function undoState() {

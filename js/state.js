@@ -1,10 +1,10 @@
 import {nd} from "./notes/NotesData.js";
 import {b64_unicode, unicode_b64} from "./base64.js";
 import {async_redraw, clicked, engraverParams} from "./abc/abchelper.js";
-import {start_counter, stop_counter} from "./lib.js";
+import {currentTimestamp, start_counter, stop_counter, timestamp2date} from "./lib.js";
 
-const ENCODING_VERSION = 4;
-export const STATE_VOLATILE_SUFFIX = 6;
+const ENCODING_VERSION = 5;
+export const STATE_VOLATILE_SUFFIX = 12;
 
 let b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 let fb64 = {};
@@ -106,13 +106,14 @@ function data2string() {
     st += ui_b64(clicked.note.voice, 2);
     st += ui_b64(clicked.note.note, 4);
   }
+  st += ui_b64(currentTimestamp(), 6);
   return st;
 }
 
 function string2data(st, pos) {
   let saved_encoding_version = b64_ui(st, pos, 2);
   if (saved_encoding_version !== ENCODING_VERSION) {
-    throw(`Supported encoding version is ${ENCODING_VERSION}, while data has version ${saved_encoding_version}`);
+    throw('version');
   }
   nd.name = b64_string(st, pos);
   nd.filename = b64_string(st, pos);
@@ -154,6 +155,8 @@ function string2data(st, pos) {
   if (clicked.note.voice === 64*64 - 1) {
     clicked.note = undefined;
   }
+  let time = b64_ui(st, pos, 6);
+  console.log('Decoded time:', time, timestamp2date(time));
 }
 
 export function utf16_storage(utf16) {
@@ -213,7 +216,7 @@ export function url2state(url) {
   }
   catch (e) {
     nd.reset();
-    alertify.error('Shared url is corrupted');
+    alertify.error('Shared url is corrupted or expired');
     throw e;
   }
   async_redraw();

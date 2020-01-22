@@ -87,6 +87,14 @@ export function stop_counter() {
   //console.log(st);
 }
 
-export function cleanUrl() {
+export function urlNoParams() {
   return window.location.href.split('?')[0].replace('#', '');
+}
+
+export function currentTimestamp() {
+  return new Date().getTime() / 1000;
+}
+
+export function timestamp2date(unix_timestamp) {
+  return new Date(unix_timestamp * 1000);
 }

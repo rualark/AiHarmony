@@ -88,7 +88,6 @@ function pushState(state) {
     history.splice(history_pos + 1, history.length - history_pos - 1);
   }
   let hist = newHist(state);
-  hist.time = Date.now();
   history.push(hist);
   history_pos++;
   limitHistory();
@@ -97,11 +96,21 @@ function pushState(state) {
 }
 
 export function loadState() {
-  pushState(storage2state());
+  try {
+    pushState(storage2state());
+  }
+  catch (e) {
+    console.error(e);
+  }
 }
 
 export function saveState() {
-  pushState(state2storage());
+  try {
+    pushState(state2storage());
+  }
+  catch (e) {
+    console.error(e);
+  }
 }
 
 export function undoState() {

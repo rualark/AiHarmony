@@ -13,14 +13,14 @@ import {
   init_commands
 } from "./commands.js";
 import {getUrlParam} from "../urlparams.js";
-import {showShortcutsModal} from "./modal/modal.js";
+import {showShortcutsModal} from "./modal/shortcutsModal.js";
 import {showClefsModal} from "./modal/clefs.js";
 import {showTimesigModal} from "./modal/timesig.js";
 import {showKeysigModal} from "./modal/keysig.js";
 import {load_test_musicXml} from "../MusicXml/test-xml.js";
 import {init_base64, storage2state, url2state, state2storage} from "../state.js";
 import {readRemoteMusicXmlFile} from "../MusicXml/readRemoteMusicXml.js";
-import {cleanUrl} from "../lib.js";
+import {urlNoParams} from "../lib.js";
 import {loadState, saveState} from "../history.js";
 import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
 import {sendToAic} from "../integration/aiCounterpoint.js";
@@ -104,7 +104,7 @@ function after_init() {
   if (getUrlParam('state')) {
     url2state(getUrlParam('state'));
     saveState();
-    window.history.replaceState("", "", cleanUrl());
+    window.history.replaceState("", "", urlNoParams());
     return;
   }
   loadState();
@@ -113,7 +113,7 @@ function after_init() {
   }
   if (getUrlParam('load')) {
     readRemoteMusicXmlFile('musicxml/' + getUrlParam('load').replace('/', '') + '.xml');
-    window.history.replaceState("", "", cleanUrl());
+    window.history.replaceState("", "", urlNoParams());
   }
 }
 

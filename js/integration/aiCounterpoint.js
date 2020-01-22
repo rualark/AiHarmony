@@ -56,16 +56,24 @@ export function sendToAic() {
 function getAicData(data) {
   let spl = data.split('\n');
   //console.log(spl, spl.length < 3, spl[0] !== 'Upload successful', spl[1] !== 'Start successful', isNaN(Number(spl[2])));
-  if (spl.length < 3 || spl[0] !== 'Upload successful' || spl[1] !== 'Start successful' || isNaN(Number(spl[2]))) {
-    alertify.error(data);
+  if (spl.length < 4 || spl[1] !== 'Upload successful' || spl[2] !== 'Start successful' || isNaN(Number(spl[3]))) {
+    alertify.error('Error: ' + data);
     aic.f_id = 0;
     setAicState('ready');
     return;
   }
-  aic.f_id = spl[2];
+  aic.u_name = spl[0];
+  aic.f_id = spl[3];
+  if (aic.u_name === 'robot_aih') {
+    alertify.warning('<a href=https://artinfuser.com/counterpoint target=_blank>Login to Artinfuser</a> for more analysis options and history', 15);
+  }
+  else {
+    alertify.notify(`<a href=https://artinfuser.com/counterpoint/file.php?f_id=${aic.f_id} target=_blank>Analysing...</a>`, 5);
+  }
 }
 
 function getAicUpdate(data) {
+  //console.log(data);
   let spl = data.split('\n');
   if (spl.length < 6) {
     aic.f_id = 0;

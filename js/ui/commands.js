@@ -10,7 +10,7 @@ import {
   toggle_dot,
   toggle_tie, voiceChange
 } from "./edit.js";
-import {showShortcutsModal} from "./modal/modal.js";
+import {showShortcutsModal} from "./modal/shortcutsModal.js";
 import {async_redraw, notation_zoom} from "../abc/abchelper.js";
 import {keyCodes} from './lib/keys.js';
 import {play} from "../audio/audio.js";
@@ -232,54 +232,54 @@ export let commands = [
   { separator: true },
   {
     id: 'note_c',
-    toolbar: {type: 'text', text: 'C', fontSize: 1.5, dev: 1},
+    toolbar: {type: 'image'},
     keys: ['C'],
     command: () => { set_note(0) },
     name: 'Input note C',
   },
   {
     id: 'note_d',
-    toolbar: {type: 'text', text: 'D', fontSize: 1.5, dev: 1},
+    toolbar: {type: 'image'},
     keys: ['D'],
     command: () => { set_note(1) },
     name: 'Input note D',
   },
   {
     id: 'note_e',
-    toolbar: {type: 'text', text: 'E', fontSize: 1.5, dev: 1},
+    toolbar: {type: 'image'},
     keys: ['E'],
     command: () => { set_note(2) },
     name: 'Input note E',
   },
   {
     id: 'note_f',
-    toolbar: {type: 'text', text: 'F', fontSize: 1.5, dev: 1},
+    toolbar: {type: 'image'},
     keys: ['F'],
     command: () => { set_note(3) },
     name: 'Input note F',
   },
   {
     id: 'note_g',
-    toolbar: {type: 'text', text: 'G', fontSize: 1.5, dev: 1},
+    toolbar: {type: 'image'},
     keys: ['G'],
     command: () => { set_note(4) },
     name: 'Input note G',
   },
   {
     id: 'note_a',
-    toolbar: {type: 'text', text: 'A', fontSize: 1.5, dev: 1},
+    toolbar: {type: 'image'},
     keys: ['A'],
     command: () => { set_note(5) },
     name: 'Input note A',
   },
   {
     id: 'note_b',
-    toolbar: {type: 'text', text: 'B', fontSize: 1.5, dev: 1},
+    toolbar: {type: 'image'},
     keys: ['B'],
     command: () => { set_note(6) },
     name: 'Input note B',
   },
-  { separator: true, toolbar: {dev: 1} },
+  { separator: true },
   {
     id: 'dblflat',
     toolbar: {type: 'image'},

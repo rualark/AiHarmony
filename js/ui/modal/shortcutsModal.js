@@ -5,7 +5,8 @@ import {trigger_tooltips} from "../../lib.js";
 export function showShortcutsModal() {
   document.getElementById("ModalTitle").innerHTML = 'Artinfuser Harmony';
   let st = '';
-  st += 'Artinfuser Harmony allows to edit, play, import and export notes. Minimal supported note length is 1/16. Tuplets are not supported. Only single clef, key and time signature is supported per staff.<br><br>';
+  st += 'Artinfuser Harmony allows to play, edit and <a href=https://artinfuser.com/counterpoint/docs.php?d=cp_analyse target=_blank>analyse</a> MusicXML files with exercises. ';
+  st += 'Limitations: minimal supported note length is 1/16. Tuplets are not supported. Only single clef, key and time signature is supported per staff.<br><br>';
   st += '<table class=table>';
   st += '<tr>';
   st += '<th>Function';

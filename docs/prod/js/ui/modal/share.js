@@ -1,9 +1,13 @@
 import {state2url} from "../../state.js";
-import {cleanUrl} from "../../lib.js";
+import {urlNoParams} from "../../lib.js";
 
 export function showShareModal() {
   let st = '';
-  let url = cleanUrl() + '?state=' + state2url();
+  let url = urlNoParams() + '?state=' + state2url();
+  //console.log('Share url length:', url.length);
+  if (url.length > 2000) {
+    alertify.error(`Generated url is ${url.length} characters long, because you try to share large piece of music. It is recommended to download and send file instead`, 15);
+  }
   st += `Copy link below to share:<br><br>`;
   st += `<div class="input-group mb-3">`;
   st += `<input onClick="this.setSelectionRange(0, this.value.length)" id=shareurl type="text" class="form-control" value="${url}">`;
