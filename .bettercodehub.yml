@@ -1,0 +1,5 @@
+exclude:
+- /docs/.*
+- /plugin/.*
+- /work/.*
+- /test/.*
