@@ -10,3 +10,5 @@ Artinfuser Harmony allows to play, edit and analyse MusicXML files with exercise
 <a href=https://trello.com/b/tX8MG31U/harmony>Kanban project management on Trello</a>
 
 <a href=https://app.logrocket.com/rgvzmt/aiharmony/>LogRocket</a>
+
+<a href=https://app.linc.sh/sites/rualark-aiharmony>Linc frontend CI/CD</a>
