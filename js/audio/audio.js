@@ -1,6 +1,5 @@
 import {abcjs} from "../abc/abchelper.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
-import {nd} from "../notes/NotesData.js";
 
 let synthControl = {};
 
