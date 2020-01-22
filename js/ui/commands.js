@@ -87,7 +87,7 @@ export function enableKeys(enable = true) {
 
 export function init_commands() {
   for (let command of commands) {
-    if (command.keys === undefined) continue;
+    if (command.keys == null) continue;
     for (let key of command.keys) {
       if (key.startsWith('Ctrl+')) {
         setKeyCode(commandCtrlKeyCodes, key.substr(5), command);

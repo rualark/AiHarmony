@@ -31,7 +31,7 @@ export function play2() {
 export function play3() {
   if (ABCJS.synth.supportsAudio()) {
     synthControl = new ABCJS.synth.SynthController();
-    synthControl.load("#audio", undefined, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
+    synthControl.load("#audio", null, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
   } else {
     document.querySelector("#audio").innerHTML = "<div class='audio-error'>Audio is not supported in this browser.</div>";
   }
