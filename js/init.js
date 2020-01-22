@@ -7,7 +7,7 @@ import {init_base64, url2state} from "./state/state.js";
 import {readRemoteMusicXmlFile} from "./MusicXml/readRemoteMusicXml.js";
 import {loadState, saveState} from "./state/history.js";
 import {initTooltips} from "./ui/lib/tooltips.js";
-import {element_click} from "./ui/window.js";
+import {element_click} from "./ui/notation.js";
 
 function init() {
   init_commands();

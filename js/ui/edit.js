@@ -1,8 +1,7 @@
 import {nd} from "../notes/NotesData.js";
 import {async_redraw, clicked, find_selection, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "../abc/abchelper.js";
-import {button_enabled, button_enabled_active} from "./lib/uilib.js";
-import {state2storage} from "../state/state.js";
 import {saveState} from "../state/history.js";
+import {update_selection} from "./notation.js";
 
 export let future = {
   advancing: false,
@@ -10,7 +9,7 @@ export let future = {
   len: 0
 };
 
-function can_dot() {
+export function can_dot() {
   if (!clicked.element || !clicked.element.duration) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
   let notes = nd.voices[el.voice].notes;
@@ -34,7 +33,7 @@ export function toggle_dot() {
   else set_len(Math.round(len * 1.5));
 }
 
-function can_len(len) {
+export function can_len(len) {
   if (!clicked.element || !clicked.element.duration) return false;
   let el = nd.abc_charStarts[clicked.element.startChar];
   let notes = nd.voices[el.voice].notes;
@@ -185,7 +184,7 @@ export function set_rest(advance) {
   async_redraw();
 }
 
-function can_increment_note(dnote) {
+export function can_increment_note(dnote) {
   if (!clicked.element || !clicked.element.duration) return;
   let el = nd.abc_charStarts[clicked.element.startChar];
   let n = el.note;
@@ -249,7 +248,7 @@ export function toggle_alter(alt) {
   async_redraw();
 }
 
-function can_tie() {
+export function can_tie() {
   if (!clicked.element || !clicked.element.duration) return false;
   let el = nd.abc_charStarts[clicked.element.startChar];
   let notes = nd.voices[el.voice].notes;
@@ -257,14 +256,14 @@ function can_tie() {
   return notes[el.note].d === notes[el.note + 1].d;
 }
 
-function can_pre_tie() {
+export function can_pre_tie() {
   if (!clicked.element || !clicked.element.duration) return false;
   let el = nd.abc_charStarts[clicked.element.startChar];
   if (!el.note) return false;
   return nd.voices[el.voice].notes[el.note - 1].d !== 0;
 }
 
-function is_pre_tie() {
+export function is_pre_tie() {
   if (!clicked.element || !clicked.element.duration) return false;
   let el = nd.abc_charStarts[clicked.element.startChar];
   return el.note && nd.voices[el.voice].notes[el.note - 1].startsTie;
@@ -306,56 +305,6 @@ export function del_part() {
   async_redraw();
 }
 
-export function update_selection() {
-  button_enabled('add_part', typeof clicked.element.abselem !== 'undefined' && nd.voices.length < 63);
-  button_enabled('del_part', typeof clicked.element.abselem !== 'undefined' && nd.voices.length > 1);
-  button_enabled_active('note_c', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 0);
-  button_enabled_active('note_d', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 1);
-  button_enabled_active('note_e', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 2);
-  button_enabled_active('note_f', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 3);
-  button_enabled_active('note_g', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 4);
-  button_enabled_active('note_a', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 5);
-  button_enabled_active('note_b', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 6);
-  button_enabled_active('rest', clicked.element.duration, clicked.element.rest && clicked.element.rest.type === 'rest');
-  button_enabled_active('up8', can_increment_note(7), false);
-  button_enabled_active('down8', can_increment_note(-7), false);
-  if (clicked.element.rest && clicked.element.rest.type === 'rest' || future.advancing) {
-    button_enabled_active('dblflat', clicked.element.duration, future.alteration === -2);
-    button_enabled_active('flat', clicked.element.duration, future.alteration === -1);
-    button_enabled_active('natural', clicked.element.duration, future.alteration === 0);
-    button_enabled_active('sharp', clicked.element.duration, future.alteration === 1);
-    button_enabled_active('dblsharp', clicked.element.duration, future.alteration === 2);
-  } else {
-    button_enabled_active('dblflat', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'dblflat');
-    button_enabled_active('flat', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'flat');
-    button_enabled_active('natural', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'natural');
-    button_enabled_active('sharp', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'sharp');
-    button_enabled_active('dblsharp', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'dblsharp');
-  }
-  //console.log('nl', future.advancing, future.len);
-  if (future.advancing && future.len) {
-    button_enabled_active('len2', clicked.element.duration, [1].includes(future.len));
-    button_enabled_active('len3', can_len(2), [2, 3].includes(future.len));
-    button_enabled_active('len4', can_len(4), [4, 6].includes(future.len));
-    button_enabled_active('len5', can_len(8), [8, 12].includes(future.len));
-    button_enabled_active('len6', can_len(16), [16, 24].includes(future.len));
-    button_enabled_active('dot', can_dot(), [3, 6, 12, 24].includes(future.len));
-  }
-  else {
-    button_enabled_active('len2', clicked.element.duration, [0.0625].includes(clicked.element.duration));
-    button_enabled_active('len3', can_len(2), [0.125, 0.1875].includes(clicked.element.duration));
-    button_enabled_active('len4', can_len(4), [0.25, 0.375].includes(clicked.element.duration));
-    button_enabled_active('len5', can_len(8), [0.5, 0.75].includes(clicked.element.duration));
-    button_enabled_active('len6', can_len(16), [1, 1.5].includes(clicked.element.duration));
-    button_enabled_active('dot', can_dot(), [0.375, 0.75, 1.5].includes(clicked.element.duration));
-  }
-  if (future.advancing && future.len) {
-    button_enabled_active('tie', can_pre_tie(), is_pre_tie());
-  } else {
-    button_enabled_active('tie', can_tie(), clicked.element.abselem && clicked.element.abselem.startTie);
-  }
-}
-
 export function stop_advancing() {
   future.advancing = false;
   future.alteration = 10;
@@ -368,14 +317,6 @@ export function new_file() {
   clicked.note = {voice: 0, note: 0};
   saveState();
   async_redraw();
-  /*
-  alertify.confirm('New empty file', 'This will delete current file. Download or share file before deleting if needed.',
-    function() {
-    },
-    function() {
-    }
-  );
-  */
 }
 
 export function voiceChange(dv) {

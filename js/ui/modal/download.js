@@ -44,7 +44,7 @@ function saveSvg(svgEl, name) {
 }
 
 function downloadAsSvg() {
-  saveSvg($('#notation').children()[0], name2filename(nd.name, nd.filename) + '.svg');
+  saveSvg($('#abc').children()[0], name2filename(nd.name, nd.filename) + '.svg');
 }
 
 function downloadAsAbc() {
