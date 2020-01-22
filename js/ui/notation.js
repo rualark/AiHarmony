@@ -75,7 +75,7 @@ export function element_click(abcElem, tuneNumber, classes, move) {
   clicked.element = abcElem;
   clicked.classes = classes;
   clicked.voice = get_voice(classes);
-  clicked.note = undefined;
+  clicked.note = null;
   if (typeof clicked.element.clefPos !== 'undefined') {
     showClefsModal(nd.voices[clicked.voice]);
   }

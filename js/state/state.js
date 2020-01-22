@@ -153,7 +153,7 @@ function string2data(st, pos) {
   let n = b64_ui(st, pos, 4);
   clicked.note = {voice: v, note: n};
   if (clicked.note.voice === 64*64 - 1) {
-    clicked.note = undefined;
+    clicked.note = null;
   }
   let time = b64_ui(st, pos, 6);
   console.log('Decoded time:', time, timestamp2date(time));
