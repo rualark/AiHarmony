@@ -1,22 +1,11 @@
 import {
-  add_part,
-  del_bar,
-  del_part,
   increment_note,
   increment_octave,
-  new_file,
-  next_note,
-  prev_note,
   repeat_element,
-  set_len,
   set_note,
   set_rest,
-  stop_advancing,
-  toggle_alter,
-  toggle_dot,
-  toggle_tie,
-  voiceChange
-} from "./edit.js";
+  toggle_alter
+} from "./edit/editNote.js";
 import {showShortcutsModal} from "./modal/shortcutsModal.js";
 import {async_redraw, notation_zoom} from "../abc/abchelper.js";
 import {keyCodes} from './lib/keys.js';
@@ -30,6 +19,10 @@ import {showShareModal} from "./modal/share.js";
 import {redoState, undoState} from "../state/history.js";
 import {mobileOrTablet} from "../core/mobileCheck.js";
 import {aic, sendToAic} from "../integration/aiCounterpoint.js";
+import {add_part, del_bar, del_part, new_file, stop_advancing, voiceChange} from "./edit/editScore.js";
+import {toggle_tie} from "./edit/editTie.js";
+import {next_note, prev_note} from "./edit/move.js";
+import {set_len, toggle_dot} from "./edit/editLen.js";
 
 let mobileOpt = {
   true: {
@@ -85,7 +78,7 @@ export function enableKeys(enable = true) {
   keysEnabled = enable;
 }
 
-export function init_commands() {
+export function initKeyCodes() {
   for (let command of commands) {
     if (command.keys == null) continue;
     for (let key of command.keys) {
@@ -103,6 +96,9 @@ export function init_commands() {
       }
     }
   }
+}
+
+export function initCommands() {
   let st = '';
   for (let command of commands) {
     if (command.toolbar != null && command.toolbar.dev != null) {
@@ -145,6 +141,9 @@ export function init_commands() {
       return false;
     };
   }
+}
+
+export function initFilenameClick() {
   document.getElementById('filename').onclick=function(){
     enableKeys(false);
     alertify.prompt('Exercise name', '', nd.name,

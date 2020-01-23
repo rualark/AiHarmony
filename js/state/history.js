@@ -1,8 +1,8 @@
 import {storage2state, storage_utf16, state2storage, utf16_storage, STATE_VOLATILE_SUFFIX} from "./state.js";
-import {stop_advancing} from "../ui/edit.js";
 import {nd} from "../notes/NotesData.js";
 import {async_redraw} from "../abc/abchelper.js";
 import {button_enabled} from "../ui/lib/uilib.js";
+import {stop_advancing} from "../ui/edit/editScore.js";
 
 export let history = [];
 export let history_pos = -1;

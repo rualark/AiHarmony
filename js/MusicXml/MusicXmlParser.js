@@ -43,16 +43,7 @@ let emptyNote = {
 };
 
 export class MusicXmlParser {
-  constructor(txt) {
-    this.voices = []; // [v]
-    this.mea = []; // [m]
-    this.notes = []; // [v][m][]
-
-    this.xml = new XmlParser(txt);
-    if (this.xml.error) {
-      this.error = this.xml.error;
-      return;
-    }
+  parseHeader() {
     this.encoder = this.xml.xpathFirstValue("/score-partwise/identification/encoding/encoder");
     this.encoding_date = this.xml.xpathFirstValue("/score-partwise/identification/encoding/encoding-date");
     this.software = this.xml.xpathFirstValue("/score-partwise/identification/encoding/software");
@@ -61,6 +52,9 @@ export class MusicXmlParser {
     this.composer = this.xml.xpathFirstValue("/score-partwise/identification/creator[@type='composer']");
     this.arranger = this.xml.xpathFirstValue("/score-partwise/identification/creator[@type='arranger']");
     this.rights = this.xml.xpathFirstValue("/score-partwise/identification/rights");
+  }
+
+  parseElements() {
     let elements = this.xml.xpath("/score-partwise/part/measure/*");
     if (!elements) {
       this.error = "Cannot find notes in XML";
@@ -196,6 +190,20 @@ export class MusicXmlParser {
         m_pos += this.notes[vi][m][ni].dur * 0.25 / divisions;
       }
     }
+  }
+
+  constructor(txt) {
+    this.voices = []; // [v]
+    this.mea = []; // [m]
+    this.notes = []; // [v][m][]
+
+    this.xml = new XmlParser(txt);
+    if (this.xml.error) {
+      this.error = this.xml.error;
+      return;
+    }
+    this.parseHeader();
+    this.parseElements();
     this.appendRests();
     //this.removeEmptyVoices();
   }
@@ -314,134 +322,142 @@ export class MusicXmlParser {
     return st;
   }
 
+  validateLen(vi, m) {
+    let stack = this.notes[vi][m][0].pos;
+    for (let ni = 0; ni < this.notes[vi][m].length; ++ni) {
+      // Detect hidden pause
+      if (ni > 0 && this.notes[vi][m][ni].pos > stack) {
+        this.append_pause(vi, m, ni, stack, this.notes[vi][m][ni].pos - stack,
+          this.notes[vi][m][ni - 1].dur_div, 'hidden pause');
+        //echo "Added hidden pause vi/m/ni<br>";
+      }
+      // Detect length error
+      if (ni > 0 && this.notes[vi][m][ni].pos < stack) {
+        this.error = this.getErrPrefix(vi, m, ni) + ` Note starts at position ` +
+          this.notes[vi][m][ni].pos + ` that is less than stack of previous note lengths stack ${stack}`;
+        return true;
+      }
+      stack += this.notes[vi][m][ni].dur * 0.25 / this.notes[vi][m][ni].dur_div;
+    }
+    // Do not check chord voices for note length stack
+    //if (this.voices[vi].chord) continue;
+    // Add pause if measure is not full
+    if (stack < this.mea[m].measure_len) {
+      this.append_pause(vi, m, this.notes[vi][m].length, stack, this.mea[m].measure_len - stack,
+        this.notes[vi][m][this.notes[vi][m].length - 1].dur_div, 'non-full measure');
+      //echo "Added hidden pause to the end of measure vi/m<br>";
+    }
+    // Detect length error
+    if (stack > this.mea[m].measure_len) {
+      this.error = this.getErrPrefix(vi, m, this.notes[vi][m].length) +
+        " Need " + this.mea[m].measure_len + " time but got stack " + stack;
+      return true;
+    }
+  }
+
+  validateTies(vi, m) {
+    for (let ni = 0; ni < this.notes[vi][m].length; ++ni) {
+      if (this.notes[vi][m][ni].tie_start) {
+        if (ni < this.notes[vi][m].length - 1) {
+          if (this.notes[vi][m][ni + 1].rest) {
+            this.warning = this.getErrPrefix(vi, m, ni) +
+              " Note starts tie, but next note in this measure is a rest. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
+            this.notes[vi][m][ni].tie_start = 0;
+          }
+          if (this.notes[vi][m][ni].pitch !== this.notes[vi][m][ni + 1].pitch) {
+            this.warning = this.getErrPrefix(vi, m, ni) +
+              " Note starts tie, but next note in this measure has different pitch. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
+            this.notes[vi][m][ni].tie_start = 0;
+          }
+          if (!this.notes[vi][m][ni + 1].tie_stop) {
+            this.warning = this.getErrPrefix(vi, m, ni) +
+              " Note starts tie, but next note in this measure does not stop tie. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
+            this.notes[vi][m][ni].tie_start = 0;
+          }
+        } else if (m < this.mea.length - 1) {
+          if (!this.notes[vi][m + 1].length) {
+            this.warning = this.getErrPrefix(vi, m, ni) +
+              " Note starts tie, but next measure does not have note in this voice.";
+            this.notes[vi][m][ni].tie_start = 0;
+          } else {
+            if (this.notes[vi][m + 1][0].rest) {
+              this.warning = this.getErrPrefix(vi, m, ni) +
+                " Note starts tie, but next note is a rest. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
+              this.notes[vi][m][ni].tie_start = 0;
+            }
+            if (this.notes[vi][m][ni].pitch !== this.notes[vi][m + 1][0].pitch) {
+              this.warning = this.getErrPrefix(vi, m, ni) +
+                " Note starts tie, but next note has different pitch. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
+              this.notes[vi][m][ni].tie_start = 0;
+            }
+            if (!this.notes[vi][m + 1][0].tie_stop) {
+              this.warning = this.getErrPrefix(vi, m, ni) +
+                " Note starts tie, but next note does not stop tie. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
+              this.notes[vi][m][ni].tie_start = 0;
+            }
+          }
+        } else {
+          this.warning = this.getErrPrefix(vi, m, ni) +
+            " Note starts tie, but it is last note in this voice.";
+          this.notes[vi][m][ni].tie_start = 0;
+        }
+      }
+      if (this.notes[vi][m][ni].tie_stop) {
+        if (ni) {
+          if (this.notes[vi][m][ni - 1].rest) {
+            this.warning = this.getErrPrefix(vi, m, ni) +
+              " Note stops tie, but previous note in this measure is a rest. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
+            this.notes[vi][m][ni].tie_stop = 0;
+          }
+          if (this.notes[vi][m][ni].pitch !== this.notes[vi][m][ni - 1].pitch) {
+            this.warning = this.getErrPrefix(vi, m, ni) +
+              " Note stops tie, but previous note in this measure has different pitch. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
+            this.notes[vi][m][ni].tie_stop = 0;
+          }
+          if (!this.notes[vi][m][ni - 1].tie_start) {
+            this.warning = this.getErrPrefix(vi, m, ni) +
+              " Note stops tie, but previous note in this measure does not stop tie. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
+            this.notes[vi][m][ni].tie_stop = 0;
+          }
+        } else if (m > 1) {
+          if (!this.notes[vi][m - 1].length) {
+            this.warning = this.getErrPrefix(vi, m, ni) +
+              " Note stops tie, but previous measure does not have note in this voice.";
+            this.notes[vi][m][ni].tie_stop = 0;
+          } else {
+            if (this.notes[vi][m - 1][this.notes[vi][m - 1].length - 1].rest) {
+              this.warning = this.getErrPrefix(vi, m, ni) +
+                " Note stops tie, but previous note is a rest. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
+              this.notes[vi][m][ni].tie_stop = 0;
+            }
+            if (this.notes[vi][m][ni].pitch !== this.notes[vi][m - 1][this.notes[vi][m - 1].length - 1].pitch) {
+              this.warning = this.getErrPrefix(vi, m, ni) +
+                " Note stops tie, but previous note has different pitch. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
+              this.notes[vi][m][ni].tie_stop = 0;
+            }
+            if (!this.notes[vi][m - 1][this.notes[vi][m - 1].length - 1].tie_start) {
+              this.warning = this.getErrPrefix(vi, m, ni) +
+                " Note stops tie, but previous note does not start tie. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
+              this.notes[vi][m][ni].tie_stop = 0;
+            }
+          }
+        } else {
+          this.warning = this.getErrPrefix(vi, m, ni) +
+            " Note stops tie, but it is the first note in this voice.";
+          this.notes[vi][m][ni].tie_stop = 0;
+        }
+      }
+    }
+  }
+
   validateMusicXml() {
     // Check if measure is not filled with notes
     for (let vi = 0; vi < this.voices.length; ++vi) {
       for (let m = 1; m < this.mea.length; ++m) {
         // Do not check measures without notes
         if (!this.notes[vi][m].length) continue;
-        let stack = this.notes[vi][m][0].pos;
-        for (let ni = 0; ni < this.notes[vi][m].length; ++ni) {
-          // Detect hidden pause
-          if (ni > 0 && this.notes[vi][m][ni].pos > stack) {
-            this.append_pause(vi, m, ni, stack, this.notes[vi][m][ni].pos - stack,
-              this.notes[vi][m][ni - 1].dur_div, 'hidden pause');
-            //echo "Added hidden pause vi/m/ni<br>";
-          }
-          // Detect length error
-          if (ni > 0 && this.notes[vi][m][ni].pos < stack) {
-            this.error = this.getErrPrefix(vi, m, ni) + ` Note starts at position ` +
-              this.notes[vi][m][ni].pos + ` that is less than stack of previous note lengths stack ${stack}`;
-            return;
-          }
-          stack += this.notes[vi][m][ni].dur * 0.25 / this.notes[vi][m][ni].dur_div;
-        }
-        for (let ni = 0; ni < this.notes[vi][m].length; ++ni) {
-          if (this.notes[vi][m][ni].tie_start) {
-            if (ni < this.notes[vi][m].length - 1) {
-              if (this.notes[vi][m][ni + 1].rest) {
-                this.warning = this.getErrPrefix(vi, m, ni) +
-                " Note starts tie, but next note in this measure is a rest. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
-                this.notes[vi][m][ni].tie_start = 0;
-              }
-              if (this.notes[vi][m][ni].pitch !== this.notes[vi][m][ni + 1].pitch) {
-                this.warning = this.getErrPrefix(vi, m, ni) +
-                " Note starts tie, but next note in this measure has different pitch. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
-                this.notes[vi][m][ni].tie_start = 0;
-              }
-              if (!this.notes[vi][m][ni + 1].tie_stop) {
-                this.warning = this.getErrPrefix(vi, m, ni) +
-                " Note starts tie, but next note in this measure does not stop tie. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
-                this.notes[vi][m][ni].tie_start = 0;
-              }
-            } else if (m < this.mea.length - 1) {
-              if (!this.notes[vi][m + 1].length) {
-                this.warning = this.getErrPrefix(vi, m, ni) +
-                " Note starts tie, but next measure does not have note in this voice.";
-                this.notes[vi][m][ni].tie_start = 0;
-              } else {
-                if (this.notes[vi][m + 1][0].rest) {
-                  this.warning = this.getErrPrefix(vi, m, ni) +
-                  " Note starts tie, but next note is a rest. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
-                  this.notes[vi][m][ni].tie_start = 0;
-                }
-                if (this.notes[vi][m][ni].pitch !== this.notes[vi][m + 1][0].pitch) {
-                  this.warning = this.getErrPrefix(vi, m, ni) +
-                  " Note starts tie, but next note has different pitch. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
-                  this.notes[vi][m][ni].tie_start = 0;
-                }
-                if (!this.notes[vi][m + 1][0].tie_stop) {
-                  this.warning = this.getErrPrefix(vi, m, ni) +
-                  " Note starts tie, but next note does not stop tie. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
-                  this.notes[vi][m][ni].tie_start = 0;
-                }
-              }
-            } else {
-              this.warning = this.getErrPrefix(vi, m, ni) +
-              " Note starts tie, but it is last note in this voice.";
-              this.notes[vi][m][ni].tie_start = 0;
-            }
-          }
-          if (this.notes[vi][m][ni].tie_stop) {
-            if (ni) {
-              if (this.notes[vi][m][ni - 1].rest) {
-                this.warning = this.getErrPrefix(vi, m, ni) +
-                " Note stops tie, but previous note in this measure is a rest. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
-                this.notes[vi][m][ni].tie_stop = 0;
-              }
-              if (this.notes[vi][m][ni].pitch !== this.notes[vi][m][ni - 1].pitch) {
-                this.warning = this.getErrPrefix(vi, m, ni) +
-                " Note stops tie, but previous note in this measure has different pitch. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
-                this.notes[vi][m][ni].tie_stop = 0;
-              }
-              if (!this.notes[vi][m][ni - 1].tie_start) {
-                this.warning = this.getErrPrefix(vi, m, ni) +
-                " Note stops tie, but previous note in this measure does not stop tie. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
-                this.notes[vi][m][ni].tie_stop = 0;
-              }
-            } else if (m > 1) {
-              if (!this.notes[vi][m - 1].length) {
-                this.warning = this.getErrPrefix(vi, m, ni) +
-                " Note stops tie, but previous measure does not have note in this voice.";
-                this.notes[vi][m][ni].tie_stop = 0;
-              } else {
-                if (this.notes[vi][m - 1][this.notes[vi][m - 1].length - 1].rest) {
-                  this.warning = this.getErrPrefix(vi, m, ni) +
-                  " Note stops tie, but previous note is a rest. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
-                  this.notes[vi][m][ni].tie_stop = 0;
-                }
-                if (this.notes[vi][m][ni].pitch !== this.notes[vi][m - 1][this.notes[vi][m - 1].length - 1].pitch) {
-                  this.warning = this.getErrPrefix(vi, m, ni) +
-                  " Note stops tie, but previous note has different pitch. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
-                  this.notes[vi][m][ni].tie_stop = 0;
-                }
-                if (!this.notes[vi][m - 1][this.notes[vi][m - 1].length - 1].tie_start) {
-                  this.warning = this.getErrPrefix(vi, m, ni) +
-                  " Note stops tie, but previous note does not start tie. Probably, you are using tie in a chord, which is not recommended: better use voices or staffs";
-                  this.notes[vi][m][ni].tie_stop = 0;
-                }
-              }
-            } else {
-              this.warning = this.getErrPrefix(vi, m, ni) +
-              " Note stops tie, but it is the first note in this voice.";
-              this.notes[vi][m][ni].tie_stop = 0;
-            }
-          }
-        }
-        // Do not check chord voices for note length stack
-        //if (this.voices[vi].chord) continue;
-        // Add pause if measure is not full
-        if (stack < this.mea[m].measure_len) {
-          this.append_pause(vi, m, this.notes[vi][m].length, stack, this.mea[m].measure_len - stack,
-            this.notes[vi][m][this.notes[vi][m].length - 1].dur_div, 'non-full measure');
-          //echo "Added hidden pause to the end of measure vi/m<br>";
-        }
-        // Detect length error
-        if (stack > this.mea[m].measure_len) {
-          this.error = this.getErrPrefix(vi, m, this.notes[vi][m].length) +
-          " Need " + this.mea[m].measure_len + " time but got stack " + stack;
-          return;
-        }
+        if (this.validateLen(vi, m)) return;
+        this.validateTies(vi, m);
       }
     }
   }

@@ -225,4 +225,3 @@ export function init_base64() {
   //console.log(fb64);
 }
 
-// TODO: No need to convert to base64 before compressing - can convert to full ASCII array and then compress

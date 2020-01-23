@@ -4,18 +4,15 @@ import {nd} from "../notes/NotesData.js";
 import {showTimesigModal} from "./modal/timesig.js";
 import {showKeysigModal} from "./modal/keysig.js";
 import {
-  can_dot,
   can_increment_note,
-  can_len,
-  can_pre_tie,
-  can_tie,
   future,
-  increment_note,
-  is_pre_tie,
-  stop_advancing
-} from "./edit.js";
+  increment_note
+} from "./edit/editNote.js";
 import {saveState} from "../state/history.js";
 import {button_enabled, button_enabled_active} from "./lib/uilib.js";
+import {stop_advancing} from "./edit/editScore.js";
+import {can_pre_tie, can_tie, is_pre_tie} from "./edit/editTie.js";
+import {can_dot, can_len} from "./edit/editLen.js";
 
 window.onresize = function() {
   async_redraw();

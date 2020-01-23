@@ -1,6 +1,6 @@
 import "./MusicXml/musicXmlToData.js";
 import {async_redraw, init_abcjs} from "./abc/abchelper.js";
-import {init_commands} from "./ui/commands.js";
+import {initCommands, initFilenameClick, initKeyCodes} from "./ui/commands.js";
 import {getUrlParam, urlNoParams} from "./core/url.js";
 import {showShortcutsModal} from "./ui/modal/shortcutsModal.js";
 import {init_base64, url2state} from "./state/state.js";
@@ -10,7 +10,9 @@ import {initTooltips} from "./ui/lib/tooltips.js";
 import {element_click} from "./ui/notation.js";
 
 function init() {
-  init_commands();
+  initKeyCodes();
+  initCommands();
+  initFilenameClick();
   init_abcjs(element_click);
   init_base64();
   loadState();
