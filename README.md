@@ -7,6 +7,8 @@ Artinfuser Harmony allows to play, edit and analyse MusicXML files with exercise
 
 <a href=https://bettercodehub.com/results/rualark/AiHarmony><img src='https://bettercodehub.com/edge/badge/rualark/AiHarmony?branch=master'></a>
 
+<a href="https://codeclimate.com/github/rualark/AiHarmony/maintainability"><img src="https://api.codeclimate.com/v1/badges/b37613db378907b3b859/maintainability" /></a>
+
 <a href="https://browserstack.com">Browserstack</a>
 
 <a href=https://rollbar.com/rualark/all/items>Rollbar error tracking</a>
