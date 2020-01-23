@@ -7,7 +7,7 @@ export let aic = {
 };
 
 function setAicState(state) {
-  if (state === 'running' && aic.state !== 'ready') return;
+  if (state === 'running' && aic.state !== 'ready') return false;
   aic.state = state;
   if (state === 'success' || state === 'ready') {
     document.getElementById("aici").src = 'img/toolbar/aic.png';
@@ -15,11 +15,15 @@ function setAicState(state) {
   if (state === 'running') {
     document.getElementById("aici").src = 'img/progress.gif';
   }
+  return true;
 }
 
 export function sendToAic() {
   let xml;
-  setAicState('running');
+   if (!setAicState('running')) {
+     alertify.error('Please wait for analysis task to finish');
+     return;
+   }
   try {
     xml = dataToMusicXml();
   }
@@ -64,18 +68,20 @@ function getAicData(data) {
   }
   aic.u_name = spl[0];
   aic.f_id = spl[3];
+  aic.timeStarted = new Date();
+  aic.warnedQueue = false;
   if (aic.u_name === 'robot_aih') {
     alertify.warning('<a href=https://artinfuser.com/counterpoint target=_blank>Login to Artinfuser</a> for more analysis options and history', 15);
   }
   else {
-    alertify.notify(`<a href=https://artinfuser.com/counterpoint/file.php?f_id=${aic.f_id} target=_blank>Analysing...</a>`, 5);
+    alertify.message(`<a href=https://artinfuser.com/counterpoint/file.php?f_id=${aic.f_id} target=_blank>Analysing...</a>`, 5);
   }
 }
 
 function getAicUpdate(data) {
   //console.log(data);
   let spl = data.split('\n');
-  if (spl.length < 6) {
+  if (spl.length < 7) {
     aic.f_id = 0;
     setAicState('ready');
     return;
@@ -84,6 +90,11 @@ function getAicUpdate(data) {
   aic.j_state = Number(spl[3]);
   aic.j_result = Number(spl[4]);
   aic.j_url = spl[5];
+  aic.passedTime = spl[6];
+  if (aic.passedTime > 10 && aic.j_state === 1 && !aic.warnedQueue) {
+    aic.warnedQueue = true;
+    alertify.message('Please be patient. Analysis is <a href=https://artinfuser.com/counterpoint/status.php target=_blank>waiting</a> for other users', 15);
+  }
 }
 
 function waitForAic() {

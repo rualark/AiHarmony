@@ -7,3 +7,8 @@ export function getUrlParam(par) {
 export function urlNoParams() {
   return window.location.href.split('?')[0].replace('#', '');
 }
+
+export function getEnvironment() {
+  if (urlNoParams().includes("/harmony-dev")) return "dev";
+  else return "prod";
+}
