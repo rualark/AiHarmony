@@ -33,7 +33,7 @@ function console2html() {
   console.log = function () {
     for (let i = 0; i < arguments.length; i++) {
       if (typeof arguments[i] == 'object') {
-        logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(arguments[i], undefined, 2) : arguments[i]) + '<br />';
+        logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(arguments[i], null, 2) : arguments[i]) + '<br />';
       } else {
         logger.innerHTML += arguments[i] + '<br />';
       }
@@ -152,17 +152,17 @@ async function test_do(test_level) {
   let loaded_nd = JSON.stringify(nd, null, 1);
   let loaded_plain = data2string().slice(0, -STATE_VOLATILE_SUFFIX);
   assert2strings('Loaded plain',
-    await httpRequestNoCache('GET', 'work/test_data/test1.plain'),
+    await httpRequestNoCache('GET', 'test_data/test1.plain'),
     loaded_plain);
   assert2strings('Base64 compression', loaded_plain, LZString.decompressFromBase64(LZString.compressToBase64(loaded_plain)));
    assert2strings('UTF16 compression', loaded_plain, LZString.decompressFromUTF16(LZString.compressToUTF16(loaded_plain)));
   await test_actions();
   assert2strings('Edited plain',
-    await httpRequestNoCache('GET', 'work/test_data/test2.plain'),
+    await httpRequestNoCache('GET', 'test_data/test2.plain'),
     data2string().slice(0, -STATE_VOLATILE_SUFFIX));
   assert2strings('Edited XML',
-    await httpRequestNoCache('GET', 'work/test_data/test2.xml'),
-    dataToMusicXml());
+    await httpRequestNoCache('GET', 'test_data/test2.xml'),
+    dataToMusicXml('NO DATE'));
   for (let i=0; i<34; ++i) {
     await waitForState('undo', state, ['ready'], 50, 5000);
     undoState();

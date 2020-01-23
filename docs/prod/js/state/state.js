@@ -72,7 +72,7 @@ function contig2alter(con) {
   return con - 3;
 }
 
-function data2string() {
+export function data2string() {
   let st = '';
   st += ui_b64(ENCODING_VERSION, 2);
   //console.log(ENCODING_VERSION);
@@ -161,7 +161,7 @@ function string2data(st, pos) {
 
 export function utf16_storage(utf16) {
   localStorage.setItem('aih', utf16);
-  stop_counter();
+  //stop_counter();
   console.log(`Saved state: ${utf16.length} bytes`);
 }
 

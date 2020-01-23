@@ -3,9 +3,9 @@ import {keysig_imprint} from "../notes/notehelper.js";
 
 export let xmlExportWarnings = new Set();
 
-export function dataToMusicXml() {
+export function dataToMusicXml(date) {
   let st = '';
-  let now = new Date();
+  if (date == null) date = new Date().yyyymmdd('-');
   xmlExportWarnings.clear();
   st += `<?xml version="1.0" encoding='UTF-8' standalone='no' ?>
 <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
@@ -18,7 +18,7 @@ export function dataToMusicXml() {
   <creator type="arranger"></creator>
   <rights></rights>
   <encoding>
-   <encoding-date>${now.yyyymmdd('-')}</encoding-date>
+   <encoding-date>${date}</encoding-date>
    <encoder></encoder>
    <software>Artinfuser Harmony</software>
    <encoding-description>Artinfuser Harmony / MusicXML 3.0</encoding-description>

@@ -1,4 +1,5 @@
 import {readMusicXml} from "./musicXmlToData.js";
+import {state} from "../abc/abchelper.js";
 
 function httpGetAsync(theUrl, callback) {
   let xmlHttp = new XMLHttpRequest();
@@ -11,5 +12,6 @@ function httpGetAsync(theUrl, callback) {
 }
 
 export function readRemoteMusicXmlFile(url) {
+  state.state = 'downloading';
   httpGetAsync(url, readMusicXml);
 }

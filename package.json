@@ -11,7 +11,10 @@
   "dependencies": {
     "logrocket": "^1.0.6"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "istanbul": "^0.4.5",
+    "nyc": "^15.0.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

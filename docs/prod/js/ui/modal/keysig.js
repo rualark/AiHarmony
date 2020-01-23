@@ -2,37 +2,37 @@ import {async_redraw} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 
 export let keysigs = {
-  'C#': {fifths: 7, mode: 0, base_note: 1},
-  'F#': {fifths: 6, mode: 0, base_note: 6},
-  'B': {fifths: 5, mode: 0, base_note: 11},
-  'E': {fifths: 4, mode: 0, base_note: 4},
-  'A': {fifths: 3, mode: 0, base_note: 9},
-  'D': {fifths: 2, mode: 0, base_note: 2},
-  'G': {fifths: 1, mode: 0, base_note: 7},
-  'C': {fifths: 0, mode: 0, base_note: 0},
-  'F': {fifths: -1, mode: 0, base_note: 5},
-  'Bb': {fifths: -2, mode: 0, base_note: 10},
-  'Eb': {fifths: -3, mode: 0, base_note: 3},
-  'Ab': {fifths: -4, mode: 0, base_note: 8},
-  'Db': {fifths: -5, mode: 0, base_note: 1},
-  'Gb': {fifths: -6, mode: 0, base_note: 6},
-  'Cb': {fifths: -7, mode: 0, base_note: 11},
+  'C#': {name: 'C#', fifths: 7, mode: 0, base_note: 1},
+  'F#': {name: 'F#', fifths: 6, mode: 0, base_note: 6},
+  'B': {name: 'B', fifths: 5, mode: 0, base_note: 11},
+  'E': {name: 'E', fifths: 4, mode: 0, base_note: 4},
+  'A': {name: 'A', fifths: 3, mode: 0, base_note: 9},
+  'D': {name: 'D', fifths: 2, mode: 0, base_note: 2},
+  'G': {name: 'G', fifths: 1, mode: 0, base_note: 7},
+  'C': {name: 'C', fifths: 0, mode: 0, base_note: 0},
+  'F': {name: 'F', fifths: -1, mode: 0, base_note: 5},
+  'Bb': {name: 'Bb', fifths: -2, mode: 0, base_note: 10},
+  'Eb': {name: 'Eb', fifths: -3, mode: 0, base_note: 3},
+  'Ab': {name: 'Ab', fifths: -4, mode: 0, base_note: 8},
+  'Db': {name: 'Db', fifths: -5, mode: 0, base_note: 1},
+  'Gb': {name: 'Gb', fifths: -6, mode: 0, base_note: 6},
+  'Cb': {name: 'Cb', fifths: -7, mode: 0, base_note: 11},
 
-  'A#m': {fifths: 7, mode: 9, base_note: 10},
-  'D#m': {fifths: 6, mode: 9, base_note: 3},
-  'G#m': {fifths: 5, mode: 9, base_note: 8},
-  'C#m': {fifths: 4, mode: 9, base_note: 1},
-  'F#m': {fifths: 3, mode: 9, base_note: 6},
-  'Bm': {fifths: 2, mode: 9, base_note: 11},
-  'Em': {fifths: 1, mode: 9, base_note: 4},
-  'Am': {fifths: 0, mode: 9, base_note: 9},
-  'Dm': {fifths: -1, mode: 9, base_note: 2},
-  'Gm': {fifths: -2, mode: 9, base_note: 7},
-  'Cm': {fifths: -3, mode: 9, base_note: 0},
-  'Fm': {fifths: -4, mode: 9, base_note: 5},
-  'Bbm': {fifths: -5, mode: 9, base_note: 10},
-  'Ebm': {fifths: -6, mode: 9, base_note: 3},
-  'Abm': {fifths: -7, mode: 9, base_note: 8},
+  'A#m': {name: 'A#m', fifths: 7, mode: 9, base_note: 10},
+  'D#m': {name: 'D#m', fifths: 6, mode: 9, base_note: 3},
+  'G#m': {name: 'G#m', fifths: 5, mode: 9, base_note: 8},
+  'C#m': {name: 'C#m', fifths: 4, mode: 9, base_note: 1},
+  'F#m': {name: 'F#m', fifths: 3, mode: 9, base_note: 6},
+  'Bm': {name: 'Bm', fifths: 2, mode: 9, base_note: 11},
+  'Em': {name: 'Em', fifths: 1, mode: 9, base_note: 4},
+  'Am': {name: 'Am', fifths: 0, mode: 9, base_note: 9},
+  'Dm': {name: 'Dm', fifths: -1, mode: 9, base_note: 2},
+  'Gm': {name: 'Gm', fifths: -2, mode: 9, base_note: 7},
+  'Cm': {name: 'Cm', fifths: -3, mode: 9, base_note: 0},
+  'Fm': {name: 'Fm', fifths: -4, mode: 9, base_note: 5},
+  'Bbm': {name: 'Bbm', fifths: -5, mode: 9, base_note: 10},
+  'Ebm': {name: 'Ebm', fifths: -6, mode: 9, base_note: 3},
+  'Abm': {name: 'Abm', fifths: -7, mode: 9, base_note: 8},
 
   /*
   'G# mix': {fifths: 7, mode: 7, base_note: 8},
@@ -58,7 +58,6 @@ export function showKeysigModal() {
   let i;
   i = 0;
   for (const keysig in keysigs) {
-    keysigs[keysig].name = keysig;
     if (!(i % 15)) ksig.push([]);
     ksig[Math.floor(i / 15)].push({name: keysig, i: i, value: keysigs[keysig]});
     ++i;

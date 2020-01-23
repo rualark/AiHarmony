@@ -14,7 +14,7 @@ export function readMusicXml(xml, filename) {
   try {
     start_counter('musicXmlToData');
     let error = musicXmlToData(xml);
-    stop_counter();
+    //stop_counter();
     if (error) {
       storage2state();
       alertify.alert('Error loading MusicXML', error);
