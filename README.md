@@ -8,7 +8,7 @@ Artinfuser Harmony allows to play, edit and analyse MusicXML files with exercise
 
 <a href="https://browserstack.com">Browserstack</a>
 
-<a href=https://sentry.io/organizations/artinfuser/issues/?project=1894684>Sentry error tracking</a>
+<a href='https://sentry.io/organizations/artinfuser/issues/?project=1894684'>Sentry error tracking</a>
 
 <a href=https://rollbar.com/rualark/all/items>Rollbar error tracking</a>
 
