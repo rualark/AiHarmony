@@ -7,22 +7,25 @@ export let aic = {
   openPdf: true
 };
 
+function setAicIcon(img) {
+  if (document.getElementById("aici").src.endsWith(img)) return;
+  console.log('Set icon');
+  document.getElementById("aici").src = img;
+}
+
 function setAicState(state) {
-  if (aic.state === state) return;
   aic.state = state;
   if (state === 'ready') {
-    document.getElementById("aici").src = 'img/toolbar/aic.png';
+    setAicIcon('img/toolbar/aic.png');
+    return;
   }
-  if (state === 'sent') {
-    document.getElementById("aici").src = 'img/progress/progress11c.gif';
+  let passed = (new Date() - aic.sendTime) / 1000;
+  if (passed > 5) {
+    if (state === 'sent') setAicIcon('img/progress/progress11c.gif');
+    if (state === 'queued') setAicIcon('img/progress/progress9c.gif');
+    return;
   }
-  if (state === 'queued') {
-    document.getElementById("aici").src = 'img/progress/progress9c.gif';
-  }
-  if (state === 'running') {
-    document.getElementById("aici").src = 'img/progress/progress.gif';
-  }
-  return true;
+  setAicIcon('img/progress/progress.gif');
 }
 
 export function sendToAic(openPdf=true) {
@@ -79,6 +82,7 @@ function getAicData(data) {
   aic.f_id = spl[3];
   aic.timeStarted = new Date();
   aic.warnedQueue = false;
+  aic.sendTime = new Date();
   if (aic.u_name === 'robot_aih') {
     alertify.warning('<a href=https://artinfuser.com/counterpoint target=_blank>Login to Artinfuser</a> for more analysis options and history', 15);
   }
@@ -106,9 +110,9 @@ function getAicUpdate(data) {
   if (aic.j_state === 2) {
     setAicState('running');
   }
-  if (aic.passedTime > 10 && aic.j_state === 1 && !aic.warnedQueue) {
+  if (aic.passedTime > 7 && aic.j_state === 1 && !aic.warnedQueue) {
     aic.warnedQueue = true;
-    alertify.message('Please be patient. Analysis is <a href=https://artinfuser.com/counterpoint/status.php target=_blank>waiting</a> for other users', 15);
+    alertify.message('Please be patient. Analysis is <a href=https://artinfuser.com/counterpoint/status.php target=_blank>waiting</a> for other users', 20);
   }
 }
 

@@ -1,7 +1,7 @@
 import {dataToAbc} from "./dataToAbc.js";
 import {nd} from "../notes/NotesData.js";
 import {saveState} from "../state/history.js";
-import {start_counter, stop_counter} from "../core/time.js";
+import {start_counter} from "../core/time.js";
 import {update_selection} from "../ui/notation.js";
 
 export let MAX_ABC_NOTE = 60;

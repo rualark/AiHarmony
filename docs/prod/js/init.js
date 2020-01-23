@@ -39,8 +39,8 @@ function init() {
 function after_init() {
   initTooltips(800, 100);
   if (debug_error) throw "debug_test_exception";
-  if (getUrlParam('test') === '1') {
-    test();
+  if (getUrlParam('test') != null) {
+    test(getUrlParam('test'));
   }
 }
 
