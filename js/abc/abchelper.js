@@ -48,7 +48,7 @@ function notation_redraw() {
   $('#filename').html('&nbsp;&nbsp;' + nd.name);
   start_counter('renderAbc');
   abcjs = ABCJS.renderAbc('abc', dataToAbc(), parserParams, engraverParams);
-  stop_counter();
+  //stop_counter();
   if (clicked.note) {
     find_selection();
   }

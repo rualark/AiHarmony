@@ -1,7 +1,7 @@
 import "./MusicXml/musicXmlToData.js";
 import {async_redraw, init_abcjs} from "./abc/abchelper.js";
 import {initCommands, initFilenameClick, initKeyCodes} from "./ui/commands.js";
-import {getUrlParam, urlNoParams} from "./core/url.js";
+import {debug_error, getUrlParam, urlNoParams} from "./core/remote.js";
 import {showShortcutsModal} from "./ui/modal/shortcutsModal.js";
 import {init_base64, url2state} from "./state/state.js";
 import {readRemoteMusicXmlFile} from "./MusicXml/readRemoteMusicXml.js";
@@ -34,6 +34,7 @@ function init() {
 
 function after_init() {
   initTooltips(800, 100);
+  if (debug_error) undefined_debug_error();
 }
 
 init();

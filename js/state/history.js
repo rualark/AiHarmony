@@ -51,7 +51,7 @@ function getHistoryUtf16(history_pos) {
   }
 }
 
-function makePatch(st1, st2) {
+export function makePatch(st1, st2) {
   let p1 = 0;
   let p2 = 0;
   for (let i=0; i<st1.length; ++i) {

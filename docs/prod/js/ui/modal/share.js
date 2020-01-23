@@ -1,5 +1,5 @@
 import {state2url} from "../../state/state.js";
-import {urlNoParams} from "../../core/url.js";
+import {urlNoParams} from "../../core/remote.js";
 
 export function showShareModal() {
   let st = '';

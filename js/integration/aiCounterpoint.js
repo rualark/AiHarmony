@@ -3,27 +3,36 @@ import {nd} from "../notes/NotesData.js";
 
 export let aic = {
   state: 'ready',
-  f_id: 0
+  f_id: 0,
+  openPdf: true
 };
 
 function setAicState(state) {
-  if (state === 'running' && aic.state !== 'ready') return false;
+  if (aic.state === state) return;
   aic.state = state;
-  if (state === 'success' || state === 'ready') {
+  if (state === 'ready') {
     document.getElementById("aici").src = 'img/toolbar/aic.png';
   }
+  if (state === 'sent') {
+    document.getElementById("aici").src = 'img/progress/progress11c.gif';
+  }
+  if (state === 'queued') {
+    document.getElementById("aici").src = 'img/progress/progress9c.gif';
+  }
   if (state === 'running') {
-    document.getElementById("aici").src = 'img/progress.gif';
+    document.getElementById("aici").src = 'img/progress/progress.gif';
   }
   return true;
 }
 
-export function sendToAic() {
+export function sendToAic(openPdf=true) {
+  aic.openPdf = openPdf;
   let xml;
-   if (!setAicState('running')) {
-     alertify.error('Please wait for analysis task to finish');
-     return;
-   }
+  if (aic.state !== 'ready') {
+    alertify.error('Please wait for analysis task to finish');
+    return;
+  }
+  setAicState('sent');
   try {
     xml = dataToMusicXml();
   }
@@ -91,6 +100,12 @@ function getAicUpdate(data) {
   aic.j_result = Number(spl[4]);
   aic.j_url = spl[5];
   aic.passedTime = spl[6];
+  if (aic.j_state === 1) {
+    setAicState('queued');
+  }
+  if (aic.j_state === 2) {
+    setAicState('running');
+  }
   if (aic.passedTime > 10 && aic.j_state === 1 && !aic.warnedQueue) {
     aic.warnedQueue = true;
     alertify.message('Please be patient. Analysis is <a href=https://artinfuser.com/counterpoint/status.php target=_blank>waiting</a> for other users', 15);
@@ -99,7 +114,6 @@ function getAicUpdate(data) {
 
 function waitForAic() {
   console.log(aic);
-  if (aic.state !== 'running') return;
   $.ajax({
     type: 'GET',
     url: 'https://artinfuser.com/counterpoint/robotstate.php',
@@ -127,5 +141,7 @@ function waitForAic() {
 
 function finishAic() {
   setAicState('ready');
-  window.open('https://artinfuser.com/counterpoint/' + aic.j_url, '_blank');
+  if (aic.openPdf) {
+    window.open('https://artinfuser.com/counterpoint/' + aic.j_url, '_blank');
+  }
 }

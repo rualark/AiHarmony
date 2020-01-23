@@ -2,7 +2,7 @@ export let local_start_counter;
 export let global_start_counter;
 export let counter_name;
 
-export function start_counter(name, global_start = true) {
+export function start_counter(name, global_start = false) {
   let now = new Date();
   counter_name = name;
   if (!global_start_counter || global_start) {
@@ -18,7 +18,7 @@ export function stop_counter() {
   if (global_start_counter !== local_start_counter) {
     st += ` (total ${(now - global_start_counter) / 1000} s)`;
   }
-  //console.log(st);
+  console.log(st);
 }
 
 export function currentTimestamp() {
