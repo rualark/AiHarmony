@@ -227,7 +227,7 @@ class NotesData {
         ]
       },
     ];
-    clicked.note = null;
+    clicked.note = {voice: 0, note: 0};
     this.abc_charStarts = [];
   }
 
