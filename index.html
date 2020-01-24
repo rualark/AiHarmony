@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body style='touch-action: pan-x pan-y;'>
-<div id=toolbar style='position: fixed; top: 0; left: 0; z-index: 99; background-color: white; width: 100%; overflow: auto; white-space: nowrap; border:0px; border-bottom: 1px solid #dddddd; padding: 2px;'>
+<div id=toolbar style='display: flex; position: fixed; top: 0; left: 0; z-index: 99; background-color: white; width: 100%; overflow: auto; white-space: nowrap; border:0px; border-bottom: 1px solid #dddddd; padding: 2px;'>
 </div>
 
 <div style='position: fixed; bottom: 50px; right: 20px; z-index: 99'>
@@ -25,9 +25,7 @@
 <div id="audio"></div>
 <div style='border: 0px; position:relative; width: 100%; height: 100px; display: inline-block' id='abc'>
 </div>
-</body>
 
-<script>let ip; function ipCallback(json) {ip = json.ip;}</script>
 <script src="https://browser.sentry-cdn.com/5.11.1/bundle.min.js" integrity="sha384-r7/ZcDRYpWjCNXLUKk3iuyyyEcDJ+o+3M5CqXP5GUGODYbolXewNHAZLYSJ3ZHcV" crossorigin="anonymous"></script>
 <script type=module src=js/integration/sentry.js></script>
 <script type='text/javascript' src='js/integration/rollbar.js'></script>
@@ -51,7 +49,6 @@
 
 <script defer src="plugin/bootstrap-4.3.1/js/bootstrap.bundle.min.js"></script>
 <script defer type='text/javascript' src='plugin/clipboard.js/clipboard.min.js'></script>
-<script defer src="https://api.ipify.org?format=jsonp&callback=ipCallback"></script>
 <script defer src="https://cdn.lr-ingest.io/LogRocket.min.js" crossorigin="anonymous"></script>
 <script defer type='text/javascript' src='js/integration/logRocket.js'></script>
 
@@ -73,3 +70,4 @@
 
 <div id=testResult></div>
 <div id=console></div>
+</body>

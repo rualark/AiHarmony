@@ -43,7 +43,6 @@ export function voiceChange(dv) {
 export function new_file() {
   if (state.state !== 'ready') return;
   nd.reset();
-  clicked.note = {voice: 0, note: 0};
   saveState();
   async_redraw();
 }

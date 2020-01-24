@@ -106,7 +106,7 @@ export function initCommands() {
       if (!mobileOrTablet && !(command.toolbar.dev & 2)) continue;
     }
     if (command.separator) {
-      st += `<div style='display: inline-block; height: 100%; vertical-align: middle;'><img src=img/color/gray.png style='vertical-align: middle; opacity: 0.3' height=${mobileOpt[mobileOrTablet].toolbar_img_height - 4} width=1></div>&nbsp;`;
+      st += `<div style='display: flex; justify-content: center; align-items: center;'><img src=img/color/gray.png style='opacity: 0.3' height=${mobileOpt[mobileOrTablet].toolbar_img_height - 4} width=1></div>&nbsp;`;
       continue;
     }
     if (!command.toolbar) continue;
@@ -119,7 +119,7 @@ export function initCommands() {
       }
       tooltip = `data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${title}"`;
     }
-    st += `<a ${tooltip} id='${command.id}' class='btn btn-outline-white ${command.toolbar.disabled ? "disabled " : ""}p-1' href=# role='button' style='min-width: ${mobileOpt[mobileOrTablet].toolbar_button_width}px; font-size: ${command.toolbar.fontSize * mobileOpt[mobileOrTablet].toolbar_font_scale || '1'}em'>`;
+    st += `<a ${tooltip} id='${command.id}' class='btn btn-outline-white ${command.toolbar.disabled ? "disabled " : ""}p-1' href=# role='button' style='display: flex; justify-content: center; align-items: center; min-width: ${mobileOpt[mobileOrTablet].toolbar_button_width}px; font-size: ${command.toolbar.fontSize * mobileOpt[mobileOrTablet].toolbar_font_scale || '1'}em'>`;
     if (command.toolbar.type === 'image') {
       command.toolbar.html = `<img id='${command.id}i' src=img/toolbar/${command.id}.png height=${mobileOpt[mobileOrTablet].toolbar_img_height}>`;
     }

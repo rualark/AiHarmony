@@ -1,4 +1,3 @@
-import "./MusicXml/musicXmlToData.js";
 import {async_redraw, init_abcjs} from "./abc/abchelper.js";
 import {initCommands, initFilenameClick, initKeyCodes} from "./ui/commands.js";
 import {debug_error, getUrlParam, urlNoParams} from "./core/remote.js";

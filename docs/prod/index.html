@@ -25,9 +25,7 @@
 <div id="audio"></div>
 <div style='border: 0px; position:relative; width: 100%; height: 100px; display: inline-block' id='abc'>
 </div>
-</body>
 
-<script>let ip; function ipCallback(json) {ip = json.ip;}</script>
 <script src="https://browser.sentry-cdn.com/5.11.1/bundle.min.js" integrity="sha384-r7/ZcDRYpWjCNXLUKk3iuyyyEcDJ+o+3M5CqXP5GUGODYbolXewNHAZLYSJ3ZHcV" crossorigin="anonymous"></script>
 <script type=module src=js/integration/sentry.js></script>
 <script type='text/javascript' src='js/integration/rollbar.js'></script>
@@ -51,7 +49,6 @@
 
 <script defer src="plugin/bootstrap-4.3.1/js/bootstrap.bundle.min.js"></script>
 <script defer type='text/javascript' src='plugin/clipboard.js/clipboard.min.js'></script>
-<script defer src="https://api.ipify.org?format=jsonp&callback=ipCallback"></script>
 <script defer src="https://cdn.lr-ingest.io/LogRocket.min.js" crossorigin="anonymous"></script>
 <script defer type='text/javascript' src='js/integration/logRocket.js'></script>
 
@@ -73,3 +70,4 @@
 
 <div id=testResult></div>
 <div id=console></div>
+</body>

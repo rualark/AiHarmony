@@ -13,7 +13,7 @@ export function urlNoParams() {
 export function getEnvironment() {
   if (getUrlParam('test')) return "test";
   if (urlNoParams().includes("/harmony-dev")) return "dev";
-  if (ip === "95.165.137.69" || getCookie('mgen_login') === 'rualark@gmail.com') return "prod-in";
+  if (getCookie('mgen_login') === 'rualark@gmail.com') return "prod-in";
   return "prod";
 }
 
