@@ -1,4 +1,4 @@
-export let debug_error = 0;
+export let debug_error = 1;
 
 export function getUrlParam(par) {
   let url_string = window.location.href;

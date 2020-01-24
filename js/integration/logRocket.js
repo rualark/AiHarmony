@@ -1,8 +1,12 @@
-window.LogRocket && window.LogRocket.init('rgvzmt/aiharmony');
+import {getEnvironment} from "../core/remote.js";
 
-LogRocket.getSessionURL(sessionURL => {
-  Sentry.configureScope(scope => {
-    scope.setExtra("sessionURL", sessionURL);
-    console.log('Logrocket integrated with sentry');
+if (getEnvironment() === 'prod') {
+  window.LogRocket && window.LogRocket.init('rgvzmt/aiharmony');
+
+  LogRocket.getSessionURL(sessionURL => {
+    Sentry.configureScope(scope => {
+      scope.setExtra("sessionURL", sessionURL);
+      console.log('Logrocket integrated with sentry');
+    });
   });
-});
+}

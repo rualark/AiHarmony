@@ -150,7 +150,6 @@ async function test_do(test_level) {
   await waitForState('readRemoteMusicXmlFile', state, ['ready'], 50, 5000);
   readRemoteMusicXmlFile('musicxml/good-cp5-extract.xml');
   await waitForState('next_note', state, ['ready'], 50, 5000);
-  let loaded_nd = JSON.stringify(nd, null, 1);
   let loaded_plain = data2string().slice(0, -STATE_VOLATILE_SUFFIX);
   assert2strings('Loaded plain',
     await httpRequestNoCache('GET', 'test_data/test1.plain'),

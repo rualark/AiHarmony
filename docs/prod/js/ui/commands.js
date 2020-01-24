@@ -18,7 +18,7 @@ import {showDownloadModal} from "./modal/download.js";
 import {showShareModal} from "./modal/share.js";
 import {redoState, undoState} from "../state/history.js";
 import {mobileOrTablet} from "../core/mobileCheck.js";
-import {aic, sendToAic} from "../integration/aiCounterpoint.js";
+import {sendToAic} from "../integration/aiCounterpoint.js";
 import {add_part, del_bar, del_part, new_file, stop_advancing, voiceChange} from "./edit/editScore.js";
 import {toggle_tie} from "./edit/editTie.js";
 import {next_note, prev_note} from "./edit/move.js";
@@ -105,8 +105,10 @@ export function initCommands() {
       if (mobileOrTablet && !(command.toolbar.dev & 1)) continue;
       if (!mobileOrTablet && !(command.toolbar.dev & 2)) continue;
     }
+    let nbsp = '&nbsp;';
+    //if (!mobileOrTablet) nbsp = '';
     if (command.separator) {
-      st += `<div style='display: flex; justify-content: center; align-items: center;'><img src=img/color/gray.png style='opacity: 0.3' height=${mobileOpt[mobileOrTablet].toolbar_img_height - 4} width=1></div>&nbsp;`;
+      st += `<div style='display: flex; justify-content: center; align-items: center;'><img src=img/color/gray.png style='opacity: 0.3' height=${mobileOpt[mobileOrTablet].toolbar_img_height - 4} width=1></div>${nbsp}`;
       continue;
     }
     if (!command.toolbar) continue;
@@ -126,7 +128,7 @@ export function initCommands() {
     if (command.toolbar.type === 'text') {
       command.toolbar.html = `${command.toolbar.text}`;
     }
-    st += command.toolbar.html + '</a>';
+    st += command.toolbar.html + `</a>${nbsp}`;
   }
   //console.log(st);
   document.getElementById("toolbar").innerHTML = st;
