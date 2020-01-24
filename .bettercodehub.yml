@@ -3,3 +3,10 @@ exclude:
 - /plugin/.*
 - /work/.*
 - /test/.*
+- name: javascript
+  production:
+    exclude:
+      - js/test/.*
+  test:
+    include:
+      - js/test/.*

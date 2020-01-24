@@ -7,7 +7,7 @@ if (getEnvironment() === 'prod') {
     environment: getEnvironment(),
     beforeSend(event, hint) {
       // Check if it is an exception, and if so, show the report dialog
-      if (event.exception) {
+      if (event.exception && !debug_error) {
         try {
           enableKeys(false);
         } catch (e) {
