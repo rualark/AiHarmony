@@ -173,14 +173,14 @@ export let commands = [
     toolbar: {type: 'image'},
     keys: [],
     command: () => { window.open('https://artinfuser.com', '_blank') },
-    name: 'Artinfuser',
+    name: '',
   },
   {
     id: 'question',
     toolbar: {type: 'image'},
     keys: ['F1'],
     command: () => { showShortcutsModal() },
-    name: '',
+    name: 'Help',
   },
   {
     id: 'new',
