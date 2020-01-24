@@ -22,6 +22,7 @@ export function showShareModal() {
   //st += `<img height=20 src=img/clipboard.svg alt='Copy to clipboard'>`;
   //st += `</button>`;
   new ClipboardJS('.btn');
+  $('#modalDialog').removeClass("modal-lg");
   document.getElementById("ModalTitle").innerHTML = 'Share music';
   document.getElementById("ModalBody").innerHTML = st;
   $('#Modal').modal();

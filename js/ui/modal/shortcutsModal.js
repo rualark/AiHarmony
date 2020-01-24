@@ -35,6 +35,7 @@ export function showShortcutsModal() {
       st += keys_st;
     }
   }
+  $('#modalDialog').addClass("modal-lg");
   document.getElementById("ModalBody").innerHTML = st;
   initTooltips(200, 100);
   $('#Modal').modal();

@@ -67,6 +67,7 @@ export function showDownloadModal() {
     st += '</a></p>';
   }
   st += `<div style='display: none' id="midi-download"></div>`;
+  $('#modalDialog').removeClass("modal-lg");
   document.getElementById("ModalTitle").innerHTML = 'Download music';
   document.getElementById("ModalBody").innerHTML = st;
   for (const i in exportFormats) {
