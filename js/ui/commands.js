@@ -18,7 +18,7 @@ import {showDownloadModal} from "./modal/download.js";
 import {showShareModal} from "./modal/share.js";
 import {redoState, undoState} from "../state/history.js";
 import {mobileOrTablet} from "../core/mobileCheck.js";
-import {aic, sendToAic} from "../integration/aiCounterpoint.js";
+import {sendToAic} from "../integration/aiCounterpoint.js";
 import {add_part, del_bar, del_part, new_file, stop_advancing, voiceChange} from "./edit/editScore.js";
 import {toggle_tie} from "./edit/editTie.js";
 import {next_note, prev_note} from "./edit/move.js";
