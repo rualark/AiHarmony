@@ -4,8 +4,14 @@
   <meta charset='utf-8'>
   <meta http-equiv="content-type" content="text/html" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Harmony</title>
+  <title>Artinfuser Harmony</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="AiHarmony">
+  <meta name="apple-mobile-web-app-title" content="AiHarmony">
+  <meta name="msapplication-starturl" content="/">
+  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="plugin/bootstrap-4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="plugin/alertifyjs/css/alertify.min.css" />
   <link rel="stylesheet" href="plugin/alertifyjs/css/themes/semantic.min.css" />
@@ -45,6 +51,7 @@
 <script type='text/javascript' src='plugin/jquery-3.4.1/jquery-3.4.1.min.js'></script>
 <script type='text/javascript' src='plugin/lz-string-1.4.4/lz-string.min.js'></script>
 <script type='text/javascript' src='plugin/alertifyjs/alertify.min.js'></script>
+<script type='text/javascript' src="plugin/bootbox/bootbox.min.js"></script>
 <script type=module src=js/init.js></script>
 
 <script defer src="plugin/bootstrap-4.3.1/js/bootstrap.bundle.min.js"></script>
@@ -54,7 +61,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id=Modal tabindex=-1 role="dialog">
-  <div class="modal-dialog" role="document">
+  <div id=modalDialog class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id=ModalTitle></h5>

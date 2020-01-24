@@ -232,14 +232,10 @@
      <octave>5</octave>
     </pitch>
     <duration>512</duration>
-    <tie type="start" />
     <voice>1</voice>
     <type>half</type>
     <accidental>natural</accidental>
     <staff>1</staff>
-    <notations>
-     <tied type="start" />
-    </notations>
    </note>
   </measure>
   <measure number="4">
@@ -250,14 +246,10 @@
      <octave>4</octave>
     </pitch>
     <duration>512</duration>
-    <tie type="stop" />
     <voice>1</voice>
     <type>half</type>
     <accidental>natural</accidental>
     <staff>1</staff>
-    <notations>
-     <tied type="stop" />
-    </notations>
    </note>
    <note color="#000000">
     <pitch>

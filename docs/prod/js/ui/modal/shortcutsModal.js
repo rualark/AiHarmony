@@ -10,8 +10,8 @@ export function showShortcutsModal() {
   st += '<table class=table>';
   st += '<tr>';
   st += '<th>Function';
-  st += '<th>Button';
-  st += '<th>Keyboard shortcut';
+  st += '<th style="text-align: center">Button';
+  st += '<th style="text-align: center">Keyboard shortcut';
   for (let command of commands) {
     if (!command.name) continue;
     st += '<tr>';
@@ -35,6 +35,7 @@ export function showShortcutsModal() {
       st += keys_st;
     }
   }
+  $('#modalDialog').addClass("modal-lg");
   document.getElementById("ModalBody").innerHTML = st;
   initTooltips(200, 100);
   $('#Modal').modal();

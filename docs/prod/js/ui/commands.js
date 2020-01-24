@@ -148,16 +148,16 @@ export function initCommands() {
 export function initFilenameClick() {
   document.getElementById('filename').onclick=function(){
     enableKeys(false);
-    alertify.prompt('Exercise name', '', nd.name,
-      function(evt, value) {
+    bootbox.prompt({
+      title: "Exercise name",
+      value: nd.name,
+      callback: function(value) {
         enableKeys(true);
+        if (value == null) return;
         nd.name = value;
         $('#filename').html('&nbsp;&nbsp;' + nd.name);
-      },
-      function() {
-        enableKeys(true);
       }
-    );
+    });
     return false;
   };
 }
@@ -168,6 +168,13 @@ export let commandAltKeyCodes = {};
 export let commandShiftKeyCodes = {};
 
 export let commands = [
+  {
+    id: 'logo',
+    toolbar: {type: 'image'},
+    keys: [],
+    command: () => { window.open('https://artinfuser.com', '_blank') },
+    name: 'Artinfuser',
+  },
   {
     id: 'question',
     toolbar: {type: 'image'},
@@ -410,14 +417,14 @@ export let commands = [
   { separator: true },
   {
     id: 'add_part',
-    toolbar: {type: 'text', text: '+Part', fontSize: 1.2},
+    toolbar: {type: 'text', text: '+P', fontSize: 1.4},
     keys: [],
     command: () => { add_part() },
     name: 'Add part below selected part',
   },
   {
     id: 'del_part',
-    toolbar: {type: 'text', text: '-Part', fontSize: 1.2},
+    toolbar: {type: 'text', text: '-P', fontSize: 1.4},
     keys: [],
     command: () => { del_part() },
     name: 'Delete selected part',

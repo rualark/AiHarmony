@@ -10,8 +10,8 @@ export function showShortcutsModal() {
   st += '<table class=table>';
   st += '<tr>';
   st += '<th>Function';
-  st += '<th>Button';
-  st += '<th>Keyboard shortcut';
+  st += '<th style="text-align: center">Button';
+  st += '<th style="text-align: center">Keyboard shortcut';
   for (let command of commands) {
     if (!command.name) continue;
     st += '<tr>';

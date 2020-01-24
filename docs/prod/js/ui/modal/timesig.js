@@ -41,6 +41,7 @@ export function showTimesigModal() {
     st += timesig_html(timesigs[i].beats_per_measure, timesigs[i].beat_type, i);
   }
   st += "</table></div>";
+  $('#modalDialog').removeClass("modal-lg");
   document.getElementById("ModalTitle").innerHTML = 'Choose time signature';
   document.getElementById("ModalBody").innerHTML = st;
   for (const i in timesigs) {

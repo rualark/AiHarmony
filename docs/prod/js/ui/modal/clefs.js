@@ -23,6 +23,7 @@ export function showClefsModal(voice) {
     ++i;
   }
   st += "</table></div>";
+  $('#modalDialog').removeClass("modal-lg");
   document.getElementById("ModalTitle").innerHTML = 'Choose clef';
   document.getElementById("ModalBody").innerHTML = st;
   i = 0;

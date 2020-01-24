@@ -257,6 +257,9 @@ class NotesData {
         let nt = vc.notes[n];
         if (nt.step >= p1 && nt.step + nt.len <= p2) {
           vc.notes.splice(n, 1);
+          if (n) {
+            vc.notes[n - 1].startsTie = false;
+          }
           --n;
         }
       }

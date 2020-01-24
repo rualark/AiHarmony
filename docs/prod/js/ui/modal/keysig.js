@@ -85,6 +85,7 @@ export function showKeysigModal() {
     }
   }
   st += '</table>';
+  $('#modalDialog').removeClass("modal-lg");
   document.getElementById("ModalTitle").innerHTML = 'Choose key signature';
   document.getElementById("ModalBody").innerHTML = st;
   i = 0;

@@ -169,6 +169,13 @@ export let commandShiftKeyCodes = {};
 
 export let commands = [
   {
+    id: 'logo',
+    toolbar: {type: 'image'},
+    keys: [],
+    command: () => { window.open('https://artinfuser.com', '_blank') },
+    name: 'Artinfuser',
+  },
+  {
     id: 'question',
     toolbar: {type: 'image'},
     keys: ['F1'],
@@ -410,14 +417,14 @@ export let commands = [
   { separator: true },
   {
     id: 'add_part',
-    toolbar: {type: 'text', text: '+Part', fontSize: 1.2},
+    toolbar: {type: 'text', text: '+P', fontSize: 1.4},
     keys: [],
     command: () => { add_part() },
     name: 'Add part below selected part',
   },
   {
     id: 'del_part',
-    toolbar: {type: 'text', text: '-Part', fontSize: 1.2},
+    toolbar: {type: 'text', text: '-P', fontSize: 1.4},
     keys: [],
     command: () => { del_part() },
     name: 'Delete selected part',
