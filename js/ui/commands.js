@@ -148,16 +148,16 @@ export function initCommands() {
 export function initFilenameClick() {
   document.getElementById('filename').onclick=function(){
     enableKeys(false);
-    alertify.prompt('Exercise name', '', nd.name,
-      function(evt, value) {
+    bootbox.prompt({
+      title: "Exercise name",
+      value: nd.name,
+      callback: function(value) {
         enableKeys(true);
+        if (value == null) return;
         nd.name = value;
         $('#filename').html('&nbsp;&nbsp;' + nd.name);
-      },
-      function() {
-        enableKeys(true);
       }
-    );
+    });
     return false;
   };
 }
