@@ -5,7 +5,7 @@ export function waitForVar(obj, field, vals, pause, timeout) {
         return resolve(time);
       }
       if (time > timeout) {
-        return reject(`Timeout ${timeout} ms waiting for ${field}`);
+        return reject(`Timeout ${timeout} ms waiting for ${field}=${vals.join(',')}`);
       }
       setTimeout(() => {
         waitForVarInternal(time + pause);

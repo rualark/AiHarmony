@@ -634,7 +634,7 @@ var wasmMemory;
 // so this creates a (non-native-wasm) table for us.
 var wasmTable = new WebAssembly.Table({
   'initial': 1,
-  'maximum': 1 + 0,
+  'maximum': 1 + 5,
   'element': 'anyfunc'
 });
 
@@ -1633,7 +1633,7 @@ function isDataURI(filename) {
 
 
 
-var wasmBinaryFile = 'modules/CA3.wasm';
+var wasmBinaryFile = 'CA3.wasm';
 if (!isDataURI(wasmBinaryFile)) {
   wasmBinaryFile = locateFile(wasmBinaryFile);
 }
@@ -1967,6 +1967,13 @@ var ASM_CONSTS = {
       }
       return (end-num)|0;
     }
+
+  function _sendState(i) {
+      self.postMessage({
+        type: 'STATE',
+        data: i,
+      });
+    }
 var ASSERTIONS = true;
 
 // Copyright 2017 The Emscripten Authors.  All rights reserved.
@@ -2002,7 +2009,7 @@ function intArrayToString(array) {
 // ASM_LIBRARY EXTERN PRIMITIVES: Int8Array,Int32Array
 
 var asmGlobalArg = {};
-var asmLibraryArg = { "__handle_stack_overflow": ___handle_stack_overflow, "__lock": ___lock, "__unlock": ___unlock, "emscripten_get_sbrk_ptr": _emscripten_get_sbrk_ptr, "emscripten_resize_heap": _emscripten_resize_heap, "memory": wasmMemory, "table": wasmTable };
+var asmLibraryArg = { "__handle_stack_overflow": ___handle_stack_overflow, "__lock": ___lock, "__unlock": ___unlock, "emscripten_get_sbrk_ptr": _emscripten_get_sbrk_ptr, "emscripten_resize_heap": _emscripten_resize_heap, "memory": wasmMemory, "sendState": _sendState, "table": wasmTable };
 var asm = createWasm();
 var real____wasm_call_ctors = asm["__wasm_call_ctors"];
 asm["__wasm_call_ctors"] = function() {
@@ -2011,11 +2018,11 @@ asm["__wasm_call_ctors"] = function() {
   return real____wasm_call_ctors.apply(null, arguments);
 };
 
-var real___Z12doubleValuesPii = asm["_Z12doubleValuesPii"];
-asm["_Z12doubleValuesPii"] = function() {
+var real___Z12doubleValuesPfi = asm["_Z12doubleValuesPfi"];
+asm["_Z12doubleValuesPfi"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return real___Z12doubleValuesPii.apply(null, arguments);
+  return real___Z12doubleValuesPfi.apply(null, arguments);
 };
 
 var real__main = asm["main"];
@@ -2102,10 +2109,10 @@ var ___wasm_call_ctors = Module["___wasm_call_ctors"] = function() {
   return Module["asm"]["__wasm_call_ctors"].apply(null, arguments)
 };
 
-var __Z12doubleValuesPii = Module["__Z12doubleValuesPii"] = function() {
+var __Z12doubleValuesPfi = Module["__Z12doubleValuesPfi"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["_Z12doubleValuesPii"].apply(null, arguments)
+  return Module["asm"]["_Z12doubleValuesPfi"].apply(null, arguments)
 };
 
 var _main = Module["_main"] = function() {

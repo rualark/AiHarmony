@@ -2,6 +2,12 @@ let workerState = {
   state: 'init'
 };
 
+var Module = {
+  locateFile: function(s) {
+    return 'modules/' + s;
+  },
+};
+
 function waitForVar(obj, field, vals, pause, timeout) {
   return new Promise((resolve, reject) => {
     (function waitForVarInternal(time = 0) {
@@ -9,7 +15,7 @@ function waitForVar(obj, field, vals, pause, timeout) {
         return resolve(time);
       }
       if (time > timeout) {
-        return reject(`Timeout ${timeout} ms waiting for ${field}`);
+        return reject(`Timeout ${timeout} ms waiting for ${field}=${vals.join(',')}`);
       }
       setTimeout(() => {
         waitForVarInternal(time + pause);
@@ -29,7 +35,7 @@ async function initWasmModule(modName) {
   Module.onRuntimeInitialized = function() {
     workerState.state = 'ready';
   };
-  await waitForVar(workerState, 'state', 'ready', 50, 4000);
+  await waitForVar(workerState, 'state', ['ready'], 50, 4000);
 }
 
 function toInt32Arr(arr) {
@@ -39,10 +45,17 @@ function toInt32Arr(arr) {
   return res;
 }
 
+function toFloat32Arr(arr) {
+  const res = new Float32Array(arr.length);
+  for (let i=0; i < arr.length; i++)
+    res[i] = arr[i];
+  return res;
+}
+
 function transferToHeap(wasmMod, arr) {
-  const intArray = toInt32Arr(arr);
-  let heapSpace = wasmMod._malloc(intArray.length * intArray.BYTES_PER_ELEMENT);
-  wasmMod.HEAPF32.set(intArray, heapSpace >> 2);
+  const fixedArray = toFloat32Arr(arr);
+  let heapSpace = wasmMod._malloc(fixedArray.length * fixedArray.BYTES_PER_ELEMENT);
+  wasmMod.HEAPF32.set(fixedArray, heapSpace >> 2);
   return heapSpace;
 }
 
@@ -50,7 +63,7 @@ function callWasmFuncArray(wasmMod, funcName, arr) {
   let arrayOnHeap;
   try {
     arrayOnHeap = transferToHeap(wasmMod, arr);
-    return wasmMod.__Z12doubleValuesPii(arrayOnHeap, arr.length);
+    return wasmMod[funcName](arrayOnHeap, arr.length);
   }
   finally {
     wasmMod._free(arrayOnHeap);
@@ -59,10 +72,10 @@ function callWasmFuncArray(wasmMod, funcName, arr) {
 
 function callWasmFuncArrayToArray(wasmMod, funcName, arr) {
   let res = callWasmFuncArray(wasmMod, funcName, arr);
-  const array = [];
-  let n = wasmMod.HEAPF32[res / Int32Array.BYTES_PER_ELEMENT];
+  let array = [];
+  let n = wasmMod.HEAPF32[res / Float32Array.BYTES_PER_ELEMENT];
   for (let i=0; i<n; i++) {
-    array.push(wasmMod.HEAPF32[res / Int32Array.BYTES_PER_ELEMENT + i + 1]);
+    array.push(wasmMod.HEAPF32[res / Float32Array.BYTES_PER_ELEMENT + i + 1]);
   }
   return array;
 }
