@@ -1,5 +1,4 @@
 import {dataToMusicXml} from "../../MusicXml/dataToMusicXml.js";
-import {fileSave, getDataUrl} from "../lib/fileSave.js";
 import {name2filename} from "../../core/string.js";
 import {nd} from "../../notes/NotesData.js";
 import {dataToAbc} from "../../abc/dataToAbc.js";
