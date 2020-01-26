@@ -7,7 +7,6 @@ import {readRemoteMusicXmlFile} from "./MusicXml/readRemoteMusicXml.js";
 import {loadState, saveState} from "./state/history.js";
 import {initTooltips} from "./ui/lib/tooltips.js";
 import {element_click} from "./ui/notation.js";
-import {test} from "./test/test.js";
 
 function init() {
   initKeyCodes();
@@ -35,11 +34,12 @@ function init() {
   setTimeout(after_init, 0);
 }
 
-function after_init() {
+async function after_init() {
   initTooltips(800, 100);
   if (debug_error) throw "debug_test_exception";
   if (getUrlParam('test') != null) {
-    test(getUrlParam('test'));
+    let testModule = await import("./test/test.js");
+    await testModule.test(getUrlParam('test'));
   }
 }
 
