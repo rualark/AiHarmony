@@ -21,12 +21,11 @@ import {httpRequestNoCache} from "../core/remote.js";
 import {data2string, STATE_VOLATILE_SUFFIX} from "../state/state.js";
 import {keysigs} from "../ui/modal/keysig.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
+import {waitForVar} from "../core/promise.js";
 
 export let testState = {
   testing: false
 };
-
-export let waitEnabled = true;
 
 function console2html() {
   let old = console.log;
@@ -43,25 +42,17 @@ function console2html() {
   }
 }
 
-function waitForState(stage, obj, vals, pause, timeout) {
-  return new Promise((resolve, reject) => {
-    if (!waitEnabled) {
-      return resolve();
-    }
-    (function waitForStateInternal(time=0){
-      if (vals.includes(obj.state)) {
-        console.log('READY: ' + stage);
-        return resolve();
-      }
-      if (time > timeout) {
-        return reject(`${stage}. Timeout ${timeout} waiting for state (current ${obj.state}) with pause ${pause}`);
-      }
-      console.log(stage + '. Throttling: ' + time);
-      setTimeout(() => {
-        waitForStateInternal(time + pause);
-      }, pause);
-    })();
-  });
+async function waitForState(stage, obj, vals, pause, timeout) {
+  // Check for abc redraw error
+  if (state.error != null) {
+    throw state.error;
+  }
+  try {
+    await waitForVar(obj, 'state', vals, pause, timeout);
+  }
+  catch (e) {
+    throw `${stage}. Timeout ${timeout} waiting for state (current ${obj.state}) with pause ${pause}`;
+  }
 }
 
 function assert2strings(stage, st1, st2) {

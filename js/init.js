@@ -35,13 +35,16 @@ function init() {
 }
 
 async function after_init() {
+}
+
+window.addEventListener('DOMContentLoaded', async function() {
   initTooltips(800, 100);
   if (debug_error) throw "debug_test_exception";
   if (getUrlParam('test') != null) {
     let testModule = await import("./test/test.js");
     await testModule.test(getUrlParam('test'));
   }
-}
+});
 
 init();
 

@@ -44,19 +44,23 @@ export function find_selection() {
 }
 
 function notation_redraw() {
-  parserParams.staffwidth = window.innerWidth - 60;
-  $('#filename').html('&nbsp;&nbsp;' + nd.name);
-  start_counter('renderAbc');
-  abcjs = ABCJS.renderAbc('abc', dataToAbc(), parserParams, engraverParams);
-  //stop_counter();
-  if (clicked.note) {
-    find_selection();
+  try {
+    parserParams.staffwidth = window.innerWidth - 60;
+    $('#filename').html('&nbsp;&nbsp;' + nd.name);
+    start_counter('renderAbc');
+    abcjs = ABCJS.renderAbc('abc', dataToAbc(), parserParams, engraverParams);
+    //stop_counter();
+    if (clicked.note) {
+      find_selection();
+    } else {
+      clicked.element = {};
+      clicked.classes = "";
+    }
+    update_selection();
   }
-  else {
-    clicked.element = {};
-    clicked.classes = "";
+  catch (e) {
+    state.error = e;
   }
-  update_selection();
   state.state = 'ready';
 }
 
