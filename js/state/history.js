@@ -92,7 +92,7 @@ function pushState(state) {
   history_pos++;
   limitHistory();
   updateUndoRedoButtons();
-  console.log('History', history_pos, historySize());
+  //console.log('History', history_pos, historySize());
 }
 
 export function loadState() {
@@ -129,7 +129,7 @@ export function undoState() {
     utf16_storage(utf16);
     stop_advancing();
     updateUndoRedoButtons();
-    console.log('History', history_pos, historySize());
+    //console.log('History', history_pos, historySize());
   }
   catch (e) {
     nd.reset();
@@ -149,7 +149,7 @@ export function redoState() {
   utf16_storage(utf16);
   stop_advancing();
   updateUndoRedoButtons();
-  console.log('History', history_pos, historySize());
+  //console.log('History', history_pos, historySize());
 }
 
 function updateUndoRedoButtons() {

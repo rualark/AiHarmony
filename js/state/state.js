@@ -156,13 +156,13 @@ function string2data(st, pos) {
     clicked.note = null;
   }
   let time = b64_ui(st, pos, 6);
-  console.log('Decoded time:', time, timestamp2date(time));
+  //console.log('Decoded time:', time, timestamp2date(time));
 }
 
 export function utf16_storage(utf16) {
   localStorage.setItem('aih', utf16);
   //stop_counter();
-  console.log(`Saved state: ${utf16.length} bytes`);
+  //console.log(`Saved state: ${utf16.length} bytes`);
 }
 
 export function state2storage() {

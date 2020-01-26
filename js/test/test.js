@@ -134,8 +134,34 @@ async function test_actions() {
   async_redraw();
 }
 
+async function test_framework() {
+  // Test that wait does not fire before
+  testState.test = '0';
+  setTimeout(() => { testState.test = '1' }, 100);
+  try {
+    console.log('+ Successfully tested waitForVar, ms: ' +
+      await waitForVar(testState, 'test', '1', 50, 1000)
+    );
+  }
+  catch (e) {
+    throw e;
+  }
+  let timeouted = 0;
+  try {
+    await waitForVar(testState, 'test', '2', 50, 100);
+  }
+  catch (e) {
+    timeouted = 1;
+    console.log('+ Successfully timeouted waitForVar');
+  }
+  if (!timeouted) {
+    throw 'This test should timeout';
+  }
+}
+
 async function test_do(test_level) {
   console.log('START TEST');
+  await test_framework();
   await waitForState('new_file', state, ['ready'], 50, 5000);
   new_file();
   await waitForState('readRemoteMusicXmlFile', state, ['ready'], 50, 5000);
