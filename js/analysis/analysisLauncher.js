@@ -1,3 +1,5 @@
+import {debugLog} from "../core/debug.js";
+
 let workers = {};
 
 function createWorker() {
@@ -7,7 +9,7 @@ function createWorker() {
 async function workerMessageReceiver(event) {
   const { type, modName, funcName, data } = event.data;
   if (type === 'ERROR') {
-    alertify.error(`${modName}/${funcName}: ${data}`, 25);
+    debugLog(5, modName, funcName, data);
   }
   console.log(event.data);
 }

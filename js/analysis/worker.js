@@ -1,4 +1,6 @@
-let mods = {};
+let workerState = {
+  state: 'init'
+};
 
 function waitForVar(obj, field, vals, pause, timeout) {
   return new Promise((resolve, reject) => {
@@ -17,18 +19,24 @@ function waitForVar(obj, field, vals, pause, timeout) {
 }
 
 async function initWasmModule(modName) {
-  mods[modName] = {};
-  mods[modName].state = 'loading js';
-  mods[modName].jsMod = await import('./modules/' + modName + '.js');
-  if (mods[modName].jsMod == null || mods[modName].jsMod.Module == null) {
+  workerState = {};
+  workerState.state = 'loading js';
+  importScripts('modules/' + modName + '.js');
+  if (Module == null) {
     throw 'Error loading worker js module';
   }
-  mods[modName].wasmMod = mods[modName].jsMod.Module;
-  mods[modName].state = 'loading wasm';
-  mods[modName].wasmMod.onRuntimeInitialized = function() {
-    mods[modName].state = 'ready';
+  workerState.state = 'loading wasm';
+  Module.onRuntimeInitialized = function() {
+    workerState.state = 'ready';
   };
-  await waitForVar(mods[modName], 'state', 'ready', 50, 4000);
+  await waitForVar(workerState, 'state', 'ready', 50, 4000);
+}
+
+function toInt32Arr(arr) {
+  const res = new Int32Array(arr.length);
+  for (let i=0; i < arr.length; i++)
+    res[i] = arr[i];
+  return res;
 }
 
 function transferToHeap(wasmMod, arr) {
@@ -36,20 +44,13 @@ function transferToHeap(wasmMod, arr) {
   let heapSpace = wasmMod._malloc(intArray.length * intArray.BYTES_PER_ELEMENT);
   wasmMod.HEAPF32.set(intArray, heapSpace >> 2);
   return heapSpace;
-  function toInt32Arr(arr) {
-    const res = new Int32Array(arr.length);
-    for (let i=0; i < arr.length; i++)
-      res[i] = arr[i];
-    return res;
-  }
 }
 
 function callWasmFuncArray(wasmMod, funcName, arr) {
   let arrayOnHeap;
   try {
     arrayOnHeap = transferToHeap(wasmMod, arr);
-    throw "test";
-    return wasmMod[funcName](arrayOnHeap, arr.length);
+    return wasmMod.__Z12doubleValuesPii(arrayOnHeap, arr.length);
   }
   finally {
     wasmMod._free(arrayOnHeap);
@@ -66,30 +67,28 @@ function callWasmFuncArrayToArray(wasmMod, funcName, arr) {
   return array;
 }
 
+function message(type, modName, funcName, data) {
+  self.postMessage({
+    type: type,
+    modName: modName,
+    funcName: funcName,
+    data: data,
+  });
+}
+
 // Handle incoming messages
 self.addEventListener('message', async function(event) {
   const { type, modName, funcName, data } = event.data;
   if (type === "CALL") {
     try {
-      if (!(modName in mods)) {
+      if (workerState.state === 'init') {
         await initWasmModule(modName);
       }
-      let wasmMod = mods[modName].wasmMod;
-      let res = callWasmFuncArrayToArray(wasmMod, funcName, data);
-      self.postMessage({
-        type: "RESULT",
-        modName: modName,
-        funcName: funcName,
-        data: res,
-      });
+      let res = callWasmFuncArrayToArray(Module, funcName, data);
+      message("RESULT", modName, funcName, res);
     }
     catch (e) {
-      self.postMessage({
-        type: "ERROR",
-        modName: modName,
-        funcName: funcName,
-        data: e,
-      });
+      message("ERROR", modName, funcName, e);
     }
   }
 }, false);
