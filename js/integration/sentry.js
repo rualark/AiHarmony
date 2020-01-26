@@ -1,5 +1,6 @@
 import {enableKeys} from "../ui/commands.js";
-import {debug_error, getCookie, getEnvironment, pageLoadTime} from "../core/remote.js";
+import {getCookie, getEnvironment, pageLoadTime} from "../core/remote.js";
+import {debugError} from "../core/debug.js";
 
 if (getEnvironment() === 'prod') {
   Sentry.init({
@@ -8,7 +9,7 @@ if (getEnvironment() === 'prod') {
     beforeSend(event, hint) {
       // Check if it is an exception, and if so, show the report dialog
       let now = new Date();
-      if (event.exception && !debug_error && (now - pageLoadTime > 5000)) {
+      if (event.exception && !debugError && (now - pageLoadTime > 5000)) {
         try {
           enableKeys(false);
         } catch (e) {

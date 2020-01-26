@@ -14,7 +14,7 @@ import {
 } from "../ui/edit/editNote.js";
 import {add_part, del_bar, new_file, voiceChange} from "../ui/edit/editScore.js";
 import {toggle_tie} from "../ui/edit/editTie.js";
-import {makePatch, undoState} from "../state/history.js";
+import {undoState} from "../state/history.js";
 import {aic, sendToAic} from "../integration/aiCounterpoint.js";
 import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
 import {httpRequestNoCache} from "../core/remote.js";
@@ -22,6 +22,7 @@ import {data2string, STATE_VOLATILE_SUFFIX} from "../state/state.js";
 import {keysigs} from "../ui/modal/keysig.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
 import {waitForVar} from "../core/promise.js";
+import {makePatch} from "../core/string.js";
 
 export let testState = {
   testing: false
@@ -140,7 +141,7 @@ async function test_framework() {
   setTimeout(() => { testState.test = '1' }, 100);
   try {
     console.log('+ Successfully tested waitForVar, ms: ' +
-      await waitForVar(testState, 'test', '1', 50, 1000)
+      await waitForVar(testState, 'test', ['1'], 50, 1000)
     );
   }
   catch (e) {
@@ -148,7 +149,7 @@ async function test_framework() {
   }
   let timeouted = 0;
   try {
-    await waitForVar(testState, 'test', '2', 50, 100);
+    await waitForVar(testState, 'test', ['2'], 50, 100);
   }
   catch (e) {
     timeouted = 1;

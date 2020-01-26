@@ -1,8 +1,10 @@
-import {storage2state, storage_utf16, state2storage, utf16_storage, STATE_VOLATILE_SUFFIX} from "./state.js";
+import {state2storage, STATE_VOLATILE_SUFFIX, storage2state, storage_utf16, utf16_storage} from "./state.js";
 import {nd} from "../notes/NotesData.js";
 import {async_redraw} from "../abc/abchelper.js";
 import {button_enabled} from "../ui/lib/uilib.js";
 import {stop_advancing} from "../ui/edit/editScore.js";
+import {makePatch} from "../core/string.js";
+import {analyse} from "../analysis/analyse.js";
 
 export let history = [];
 export let history_pos = -1;
@@ -51,23 +53,6 @@ function getHistoryUtf16(history_pos) {
   }
 }
 
-export function makePatch(st1, st2) {
-  let p1 = 0;
-  let p2 = 0;
-  for (let i=0; i<st1.length; ++i) {
-    if (st1[i] === st2[i]) ++p1;
-    else break;
-  }
-  let max_p2 = Math.min(st1.length, st2.length) - p1;
-  for (let i=0; i<max_p2; ++i) {
-    if (st1[st1.length - i - 1] === st2[st2.length - i - 1]) ++p2;
-    else break;
-  }
-  let patch = st2.slice(p1, st2.length - p2);
-  //console.log('Patch', p1, p2, st1.length, st2.length, patch, st1, st2);
-  return {p1: p1, p2: p2, patch: patch};
-}
-
 function newHist(state) {
   //console.log('newHist', history_pos, state);
   if (history_pos < 0) return {chain: 0, utf16: state.utf16};
@@ -109,16 +94,17 @@ export function loadState() {
   }
 }
 
-export function saveState() {
+export function saveState(doAnalysis=true) {
   try {
     pushState(state2storage());
+    if (doAnalysis) analyse();
   }
   catch (e) {
     console.error(e);
   }
 }
 
-export function undoState() {
+export function undoState(doAnalysis=true) {
   if (history_pos < 1) {
     return false;
   }
@@ -129,6 +115,7 @@ export function undoState() {
     utf16_storage(utf16);
     stop_advancing();
     updateUndoRedoButtons();
+    if (doAnalysis) analyse();
     //console.log('History', history_pos, historySize());
   }
   catch (e) {
@@ -139,7 +126,7 @@ export function undoState() {
   }
 }
 
-export function redoState() {
+export function redoState(doAnalysis=true) {
   if (history_pos === history.length - 1) {
     return false;
   }
@@ -149,6 +136,7 @@ export function redoState() {
   utf16_storage(utf16);
   stop_advancing();
   updateUndoRedoButtons();
+  if (doAnalysis) analyse();
   //console.log('History', history_pos, historySize());
 }
 
@@ -156,3 +144,4 @@ function updateUndoRedoButtons() {
   button_enabled('undo', history_pos > 0);
   button_enabled('redo', history_pos < history.length - 1);
 }
+
