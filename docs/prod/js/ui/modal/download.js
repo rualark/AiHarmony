@@ -1,8 +1,8 @@
 import {dataToMusicXml} from "../../MusicXml/dataToMusicXml.js";
-import {fileSave} from "../lib/fileSave.js";
 import {name2filename} from "../../core/string.js";
 import {nd} from "../../notes/NotesData.js";
 import {dataToAbc} from "../../abc/dataToAbc.js";
+import "../../../plugin/FileSaver.js-2.0.2/FileSaver.js";
 
 let exportFormats = [
   {name: 'Download as MusicXML', func: downloadAsMusicXml },
@@ -26,21 +26,14 @@ function downloadAsMusicXml() {
     alertify.alert("Error exporting MusicXML", e.toString());
     throw e;
   }
-  fileSave(name2filename(nd.name, nd.filename) + '.xml', xml);
+  saveAs(new Blob([xml], {type: "text/xml"}), name2filename(nd.name, nd.filename) + '.xml');
 }
 
 function saveSvg(svgEl, name) {
   svgEl.setAttribute("xmlns", "http://www.w3.org/2000/svg");
   var svgData = svgEl.outerHTML;
   var preface = '<?xml version="1.0" standalone="no"?>\r\n';
-  var svgBlob = new Blob([preface, svgData], {type:"image/svg+xml;charset=utf-8"});
-  var svgUrl = URL.createObjectURL(svgBlob);
-  var downloadLink = document.createElement("a");
-  downloadLink.href = svgUrl;
-  downloadLink.download = name;
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
-  document.body.removeChild(downloadLink);
+  saveAs(new Blob([preface, svgData], {type: "image/svg+xml;charset=utf-8"}), name);
 }
 
 function downloadAsSvg() {
@@ -48,7 +41,7 @@ function downloadAsSvg() {
 }
 
 function downloadAsAbc() {
-  fileSave(name2filename(nd.name, nd.filename) + '.abc', dataToAbc());
+  saveAs(new Blob([dataToAbc()], {type: "text/abc"}), name2filename(nd.name, nd.filename) + '.abc');
 }
 
 function downloadAsMidi() {
@@ -62,6 +55,7 @@ export function showDownloadModal() {
   let st = '';
   for (const i in exportFormats) {
     st += `<p style='text-align: center'>`;
+    //st += `<a href="${getDataUrl(dataToMusicXml(), 'data:attachment/file')}" download="1.xml">AAA</a> `;
     st += `<a id=adownload${i} class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;
     st += `<b>${exportFormats[i].name}</b>`;
     st += '</a></p>';
