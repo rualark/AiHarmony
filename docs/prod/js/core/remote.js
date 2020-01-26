@@ -1,4 +1,4 @@
-export let debug_error = 1;
+export let debug_error = 0;
 export let pageLoadTime = new Date();
 
 export function getUrlParam(par) {
@@ -14,7 +14,7 @@ export function urlNoParams() {
 export function getEnvironment() {
   if (getUrlParam('test')) return "test";
   if (urlNoParams().includes("/harmony-dev")) return "dev";
-  if (getCookie('mgen_login') === 'rualark@gmail.com') return "prod-in";
+  if (getCookie('mgen_login').startsWith('rualark')) return "prod-in";
   return "prod";
 }
 

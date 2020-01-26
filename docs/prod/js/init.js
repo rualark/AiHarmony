@@ -32,7 +32,7 @@ function init() {
   if (getUrlParam('action') === 'shortcuts') {
     setTimeout(showShortcutsModal, 0);
   }
-  setTimeout(after_init, 6000);
+  setTimeout(after_init, 0);
 }
 
 function after_init() {

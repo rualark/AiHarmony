@@ -8,9 +8,7 @@ if (getEnvironment() === 'prod') {
     beforeSend(event, hint) {
       // Check if it is an exception, and if so, show the report dialog
       let now = new Date();
-      console.log(now - pageLoadTime);
       if (event.exception && !debug_error && (now - pageLoadTime > 5000)) {
-        console.log(now - pageLoadTime);
         try {
           enableKeys(false);
         } catch (e) {
