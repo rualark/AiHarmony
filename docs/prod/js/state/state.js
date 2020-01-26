@@ -1,7 +1,7 @@
 import {nd} from "../notes/NotesData.js";
 import {b64_unicode, unicode_b64} from "./base64.js";
 import {async_redraw, clicked, engraverParams} from "../abc/abchelper.js";
-import {currentTimestamp, start_counter, timestamp2date} from "../core/time.js";
+import {currentTimestamp, start_counter} from "../core/time.js";
 
 const ENCODING_VERSION = 5;
 export const STATE_VOLATILE_SUFFIX = 12;
@@ -155,14 +155,14 @@ function string2data(st, pos) {
   if (clicked.note.voice === 64*64 - 1) {
     clicked.note = null;
   }
-  let time = b64_ui(st, pos, 6);
-  console.log('Decoded time:', time, timestamp2date(time));
+  //let time = b64_ui(st, pos, 6);
+  //console.log('Decoded time:', time, timestamp2date(time));
 }
 
 export function utf16_storage(utf16) {
   localStorage.setItem('aih', utf16);
   //stop_counter();
-  console.log(`Saved state: ${utf16.length} bytes`);
+  //console.log(`Saved state: ${utf16.length} bytes`);
 }
 
 export function state2storage() {
@@ -199,9 +199,8 @@ export function state2url() {
   plain += data2string();
   //console.log(plain);
   let b64 = LZString.compressToBase64(plain);
-  let url = b64.replace(/\//g, '.').replace(/=/g, '_').replace(/\+/g, '-');
   //console.log(url);
-  return url;
+  return b64.replace(/\//g, '.').replace(/=/g, '_').replace(/\+/g, '-');
 }
 
 export function url2state(url) {

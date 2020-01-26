@@ -30,3 +30,19 @@ export function name2filename(name, filename) {
   return fname;
 }
 
+export function makePatch(st1, st2) {
+  let p1 = 0;
+  let p2 = 0;
+  for (let i = 0; i < st1.length; ++i) {
+    if (st1[i] === st2[i]) ++p1;
+    else break;
+  }
+  let max_p2 = Math.min(st1.length, st2.length) - p1;
+  for (let i = 0; i < max_p2; ++i) {
+    if (st1[st1.length - i - 1] === st2[st2.length - i - 1]) ++p2;
+    else break;
+  }
+  let patch = st2.slice(p1, st2.length - p2);
+  //console.log('Patch', p1, p2, st1.length, st2.length, patch, st1, st2);
+  return {p1: p1, p2: p2, patch: patch};
+}

@@ -146,6 +146,13 @@ function waitForAic() {
 function finishAic() {
   setAicState('ready');
   if (aic.openPdf) {
-    window.open('https://artinfuser.com/counterpoint/' + aic.j_url, '_blank');
+    let url = 'https://artinfuser.com/counterpoint/' + aic.j_url;
+    // Changing href will open PDF in same window
+    // Headers for PDF can be changed to download instead, but this can be not comfortable for other users
+    //window.location.href = url;
+    let newWin = window.open(url, '_blank');
+    if(!newWin || newWin.closed || typeof newWin.closed=='undefined') {
+      alertify.error(`Popup blocked by your browser. Please allow popups or <a href="${url}" target=_blank>click here</a> to open file manually`, 45);
+    }
   }
 }

@@ -1,4 +1,4 @@
-export let debug_error = 0;
+
 export let pageLoadTime = new Date();
 
 export function getUrlParam(par) {

@@ -14,19 +14,19 @@ import {
 } from "../ui/edit/editNote.js";
 import {add_part, del_bar, new_file, voiceChange} from "../ui/edit/editScore.js";
 import {toggle_tie} from "../ui/edit/editTie.js";
-import {makePatch, undoState} from "../state/history.js";
+import {undoState} from "../state/history.js";
 import {aic, sendToAic} from "../integration/aiCounterpoint.js";
 import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
 import {httpRequestNoCache} from "../core/remote.js";
 import {data2string, STATE_VOLATILE_SUFFIX} from "../state/state.js";
 import {keysigs} from "../ui/modal/keysig.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
+import {waitForVar} from "../core/promise.js";
+import {makePatch} from "../core/string.js";
 
 export let testState = {
   testing: false
 };
-
-export let waitEnabled = true;
 
 function console2html() {
   let old = console.log;
@@ -43,25 +43,17 @@ function console2html() {
   }
 }
 
-function waitForState(stage, obj, vals, pause, timeout) {
-  return new Promise((resolve, reject) => {
-    if (!waitEnabled) {
-      return resolve();
-    }
-    (function waitForStateInternal(time=0){
-      if (vals.includes(obj.state)) {
-        console.log('READY: ' + stage);
-        return resolve();
-      }
-      if (time > timeout) {
-        return reject(`${stage}. Timeout ${timeout} waiting for state (current ${obj.state}) with pause ${pause}`);
-      }
-      console.log(stage + '. Throttling: ' + time);
-      setTimeout(() => {
-        waitForStateInternal(time + pause);
-      }, pause);
-    })();
-  });
+async function waitForState(stage, obj, vals, pause, timeout) {
+  // Check for abc redraw error
+  if (state.error != null) {
+    throw state.error;
+  }
+  try {
+    await waitForVar(obj, 'state', vals, pause, timeout);
+  }
+  catch (e) {
+    throw `${stage}. Timeout ${timeout} waiting for state (current ${obj.state}) with pause ${pause}`;
+  }
 }
 
 function assert2strings(stage, st1, st2) {
@@ -143,8 +135,34 @@ async function test_actions() {
   async_redraw();
 }
 
+async function test_framework() {
+  // Test that wait does not fire before
+  testState.test = '0';
+  setTimeout(() => { testState.test = '1' }, 100);
+  try {
+    console.log('+ Successfully tested waitForVar, ms: ' +
+      await waitForVar(testState, 'test', ['1'], 50, 1000)
+    );
+  }
+  catch (e) {
+    throw e;
+  }
+  let timeouted = 0;
+  try {
+    await waitForVar(testState, 'test', ['2'], 50, 100);
+  }
+  catch (e) {
+    timeouted = 1;
+    console.log('+ Successfully timeouted waitForVar');
+  }
+  if (!timeouted) {
+    throw 'This test should timeout';
+  }
+}
+
 async function test_do(test_level) {
   console.log('START TEST');
+  await test_framework();
   await waitForState('new_file', state, ['ready'], 50, 5000);
   new_file();
   await waitForState('readRemoteMusicXmlFile', state, ['ready'], 50, 5000);
