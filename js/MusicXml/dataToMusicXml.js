@@ -1,5 +1,6 @@
 import {nd} from "../notes/NotesData.js";
 import {keysig_imprint} from "../notes/notehelper.js";
+import {state2url} from "../state/state.js";
 
 export let xmlExportWarnings = new Set();
 
@@ -21,6 +22,7 @@ export function dataToMusicXml(date) {
    <encoding-date>${date}</encoding-date>
    <encoder></encoder>
    <software>Artinfuser Harmony</software>
+   <software>AIHS:${state2url()}</software>
    <encoding-description>Artinfuser Harmony / MusicXML 3.0</encoding-description>
    <supports element="print" type="yes" value="yes" attribute="new-system" />
    <supports element="print" type="yes" value="yes" attribute="new-page" />

@@ -3,7 +3,7 @@ import {nd, supportedNoteLen} from "../notes/NotesData.js";
 import {timesigs} from "../ui/modal/timesig.js";
 import {getBestClef} from "../notes/bestClef.js";
 import {d2c, keysig_imprint} from "../notes/notehelper.js";
-import {storage2state} from "../state/state.js";
+import {storage2state, url2state} from "../state/state.js";
 import {async_redraw, clicked} from "../abc/abchelper.js";
 import {saveState} from "../state/history.js";
 import {start_counter} from "../core/time.js";
@@ -45,6 +45,16 @@ export function readMusicXml(xml, filename) {
 export function musicXmlToData(txt) {
   xmlLoadWarnings.clear();
   let mxp = new MusicXmlParser(txt);
+  if (mxp.urlState != null && mxp.urlState.length > 0 && mxp.urlState.startsWith('AIHS:')) {
+    try {
+      url2state(mxp.urlState.substr(5));
+      console.log('Detected and successfully read encoded state from XML file');
+      return;
+    }
+    catch (e) {
+      console.log('Cannot read encoded state from XML file. Falling back to importing XML file tags:', e);
+    }
+  }
   //for (let i=0; i<40; ++i) console.log(i, mxp.sliceLen(i));
   let error = checkImportableMusicXml(mxp);
   if (error) return error;

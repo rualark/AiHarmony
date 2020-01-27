@@ -46,7 +46,9 @@ export class MusicXmlParser {
   parseHeader() {
     this.encoder = this.xml.xpathFirstValue("/score-partwise/identification/encoding/encoder");
     this.encoding_date = this.xml.xpathFirstValue("/score-partwise/identification/encoding/encoding-date");
-    this.software = this.xml.xpathFirstValue("/score-partwise/identification/encoding/software");
+    let sw = this.xml.xpathValues("/score-partwise/identification/encoding/software");
+    if (sw != null && sw.length > 0) this.software = sw[0];
+    if (sw != null && sw.length > 1) this.urlState = sw[1];
     this.encoding_description = this.xml.xpathFirstValue("/score-partwise/identification/encoding/encoding-description");
     this.work_title = this.xml.xpathFirstValue("/score-partwise/work/work-title");
     this.composer = this.xml.xpathFirstValue("/score-partwise/identification/creator[@type='composer']");
