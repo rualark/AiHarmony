@@ -134,6 +134,8 @@ var playEvent = __webpack_require__(/*! ./src/synth/play-event */ "./src/synth/p
 
 var SynthController = __webpack_require__(/*! ./src/synth/synth-controller */ "./src/synth/synth-controller.js");
 
+var getMidiFile = __webpack_require__(/*! ./src/synth/get-midi-file */ "./src/synth/get-midi-file.js");
+
 abcjs.synth = {
   CreateSynth: CreateSynth,
   instrumentIndexToName: instrumentIndexToName,
@@ -144,13 +146,3297 @@ abcjs.synth = {
   registerAudioContext: registerAudioContext,
   activeAudioContext: activeAudioContext,
   supportsAudio: supportsAudio,
-  playEvent: playEvent
+  playEvent: playEvent,
+  getMidiFile: getMidiFile
 };
 
 var editor = __webpack_require__(/*! ./src/edit/abc_editor */ "./src/edit/abc_editor.js");
 
 abcjs['Editor'] = editor;
 module.exports = abcjs;
+
+/***/ }),
+
+/***/ "./node_modules/midi/inc/AudioSupports.js":
+/*!************************************************!*\
+  !*** ./node_modules/midi/inc/AudioSupports.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+	----------------------------------------------------------
+	AudioSupports : 2015-12-22 : https://mudcu.be
+	----------------------------------------------------------
+	https://github.com/mudcube/AudioSupports
+	----------------------------------------------------------
+	Probably, Maybe, No... Absolutely!
+	Determine audio formats and features your browser supports.
+	----------------------------------------------------------
+	TEST FILES - can these be smaller?
+	----------------------------------------------------------
+		Ogg Opus:      176-bytes
+		Ogg Vorbis:    3,177-bytes
+		MP3:           306-bytes
+	----------------------------------------------------------
+*/
+
+(function () { 'use strict';
+
+	var supports = {};
+	var tests = {};
+
+	function AudioSupports() {
+		detectAudio();
+		detectMIDI();
+		detectWebAudio();
+
+		return detectAudioFormats().then(function () {
+			return supports;
+		});
+	}
+
+
+	/* synchronous detects */
+	function detectAudio() {
+		return supports.audio = self.Audio ? {} : false;
+	}
+	
+	function detectWebAudio() {
+		return supports.audioapi = AudioContext ? {} : false;
+	}
+	
+	function detectMIDI() {
+		if (navigator.requestMIDIAccess) {
+			var toString = Function.prototype.toString;
+			var isNative = toString.call(navigator.requestMIDIAccess).indexOf('[native code]') !== -1;
+			if (isNative) { // has native midi support
+				return supports.midiapi = {};
+			} else { // check for jazz plugin support
+				for (var n = 0; navigator.plugins.length > n; n ++) {
+					var plugin = navigator.plugins[n];
+					if (plugin.name.indexOf('Jazz-Plugin') >= 0) {
+						return supports.midiapi = {};
+					}
+				}
+			}
+		}
+		return supports.midiapi = false;
+	}
+
+
+	/* asynchronous detects */
+	function detectAudioFormats() {
+		return new Promise(function (resolve, reject) {
+			if (!supports.audio) {
+				return resolve();
+			}
+
+			/* max execution time */
+			setTimeout(resolve, 5000);
+
+			/* run tests */
+			Promise.all([
+				canPlayThrough(tests['mpeg_mp3']),
+				canPlayThrough(tests['ogg_opus']),
+				canPlayThrough(tests['ogg_vorbis'])
+			]).then(resolve);
+		});
+	}
+
+	function canPlayThrough(test) {
+		return new Promise(function (resolve, reject) {
+			var format = test.format;
+			var codec = test.codec;
+			var base64 = test.base64;
+			
+			var mime = 'audio/' + format + '; codecs="' + codec + '"';
+			var src = 'data:' + mime + ';base64,' + base64;
+
+			var audio = new Audio();
+			if (!audio.canPlayType(mime).replace(/no/i, '')) {
+				hasSupport(false);
+				return;
+			}
+
+			audio.id = 'audio';
+			audio.controls = false;
+			audio.setAttribute('autobuffer', true);
+			audio.setAttribute('preload', 'auto');
+			audio.addEventListener('error', function onError(err) {
+				if (createObjectURL && !audio.testedBlobURL) {
+					audio.testedBlobURL = true; // workaround for https://code.google.com/p/chromium/issues/detail?id=544988&q=Cr%3DInternals-Media&colspec=ID%20Pri%20M%20Stars%20ReleaseBlock%20Cr%20Status%20Owner%20Summary%20OS%20Modified
+					audio.src = createObjectURL(base64ToBlob(src));
+				} else {
+					audio.removeEventListener('error', onError);
+					hasSupport(false);
+				}
+			});
+			audio.addEventListener('canplaythrough', function onCanPlayThrough() {
+				audio.removeEventListener('canplaythrough', onCanPlayThrough);
+				hasSupport(true);
+			});
+			audio.src = src;
+			audio.load();
+
+			function hasSupport(truthy) {
+				record(supports.audio, format, codec, truthy);
+				
+				if (!supports.audioapi) {
+					resolve();
+					return;
+				}
+
+				detectDecodeAudio(src).then(function () {
+					record(supports.audioapi, format, codec, true);
+					resolve();
+				}, function (err) {
+					record(supports.audioapi, format, codec, false);
+					resolve();
+				});
+				
+				function record(_supports, format, codec, truthy) {
+					!supports[format] && (supports[format] = truthy);
+					!supports[codec] && (supports[codec] = truthy);
+					!_supports[format] && (_supports[format] = truthy);
+					_supports[codec] = truthy;
+				}
+			}
+		});
+	}
+	
+	var audioContext;
+	var AudioContext = self.AudioContext || self.mozAudioContext || self.webkitAudioContext;
+	var createObjectURL = (self.URL || self.webkitURL || {}).createObjectURL;
+
+	function detectDecodeAudio(src) {
+		return new Promise(function (resolve, reject) {
+			audioContext = audioContext || new AudioContext();
+			audioContext.decodeAudioData(base64ToBuffer(src), resolve, reject).then(function(resp) {
+			}).catch(function(err) {
+				// It's ok to fail this test: suppress the console message for it.
+			});
+			setTimeout(reject, 250); // chrome workaround https://code.google.com/p/chromium/issues/detail?id=424174
+		});
+	}
+
+	/* base64 utils */
+	function base64Mime(uri) {
+		uri = uri.split(',');
+		return uri[0].split(':')[1].split(';')[0];
+	}
+
+	function base64ToBuffer(uri) {
+		uri = uri.split(',');
+		var binary = atob(uri[1]);
+		var buffer = new ArrayBuffer(binary.length);
+		var uint = new Uint8Array(buffer);
+		for (var n = 0; n < binary.length; n++) {
+			uint[n] = binary.charCodeAt(n);
+		}
+		return buffer;
+	}
+	
+	function base64ToBlob(uri) {
+		return new Blob([base64ToBuffer(uri)], {
+			type: base64Mime(uri)
+		});
+	}
+	
+
+	/* register formats */
+	function register(format, codec, base64) {
+		tests[format + '_' + codec] = {
+			format: format,
+			codec: codec,
+			base64: base64
+		};
+	}
+
+
+	/* formats */
+	register('mpeg', 'mp3', '//MUxAAB6AXgAAAAAPP+c6nf//yi/6f3//MUxAMAAAIAAAjEcH//0fTX6C9Lf//0//MUxA4BeAIAAAAAAKX2/6zv//+IlR4f//MUxBMCMAH8AAAAABYWalVMQU1FMy45//MUxBUB0AH0AAAAADkuM1VVVVVVVVVV//MUxBgBUATowAAAAFVVVVVVVVVVVVVV'); // via Modernizr
+	register('ogg', 'opus', 'T2dnUwACAAAAAAAAAAAAAAAAAAAAAEVP7KoBE09wdXNIZWFkAQEAD0SsAAAAAABPZ2dTAAAAAAAAAAAAAAAAAAABAAAAVewFUgEYT3B1c1RhZ3MIAAAAUmVjb3JkZXIAAAAAT2dnUwAEwAMAAAAAAAAAAAAAAgAAAHSiY8oBA/j//g==');
+	register('ogg', 'vorbis', 'T2dnUwACAAAAAAAAAAD/QwAAAAAAAM2LVKsBHgF2b3JiaXMAAAAAAUSsAAAAAAAAgLsAAAAAAAC4AU9nZ1MAAAAAAAAAAAAA/0MAAAEAAADmvOe6Dy3/////////////////MgN2b3JiaXMdAAAAWGlwaC5PcmcgbGliVm9yYmlzIEkgMjAwNzA2MjIAAAAAAQV2b3JiaXMfQkNWAQAAAQAYY1QpRplS0kqJGXOUMUaZYpJKiaWEFkJInXMUU6k515xrrLm1IIQQGlNQKQWZUo5SaRljkCkFmVIQS0kldBI6J51jEFtJwdaYa4tBthyEDZpSTCnElFKKQggZU4wpxZRSSkIHJXQOOuYcU45KKEG4nHOrtZaWY4updJJK5yRkTEJIKYWSSgelU05CSDWW1lIpHXNSUmpB6CCEEEK2IIQNgtCQVQAAAQDAQBAasgoAUAAAEIqhGIoChIasAgAyAAAEoCiO4iiOIzmSY0kWEBqyCgAAAgAQAADAcBRJkRTJsSRL0ixL00RRVX3VNlVV9nVd13Vd13UgNGQVAAABAEBIp5mlGiDCDGQYCA1ZBQAgAAAARijCEANCQ1YBAAABAABiKDmIJrTmfHOOg2Y5aCrF5nRwItXmSW4q5uacc845J5tzxjjnnHOKcmYxaCa05pxzEoNmKWgmtOacc57E5kFrqrTmnHPGOaeDcUYY55xzmrTmQWo21uaccxa0pjlqLsXmnHMi5eZJbS7V5pxzzjnnnHPOOeecc6oXp3NwTjjnnHOi9uZabkIX55xzPhmne3NCOOecc84555xzzjnnnHOC0JBVAAAQAABBGDaGcacgSJ+jgRhFiGnIpAfdo8MkaAxyCqlHo6ORUuoglFTGSSmdIDRkFQAACAAAIYQUUkghhRRSSCGFFFKIIYYYYsgpp5yCCiqppKKKMsoss8wyyyyzzDLrsLPOOuwwxBBDDK20EktNtdVYY62555xrDtJaaa211koppZRSSikIDVkFAIAAABAIGWSQQUYhhRRSiCGmnHLKKaigAkJDVgEAgAAAAgAAADzJc0RHdERHdERHdERHdETHczxHlERJlERJtEzL1ExPFVXVlV1b1mXd9m1hF3bd93Xf93Xj14VhWZZlWZZlWZZlWZZlWZZlWYLQkFUAAAgAAIAQQgghhRRSSCGlGGPMMeegk1BCIDRkFQAACAAgAAAAwFEcxXEkR3IkyZIsSZM0S7M8zdM8TfREURRN01RFV3RF3bRF2ZRN13RN2XRVWbVdWbZt2dZtX5Zt3/d93/d93/d93/d93/d1HQgNWQUASAAA6EiOpEiKpEiO4ziSJAGhIasAABkAAAEAKIqjOI7jSJIkSZakSZ7lWaJmaqZneqqoAqEhqwAAQAAAAQAAAAAAKJriKabiKaLiOaIjSqJlWqKmaq4om7Lruq7ruq7ruq7ruq7ruq7ruq7ruq7ruq7ruq7ruq7ruq7rui4QGrIKAJAAANCRHMmRHEmRFEmRHMkBQkNWAQAyAAACAHAMx5AUybEsS9M8zdM8TfRET/RMTxVd0QVCQ1YBAIAAAAIAAAAAADAkw1IsR3M0SZRUS7VUTbVUSxVVT1VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTVN0zRNIDRkJQAABADAYo3B5SAhJSXl3hDCEJOeMSYhtV4hBJGS3jEGFYOeMqIMct5C4xCDHggNWREARAEAAMYgxxBzyDlHqZMSOeeodJQa5xyljlJnKcWYYs0oldhSrI1zjlJHraOUYiwtdpRSjanGAgAAAhwAAAIshEJDVgQAUQAAhDFIKaQUYow5p5xDjCnnmHOGMeYcc44556B0UirnnHROSsQYc445p5xzUjonlXNOSiehAACAAAcAgAALodCQFQFAnACAQZI8T/I0UZQ0TxRFU3RdUTRd1/I81fRMU1U90VRVU1Vt2VRVWZY8zzQ901RVzzRV1VRVWTZVVZZFVdVt03V123RV3ZZt2/ddWxZ2UVVt3VRd2zdV1/Zd2fZ9WdZ1Y/I8VfVM03U903Rl1XVtW3VdXfdMU5ZN15Vl03Vt25VlXXdl2fc103Rd01Vl2XRd2XZlV7ddWfZ903WF35VlX1dlWRh2XfeFW9eV5XRd3VdlVzdWWfZ9W9eF4dZ1YZk8T1U903RdzzRdV3VdX1dd19Y105Rl03Vt2VRdWXZl2fddV9Z1zzRl2XRd2zZdV5ZdWfZ9V5Z13XRdX1dlWfhVV/Z1WdeV4dZt4Tdd1/dVWfaFV5Z14dZ1Ybl1XRg+VfV9U3aF4XRl39eF31luXTiW0XV9YZVt4VhlWTl+4ViW3feVZXRdX1ht2RhWWRaGX/id5fZ943h1XRlu3efMuu8Mx++k+8rT1W1jmX3dWWZfd47hGDq/8OOpqq+brisMpywLv+3rxrP7vrKMruv7qiwLvyrbwrHrvvP8vrAso+z6wmrLwrDatjHcvm4sv3Acy2vryjHrvlG2dXxfeArD83R1XXlmXcf2dXTjRzh+ygAAgAEHAIAAE8pAoSErAoA4AQCPJImiZFmiKFmWKIqm6LqiaLqupGmmqWmeaVqaZ5qmaaqyKZquLGmaaVqeZpqap5mmaJqua5qmrIqmKcumasqyaZqy7LqybbuubNuiacqyaZqybJqmLLuyq9uu7Oq6pFmmqXmeaWqeZ5qmasqyaZquq3meanqeaKqeKKqqaqqqraqqLFueZ5qa6KmmJ4qqaqqmrZqqKsumqtqyaaq2bKqqbbuq7Pqybeu6aaqybaqmLZuqatuu7OqyLNu6L2maaWqeZ5qa55mmaZqybJqqK1uep5qeKKqq5ommaqqqLJumqsqW55mqJ4qq6omea5qqKsumatqqaZq2bKqqLZumKsuubfu+68qybqqqbJuqauumasqybMu+78qq7oqmKcumqtqyaaqyLduy78uyrPuiacqyaaqybaqqLsuybRuzbPu6aJqybaqmLZuqKtuyLfu6LNu678qub6uqrOuyLfu67vqucOu6MLyybPuqrPq6K9u6b+sy2/Z9RNOUZVM1bdtUVVl2Zdn2Zdv2fdE0bVtVVVs2TdW2ZVn2fVm2bWE0Tdk2VVXWTdW0bVmWbWG2ZeF2Zdm3ZVv2ddeVdV/XfePXZd3murLty7Kt+6qr+rbu+8Jw667wCgAAGHAAAAgwoQwUGrISAIgCAACMYYwxCI1SzjkHoVHKOecgZM5BCCGVzDkIIZSSOQehlJQy5yCUklIIoZSUWgshlJRSawUAABQ4AAAE2KApsThAoSErAYBUAACD41iW55miatqyY0meJ4qqqaq27UiW54miaaqqbVueJ4qmqaqu6+ua54miaaqq6+q6aJqmqaqu67q6Lpqiqaqq67qyrpumqqquK7uy7Oumqqqq68quLPvCqrquK8uybevCsKqu68qybNu2b9y6ruu+7/vCka3rui78wjEMRwEA4AkOAEAFNqyOcFI0FlhoyEoAIAMAgDAGIYMQQgYhhJBSSiGllBIAADDgAAAQYEIZKDRkRQAQJwAAGEMppJRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkgppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkqppJRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoplVJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSCgCQinAAkHowoQwUGrISAEgFAACMUUopxpyDEDHmGGPQSSgpYsw5xhyUklLlHIQQUmktt8o5CCGk1FJtmXNSWosx5hgz56SkFFvNOYdSUoux5ppr7qS0VmuuNedaWqs115xzzbm0FmuuOdecc8sx15xzzjnnGHPOOeecc84FAOA0OACAHtiwOsJJ0VhgoSErAYBUAAACGaUYc8456BBSjDnnHIQQIoUYc845CCFUjDnnHHQQQqgYc8w5CCGEkDnnHIQQQgghcw466CCEEEIHHYQQQgihlM5BCCGEEEooIYQQQgghhBA6CCGEEEIIIYQQQgghhFJKCCGEEEIJoZRQAABggQMAQIANqyOcFI0FFhqyEgAAAgCAHJagUs6EQY5Bjw1BylEzDUJMOdGZYk5qMxVTkDkQnXQSGWpB2V4yCwAAgCAAIMAEEBggKPhCCIgxAABBiMwQCYVVsMCgDBoc5gHAA0SERACQmKBIu7iALgNc0MVdB0IIQhCCWBxAAQk4OOGGJ97whBucoFNU6iAAAAAAAAwA4AEA4KAAIiKaq7C4wMjQ2ODo8AgAAAAAABYA+AAAOD6AiIjmKiwuMDI0Njg6PAIAAAAAAAAAAICAgAAAAAAAQAAAAICAT2dnUwAE7AwAAAAAAAD/QwAAAgAAADuydfsFAQEBAQEACg4ODg=='); // via Modernizr
+
+
+	/* expose */
+	self.AudioSupports = AudioSupports;
+	self.AudioSupports.register = register;
+
+})();
+
+/***/ }),
+
+/***/ "./node_modules/midi/inc/EventEmitter.js":
+/*!***********************************************!*\
+  !*** ./node_modules/midi/inc/EventEmitter.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/* 
+	----------------------------------------------------------
+	EventEmitter : 2015-09-29 : https://sketch.io
+	----------------------------------------------------------
+	root.EventEmitter(object);
+	object.on('blah', function(){});
+	object.emit('blah');
+	----------------------------------------------------------
+*/
+
+if (typeof galactic === 'undefined') galactic = {};
+
+(function(root) { 'use strict';
+
+root.EventEmitter = function(proto) {
+
+	var uniqueId = 1;
+	function funcID(type, fn) {
+		if (typeof fn === 'function') {
+			var fnId = fn.uniqueId || (fn.uniqueId = uniqueId++);
+			return type + '.' + fnId;
+		} else {
+			console.warn(type, 'listener does not exist');
+		}
+	};
+
+	function listener(type) {
+		if (proto.on[type]) {
+			return proto.on[type];
+		} else {
+			return proto.on[type] = Stack(type);
+		}
+	};
+
+	function Stack(type) {
+		var stack = {};
+		///
+		function emitter() {
+			var overrides = false;
+			for (var key in stack) {
+				if (stack[key].apply(proto, arguments)) {
+					overrides = true;
+				}
+			}
+			return overrides;
+		};
+
+		emitter.add = function(fn) {
+			var fid = funcID(type, fn);
+			if (stack[fid] === undefined && fn) {
+				stack[fid] = fn;
+				return {
+					add: function() {
+						stack[fid] = fn;
+					},
+					remove: function() {
+						delete stack[fid];
+					}
+				};
+			}
+		};
+
+		emitter.remove = function(fn) {
+			var fid = funcID(type, fn);
+			if (stack[fid] !== undefined && fn) {
+				delete stack[fid];
+			}
+		};
+		
+		emitter.stack = stack; // easier debugging
+
+		return emitter;
+	};
+
+	proto.on = function(type, fn) {
+		return listener(type).add(fn);
+	};
+
+	proto.off = function(type, fn) {
+		if (fn) {
+			listener(type).remove(fn);
+		} else {
+			delete proto.on[type];
+		}
+	};
+
+	proto.emit = function(type) {
+		var stack = proto.on[type];
+		if (stack) {
+			var args = Array.prototype.slice.call(arguments).slice(1);
+			return stack.apply(proto, args);
+		}
+	};
+};
+
+})(galactic);
+
+/***/ }),
+
+/***/ "./node_modules/midi/inc/dom/request_xhr.js":
+/*!**************************************************!*\
+  !*** ./node_modules/midi/inc/dom/request_xhr.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+	----------------------------------------------------------
+	util/Request : 0.1.1 : 2015-07-12 : https://sketch.io
+	----------------------------------------------------------
+	XMLHttpRequest - IE7+ | Chrome 1+ | Firefox 1+ | Safari 1.2+
+	CORS - IE10+ | Chrome 3+ | Firefox 3.5+ | Safari 4+
+	----------------------------------------------------------
+	galactic.request({
+		url: './dir/something.extension',
+		data: 'test!',
+		format: 'text', // text | xml | json
+		responseType: 'text', // arraybuffer | blob | document | json | text
+		headers: {},
+		withCredentials: true, // true | false
+		///
+		onerror: function(e) {
+			console.log(e);
+		},
+		onsuccess: function(e, res) {
+			console.log(res);
+		},
+		onprogress: function(e, progress) {
+			progress = Math.round(progress * 100);
+			loader.create('thread', 'loading... ', progress);
+		}
+	});
+*/
+
+if (typeof galactic === 'undefined') galactic = {};
+
+(function(root) { 'use strict';
+
+	root.request = function(args, onsuccess, onerror, onprogress) {
+		if (typeof args === 'string') args = {url: args};
+		var data = args.data;
+		var url = args.url;
+		var method = args.method || (args.data ? 'POST' : 'GET');
+		var format = args.format;
+		var headers = args.headers;
+		var mimeType = args.mimeType;
+		var responseType = args.responseType;
+		var withCredentials = args.withCredentials || false;
+		var onprogress = onprogress || args.onprogress;
+		var onsuccess = onsuccess || args.onsuccess;
+		var onerror = onerror || args.onerror;
+		///
+		if (typeof NodeFS !== 'undefined' && root.loc.isLocalUrl(url)) {
+			NodeFS.readFile(url, 'utf8', function(err, res) {
+				if (err) {
+					onerror && onerror(err);
+				} else {
+					onsuccess && onsuccess({responseText: res}, res);
+				}
+			});
+		} else {
+			var xhr = new XMLHttpRequest();
+			xhr.open(method, url, true);
+			///
+			if (headers) {
+				for (var type in headers) {
+					xhr.setRequestHeader(type, headers[type]);
+				}
+			} else if (data) { // set the default headers for POST
+				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			}
+			if (mimeType) {
+				xhr.overrideMimeType(mimeType);
+			}
+			if (responseType) {
+				xhr.responseType = responseType;
+			}
+			if (withCredentials) {
+				xhr.withCredentials = true;
+			}
+			if (onerror && 'onerror' in xhr) {
+				xhr.onerror = onerror;
+			}
+			if (onprogress && xhr.upload && 'onprogress' in xhr.upload) {
+				if (data) { // send
+					xhr.upload.onprogress = function(evt) {
+						onprogress.call(xhr, evt, event.loaded / event.total);
+					};
+				} else { // receive
+					xhr.addEventListener('progress', function(evt) {
+						var totalBytes = 0;
+						if (evt.lengthComputable) {
+							totalBytes = evt.total;
+						} else if (xhr.totalBytes) {
+							totalBytes = xhr.totalBytes;
+						} else {
+							var rawBytes = parseInt(xhr.getResponseHeader('Content-Length-Raw'));
+							if (isFinite(rawBytes)) {
+								xhr.totalBytes = totalBytes = rawBytes;
+							} else {
+								return;
+							}
+						}
+						onprogress.call(xhr, evt, evt.loaded / totalBytes);
+					}, false);
+				}
+			}
+			///
+			xhr.onreadystatechange = function(evt) {
+				if (xhr.readyState === 4) { // The request is complete
+					if (xhr.status === 200 || // Response OK
+						xhr.status === 304 || // Not Modified
+						xhr.status === 308 || // Permanent Redirect
+						xhr.status === 0 && !!window.top.cordova // Cordova quirk
+					) {
+						if (onsuccess) {
+							var res;
+							if (format === 'json') {
+								try {
+									res = JSON.parse(evt.target.response);
+								} catch(err) {
+									onerror && onerror.call(xhr, evt);
+								}
+							} else if (format === 'xml') {
+								res = evt.target.responseXML;
+							} else if (format === 'text') {
+								res = evt.target.responseText;
+							} else {
+								res = evt.target.response;
+							}
+							///
+							onsuccess.call(xhr, evt, res);
+						}
+					} else {
+						onerror && onerror.call(xhr, evt);
+					}
+				}
+			};
+			///
+			xhr.send(data);
+			///
+			return xhr;
+		}
+	};
+
+	/* NodeJS
+	------------------------------------------------------ */
+	if ( true && module.exports) {
+//TODO-PER: to make it compile		var NodeFS = require('fs');
+		module.exports = root.request;
+	}
+
+})(galactic);
+
+/***/ }),
+
+/***/ "./node_modules/midi/inc/dom/util.js":
+/*!*******************************************!*\
+  !*** ./node_modules/midi/inc/dom/util.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+	-------------------------------------------------------
+	util/DOMMisc : 0.2.1 : 2015-04-27 : https://sketch.io
+	-------------------------------------------------------
+*/
+
+if (typeof galactic === 'undefined') galactic = {};
+
+(function(root) { 'use strict';
+
+root.module = root.module || {};
+root.module.DOMMisc = function(root) {
+
+	var util = root.util || (root.util = {});
+
+	/* Inherits
+	---------------------------------------------------------- */
+	util.inherits = function(child, parent) {
+		function temp() {};
+		temp.prototype = parent.prototype;
+		child.prototype = new temp();
+		child.prototype.constructor = child;
+	};
+
+
+	/* Error handler
+	---------------------------------------------------------- */
+	util.errorHandler = function(type) {
+		return function() {
+			console.warn(type, arguments);
+		};
+	};
+
+
+	/* Kiosk
+	---------------------------------------------------------- */
+	util.requestKioskMode = function() {
+		if (root.client.nodewebkit) {
+			//TODO-PER: to make it compile			var win = require('nw.gui').Window.get();
+			win.enterKioskMode();
+		} else {
+//			root.FullScreen.enter();
+		}
+	};
+
+
+	/* Diff
+	---------------------------------------------------------- */
+	util.diff = function(_from, _to, _retain) { // see style.js
+		if (_from === _to) return;
+		///
+		var from = new _from.constructor();
+		var to = new _to.constructor();
+		var equal = true;
+		for (var key in _from) {
+			if (_retain && _retain.indexOf(key) !== -1) {
+				from[key] = _from[key];
+				to[key] = _to[key];
+			} else if (!(key in _to)) {
+				equal = false;
+				from[key] = _from[key];
+				to[key] = _to[key];
+			} else {
+				if (_from[key] !== _to[key]) {
+					if (typeof _from[key] === 'object' && typeof _to[key] === 'object') {
+						var diff = util.diff(_from[key], _to[key], _retain);
+						if (diff !== undefined) {
+							equal = false;
+							from[key] = diff.from;
+							to[key] = diff.to;
+						}
+					} else {
+						equal = false;
+						from[key] = _from[key];
+						to[key] = _to[key];
+					}
+				}
+			}
+		}
+		for (var key in _to) {
+			if (!(key in _from)) {
+				equal = false;
+				from[key] = _from[key];
+				to[key] = _to[key];
+			}
+		}
+		if (!equal) {
+			return {
+				from: from,
+				to: to
+			};
+		}
+	};
+
+
+	/* Sort
+	--------------------------------------------------- 
+		util.sort({
+			fn: 'natural', // string | custom function
+			data: {},
+			param: 'columnId'
+		});
+	*/
+	util.sort = function(opts) {
+		var fn = util.sort[opts.fn] || opts.fn;
+		var data = opts.data || opts;
+		var param = opts.param;
+		///
+		var res;
+		if (Array.isArray(data)) { // sort arrays
+			if (param) { // sort array by param
+				res = data.sort(function(a, b) {
+					return fn(a[param], b[param]);
+				});
+			} else { // sort array with custom function
+				res = data.sort(fn);
+			}
+		} else { // sort object by key
+			res = {};
+			Object.keys(data).sort(fn).forEach(function(idx) {
+				res[idx] = data[idx];
+			});
+		}
+		return res;
+	};
+	
+	util.sort.numeric = function(a, b) {
+		return a - b;
+	};
+
+	/*
+	 * Natural Sort algorithm for Javascript - Version 0.6 - Released under MIT license
+	 * Author: Jim Palmer (based on chunking idea from Dave Koelle)
+	 * Contributors: Mike Grier (mgrier.com), Clint Priest, Kyle Adams, guillermo
+	 */
+	util.sort.natural = function(a, b) { // http://www.overset.com/2008/09/01/javascript-natural-sort-algorithm-with-unicode-support/
+		var re = /(^-?[0-9]+(\.?[0-9]*)[df]?e?[0-9]?$|^0x[0-9a-f]+$|[0-9]+)/gi;
+		var sre = /(^[ ]*|[ ]*$)/g;
+		var dre = /(^([\w ]+,?[\w ]+)?[\w ]+,?[\w ]+\d+:\d+(:\d+)?[\w ]?|^\d{1,4}[\/\-]\d{1,4}[\/\-]\d{1,4}|^\w+, \w+ \d+, \d{4})/;
+		var hre = /^0x[0-9a-f]+$/i;
+		var ore = /^0/;
+		// convert all to strings and trim()
+		var x = a.toString().replace(sre, '') || '';
+		var y = b.toString().replace(sre, '') || '';
+		// chunk/tokenize
+		var xN = x.replace(re, '\0$1\0').replace(/\0$/, '').replace(/^\0/, '').split('\0');
+		var yN = y.replace(re, '\0$1\0').replace(/\0$/, '').replace(/^\0/, '').split('\0');
+		// numeric, hex or date detection
+		var xD = parseInt(x.match(hre)) || (xN.length != 1 && x.match(dre) && Date.parse(x));
+		var yD = parseInt(y.match(hre)) || xD && y.match(dre) && Date.parse(y) || null;
+
+		// first try and sort Hex codes or Dates
+		if (yD) {
+			if (xD < yD) {
+				return -1;
+			} else if (xD > yD) {
+				return 1;
+			}
+		}
+
+		// natural sorting through split numeric strings and default strings
+		for (var cLoc = 0, numS = Math.max(xN.length, yN.length); cLoc < numS; cLoc++) {
+			// find floats not starting with '0', string or 0 if not defined (Clint Priest)
+			var oFxNcL = !(xN[cLoc] || '').match(ore) && parseFloat(xN[cLoc]) || xN[cLoc] || 0;
+			var oFyNcL = !(yN[cLoc] || '').match(ore) && parseFloat(yN[cLoc]) || yN[cLoc] || 0;
+			// handle numeric vs string comparison - number < string - (Kyle Adams)
+			if (isNaN(oFxNcL) !== isNaN(oFyNcL)) {
+				return (isNaN(oFxNcL)) ? 1 : -1;
+			} else if (typeof oFxNcL !== typeof oFyNcL) {
+				// rely on string comparison if different types - i.e. '02' < 2 != '02' < '2'
+				oFxNcL += '';
+				oFyNcL += '';
+			}
+			if (oFxNcL < oFyNcL) {
+				return -1;
+			} else if (oFxNcL > oFyNcL) {
+				return 1;
+			}
+		}
+		return 0;
+	};
+
+
+	/* LocalStorage
+	--------------------------------------------------- */
+	util.getItems = function(keys, onsuccess) {
+		var pending = keys.length;
+		var res = {};
+		util.each(keys, function(key) {
+			util.getItem(key, function(value) {
+				res[key] = value;
+				///
+				if (!--pending) {
+					onsuccess(res);
+				}
+			});
+		});
+	};
+
+	util.getItem = function(key, onsuccess) {
+		onsuccess = onsuccess || function(value) {
+		    console.log(value);
+		};
+		///
+		var parse = function(value) {
+			if (value) {
+				try {
+					value = JSON.parse(value);
+				} catch(err) {}
+			}
+			///
+			onsuccess(value);
+		};
+		///
+		if (util.exists('chrome.storage.local')) { // Chrome Packaged Apps
+			chrome.storage.local.get(key, function(data) {
+				parse(data[key]);
+			});
+		} else {
+			var prefix = root.feature && root.feature.prefix || '';
+			var prefixed = prefix + '/' + key;
+			var data = localStorage.getItem(prefixed) || '';
+			parse(data);
+		}
+	};
+
+	util.setItem = function(key, value) {
+		if (util.exists('chrome.storage.local')) { // Chrome Packaged Apps
+			var obj = {};
+			obj[key] = value;
+			chrome.storage.local.set(obj);
+		} else {
+			var prefix = root.feature && root.feature.prefix || '';
+			var prefixed = prefix + '/' + key;
+			localStorage.setItem(prefixed, value);
+		}
+	};
+
+
+	/* Canvas
+	--------------------------------------------------- */
+	util.Canvas = function(width, height, type) {
+		if (typeof document === 'undefined') { // NodeJS
+			if (Canvas === undefined) {
+				return {ctx: {}};
+			} else {
+				var canvas = new Canvas;
+			}
+		} else { // FlashCanvas | DOM
+			var canvas = document.createElement('canvas');
+			if (typeof FlashCanvas === 'function') {
+				canvas.onload = root.client.fn.detect;
+			}
+		}
+		///
+		canvas.ctx = canvas.getContext(type || '2d');
+		///
+		if (isFinite(width)) {
+			canvas.width = width || 1;
+		}
+		if (isFinite(height)) {
+			canvas.height = height || 1;
+		}
+		return canvas;
+	};
+
+	util.Canvas.resize = function(canvas, width, height) { // clear context
+		if (width && height) {
+			canvas.width = width;
+			canvas.height = height;
+		} else {
+			canvas.width = canvas.width;
+		}
+	};
+
+	util.Canvas.clear = function(canvas) { // clear context rectangle
+		canvas.ctx.clearRect(0, 0, canvas.width, canvas.height);
+	};
+
+
+	/* Context
+	--------------------------------------------------- */
+	util.Context3d = function(width, height) {
+		return util.Canvas(width, height, 'webgl').ctx;
+	};
+	
+	util.Context2d = function(width, height) {
+		return util.Canvas(width, height, '2d').ctx;
+	};
+	
+
+	/* JSON
+	--------------------------------------------------- */
+	util.json = {};
+	util.json.pretty = function(data) {
+		return JSON.stringify(data, null, '\t');
+	};
+
+	util.json.stringify = function(data) {
+		return JSON.stringify(data, function(key, value) { // filter circular
+			if (typeof value === 'object') {
+				if (value === null) return; // NULL
+				if (value.nodeName) return; // DOM Node
+				if (value.tagName) return; // DOM Element
+			}
+			return value;
+		});
+	};
+
+
+	/* Timestamp
+	--------------------------------------------------- */
+	util.timestamp = (function() {
+		if (typeof window === 'object') {
+			var performance = window.performance;
+			if (performance && performance.now) {
+				return performance.now.bind(performance);
+			}
+		}
+		return Date.now;
+	})();
+
+
+	/* Perf
+	--------------------------------------------------- */
+	util.perf = function(fn, amount, title) {
+		if (amount && fn) {
+			var perf = util.perf();
+			for (var n = 0; n < amount; n ++) fn();
+			console.log(perf() + 'ms', title || '');
+		} else {
+			var start = util.timestamp();
+			return function(title, reset) {
+				var now = util.timestamp();
+				var diff = Math.round(now - start);
+				if (title) {
+					console.log(diff + 'ms', title);
+				}
+				if (reset) {
+					start = now;
+				}
+				return diff;
+			};
+		}
+	};
+
+	util.exists = function(path, base) { // exists('scene.children', sketch)
+		try {
+			var parts = path.split('.');
+			var obj = base || window;
+			for (var n = 0, length = parts.length; n < length; n ++) {
+				var key = parts[n];
+				if (obj[key] == null) {
+					return false;
+				} else {
+					obj = obj[key];
+				}
+			}
+			return true;
+		} catch(err) {
+			return false;
+		}
+	};
+
+
+	/* Clone objects
+	--------------------------------------------------- */
+	util.copy = (function() {
+		var excludePattern = typeof CanvasPattern === 'function';
+		var copy = function(src) {
+			if (!src || typeof src !== 'object') {
+				return src;
+			} else if (src.nodeType) {
+				return; // dom element
+			} else if (excludePattern && src instanceof CanvasPattern) {
+				return;
+			} else if (src.clone && typeof src.clone === 'function') {
+				return src.clone();
+			} else if (src.constructor) {
+				var temp = new src.constructor();
+				for (var key in src) {
+					var fvalue = src[key];
+					if (!fvalue || typeof fvalue !== 'object') {
+						temp[key] = fvalue;
+					} else { // clone sub-object
+						temp[key] = copy(fvalue);
+					}
+				}
+				return temp;
+			}
+		};
+		return copy;
+	})();
+
+
+	/* Merge objects
+	--------------------------------------------------- */
+	util.copyInto = (function() {
+		var copyInto = function(src, dst, opts) {
+			opts = opts || {};
+			if (src && typeof src === 'object') {
+				for (var key in src) {
+					var tvalue = dst[key];
+					var fvalue = src[key];
+					///
+					var filter = opts.filter;
+					if (filter && filter(fvalue, tvalue)) {
+						continue;
+					}
+					///
+					var ftype = typeof fvalue;
+					if (fvalue && ftype === 'object') {
+						if (fvalue.nodeType) {
+							if (opts.referenceNodes) {
+								dst[key] = fvalue;
+							} else {
+								continue; // dom element
+							}
+						} else {
+							if (typeof tvalue === ftype) {
+								dst[key] = copyInto(fvalue, tvalue, opts);
+							} else {
+								dst[key] = copyInto(fvalue, new fvalue.constructor(), opts);
+							}
+						}
+					} else {
+						dst[key] = fvalue;
+					}
+				}
+			}
+			return dst;
+		};
+		return copyInto;
+	})();
+
+
+	/* Count objects
+	--------------------------------------------------- */
+	util.count = function(obj, whereKey, whereValue) {
+		if (obj) {
+			if (isFinite(obj.length)) {
+				return obj.length;
+			} else if (typeof obj === 'object') {
+				var length = 0;
+				var useKey = whereKey !== undefined; //- replace with filter()
+				var useValue = whereValue !== undefined;
+				if (useKey && useValue) {
+					for (var key in obj) {
+						if (obj[key] && obj[key][whereKey] === whereValue) {
+							++ length;
+						}
+					}
+				} else if (useKey) {
+					for (var key in obj) {
+						if (obj[key] !== undefined) {
+							++ length;
+						}
+					}
+				} else {
+					for (var key in obj) ++ length;
+				}
+				return length;
+			}
+		} else {
+			return 0;
+		}
+	};
+
+	util.isEmpty = function(obj) {
+		if (obj == null) { // undefined | null
+			return true;
+		} else if (obj.length >= 0) { // array | string | arguments
+			return !obj.length;
+		} else { // object
+			for (var key in obj) {
+				return false;
+			}
+			return true;
+		}
+	};
+
+	util.isNotEmpty = function(obj) {
+		return !util.isEmpty(obj);
+	};
+
+	util.clamp = function(min, max, value) {
+		return (value < min) ? min : ((value > max) ? max : value);
+	};
+
+	util.clampFinite = function(value) {
+		var INFINITY = util.INFINITY;
+		if (value > +INFINITY) value = +INFINITY;
+		if (value < -INFINITY) value = -INFINITY;
+		return value;
+	};
+	
+	util.arrayEmpty = function(arr) {
+		arr.splice(0, arr.length);
+	};
+	
+	util.arrayIntersects = function(haystack, arr) {
+		return arr.some(function(value) {
+			return haystack.indexOf(value) !== -1;
+		});
+	};
+
+	util.inArray = function(array, value) {
+		return array.indexOf(value) !== -1;
+	};
+
+	util.isArray = function(obj) {
+		return Array.isArray(obj) || obj instanceof NodeList;
+	};
+
+	util.each = function(obj, callback) {
+		if (util.isArray(obj)) {
+			for (var idx = 0; idx < obj.length; idx ++) {
+				callback(obj[idx], idx);
+			}
+		} else {
+			for (var key in obj) {
+				callback(obj[key], key);
+			}
+		}
+	};
+
+	util.equals = function(a, b) {
+		if (typeof a === 'object') {
+			if (typeof b === 'object') {
+				return util.json.stringify(a) === util.json.stringify(b);
+			} else {
+				return false;
+			}
+		} else {
+			return a === b;
+		}
+	};
+
+
+	/* Convert objects
+	--------------------------------------------------- */
+	util.objectToArray = function(obj) {
+		var res = [];
+		for (var key in obj) {
+			res.push(obj[key]);
+		}
+		return res;
+	};
+
+	util.arrayToObject = function(arr) {
+		var res = {};
+		for (var n = 0, length = arr.length; n < length; n ++) {
+			res[arr[n]] = true;
+		}
+		return res;
+	};
+
+
+	/* Uploader
+	--------------------------------------------------- */
+	util.addFileInput = function(data, openAsNew) {
+		root.uploader.addFileInput({
+			target: data,
+			onchange: function(uploader) {
+				uploader.fileInput.value = '';
+				uploader.addMedia({
+					openAsNew: openAsNew,
+					self: root.uploader
+				});
+			}
+		});
+	};
+
+
+	/* Format bytes
+	---------------------------------------------------------- */
+	util.bytesToSize = function(bytes, precision) {
+		if (bytes) {
+			precision = precision || 1;
+			var names = ['Bytes', 'kb', 'mb', 'gb', 'tb'];
+			var n = Math.floor(Math.log(Math.abs(bytes)) / Math.log(1024));
+			return (bytes / Math.pow(1024, n)).toFixed(precision) + names[n];
+		} else {
+			return '0Bytes';
+		}
+	};
+
+
+	/* Format time
+	---------------------------------------------------------- */
+	util.getTimeFormat = function(timestamp, toString) { // in milliseconds
+		timestamp /= 1000;
+		var hours = (timestamp / 3600) >> 0;
+		var minutes = ((timestamp - (hours * 3600)) / 60) >> 0;
+		var seconds = (timestamp - (hours * 3600) - (minutes * 60)) >> 0;
+		if (toString) {
+			if (hours < 10) hours = '0' + hours;
+			if (minutes < 10) minutes = '0' + minutes;
+			if (seconds < 10) seconds = '0' + seconds;
+			return hours + ':' + minutes + ':' + seconds;
+		} else {
+			return {
+				hours: hours,
+				minutes: minutes,
+				seconds: seconds
+			};
+		}
+	};
+
+	util.require = function(opts) {
+		if (typeof opts === 'string') opts = {url: opts};
+		var url = opts.url;
+		var type = opts.type || (url.indexOf('.css') !== -1 ? 'css' : 'js');
+		var async = opts.async || false;
+		var onsuccess = opts.onsuccess;
+		///
+		if (type === 'css') {
+			if (async) {
+				setTimeout(addCSS, 0);
+			} else {
+				addCSS();
+			}
+		} else {
+			var script = document.createElement('script');
+			script.src = url;
+			script.async = async;
+			///
+			if (onsuccess) { // influenced by jQuery
+				var loaded = false;
+				script.onload = script.onreadystatechange = function() {
+					if (loaded === false) {
+						var readyState = script.readyState;
+						if (!readyState || /loaded|complete/.test(readyState)) {
+							loaded = true;
+							onsuccess();
+							// Handle memory leak in IE
+							script.onload = script.onreadystatechange = null;
+						}
+					};
+				};
+			}
+			///
+			document.head.appendChild(script);
+		}
+		
+		function addCSS() {
+			var link = document.createElement('link');
+			link.href = url;
+			link.setAttribute('type', 'text/css');
+			link.setAttribute('rel', 'stylesheet');
+			document.head.appendChild(link);
+		};
+	};
+
+
+	/* Detect whether focus element is editable node
+	---------------------------------------------------------- */
+	util.isEditingText = function() { // from eventjs
+		var node = document.activeElement;
+		if (!node) return false;
+		var nodeName = node.nodeName;
+		if (nodeName === 'INPUT' || nodeName === 'TEXTAREA' || node.contentEditable === 'true') {
+			if (node.classList.contains('sk-canvas-dummy')) return false;
+			return true;
+		} else {
+			return false;
+		}
+	};
+
+
+	/* Pending queue
+	---------------------------------------------------------- */
+	util.pending = function(length, onsuccess) {
+		var pending = length;
+		return {
+			add: function(amount) {
+				pending += amount || 1;
+			},
+			next: function() {
+				if (!--pending) {
+					onsuccess();
+				}
+			}
+		};
+	};
+};
+
+/// NodeJS
+if ( true && module.exports) {
+	try {
+		//TODO-PER: to make it compile var Canvas = require('canvas');
+	} catch(e) {}
+	///
+	module.exports = root.module.DOMMisc;
+} else {
+	root.module.DOMMisc(galactic);
+}
+
+})(galactic);
+
+/***/ }),
+
+/***/ "./node_modules/midi/js/adaptors-Audio.js":
+/*!************************************************!*\
+  !*** ./node_modules/midi/js/adaptors-Audio.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+	----------------------------------------------------------------------
+	adaptors-Audio
+	----------------------------------------------------------------------
+	http://dev.w3.org/html5/spec/Overview.html#the-audio-element
+	----------------------------------------------------------------------
+*/
+
+window.Audio && (function () { 'use strict';
+
+	var midi = MIDI.adaptors.audio = {};
+	
+	var _buffers = []; // the audio channels
+	var _buffer_nid = -1; // current channel
+	var _active = []; // programId + noteId that is currently playing in each 'channel', for routing noteOff/chordOff calls
+	var _apply = {};
+
+	/** connect **/
+	midi.connect = function (args) {
+
+		MIDI.adaptor.id = 'audio';
+
+
+		/** init **/
+		for (var bufferId = 0; bufferId < 12; bufferId ++) {
+			_buffers[bufferId] || (_buffers[bufferId] = new Audio());
+		}
+
+
+		/** properties **/
+		defineProperties();
+
+
+		/** volume **/
+		_apply.volume = function (source) {
+			var channel = source._channel;
+			if (MIDI.mute || channel.mute) {
+				source.volume = 0.0;
+			} else {
+				var volume = MIDI.volume * channel.volume * source._volume;
+				source.volume = Math.min(1.0, Math.max(-1.0, volume * 2.0));
+			}
+		};
+
+
+		/** noteOn/Off **/
+		MIDI.noteOn = function (channelId, noteId, velocity, delay) {
+			switch(typeof noteId) {
+				case 'number':
+					return noteOn.apply(null, arguments);
+				case 'string':
+					break;
+				case 'object':
+					return noteGroupOn.apply(null, arguments);
+			}
+		};
+
+		MIDI.noteOff = function (channelId, noteId, delay) {
+			switch(typeof noteId) {
+				case 'number':
+					return noteOff.apply(null, arguments);
+				case 'string':
+					break;
+				case 'object':
+					return noteGroupOff.apply(null, arguments);
+			}
+		};
+
+
+		/** stopAllNotes **/
+		MIDI.stopAllNotes = function (channelId) {
+			if (isFinite(channelId)) {
+			
+			} else {
+				for (var bufferId = 0, length = _buffers.length; bufferId < length; bufferId++) {
+					_buffers[bufferId].pause();
+				}
+			}
+		};
+
+
+		/** connect **/
+		return new Promise(function (resolve, reject) {
+			var _requests = MIDI.adaptors._requests;
+			var soundfonts = MIDI.Soundfont;
+			for (var programId in soundfonts) {
+				var request = _requests[programId] || (_requests[programId] = {});
+				request.loaded = true;
+				request.loading = false;
+			}
+			resolve();
+		});
+	};
+
+
+	/** helpers **/
+	function noteOn(channelId, note, velocity, delay) {
+		var timeout;
+		var noteName = MIDI.getNoteName(note);
+		if (delay) {
+			timeout = setTimeout(function () {
+				startChannel(channelId, noteName, velocity);
+			}, delay * 1000);
+		} else {
+			startChannel(channelId, noteName, velocity);
+		}
+		return {
+			cancel: function () {
+				clearTimeout(timeout);
+			}
+		};
+	};
+
+	function noteOff(channelId, note, delay) {
+		var timeout;
+// 		var noteName = MIDI.getNoteName(note); // this sounds bad
+// 		if (delay) {
+// 			timeout = setTimeout(function () {
+// 				stopChannel(channelId, noteName);
+// 			}, delay * 1000)
+// 		} else {
+// 			stopChannel(channelId, noteName);
+// 		}
+		return {
+			cancel: function () {
+				clearTimeout(timeout);
+			}
+		};
+	};
+
+	function noteGroupOn(channelId, notes, velocity, delay) {
+		for (var i = 0; i < notes.length; i ++) {
+			var note = notes[i];
+			var noteName = MIDI.getNoteName(note);
+			if (noteName) {
+				if (delay) {
+					return setTimeout(function () {
+						startChannel(channelId, noteName, velocity);
+					}, delay * 1000);
+				} else {
+					startChannel(channelId, noteName, velocity);
+				}
+			}
+		}
+	};
+
+	function noteGroupOff(channelId, notes, delay) {
+		for (var i = 0; i < notes.length; i ++) {
+			var note = notes[i];
+			var noteName = MIDI.getNoteName(note);
+			if (noteName) {
+				if (delay) {
+					return setTimeout(function () {
+						stopChannel(channelId, noteName);
+					}, delay * 1000);
+				} else {
+					stopChannel(channelId, noteName);
+				}
+			}
+		}
+	};
+
+	function startChannel(channelId, noteName, velocity) {
+		var channel = MIDI.channels[channelId];
+		if (channel) {
+			var program = channel.program;
+			var programId = MIDI.getProgram(program).nameId;
+			var sourceId = programId + '' + noteName;
+			var bufferId = (_buffer_nid + 1) % _buffers.length;
+			
+			var soundfont = MIDI.Soundfont[programId];
+			if (soundfont) {
+				var source = _buffers[bufferId];
+				source.src = soundfont[noteName];
+				source._channel = channel;
+				source._volume = velocity;
+				source._id = sourceId;
+				
+				_apply.volume(source);
+				
+				source.play();
+				
+				_buffer_nid = bufferId;
+				_active[bufferId] = source;
+			} else {
+				MIDI.DEBUG && console.log('404', programId);
+			}
+		}
+	};
+
+	function stopChannel(channelId, noteName) {
+		var channel = MIDI.channels[channelId];
+		if (channel) {
+			var program = channel.program;
+			var programId = MIDI.getProgram(program).nameId;
+			var sourceId = programId + '' + noteName;
+			
+			for (var i = 0, len = _buffers.length; i < len; i++) {
+				var bufferId = (i + _buffer_nid + 1) % len;
+				var source = _active[bufferId];
+				if (source && source._id === sourceId) {
+					_buffers[bufferId].pause();
+					_active[bufferId] = null;
+					return;
+				}
+			}
+		}
+	};
+
+	function defineProperties() {
+		Object.defineProperties(MIDI, {
+			'mute': set('boolean', false, handler('volume')),
+			'volume': set('number', 1.0, handler('volume'))
+		});
+	
+		function set(_format, _value, _handler) {
+			return {
+				configurable: true,
+				get: function () {
+					return _value;
+				},
+				set: function (value) {
+					if (typeof value === _format) {
+						_value = value;
+						_handler && _handler();
+					}
+				}
+			}
+		};
+
+		function handler(type) {
+			return function () {
+				for (var sourceId in _active) {
+					_apply[type](_active[sourceId]);
+				}
+			};
+		};
+	};
+
+})();
+
+/***/ }),
+
+/***/ "./node_modules/midi/js/adaptors-AudioAPI.js":
+/*!***************************************************!*\
+  !*** ./node_modules/midi/js/adaptors-AudioAPI.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+	----------------------------------------------------------------------
+	adaptors-AudioAPI
+	----------------------------------------------------------------------
+	http://webaudio.github.io/web-audio-api/
+	----------------------------------------------------------------------
+*/
+
+window.AudioContext && (function () { 'use strict';
+
+	var adaptors = MIDI.adaptors;
+	var midi = adaptors.audioapi = {};
+	
+	var _ctx = createAudioContext();
+	var _buffers = {}; // downloaded & decoded audio buffers
+	var _requests = adaptors._requests; // queue
+	var _apply = {};
+
+	var _scheduled = {}; // audio sources that are scheduled to play
+
+	/** connect **/
+	midi.connect = function (args) {
+
+		MIDI.adaptor.id = 'audioapi';
+
+
+		/** properties **/
+		defineProperties();
+
+
+		/** volume **/
+		_apply.volume = function (source) {
+			var node = source.gainNode.gain;
+			var channel = source._channel;
+			
+			/* set value */
+			if (MIDI.mute || channel.mute) {
+				node.value = 0.0;
+			} else {
+				var volume = MIDI.volume * channel.volume * source._volume;
+				node.value = Math.min(2.0, Math.max(0.0, volume));
+			}
+			
+			/* reschedule fadeout */
+			if (node._fadeout) {
+				node.cancelScheduledValues(_ctx.currentTime);
+				node.linearRampToValueAtTime(node.value, node._startAt);
+				node.linearRampToValueAtTime(0.0, node._startAt + 0.3);
+			}
+		};
+
+
+		/** detune **/
+		_apply.detune = function (source) {
+			if (_ctx.hasDetune) {
+				var channel = source._channel;
+				var detune = MIDI.detune + channel.detune;
+				if (detune) {
+					source.detune.value = detune; // -1200 to 1200 - value in cents [100 cents per semitone]
+				}
+			}
+		};
+		
+
+		/** fx **/
+		_apply.fx = function (source) {
+			var channel = source._channel;
+			var chain = source.gainNode;
+			
+			source.disconnect(0);
+			source.connect(chain);
+			
+			apply(MIDI.fxNodes); // apply master effects
+			apply(channel.fxNodes); // apply channel effects //- trigger refresh when this changes
+
+			function apply(nodes) {
+				if (nodes) {
+					for (var type in nodes) {
+						var node = nodes[type];
+						chain.connect(node.input);
+						chain = node;
+					}
+				}
+			};
+		};
+
+		
+		/** noteOn/Off **/
+		MIDI.noteOn = function (channelId, noteId, velocity, delay) {
+			switch(typeof noteId) {
+				case 'number':
+					return noteOn.apply(null, arguments);
+				case 'string':
+					break;
+				case 'object':
+					return noteGroupOn.apply(null, arguments);
+			}
+		};
+
+		MIDI.noteOff = function (channelId, noteId, delay) {
+			switch(typeof noteId) {
+				case 'number':
+					return noteOff.apply(null, arguments);
+				case 'string':
+					break;
+				case 'object':
+					return noteGroupOff.apply(null, arguments);
+			}
+		};
+
+
+		/** cancelNotes **/
+		MIDI.cancelNotes = function (channelId) {
+			if (isFinite(channelId)) {
+				stopChannel(channelId);
+			} else {
+				for (var channelId in _scheduled) {
+					stopChannel(channelId);
+				}
+			}
+			
+			function stopChannel(channelId) {
+				loopChannel(channelId, function (sources, source) {
+					fadeOut(sources, source);
+				});
+			}
+		};
+
+
+		/** unlock **/
+		MIDI.iOSUnlock = function () {
+			if (_ctx.unlocked !== true) {
+				_ctx.unlocked = true;
+				var buffer = _ctx.createBuffer(1, 1, 44100);
+				var source = _ctx.createBufferSource();
+				source.buffer = buffer;
+				source.connect(_ctx.destination);
+				source.start(0);
+			}
+		};
+
+		// To take care of browsers who catch this as an "auto play" case.
+		if (_ctx.state === "suspended")
+			_ctx.resume(); // TODO-PER: should actually wrap the following in a promise, but this is the simplest code change and the following promise will take a long time.
+
+		/** connect **/
+		return new Promise(function (resolve, reject) {
+			if (window.Tuna) {
+				if (!(_ctx.tunajs instanceof Tuna)) {
+					_ctx.tunajs = new Tuna(_ctx);
+				}
+			}
+			
+			var soundfonts = MIDI.Soundfont;
+			var requests = Object.keys(soundfonts);
+			for (var programId in soundfonts) {
+				var program = MIDI.getProgram(programId);
+				if (program) {
+					var request = _requests[programId] || (_requests[programId] = {});
+					if (request.loaded) {
+						continue;
+					} else if (request.decoding) {
+						request.queue.push(resolve);
+					} else {
+						request.decoding = true;
+						request.queue.push(resolve);
+						request.pending = 0;
+						
+						var soundfont = soundfonts[programId];
+						for (var noteName in soundfont) {
+							loadAudio(programId, program.id, noteName);
+						}
+					}
+				}
+			}
+			
+			setTimeout(waitForEnd, 0);
+
+			/* helpers */
+			function waitForEnd() {
+				for (var i = 0; i < requests.length; i ++) {
+					var program = requests[i];
+					var request = _requests[program];
+					if (request.pending) {
+						return;
+					}
+				}
+				for (var i = 0; i < requests.length; i ++) {
+					var program = requests[i];
+					var request = _requests[program];
+					var cb;
+					while(cb = request.queue.pop()) {
+						cb();
+					}
+				}
+			}
+
+			function loadAudio(program, programId, noteName) {
+				var request = _requests[program];
+				var soundfont = soundfonts[program];
+				var path = soundfont[noteName];
+				if (path) {
+					request.pending ++;
+					loadBuffer(path).then(function (buffer) {
+						buffer.id = noteName;
+						
+						var noteId = MIDI.getNoteNumber(noteName);
+						var bufferId = programId + 'x' + noteId;
+						_buffers[bufferId] = buffer;
+
+						if (!--request.pending) {
+							request.decoding = false;
+							request.loading = false;
+							request.loaded = true;
+							
+							MIDI.DEBUG && console.log('loaded: ', program);
+							
+							waitForEnd();
+						}
+					}).catch(function (err) {
+						MIDI.DEBUG && console.error('audio could not load', arguments);
+					});
+				}
+			}
+		});
+		
+		function noteOn(channelId, noteId, velocity, delay) {
+			delay = delay || 0;
+
+			var source;
+			var sourceId;
+			
+			var volume = MIDI.volume;
+			if (volume) {
+				var channel = MIDI.channels[channelId];
+				var programId = channel.program;
+				var bufferId = programId + 'x' + noteId;
+				var buffer = _buffers[bufferId];
+				if (buffer) {
+					source = _ctx.createBufferSource();
+					source.buffer = buffer;
+					
+					source.gainNode = _ctx.createGain();
+					source.gainNode.connect(_ctx.destination);
+					
+					source._channel = channel;
+					source._volume = velocity;
+					
+					_apply.volume(source);
+					_apply.detune(source);
+					_apply.fx(source);
+					
+					source.start(delay + _ctx.currentTime);
+					
+					_scheduled[channelId] = _scheduled[channelId] || {};
+					_scheduled[channelId][noteId] = _scheduled[channelId][noteId] || [];
+					_scheduled[channelId][noteId].push(source);
+					_scheduled[channelId][noteId].active = source;
+				} else {
+					MIDI.DEBUG && console.error(['no buffer', arguments]);
+				}
+			}
+			return {
+				cancel: function () {
+					source && source.disconnect(0);
+				}
+			};
+		}
+		
+
+		/** noteOn/Off **/
+		function noteOff(channelId, noteId, delay) {
+			delay = delay || 0;
+			
+			var channels = _scheduled[channelId];
+			if (channels) {
+				var sources = channels[noteId];
+				if (sources) {
+					var source = sources.active;
+					if (source) {
+						fadeOut(sources, source, delay);
+					}
+				}
+			}
+			return {
+				cancel: function () {
+					source && source.disconnect(0);
+				}
+			};
+		}
+	
+		function noteGroupOn(channel, chord, velocity, delay) {
+			var res = {};
+			for (var n = 0, note, len = chord.length; n < len; n++) {
+				res[note = chord[n]] = MIDI.noteOn(channel, note, velocity, delay);
+			}
+			return res;
+		}
+
+		function noteGroupOff(channel, chord, delay) {
+			var res = {};
+			for (var n = 0, note, len = chord.length; n < len; n++) {
+				res[note = chord[n]] = MIDI.noteOff(channel, note, delay);
+			}
+			return res;
+		}
+
+		function fadeOut(sources, source, delay) {
+			var startAt = (delay || 0) + _ctx.currentTime;
+
+			// @Miranet: 'the values of 0.2 and 0.3 could of course be used as 
+			// a 'release' parameter for ADSR like time settings.'
+			// add { 'metadata': { release: 0.3 } } to soundfont files
+			var gain = source.gainNode.gain;
+			gain._fadeout = true;
+			gain._startAt = startAt;
+			gain.linearRampToValueAtTime(gain.value, startAt);
+			gain.linearRampToValueAtTime(0.0, startAt + 0.3);
+			
+			source.stop(startAt + 0.5);
+			
+			setTimeout(function () {
+				sources.shift();
+			}, delay * 1000);
+		}
+
+		function loadBuffer(path) { // streaming | base64 | arraybuffer
+			return new Promise(function (resolve, reject) {
+				if (path.indexOf('data:audio') === 0) { // Base64 string
+					decode(base64ToBuffer(path));
+				} else { // XMLHTTP buffer
+					var xhr = new XMLHttpRequest();
+					xhr.open('GET', path, true);
+					xhr.responseType = 'arraybuffer';
+					xhr.onload = function () {
+						decode(xhr.response);
+					};
+					xhr.send();
+				}
+				
+				function decode(buffer) {
+					_ctx.decodeAudioData(buffer, resolve, reject);
+				}
+			});
+		}
+	};
+	
+	function base64ToBuffer(uri) {
+		uri = uri.split(',');
+		var binary = atob(uri[1]);
+		var mime = uri[0].split(':')[1].split(';')[0];
+		var buffer = new ArrayBuffer(binary.length);
+		var uint = new Uint8Array(buffer);
+		for (var n = 0; n < binary.length; n++) {
+			uint[n] = binary.charCodeAt(n);
+		}
+		return buffer;
+	}
+
+	function createAudioContext() {
+		_ctx = new (window.AudioContext || window.webkitAudioContext)();
+		_ctx.hasDetune = detectDetune();
+		return _ctx;
+	}
+
+	function detectDetune() {
+		var buffer = _ctx.createBuffer(1, 1, 44100);
+		var source = _ctx.createBufferSource();
+		try {
+			source.detune.value = 1200;
+			return true;
+		} catch(e) {
+			return false;
+		}
+	}
+
+	function loopChannel(channelId, cb) {
+		var channel = _scheduled[channelId];
+		for (var noteId in channel) {
+			var sources = channel[noteId];
+			var source;
+			for (var i = 0; i < sources.length; i ++) {
+				cb(sources, sources[i]);
+			}
+		}
+	}
+
+	function defineProperties() {
+		Object.defineProperties(MIDI, {
+			'context': {
+				configurable: true,
+				get: function () {
+					return _ctx;
+				},
+				set: function (ctx) {
+					_ctx = ctx;
+				}
+			},
+			
+			/* effects */
+			'detune': set('number', 0, handler('detune')),
+			'fx': set('object', null, handler('fx')),
+			'mute': set('boolean', false, handler('volume')),
+			'volume': set('number', 1.0, handler('volume'))
+		});
+	
+		function set(_format, _value, _handler) {
+			return {
+				configurable: true,
+				get: function () {
+					return _value;
+				},
+				set: function (value) {
+					if (typeof value === _format) {
+						_value = value;
+						_handler && _handler();
+					}
+				}
+			}
+		}
+
+		function handler(type) {
+			return function () {
+				MIDI.setProperty(type);
+			};
+		}
+		
+		MIDI.setProperty = function (type, channelId) {
+			if (_apply[type]) {
+				if (isFinite(channelId)) {
+					type === 'fx' && prepareFX(MIDI.channels[channelId]);
+					setFX(channelId);
+				} else {
+					type === 'fx' && prepareFX(MIDI);
+					for (var channelId in _scheduled) {
+						setFX(channelId);
+					}
+				
+				}
+			}
+			
+			function setFX() {
+				loopChannel(channelId, function (sources, source) {
+					_apply[type](source);
+				});
+			}
+
+			function prepareFX(channel) {
+				var fxNodes = channel.fxNodes || (channel.fxNodes = {});
+				for (var key in fxNodes) {
+					fxNodes[key].disconnect(_ctx.destination);
+					delete fxNodes[key];
+				}
+				if (_ctx.tunajs) {
+					var fx = channel.fx;
+					for (var i = 0; i < fx.length; i ++) {
+						var data = fx[i];
+						var type = data.type;
+						var effect = new _ctx.tunajs[type](data);
+						effect.connect(_ctx.destination);
+						fxNodes[type] = effect;
+					}
+				} else {
+					MIDI.DEBUG && console.error('fx not installed.', arguments);
+				}
+			}
+		};
+	}
+
+})();
+
+/***/ }),
+
+/***/ "./node_modules/midi/js/adaptors-MIDI.js":
+/*!***********************************************!*\
+  !*** ./node_modules/midi/js/adaptors-MIDI.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+	----------------------------------------------------------------------
+	adaptors-MIDI
+	----------------------------------------------------------------------
+	http://webaudio.github.io/web-midi-api/
+	----------------------------------------------------------------------
+*/
+
+(function() { 'use strict';
+
+	var midi = MIDI.adaptors.midiapi = {};
+	
+	var _context;
+	var _active = {};
+	var _apply = {};
+
+	/** connect **/
+	midi.connect = function(args) {
+
+		MIDI.adaptor.id = 'midiapi';
+
+
+		/** properties **/
+		defineProperties();
+
+
+		/** volume **/
+		_apply.volume = function(source) {
+			var channel = source._channel;
+			if (MIDI.mute || channel.mute) {
+				setVolume(channel.id, 0.0);
+			} else {
+				var volume = MIDI.volume * channel.volume * source._volume;
+				setVolume(channel.id, Math.min(1.0, Math.max(-1.0, volume * 2.0)));
+			}
+		};
+
+
+		/** detune **/
+		_apply.detune = function(source) {
+			var channel = source._channel;
+			var detune = MIDI.detune + channel.detune;
+			if (detune) {
+				setDetune(channel.id, detune); // -1200 to 1200 - value in cents [100 cents per semitone]
+			}
+		};
+
+
+		MIDI.setController = setController; //- depreciate
+		MIDI.setPitchBend = setDetune; //- depreciate
+		MIDI.setVolume = setVolume; //- depreciate
+
+
+		/** on.programChange **/
+		MIDI.messageHandler.program = function(channelId, program, delay) { // change patch (instrument)
+			_context.send([0xC0 + channelId, program], (delay || 0) * 1000);
+		};
+
+
+		/** send **/
+		MIDI.send = function(data, delay) {
+			_context.send(data, (delay || 0) * 1000);
+		};
+
+
+		/** noteOn/Off **/
+		MIDI.noteOn = function(channelId, noteId, velocity, delay) {
+			switch(typeof noteId) {
+				case 'number':
+					return noteOn.apply(null, arguments);
+				case 'string':
+					break;
+				case 'object':
+					return noteGroupOn.apply(null, arguments);
+			}
+		};
+
+		MIDI.noteOff = function(channelId, noteId, delay) {
+			switch(typeof noteId) {
+				case 'number':
+					return noteOff.apply(null, arguments);
+				case 'string':
+					break;
+				case 'object':
+					return noteGroupOff.apply(null, arguments);
+			}
+		};
+
+
+		/** cancelNotes **/
+		MIDI.cancelNotes = function(channelId) {
+			if (isFinite(channelId)) {
+				_context.send([0xB0 + channelId, 0x7B, 0]);
+			} else {
+				_context.cancel();
+				for (var channelId = 0; channelId < 16; channelId ++) {
+					_context.send([0xB0 + channelId, 0x7B, 0]);
+				}
+			}
+		};
+	
+
+		/** connect **/
+		return new Promise(function(resolve, reject) {
+			navigator.requestMIDIAccess().then(function(e) {
+				var outputs = e.outputs;
+				if (outputs.size) {
+					outputs.forEach(function(context) {
+						if (context.state === 'connected' && context.type === 'input') {
+							_context = context;
+						}
+					});
+				}
+				if (_context == null) { // no outputs
+					handleError({
+						message: 'No available outputs.'
+					});
+				} else {
+					resolve();
+				}
+			}, handleError);
+
+			function handleError(err) { // well at least we tried.
+				reject && reject(err);
+			}
+		});
+	};
+
+
+	/* note */
+	function noteOn(channelId, noteId, velocity, delay) {
+		_context.send([0x90 + channelId, noteId, velocity * 127 >> 0], (delay || 0) * 1000);
+		_active[channelId + 'x' + noteId] = {
+			_channel: MIDI.channels[channelId],
+			_volume: velocity
+		};
+		return {
+			cancel: function() {
+				
+			}
+		};
+	}
+
+	function noteOff(channelId, noteId, delay) {
+		_context.send([0x80 + channelId, noteId, 0], (delay || 0) * 1000);
+		delete _active[channelId + 'x' + noteId];
+		return {
+			cancel: function() {
+				
+			}
+		};
+	}
+
+	function noteGroupOn(channelId, group, velocity, delay) {
+		for (var i = 0; i < group.length; i ++) {
+			_context.send([0x90 + channelId, group[i], velocity], (delay || 0) * 1000);
+		}
+	}
+
+	function noteGroupOff(channelId, group, delay) {
+		for (var i = 0; i < group.length; i ++) {
+			_context.send([0x80 + channelId, group[i], 0], (delay || 0) * 1000);
+		}
+	}
+
+
+	/* properties */
+	function setController(channelId, type, value, delay) {
+		_context.send([channelId, type, value], (delay || 0) * 1000);
+	}
+
+	function setDetune(channelId, pitch, delay) {
+		_context.send([0xE0 + channelId, pitch], (delay || 0) * 1000);
+	}
+
+	function setVolume(channelId, volume, delay) {
+		_context.send([0xB0 + channelId, 0x07, volume], (delay || 0) * 1000);
+	}
+
+
+	/** define properties **/
+	function defineProperties() {
+
+		Object.defineProperties(MIDI, {
+			'context': {
+				configurable: true,
+				set: function(context) {
+					_context = context;
+				},
+				get: function() {
+					return _context;
+				}
+			},
+			
+			/* effects */
+			'detune': set('number', 0, handler('detune')),
+			'mute': set('boolean', false, handler('volume')),
+			'volume': set('number', 1.0, handler('volume'))
+		});
+	
+		function set(_format, _value, _handler) {
+			return {
+				configurable: true,
+				get: function() {
+					return _value;
+				},
+				set: function(value) {
+					if (typeof value === _format) {
+						_value = value;
+						_handler && _handler();
+					}
+				}
+			}
+		}
+
+		function handler(type) {
+			return function() {
+				for (var sourceId in _active) {
+					_apply[type](_active[sourceId]);
+				}
+			};
+		}
+	}
+
+})();
+
+/***/ }),
+
+/***/ "./node_modules/midi/js/adaptors.js":
+/*!******************************************!*\
+  !*** ./node_modules/midi/js/adaptors.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+	----------------------------------------------------------------------
+	adaptors
+	----------------------------------------------------------------------
+*/
+
+if (typeof MIDI === 'undefined') MIDI = {};
+
+(function (MIDI) { 'use strict';
+
+	var _adaptor = MIDI.adaptor = {};
+	var _adaptors = MIDI.adaptors = {};
+	var _requests = _adaptors._requests = {};
+	var _load = _adaptors._load = function (args) {
+		resetAdaptor();
+		if (args.tech === 'midiapi') {
+			return _adaptors.midiapi.connect(args);
+		} else {
+			return requestQueue(args);
+		}
+	};
+
+	function requestQueue(args) {
+		return new Promise(function (resolve, reject) {
+			var audioFormat = _adaptor.format.split('_').shift();
+			var programs = args.instruments;
+			var onprogress = args.onprogress;
+			var tech = args.tech;
+			
+			var length = programs.length;
+
+			for (var i = 0; i < length; i ++) {
+				var programId = programs[i];
+				var request = _requests[programId] || (_requests[programId] = {});
+
+				if (request.loaded) {
+					waitForEnd([programId]);
+				} else if (request.loading) {
+					request.queue.push(resolve);
+				} else {
+					request.queue = [resolve];
+					request.loading = true;
+
+					sendRequest(programId, audioFormat).then(function (pgm) {
+						waitForEnd(pgm);
+					}).catch(reject);
+				}
+			}
+
+			function emitProgress(progress, programId) {
+				if (emitProgress.progress !== progress) {
+					emitProgress.progress = progress;
+					onprogress && onprogress('load', progress, programId);
+				}
+			}
+			
+			function waitForEnd(pgm) {
+				_requests[pgm].loading = false;
+				var pending = false;
+				for (var key in _requests) {
+					if (_requests.hasOwnProperty(key)) {
+						if (_requests[key].loading) {
+							pending = true;
+						}
+					}
+				}
+				if (!pending) {
+					emitProgress(1.0);
+					_adaptors[tech].connect(args).then(function () {
+						programs.forEach(function (programId) {
+							var request = _requests[programId];
+							var cb;
+							while(cb = request.queue.pop()) {
+								cb();
+							}
+						});
+					}).catch(reject);
+				}
+			}
+		});
+
+		function sendRequest(programId, audioFormat, onprogress) {
+			return new Promise(function (resolve, reject) {
+				var soundfontPath = MIDI.PATH + programId + '-' + audioFormat + '.js';
+				if (MIDI.USE_XHR) {
+					galactic.request({
+						url: soundfontPath,
+						format: 'text',
+						onerror: reject,
+						onprogress: onprogress,
+						onsuccess: function (event, responseText) {
+							var script = document.createElement('script');
+							script.language = 'javascript';
+							script.type = 'text/javascript';
+							script.text = responseText;
+							document.body.appendChild(script);
+							resolve(programId);
+						}
+					});
+				} else {
+					dom.loadScript.add({
+						url: soundfontPath,
+						verify: 'MIDI.Soundfont["' + programId + '"]',
+						onerror: reject,
+						onsuccess: resolve
+					});
+				}
+			});
+		}
+	};
+
+
+	/* resetAdaptor */
+	function resetAdaptor() {
+
+		/* currentTime */
+		(function () {
+			var _now = performance.now();
+			Object.defineProperties(MIDI, {
+				'currentTime': {
+					configurable: true,
+					get: function () {
+						return performance.now() - _now;
+					}
+				}
+			});
+		})();
+
+
+		/* set */
+		MIDI.set = function (property, value, delay) {
+			if (delay) {
+				return setTimeout(function () {
+					MIDI[property] = value;
+				}, delay * 1000);
+			} else {
+				MIDI[property] = value;
+			}
+		};
+
+
+		/** programChange **/
+		MIDI.messageHandler = {};
+		MIDI.programChange = function (channelId, programId, delay) {
+			var program = MIDI.getProgram(programId);
+			if (program && Number.isFinite(programId = program.id)) {
+				var channel = MIDI.channels[channelId];
+				if (channel && channel.program !== programId) {
+					if (delay) {
+						setTimeout(function () { //- is there a better option?
+							channel.program = programId;
+						}, delay);
+					} else {
+						channel.program = programId;
+					}
+					
+					var wrapper = MIDI.messageHandler.program || programHandler;
+					if (wrapper) {
+						wrapper(channelId, programId, delay);
+					}
+				}
+			}
+		};
+	
+		function programHandler(channelId, program, delay) {
+			if (MIDI.adaptor.id) {
+				if (MIDI.player.playing) {
+					MIDI.loadProgram(program).then(MIDI.player.start);
+				} else {
+					MIDI.loadProgram(program);
+				}
+			}
+		}
+
+
+		/* globals */
+		Object.defineProperties(MIDI, {
+			'context': set(null),
+			'detune': set('detune', 0),
+			'fx': set('fx', null),
+			'mute': set('mute', false),
+			'volume': set('volume', 1.0)
+		});
+		
+		function set(_type, _value) {
+			return {
+				configurable: true,
+				get: function () {
+					return _value;
+				},
+				set: function (value) {
+					_value = value;
+					handleError(_type);
+				}
+			};
+		}
+
+
+		/* functions */
+		MIDI.send = handleErrorWrapper('send');
+		MIDI.noteOn = handleErrorWrapper('noteOn');
+		MIDI.noteOff = handleErrorWrapper('noteOff');
+		MIDI.cancelNotes = handleErrorWrapper('cancelNotes');
+		
+		MIDI.setController = handleErrorWrapper('setController'); //- depreciate
+		MIDI.setEffects = handleErrorWrapper('setEffects'); //- depreciate
+		MIDI.setPitchBend = handleErrorWrapper('setPitchBend'); //- depreciate
+		MIDI.setProperty = handleErrorWrapper('setProperty');
+		MIDI.setVolume = handleErrorWrapper('setVolume'); //- depreciate
+		
+		MIDI.iOSUnlock = handleErrorWrapper('iOSUnlock');
+		
+		/* helpers */
+		function handleError(_type) {
+			MIDI.DEBUG && console.warn('The ' + _adaptor.id + ' adaptor does not support "' + _type + '".');
+		}
+
+		function handleErrorWrapper(_type) {
+			return function () {
+				handleError(_type);
+			};
+		}
+	}
+	
+	resetAdaptor();
+	
+})(MIDI);
+
+/***/ }),
+
+/***/ "./node_modules/midi/js/channels.js":
+/*!******************************************!*\
+  !*** ./node_modules/midi/js/channels.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+	----------------------------------------------------------
+	channels : 2015-10-18
+	----------------------------------------------------------
+*/
+
+if (typeof MIDI === 'undefined') MIDI = {};
+
+(function (MIDI) { 'use strict';
+
+	MIDI.channels = (function (channels) {
+		for (var i = 0; i <= 15; i++) {
+			addChannel(i);
+		}
+		
+		return channels;
+		
+		function addChannel(channelId) {
+
+			var channel = channels[channelId] = {};
+
+			channel.noteOn = function (noteId, velocity, delay) {
+				return MIDI.noteOn(channelId, noteId, velocity, delay);
+			};
+			
+			channel.noteOff = function (noteId, delay) {
+				return MIDI.noteOff(channelId, noteId, delay);
+			};
+			
+			channel.cancelNotes = function () {
+				return MIDI.cancelNotes(channelId);
+			};
+			
+			channel.set = function () {
+			
+			};
+			
+			Object.defineProperties(channel, {
+				id: {
+					value: i,
+					enumerable: true,
+					writable: true
+				},
+				program: {
+					value: i,
+					enumerable: true,
+					writable: true
+				},
+				volume: set('number', 'volume', 1.0),
+				mute: set('boolean', 'volume', false),
+				mono: set('boolean', '*', false),
+				omni: set('boolean', '*', false),
+				solo: set('boolean', '*', false),
+				detune: set('number', 'detune', 0),
+				fx: set('object', 'fx', null)
+			});
+			
+			function set(_typeof, _type, _value) {
+				return {
+					configurable: true,
+					enumerable: true,
+					get: function () {
+						return _value;
+					},
+					set: function (value) {
+						if (typeof value === _typeof) {
+							_value = value;
+							MIDI.setProperty(_type, channelId);
+						}
+					}
+				};
+			};
+		};
+	})({});
+
+})(MIDI);
+
+/***/ }),
+
+/***/ "./node_modules/midi/js/gm.js":
+/*!************************************!*\
+  !*** ./node_modules/midi/js/gm.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+	----------------------------------------------------------
+	GM : 2015-10-18
+	----------------------------------------------------------
+*/
+
+if (typeof MIDI === 'undefined') MIDI = {};
+
+(function (MIDI) { 'use strict';
+
+	/** getProgram **/
+	MIDI.getProgram = function (program) {
+		if (typeof program === 'string') {
+			return MIDI.getProgram.byName[asId(program)];
+		} else {
+			return MIDI.getProgram.byId[program];
+		}
+	};
+
+	function asId(name) {
+		return name.replace(/[^a-z0-9_ ]/gi, '').
+				    replace(/[ ]/g, '_').
+				    toLowerCase();
+	};
+	
+	(function (categories) {
+		var GM = MIDI.GM = {};
+		var byId = MIDI.getProgram.byId = {};
+		var byName = MIDI.getProgram.byName = {};
+		
+		for (var category in categories) {
+			var programs = categories[category];
+			for (var i = 0, length = programs.length; i < length; i++) {
+				var program = programs[i];
+				if (program) {
+					var id = parseInt(program.substr(0, program.indexOf(' ')), 10);
+					var name = program.replace(id + ' ', '');
+					var nameId = asId(name);
+					var categoryId = asId(category);
+					
+					var res = {
+						id: --id,
+						name: name,
+						nameId: nameId,
+						category: category
+					};
+					
+					byId[id] = res;
+					byName[nameId] = res;
+					
+					GM[categoryId] = GM[categoryId] || [];
+					GM[categoryId].push(res);
+				}
+			}
+		}
+	})({
+		'Piano': ['1 Acoustic Grand Piano', '2 Bright Acoustic Piano', '3 Electric Grand Piano', '4 Honky-tonk Piano', '5 Electric Piano 1', '6 Electric Piano 2', '7 Harpsichord', '8 Clavinet'],
+		'Chromatic Percussion': ['9 Celesta', '10 Glockenspiel', '11 Music Box', '12 Vibraphone', '13 Marimba', '14 Xylophone', '15 Tubular Bells', '16 Dulcimer'],
+		'Organ': ['17 Drawbar Organ', '18 Percussive Organ', '19 Rock Organ', '20 Church Organ', '21 Reed Organ', '22 Accordion', '23 Harmonica', '24 Tango Accordion'],
+		'Guitar': ['25 Acoustic Guitar (nylon)', '26 Acoustic Guitar (steel)', '27 Electric Guitar (jazz)', '28 Electric Guitar (clean)', '29 Electric Guitar (muted)', '30 Overdriven Guitar', '31 Distortion Guitar', '32 Guitar Harmonics'],
+		'Bass': ['33 Acoustic Bass', '34 Electric Bass (finger)', '35 Electric Bass (pick)', '36 Fretless Bass', '37 Slap Bass 1', '38 Slap Bass 2', '39 Synth Bass 1', '40 Synth Bass 2'],
+		'Strings': ['41 Violin', '42 Viola', '43 Cello', '44 Contrabass', '45 Tremolo Strings', '46 Pizzicato Strings', '47 Orchestral Harp', '48 Timpani'],
+		'Ensemble': ['49 String Ensemble 1', '50 String Ensemble 2', '51 Synth Strings 1', '52 Synth Strings 2', '53 Choir Aahs', '54 Voice Oohs', '55 Synth Choir', '56 Orchestra Hit'],
+		'Brass': ['57 Trumpet', '58 Trombone', '59 Tuba', '60 Muted Trumpet', '61 French Horn', '62 Brass Section', '63 Synth Brass 1', '64 Synth Brass 2'],
+		'Reed': ['65 Soprano Sax', '66 Alto Sax', '67 Tenor Sax', '68 Baritone Sax', '69 Oboe', '70 English Horn', '71 Bassoon', '72 Clarinet'],
+		'Pipe': ['73 Piccolo', '74 Flute', '75 Recorder', '76 Pan Flute', '77 Blown Bottle', '78 Shakuhachi', '79 Whistle', '80 Ocarina'],
+		'Synth Lead': ['81 Lead 1 (square)', '82 Lead 2 (sawtooth)', '83 Lead 3 (calliope)', '84 Lead 4 (chiff)', '85 Lead 5 (charang)', '86 Lead 6 (voice)', '87 Lead 7 (fifths)', '88 Lead 8 (bass + lead)'],
+		'Synth Pad': ['89 Pad 1 (new age)', '90 Pad 2 (warm)', '91 Pad 3 (polysynth)', '92 Pad 4 (choir)', '93 Pad 5 (bowed)', '94 Pad 6 (metallic)', '95 Pad 7 (halo)', '96 Pad 8 (sweep)'],
+		'Synth Effects': ['97 FX 1 (rain)', '98 FX 2 (soundtrack)', '99 FX 3 (crystal)', '100 FX 4 (atmosphere)', '101 FX 5 (brightness)', '102 FX 6 (goblins)', '103 FX 7 (echoes)', '104 FX 8 (sci-fi)'],
+		'Ethnic': ['105 Sitar', '106 Banjo', '107 Shamisen', '108 Koto', '109 Kalimba', '110 Bagpipe', '111 Fiddle', '112 Shanai'],
+		'Percussive': ['113 Tinkle Bell', '114 Agogo', '115 Steel Drums', '116 Woodblock', '117 Taiko Drum', '118 Melodic Tom', '119 Synth Drum', '129 Percussion'],
+		'Sound effects': ['120 Reverse Cymbal', '121 Guitar Fret Noise', '122 Breath Noise', '123 Seashore', '124 Bird Tweet', '125 Telephone Ring', '126 Helicopter', '127 Applause', '128 Gunshot']
+	});
+
+
+	/** conversions **/
+	(function () {
+		var A0 = 0x15; // first note
+		var C8 = 0x6C; // last note
+		var number2key = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+		var toNote = {}; // C8  == 108
+		var toName = {}; // 108 ==  C8
+		for (var n = A0; n <= C8; n++) {
+			var octave = (n - 12) / 12 >> 0;
+			var name = number2key[n % 12] + octave;
+			toNote[name] = n;
+			toName[n] = name;
+		}
+	
+		MIDI.getNoteName = function (value) {
+			if (value in toNote) {
+				return value;
+			} else if (value in toName) {
+				return toName[value];
+			}
+		};
+	
+		MIDI.getNoteNumber = function (value) {
+			if (value in toName) {
+				return value;
+			} else if (value in toNote) {
+				return toNote[value];
+			}
+		};
+	})();
+
+})(MIDI);
+
+/***/ }),
+
+/***/ "./node_modules/midi/js/loader.js":
+/*!****************************************!*\
+  !*** ./node_modules/midi/js/loader.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+	----------------------------------------------------------
+	MIDI/loader : 2015-12-22 : https://mudcu.be
+	----------------------------------------------------------
+	https://github.com/mudcube/MIDI.js
+	----------------------------------------------------------
+*/
+
+if (typeof MIDI === 'undefined') MIDI = {};
+
+(function (MIDI) { 'use strict';
+
+
+	/** globals **/
+	MIDI.DEBUG = false;
+	MIDI.USE_XHR = true;
+	MIDI.PATH = './soundfont/';
+
+	if (MIDI.DEBUG && console && console.log) {
+		console.log('%c♥ MIDI.js 0.4.2 ♥', 'color: red;');
+	}
+
+	/** priorities **/
+	var _adaptorPriority = {
+		'midiapi': 0,
+		'audioapi': 1,
+		'audio': 2
+	};
+
+	var _formatPriority = {
+		'ogg': 0,
+		'mp3': 1
+	};
+
+	/** setup **/
+	MIDI.setup = function (args) {
+		return new Promise(function (resolve, reject) {
+			args = args || {};
+			if (typeof args === 'function') args = {onsuccess: args};
+
+			if (isFinite(args.debug)) {
+				MIDI.DEBUG = !!args.debug;
+			}
+
+			/* custom paths */
+			if (args.soundfontUrl) {
+				MIDI.PATH = args.soundfontUrl;
+			}
+
+			/* choose adaptor */
+			AudioSupports().then(function (supports) {
+				if (chooseFormat()) {
+					chooseAdaptor();
+				} else {
+					reject({
+						message: 'MIDIJS: Browser does not have necessary audio support.'
+					});
+				}
+
+				function chooseFormat() {
+
+					/* empty object */
+					for (var key in MIDI.adaptor) {
+						delete MIDI.adaptor[key];
+					}
+
+					/* choose format based on priority */
+					for (var format in _formatPriority) {
+						if (supports[format]) {
+							MIDI.adaptor.format = format;
+							return true; // yay!...
+						}
+					}
+				}
+
+				function chooseAdaptor() {
+					if (supports[location.hash.substr(1)]) {
+						loadAdaptor(location.hash.substr(1));
+					} else if (supports.midi_api) {
+						loadAdaptor('midiapi');
+					} else if (window.AudioContext) {
+						loadAdaptor('audioapi');
+					} else if (window.Audio) {
+						loadAdaptor('Audio');
+					}
+				}
+
+				function loadAdaptor(tech) {
+					tech = tech.toLowerCase();
+					var format = MIDI.adaptor.format;
+					var canPlayThrough = supports[tech];
+//					console.log("loadAdaptor", tech, format, canPlayThrough, supports);
+					if (!canPlayThrough[format]) {
+						handleError();
+						return;
+					}
+
+					args.tech = tech;
+
+					MIDI.loadProgram(args).then(function () {
+						resolve();
+					}).catch(function (err) {
+						MIDI.DEBUG && console.error(tech, err);
+						handleError(err);
+					});
+
+					function handleError(err) {
+						var idx = parseInt(_adaptorPriority[tech]) + 1;
+						var nextAdaptor = Object.keys(_adaptorPriority)[idx];
+						if (nextAdaptor) {
+							loadAdaptor(nextAdaptor);
+						} else {
+							reject && reject({
+								message: 'All plugins failed.'
+							});
+						}
+					}
+				}
+			}, reject);
+		});
+	};
+
+
+	/** loadProgram **/
+	MIDI.loadProgram = function (args) {
+		args || (args = {});
+		typeof args === 'object' || (args = {instrument: args});
+		args.instruments = instrumentList();
+		args.tech = args.tech || MIDI.adaptor.id;
+
+		return MIDI.adaptors._load(args);
+
+		/* helpers */
+		function instrumentList() {
+			var programs = args.instruments || args.instrument || MIDI.channels[0].program;
+			if (typeof programs === 'object') {
+				Array.isArray(programs) || (programs = Object.keys(programs));
+			} else {
+				if (programs === undefined) {
+					programs = [];
+				} else {
+					programs = [programs];
+				}
+			}
+
+			/* program number -> id */
+			for (var n = 0; n < programs.length; n ++) {
+				var programId = programs[n];
+				if (programId >= 0) {
+					var program = MIDI.getProgram(programId);
+					if (program) {
+						programs[n] = program.nameId;
+					}
+				}
+			}
+			if (programs.length === 0) {
+				programs = ['acoustic_grand_piano'];
+			}
+			return programs;
+		}
+	};
+
+})(MIDI);
+
+/***/ }),
+
+/***/ "./node_modules/midi/js/player.js":
+/*!****************************************!*\
+  !*** ./node_modules/midi/js/player.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+	----------------------------------------------------------
+	MIDI/player : 2015-10-18 : https://mudcu.be
+	----------------------------------------------------------
+	https://github.com/mudcube/MIDI.js
+	----------------------------------------------------------
+*/
+
+if (typeof MIDI === 'undefined') MIDI = {};
+
+MIDI.player = new function () { 'use strict';
+
+	var player = this;
+	
+	galactic.EventEmitter(player); // player.on(...)
+
+	/* Scheduling */
+	var _schedulePerRequest = 20;
+	var _scheduleMax = 100;
+
+	/* State */
+	var _midiState = {};
+
+	/* Queue */
+	var _midiQueue = [];
+
+	/* Events */
+	var _midiEvents = {};
+	var _midiEventIndex;
+	var _midiEventTime;
+	
+	/* File */
+	var _midiFile;
+
+
+	/** properties **/
+	(function () {
+		var _currentTime = 0;
+		var _playing = false;
+		var _now = 0;
+
+		Object.defineProperties(player, {
+			'bpm': finiteValue(null, true), // beats-per-minute override
+			'warp': finiteValue(1.0, true), // warp beats-per-minute
+			'transpose': finiteValue(0.0, true), // transpose notes up or down
+			'currentTime': { // current time within current song
+				get: function () {
+					if (player.playing) {
+						return _currentTime + (performance.now() - _now);
+					} else {
+						return _currentTime;
+					}
+				},
+				set: function (time) {
+					if (Number.isFinite(time)) {
+						setTime(time);
+					}
+				}
+			},
+			'duration': finiteValue(0, false), // duration of current song
+			'playing': { // current time within current song
+				get: function () {
+					return _playing;
+				},
+				set: function (playing) {
+					setTime(player.currentTime);
+					_playing = playing;
+				}
+			}
+		});
+	
+		function finiteValue(_value, refresh) {
+			return {
+				get: function () {
+					return _value;
+				},
+				set: function (value) {
+					if (Number.isFinite(value)) {
+						_value = value;
+						refresh && refreshAudio();
+					}
+				}
+			};
+
+			function refreshAudio() {
+				if (_midiFile) {
+					player.stop();
+					readMidiFile();
+					requestEvents(0, true);
+				}		
+			};
+		};
+			
+		function setTime(time) {
+			_now = performance.now();
+			_currentTime = clamp(0, player.duration, time);
+		};
+	})();
+
+
+	/** playback **/
+	player.start = function (startAt) {
+		cancelEvents();
+		player.currentTime = startAt;
+		requestEvents(player.currentTime, true);
+	};
+
+	player.stop = function () {
+		cancelEvents();
+		player.currentTime = 0;
+	};
+
+	player.pause = function () {
+		cancelEvents();
+	};
+
+
+	/** animation **/
+	player.setAnimation = function (callback) { //- player.on('tick', ...)
+		var currentTime = 0;
+		var nowSys = 0;
+		var nowMidi = 0;
+		//
+		player.clearAnimation();
+		
+		requestAnimationFrame(function frame() {
+			player.frameId = requestAnimationFrame(frame);
+			
+			if (player.duration) {
+				if (player.playing) {
+					currentTime = (nowMidi === player.currentTime) ? nowSys - Date.now() : 0;
+					
+					if (player.currentTime === 0) {
+						currentTime = 0;
+					} else {
+						currentTime = player.currentTime - currentTime;
+					}
+					if (nowMidi !== player.currentTime) {
+						nowSys = Date.now();
+						nowMidi = player.currentTime;
+					}
+				} else {
+					currentTime = player.currentTime;
+				}
+				
+				var duration = player.duration;
+				var percent = currentTime / duration;
+				var total = currentTime / 1000;
+				var minutes = total / 60;
+				var seconds = total - (minutes * 60);
+				var t1 = minutes * 60 + seconds;
+				var t2 = (duration / 1000);
+				if (t2 - t1 < -1.0) {
+					return;
+				} else {
+					var progress = Math.min(1.0, t1 / t2);
+					if (progress !== callback.progress) {
+						callback.progress = progress;
+						callback({
+							progress: progress,
+							currentTime: t1,
+							duration: t2
+						});
+					}
+				}
+			}
+		});
+	};
+
+	player.clearAnimation = function () { //- player.off('tick', ...)
+		player.frameId && cancelAnimationFrame(player.frameId);
+	};
+
+
+	/* Request Events */
+	function requestEvents(startAt, seek) {
+		if (startAt > player.duration) { // song finished
+			return;
+		}
+
+		/* find current position */
+		if (seek) { // seek to point in time
+			if (player.playing) {
+				cancelEvents();
+			} else {
+				player.playing = true;
+			}
+			
+			var packet = seekPacket(startAt);
+			var packetIndex = packet.idx;
+			var packetTime = _midiEventTime = packet.time;
+		} else { // streaming to queue
+			var packetIndex = _midiEventIndex;
+			var packetTime = _midiEventTime;
+		}
+
+		/* queue out events */
+		var future = startAt - player.currentTime; // in ms
+		var requests = 0;
+		var length = _midiEvents.length;
+		while(packetIndex < length && requests <= _schedulePerRequest) {
+			var packet = _midiEvents[packetIndex];
+			
+			_midiEventIndex = ++packetIndex;
+			_midiEventTime += packet[1];
+			
+			startAt = _midiEventTime - packetTime;
+			
+			var event = packet[0].event;
+			var type = event.type;
+			var subtype = event.subtype;
+			
+			if (handleEvent[subtype]) {
+				switch(type) {
+					case 'channel':
+						handleChannelEvent();
+						break;
+					case 'meta':
+						handleMetaEvent();
+						break;
+				}
+			}
+		}
+		
+		/* meta event */
+		function handleMetaEvent() {
+			switch(subtype) {
+				case 'setTempo':
+// 					console.log(event); //- handle tempo changes
+					break;
+			}
+		};
+		
+		/* channel event */
+		function handleChannelEvent() {
+			var channelId = event.channel;
+			var channel = MIDI.channels[channelId];
+			var delay = Math.max(0, (startAt + future) / 1000);
+
+			switch(subtype) {
+				case 'controller':
+// 					channel.set('controller', event.controllerType, event.value, delay);
+					MIDI.setController(channelId, event.controllerType, event.value, delay); //- depreciate
+					break;
+
+				case 'programChange':
+					var program = event.programNumber;
+					if (programIsUsed(program)) {
+// 						channel.set('program', program, delay);
+						MIDI.programChange(channelId, program, delay); //- depreciate
+					}
+					break;
+
+				case 'pitchBend':
+					var pitch = event.value;
+// 					channel.set('detune', pitch, delay);
+					MIDI.setPitchBend(channelId, pitch, delay); //- depreciate
+					break;
+
+				case 'noteOn':
+					var noteNumber = transpose(event.noteNumber);
+					_midiQueue.push({
+						promise: channel.noteOn(noteNumber, event.velocity / 127, delay),
+						timeout: wait(event, noteNumber, _midiEventTime, delay)
+					});
+					requests++;
+					break;
+
+				case 'noteOff':
+					var noteNumber = transpose(event.noteNumber);
+					_midiQueue.push({
+						promise: channel.noteOff(noteNumber, delay),
+						timeout: wait(event, noteNumber, _midiEventTime, delay)
+					});
+					requests++;
+					break;
+
+				default:
+					break;
+			}
+		};
+	
+		/* event tracking */
+		function wait(event, noteNumber, currentTime, delay) {
+			return setTimeout(function () {
+				var packet = galactic.util.copy(event);
+				packet.noteNumber = noteNumber;
+				
+				player.emit('event', packet);
+				
+				_midiQueue.shift();
+				
+				var packetId = packet.channel + 'x' + packet.noteNumber;
+				switch(packet.subtype) {
+					case 'noteOn':
+						_midiState[packetId] = packet;
+						break;
+					case 'noteOff':
+						delete _midiState[packetId];
+						break;
+				}
+				
+				if (_midiQueue.length <= _scheduleMax) {
+					requestEvents(_midiEventTime);
+				}
+			}, delay * 1000);
+		};
+
+		/* change program */
+		function programIsUsed(programNumber) {
+			var program = MIDI.getProgram(programNumber);
+			return program && player.instruments[program.nameId];
+		};
+
+		/* seek to point in time */
+		function seekPacket(seekTime) {
+			var time = 0;
+			var length = _midiEvents.length;
+			for (var idx = 0; idx < length; idx++) {
+				var event = _midiEvents[idx];
+				var eventDuration = event[1];
+				if (time + eventDuration < seekTime) {
+					time += eventDuration;
+				} else {
+					break;
+				}
+			}
+			return {
+				idx: idx,
+				time: time
+			};
+		};
+
+		/* transpose notes */
+		function transpose(noteNumber) {
+			return clamp(0, 127, noteNumber + player.transpose);
+		};
+	};
+
+
+	/* Cancel Events */
+	function cancelEvents() {
+		if (player.playing) {
+			player.playing = false;
+			
+			while(_midiQueue.length) {
+				var packet = _midiQueue.pop();
+				if (packet) {
+					packet.promise && packet.promise.cancel();
+					clearTimeout(packet.timeout);
+				}
+			}
+			
+			for (var sid in _midiState) {
+				var event = _midiState[sid];
+				player.emit('event', {
+					channel: event.channel,
+					noteNumber: event.noteNumber,
+					status: event.status - 16,
+					subtype: 'noteOff',
+					type: 'channel'
+				});
+			}
+		}
+	};
+
+
+	/* math */
+	function clamp(min, max, value) {
+		return (value < min) ? min : ((value > max) ? max : value);
+	};
+
+
+	/* read data */
+	function readMidiFile() {
+		// PER: handle the case where the caller already has the midi events. Don't need to load anything here.
+		if (_midiFile)
+			_midiEvents = Replayer(MidiFile(_midiFile), player.bpm);
+		player.duration = getLength();
+
+		function getLength() {
+			var length = _midiEvents.length;
+			var totalTime = 0.0;
+			for (var n = 0; n < length; n++) {
+				totalTime += _midiEvents[n][1];
+			}
+			return totalTime;
+		};
+	};
+
+	function readMetadata() {
+		player.instruments = readInstruments();
+// 		player.notes = readNotes();
+
+		function readNotes() { //- use me; download *only* specific notes
+			var notes = {};
+			for (var i = 0; i < _midiEvents.length; i ++) {
+				var packet = _midiEvents[i];
+				var event = packet[0].event;
+				if (Number.isFinite(event.noteNumber)) {
+					notes[event.noteNumber] = true;
+				}
+			}
+			return Object.keys(notes);
+		};
+
+		function readInstruments() {
+			var instruments = {};
+			var programChange = {};
+			for (var n = 0; n < _midiEvents.length; n ++) {
+				var event = _midiEvents[n][0].event;
+				if (event.type === 'channel') {
+					var channel = event.channel;
+					switch(event.subtype) {
+						case 'programChange':
+							programChange[channel] = event.programNumber;
+							break;
+						case 'noteOn':
+							var programId = programChange[channel];
+							if (Number.isFinite(programId)) {
+								if (handleEvent.programChange) {
+									var program = MIDI.getProgram(programId);
+								} else {
+									var channel = MIDI.channels[channel];
+									var program = MIDI.getProgram(channel.program);
+								}
+								instruments[program.nameId] = true;
+							}
+							break;
+					}
+				}
+			}
+			return instruments;
+		};
+	};
+
+
+	/* Custom event handlers */
+	var handleEvent = {
+		controller: true,
+		noteOff: true,
+		noteOn: true,
+		pitchBend: true,
+		setTempo: true,
+		programChange: true
+	};
+
+	player.handleEvent = function (type, truthy) {
+		handleEvent[type] = truthy;
+	};
+
+
+	/** Load **/
+	player.load = function (args) {
+		return new Promise(function (resolve, reject) {
+			if (typeof args === 'string') args = {src: args};
+			var src = args.src;
+			var onprogress = args.onprogress;
+			
+			player.stop();
+
+			// PER: Handle the case where the caller already has the events in an array
+			if (args.events) {
+				_midiEvents = args.events;
+				_midiFile = undefined;
+				load();
+			} else if (src.indexOf('base64,') !== -1) {
+				_midiFile = atob(src.split(',')[1]);
+				load();
+			} else {
+				galactic.request({
+					url: src,
+					mimeType: 'text/plain; charset=x-user-defined',
+					onerror: function () {
+						reject && reject('Unable to load MIDI file: ' + src);
+					},
+					onsuccess: function (event, responseText) {
+						_midiFile = toBase64(responseText);
+						load();
+					}
+				});
+			}
+
+			function load() {
+				try {
+					readMidiFile();
+					readMetadata();
+
+					MIDI.setup({
+						instruments: player.instruments,
+						onprogress: onprogress
+					}).then(function (res) {
+						resolve(res);
+					}).catch(function (err) {
+						reject(err);
+					});
+				} catch(event) {
+					reject && reject(event);
+				}
+			};
+
+			function toBase64(data) {
+				var res = [];
+				var fromCharCode = String.fromCharCode;
+				for (var i = 0, length = data.length; i < length; i++) {
+					res[i] = fromCharCode(data.charCodeAt(i) & 255);
+				}
+				return res.join('');
+			};
+		});
+	};
+};
 
 /***/ }),
 
@@ -3153,6 +6439,818 @@ module.exports = Editor;
 
 /***/ }),
 
+/***/ "./src/midi/abc_midi_controls.js":
+/*!***************************************!*\
+  !*** ./src/midi/abc_midi_controls.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+//    abc_midi_controls.js: Handle the visual part of playing MIDI
+//    Copyright (C) 2010-2018 Gregory Dyke (gregdyke at gmail dot com) and Paul Rosen
+//
+//    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+//    documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+//    the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+//    to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+//    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//
+//    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+//    BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+//    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+function performanceOk() {
+  if (!('performance' in window)) return false;
+  if (!('now' in window.performance)) return false;
+  return true;
+} // Unfortunately, a few versions of Safari don't support the performance interface. For those browsers, MIDI just won't work.
+
+
+if (performanceOk()) {
+  if (!('galactic' in window)) window.galactic = {};
+  window.galactic.loc = {
+    isLocalUrl: function isLocalUrl() {
+      return false;
+    }
+  };
+
+  __webpack_require__(/*! midi/inc/dom/request_xhr */ "./node_modules/midi/inc/dom/request_xhr.js");
+
+  __webpack_require__(/*! midi/inc/dom/util */ "./node_modules/midi/inc/dom/util.js")(window.galactic);
+
+  __webpack_require__(/*! midi/inc/AudioSupports */ "./node_modules/midi/inc/AudioSupports.js");
+
+  __webpack_require__(/*! midi/inc/EventEmitter */ "./node_modules/midi/inc/EventEmitter.js");
+
+  __webpack_require__(/*! midi/js/loader */ "./node_modules/midi/js/loader.js");
+
+  __webpack_require__(/*! midi/js/adaptors */ "./node_modules/midi/js/adaptors.js");
+
+  __webpack_require__(/*! midi/js/adaptors-Audio */ "./node_modules/midi/js/adaptors-Audio.js");
+
+  __webpack_require__(/*! midi/js/adaptors-AudioAPI */ "./node_modules/midi/js/adaptors-AudioAPI.js");
+
+  __webpack_require__(/*! midi/js/adaptors-MIDI */ "./node_modules/midi/js/adaptors-MIDI.js");
+
+  __webpack_require__(/*! midi/js/channels */ "./node_modules/midi/js/channels.js");
+
+  __webpack_require__(/*! midi/js/gm */ "./node_modules/midi/js/gm.js");
+
+  __webpack_require__(/*! midi/js/player */ "./node_modules/midi/js/player.js");
+}
+
+var midi = {};
+
+(function () {
+  "use strict";
+
+  function isFunction(functionToCheck) {
+    var getType = {};
+    return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+  }
+
+  midi.generateMidiDownloadLink = function (tune, midiParams, midi, index) {
+    var divClasses = ['abcjs-download-midi', 'abcjs-midi-' + index];
+    if (midiParams.downloadClass) divClasses.push(midiParams.downloadClass);
+    var html = '<div class="' + divClasses.join(' ') + '">';
+    if (midiParams.preTextDownload) html += midiParams.preTextDownload;
+    var title = tune.metaText && tune.metaText.title ? tune.metaText.title : 'Untitled';
+    var label;
+    if (midiParams.downloadLabel && isFunction(midiParams.downloadLabel)) label = midiParams.downloadLabel(tune, index);else if (midiParams.downloadLabel) label = midiParams.downloadLabel.replace(/%T/, title);else label = "Download MIDI for \"" + title + "\"";
+    title = title.toLowerCase().replace(/'/g, '').replace(/\W/g, '_').replace(/__/g, '_');
+    html += '<a download="' + title + '.midi" href="' + midi + '">' + label + '</a>';
+    if (midiParams.postTextDownload) html += midiParams.postTextDownload;
+    return html + "</div>";
+  };
+
+  function preprocessLabel(label, title) {
+    return label.replace(/%T/g, title);
+  }
+
+  midi.deviceSupportsMidi = function () {
+    if (!performanceOk()) return false;
+    if (midi.midiInlineInitialized === 'not loaded') return false;
+    return true;
+  };
+
+  midi.generateMidiControls = function (tune, midiParams, midi, index, stopOld) {
+    if (!performanceOk()) return '<div class="abcjs-inline-midi abcjs-midi-' + index + '">ERROR: this browser doesn\'t support window.performance</div>';
+    if (midi.midiInlineInitialized === 'not loaded') return '<div class="abcjs-inline-midi abcjs-midi-' + index + '">MIDI NOT PRESENT</div>';
+    if (stopOld) stopCurrentlyPlayingTune();
+    var title = tune.metaText && tune.metaText.title ? tune.metaText.title : 'Untitled';
+    var options = midiParams.inlineControls || {};
+    if (options.standard === undefined) options.standard = true;
+    if (options.tooltipSelection === undefined) options.tooltipSelection = "Click to toggle play selection/play all.";
+    if (options.tooltipLoop === undefined) options.tooltipLoop = "Click to toggle play once/repeat.";
+    if (options.tooltipReset === undefined) options.tooltipReset = "Click to go to beginning.";
+    if (options.tooltipPlay === undefined) options.tooltipPlay = "Click to play/pause.";
+    if (options.tooltipProgress === undefined) options.tooltipProgress = "Click to change the playback position.";
+    if (options.tooltipTempo === undefined) options.tooltipTempo = "Change the playback speed.";
+    var style = "";
+    if (options.hide) style = 'style="display:none;"';
+    var html = '<div class="abcjs-inline-midi abcjs-midi-' + index + '" ' + style + '>';
+    html += '<span class="abcjs-data" style="display:none;">' + JSON.stringify(midi) + '</span>';
+    if (midiParams.preTextInline) html += '<span class="abcjs-midi-pre">' + preprocessLabel(midiParams.preTextInline, title) + '</span>';
+    if (options.selectionToggle) html += '<button type="button" class="abcjs-midi-selection abcjs-btn" title="' + options.tooltipSelection + '"></button>';
+    if (options.loopToggle) html += '<button type="button" class="abcjs-midi-loop abcjs-btn" title="' + options.tooltipLoop + '"></button>';
+    if (options.standard) html += '<button type="button" class="abcjs-midi-reset abcjs-btn" title="' + options.tooltipReset + '"></button><button type="button" class="abcjs-midi-start abcjs-btn" title="' + options.tooltipPlay + '"></button><button type="button" class="abcjs-midi-progress-background" title="' + options.tooltipProgress + '"><span class="abcjs-midi-progress-indicator"></span></button><span class="abcjs-midi-clock"> 0:00</span>';
+
+    if (options.tempo) {
+      var startTempo = tune && tune.metaText && tune.metaText.tempo && tune.metaText.tempo.bpm ? tune.metaText.tempo.bpm : 180;
+      html += '<span class="abcjs-tempo-wrapper"><input class="abcjs-midi-tempo" value="100" type="number" min="1" max="300" data-start-tempo="' + startTempo + '" title="' + options.tooltipTempo + '" />% (<span class="abcjs-midi-current-tempo">' + startTempo + '</span> BPM)</span>';
+    }
+
+    if (midiParams.postTextInline) html += '<span class="abcjs-midi-post">' + preprocessLabel(midiParams.postTextInline, title) + '</span>';
+    return html + "</div>";
+  }; // The default location for the sound font files. Simply set this to a different value if the files are served in a different place.
+  // midi.soundfontUrl = "node_modules/midi/examples/soundfont/";
+
+
+  var soundfontUrl = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+
+  midi.setSoundFont = function (url) {
+    soundfontUrl = url;
+  };
+
+  var interactiveProgressBar = true;
+
+  midi.setInteractiveProgressBar = function (interactive) {
+    interactiveProgressBar = interactive;
+  };
+
+  function hasClass(element, cls) {
+    if (!element) return false;
+    return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
+  }
+
+  function addClass(element, cls) {
+    if (!element) return;
+    if (!hasClass(element, cls)) element.className = element.className + " " + cls;
+  }
+
+  function removeClass(element, cls) {
+    if (!element) return;
+    element.className = element.className.replace(cls, "").trim().replace("  ", " ");
+  }
+
+  function toggleClass(element, cls) {
+    if (!element) return;
+    if (hasClass(element, cls)) removeClass(element, cls);else addClass(element, cls);
+  }
+
+  function closest(element, cls) {
+    // This finds the closest parent that contains the class passed in.
+    if (!element) return null;
+
+    while (element !== document.body) {
+      if (hasClass(element, cls)) return element;
+      element = element.parentNode;
+    }
+
+    return null;
+  }
+
+  function find(element, cls) {
+    if (!element) return null;
+    var els = element.getElementsByClassName(cls);
+    if (els.length === 0) return null;
+    return els[0];
+  } // function addLoadEvent(func) {
+  // 	if (window.document.readyState === 'loading') {
+  // 		window.addEventListener('load', func);
+  // 	} else {
+  // 		func();
+  // 	}
+  // }
+
+
+  var midiJsInitialized = false;
+
+  function afterSetup(timeWarp, data, onSuccess) {
+    MIDI.player.currentTime = 0;
+    MIDI.player.warp = timeWarp;
+    MIDI.player.load({
+      events: data
+    });
+    onSuccess();
+  }
+
+  function listInstruments(data) {
+    var instruments = [];
+
+    for (var i = 0; i < data.length; i++) {
+      if (data[i][0] && data[i][0].event && data[i][0].event.programNumber) {
+        instruments.push(data[i][0].event.programNumber);
+      }
+    }
+
+    return instruments;
+  }
+
+  function setCurrentMidiTune(timeWarp, data, onSuccess) {
+    if (!midiJsInitialized) {
+      MIDI.setup({
+        debug: false,
+        soundfontUrl: soundfontUrl,
+        instruments: listInstruments(data)
+      }).then(function () {
+        midiJsInitialized = true;
+        afterSetup(timeWarp, data, onSuccess);
+      })["catch"](function (e) {
+        console.log("MIDI.setup failed:", e.message);
+      });
+    } else {
+      afterSetup(timeWarp, data, onSuccess);
+    }
+  }
+
+  function startCurrentlySelectedTune() {
+    MIDI.player.start(MIDI.player.currentTime);
+  }
+
+  function stopCurrentlyPlayingTune() {
+    MIDI.player.stop();
+  }
+
+  function pauseCurrentlyPlayingTune() {
+    MIDI.player.pause();
+  }
+
+  function setMidiCallback(midiJsListener) {
+    if (midiJsListener) {
+      MIDI.player.setAnimation(midiJsListener);
+    } else {
+      MIDI.player.clearAnimation();
+    }
+  }
+
+  function jumpToMidiPosition(play, offset, width) {
+    var ratio = offset / width;
+    var endTime = MIDI.player.duration; // MIDI.Player.endTime;
+
+    if (play) pauseCurrentlyPlayingTune();
+    MIDI.player.currentTime = endTime * ratio;
+    if (play) startCurrentlySelectedTune();else if (midiJsListener) {
+      var ret = MIDI.player;
+      var progress = ret.currentTime / ret.duration;
+      midiJsListener({
+        currentTime: ret.currentTime / 1000,
+        duration: ret.duration / 1000,
+        progress: progress
+      });
+    }
+  }
+
+  function setTimeWarp(percent) {
+    // Time warp is a multiplier: the larger the number, the longer the time. Therefore,
+    // it is opposite of the percentage. That is, playing at 50% is actually multiplying the time by 2.
+    MIDI.player.warp = percent > 0 ? 100 / percent : 1;
+  }
+
+  function loadMidi(target, onSuccess) {
+    var dataEl = find(target, "abcjs-data");
+    var data = JSON.parse(dataEl.innerHTML); // See if the tempo changer is present, and use that tempo if so.
+
+    var timeWarp = 1;
+    var tempoEl = find(target, "abcjs-midi-tempo");
+
+    if (tempoEl) {
+      // Time warp is a multiplier: the larger the number, the longer the time. Therefore,
+      // it is opposite of the percentage. That is, playing at 50% is actually multiplying the time by 2.
+      var percent = parseInt(tempoEl.value, 10);
+      if (percent > 0) timeWarp = 100 / percent;
+    }
+
+    setCurrentMidiTune(timeWarp, data, onSuccess);
+  }
+
+  function deselectMidiControl() {
+    var otherMidi = find(document, "abcjs-midi-current");
+
+    if (otherMidi) {
+      stopCurrentlyPlayingTune();
+      removeClass(otherMidi, "abcjs-midi-current");
+      var otherMidiStart = find(otherMidi, "abcjs-midi-start");
+      removeClass(otherMidiStart, "abcjs-pushed");
+    }
+  }
+
+  var lastNow;
+
+  function findElements(visualItems, currentTime, epsilon) {
+    var minIndex = 0;
+    var maxIndex = visualItems.length - 1;
+    var currentIndex;
+    var currentElement;
+
+    while (minIndex <= maxIndex) {
+      currentIndex = Math.floor((minIndex + maxIndex) / 2);
+      currentElement = visualItems[currentIndex]; // A match is if the currentTime is within .1 seconds before the exact time.
+      // We get callback events at somewhat random times, so they won't match up exactly.
+
+      if (currentElement.milliseconds / 1000 - epsilon < currentTime) {
+        minIndex = currentIndex + 1;
+      } else if (currentElement.milliseconds / 1000 - epsilon > currentTime) {
+        maxIndex = currentIndex - 1;
+      } else {
+        // We have a match.
+        return currentIndex;
+      }
+    } // There was no match, so find the closest element that is less than the current time.
+
+
+    while (visualItems[currentIndex].milliseconds / 1000 - epsilon >= currentTime && currentIndex > 0) {
+      currentIndex--;
+    } // If the time is way before the first element, then we're not ready to select any of them.
+
+
+    if (currentIndex === 0 && visualItems[currentIndex].milliseconds / 1000 - epsilon >= currentTime) return -1;
+    return currentIndex;
+  }
+
+  function midiJsListener(position) {
+    // { currentTime: in seconds, duration: total length in seconds, progress: percent between 0 and 1 }
+    var midiControl;
+
+    if (position.duration > 0 && lastNow !== position.progress) {
+      lastNow = position.progress;
+      midiControl = find(document, "abcjs-midi-current");
+
+      if (midiControl) {
+        var startButton = find(midiControl, 'abcjs-midi-start');
+
+        if (hasClass(startButton, 'abcjs-loaded')) {
+          if (!isIndicatorPressed) {
+            var progressBackground = find(midiControl, "abcjs-midi-progress-background");
+            var totalWidth = progressBackground.offsetWidth;
+            var progressIndicator = find(midiControl, "abcjs-midi-progress-indicator");
+            var scaled = totalWidth * lastNow; // The number of pixels
+
+            progressIndicator.style.left = scaled + "px";
+          }
+
+          var clock = find(midiControl, "abcjs-midi-clock");
+
+          if (clock) {
+            var seconds = Math.floor(position.currentTime);
+            var minutes = Math.floor(seconds / 60);
+            seconds = seconds % 60;
+            if (seconds < 10) seconds = "0" + seconds;
+            if (minutes < 10) minutes = " " + minutes;
+            clock.innerHTML = minutes + ":" + seconds;
+          }
+
+          var tempo = midiControl.abcjsQpm;
+          if (!tempo && midiControl.abcjsTune && midiControl.abcjsTune.metaText && midiControl.abcjsTune.metaText.tempo) tempo = midiControl.abcjsTune.metaText.tempo.bpm;
+          if (!tempo) tempo = 180;
+          var beatsPerSecond = parseInt(tempo, 10) / 60;
+          var currentTime = position.currentTime;
+
+          if (midiControl.abcjsListener) {
+            var thisBeat = Math.floor(currentTime * beatsPerSecond);
+            position.newBeat = thisBeat !== midiControl.abcjsLastBeat;
+            position.thisBeat = thisBeat;
+            midiControl.abcjsLastBeat = thisBeat;
+            midiControl.abcjsListener(midiControl, position, midiControl.abcjsContext);
+          }
+
+          if (midiControl.abcjsAnimate) {
+            var epsilon = beatsPerSecond / 64; // pick a small division to round to. This is called at small, random times.
+
+            var index = findElements(midiControl.abcjsTune.noteTimings, currentTime, epsilon);
+
+            if (index !== midiControl.abcjsLastIndex) {
+              var last = midiControl.abcjsLastIndex >= 0 ? midiControl.abcjsTune.noteTimings[midiControl.abcjsLastIndex] : null;
+              midiControl.abcjsAnimate(last, midiControl.abcjsTune.noteTimings[index], midiControl.abcjsContext);
+              midiControl.abcjsLastIndex = index;
+            }
+          }
+        }
+      }
+    }
+
+    if (position.progress === 1) {
+      // The playback is stopping. We need to either indicate that
+      // it has stopped, or start over at the beginning.
+      midiControl = find(document, "abcjs-midi-current");
+      var loopControl = find(midiControl, "abcjs-midi-loop");
+
+      var finishedResetting = function finishedResetting() {
+        if (loopControl && hasClass(loopControl, "abcjs-pushed")) {
+          onStart(find(midiControl, "abcjs-midi-start"));
+        }
+      }; // midi.js is not quite finished: it still will process the last event, so we wait a minimum amount of time
+      // before doing another action.
+
+
+      setTimeout(function () {
+        doReset(midiControl, finishedResetting);
+        if (midiControl && midiControl.abcjsAnimate) midiControl.abcjsAnimate(midiControl.abcjsTune.noteTimings[midiControl.abcjsLastIndex], null, midiControl.abcjsContext);
+      }, 1);
+    }
+  }
+
+  function onStart(target) {
+    var parent = closest(target, "abcjs-inline-midi"); // If this midi is already playing,
+
+    if (hasClass(target, 'abcjs-pushed')) {
+      // Stop it.
+      pauseCurrentlyPlayingTune(); // Change the element so that the start icon is shown.
+
+      removeClass(target, "abcjs-pushed");
+      return;
+    } else {
+      // Else,
+      // If some other midi is running, turn it off.
+      // If this is the current midi, just continue.
+      if (hasClass(parent, "abcjs-midi-current")) // Start this tune playing from wherever it had stopped.
+        startCurrentlySelectedTune();else {
+        deselectMidiControl();
+        onLoadMidi(target, parent, function () {
+          startCurrentlySelectedTune();
+        });
+      }
+      addClass(target, "abcjs-pushed");
+    }
+  }
+
+  function setCurrentMidiControl(el) {
+    var els = document.querySelectorAll('.abcjs-midi-current');
+
+    for (var i = 0; i < els.length; i++) {
+      removeClass(els[i], 'abcjs-midi-current');
+    }
+
+    addClass(el, 'abcjs-midi-current');
+  }
+
+  function onLoadMidi(target, parent, cb) {
+    // else, load this midi from scratch.
+    var onSuccess = function onSuccess() {
+      removeClass(target, "abcjs-loading");
+      setCurrentMidiControl(parent);
+      addClass(target, 'abcjs-loaded');
+
+      if (cb) {
+        cb();
+      }
+    };
+
+    addClass(target, "abcjs-loading");
+    loadMidi(parent, onSuccess);
+    parent.abcjsLastBeat = -1;
+    parent.abcjsLastIndex = -1;
+    setMidiCallback(midiJsListener);
+  }
+
+  midi.startPlaying = function (target) {
+    // This can be called with the target being entire control, and if so, first find the start button.
+    var btn = target;
+    if (hasClass(target, "abcjs-inline-midi")) btn = target.querySelector('.abcjs-midi-start');
+    onStart(btn);
+  };
+
+  midi.stopPlaying = function () {
+    stopCurrentlyPlayingTune();
+    var playingEl = document.querySelector(".abcjs-midi-current");
+
+    if (playingEl) {
+      resetProgress(playingEl);
+      var startBtn = find(playingEl, "abcjs-midi-start");
+      if (startBtn) removeClass(startBtn, "abcjs-pushed");
+    }
+  };
+
+  midi.restartPlaying = function () {
+    var target = document.querySelector(".abcjs-midi-current");
+    onReset(target);
+  };
+
+  midi.setLoop = function (target, state) {
+    var loop = target.querySelector('.abcjs-midi-loop');
+    if (!loop) return;
+    if (state) addClass(loop, 'abcjs-pushed');else removeClass(loop, 'abcjs-pushed');
+  };
+
+  midi.setRandomProgress = function (percent) {
+    var target = document.querySelector(".abcjs-midi-current");
+    var playEl = find(target, "abcjs-midi-start");
+    var play = hasClass(playEl, "abcjs-pushed");
+    var endTime = MIDI.player.duration;
+    if (play) pauseCurrentlyPlayingTune();
+    MIDI.player.currentTime = endTime * percent;
+    if (play) startCurrentlySelectedTune();
+  };
+
+  function resetProgress(parent) {
+    var progressIndicator = find(parent, "abcjs-midi-progress-indicator");
+    progressIndicator.style.left = "0px";
+    var clock = find(parent, "abcjs-midi-clock");
+    clock.innerHTML = " 0:00";
+  }
+
+  function onSelection(target) {
+    toggleClass(target, 'abcjs-pushed');
+  }
+
+  function onLoop(target) {
+    toggleClass(target, 'abcjs-pushed');
+  }
+
+  function doReset(target, callback) {
+    var parent = closest(target, "abcjs-inline-midi");
+
+    function onSuccess() {
+      setCurrentMidiControl(parent);
+      resetProgress(parent);
+      if (callback) callback();
+    } // If the tune is playing, stop it.
+
+
+    deselectMidiControl();
+    if (parent) // parent can be null if the music was changed while the midi is playing. This is called to stop it, but the object is already gone.
+      loadMidi(parent, onSuccess);
+  }
+
+  function onReset(target) {
+    var parent = closest(target, "abcjs-inline-midi");
+    var playEl = find(parent, "abcjs-midi-start");
+    var play = hasClass(playEl, "abcjs-pushed");
+
+    function keepPlaying() {
+      if (play) {
+        startCurrentlySelectedTune();
+        addClass(playEl, 'abcjs-pushed');
+      }
+    }
+
+    if (hasClass(parent, "abcjs-midi-current")) // Only listen to the reset for the currently playing tune.
+      doReset(target, keepPlaying);
+  }
+
+  function relMouseX(target, event) {
+    var totalOffsetX = 0;
+    var width = target.offsetWidth;
+
+    do {
+      totalOffsetX += target.offsetLeft - target.scrollLeft;
+      target = target.offsetParent;
+    } while (target);
+
+    var x = event.pageX - totalOffsetX;
+    if (x < 0) x = 0;
+    if (x > width) x = width - 1;
+    return x;
+  }
+
+  function isPlaying(target) {
+    var parent = closest(target, "abcjs-inline-midi");
+    var play = find(parent, "abcjs-midi-start");
+
+    if (hasClass(parent, "abcjs-midi-current")) {
+      return hasClass(play, "abcjs-pushed");
+    }
+
+    return false;
+  }
+
+  function onProgress(target, event) {
+    var parent = closest(target, "abcjs-inline-midi");
+    var play = find(parent, "abcjs-midi-start");
+    var width = target.offsetWidth;
+    var offset = relMouseX(target, event);
+
+    if (hasClass(parent, "abcjs-midi-current")) {
+      jumpToMidiPosition(isPlaying(target), offset, width);
+    } else {
+      onLoadMidi(play, parent, function () {
+        jumpToMidiPosition(false, offset, width);
+      });
+    }
+  }
+
+  function onTempo(el) {
+    var percent = parseInt(el.value, 10);
+    var startTempo = parseInt(el.getAttribute("data-start-tempo"), 10);
+
+    while (el && !hasClass(el, 'abcjs-midi-current-tempo')) {
+      el = el.nextSibling;
+    }
+
+    el.innerHTML = Math.floor(percent * startTempo / 100);
+    setTimeWarp(percent);
+  }
+
+  var isIndicatorPressed = false;
+  var dragIndicator, dragParent;
+  var hasAddedMouseEvents = false;
+
+  midi.attachListeners = function (parentElement) {
+    var audioControls = parentElement.querySelectorAll(".abcjs-inline-midi");
+
+    for (var a = 0; a < audioControls.length; a++) {
+      var audioCtl = audioControls[a];
+      audioCtl.addEventListener("click", function (event) {
+        event = event || window.event;
+        var target = event.target || event.srcElement;
+
+        while (target && target !== document.body) {
+          if (hasClass(target, 'abcjs-midi-start')) {
+            onStart(target, event);
+            return;
+          } else if (hasClass(target, 'abcjs-midi-selection')) {
+            onSelection(target, event);
+            return;
+          } else if (hasClass(target, 'abcjs-midi-loop')) {
+            onLoop(target, event);
+            return;
+          } else if (hasClass(target, 'abcjs-midi-reset')) {
+            onReset(target, event);
+            return;
+          } else if (hasClass(target, 'abcjs-midi-progress-background')) {
+            if (interactiveProgressBar) {
+              onProgress(target, event);
+            }
+
+            return;
+          }
+
+          target = target.parentNode;
+        }
+      });
+      audioCtl.addEventListener("change", function (event) {
+        event = event || window.event;
+        var target = event.target || event.srcElement;
+
+        while (target !== document.body) {
+          if (hasClass(target, 'abcjs-midi-tempo')) onTempo(target, event);
+          target = target.parentNode;
+        }
+      });
+      audioCtl.addEventListener("mousedown", function (event) {
+        if (interactiveProgressBar) {
+          event = event || window.event;
+          var target = event.target || event.srcElement;
+
+          if (hasClass(target, 'abcjs-midi-progress-indicator')) {
+            dragIndicator = target;
+            isIndicatorPressed = true;
+            dragParent = closest(target, 'abcjs-midi-progress-background');
+          }
+        }
+      });
+    }
+
+    if (!hasAddedMouseEvents) {
+      hasAddedMouseEvents = true;
+      document.body.addEventListener('mousemove', function (event) {
+        if (isIndicatorPressed) {
+          event = event || window.event;
+          event.preventDefault();
+          var pos = relMouseX(dragParent, event);
+          dragIndicator.style.left = pos + 'px';
+        }
+      }, true);
+      document.body.addEventListener("mouseup", function (event) {
+        if (isIndicatorPressed) {
+          event = event || window.event;
+          event.preventDefault();
+          var pos = relMouseX(dragParent, event);
+          var width = dragParent.offsetWidth;
+          jumpToMidiPosition(isPlaying(dragParent), pos, width);
+          onProgress(dragParent, event);
+          isIndicatorPressed = false;
+          dragIndicator = null;
+          dragParent = null;
+        }
+      });
+    }
+
+    if (window.MIDI === undefined) {
+      midi.midiInlineInitialized = 'not loaded';
+      var els = document.getElementsByClassName('abcjs-inline-midi');
+
+      for (var i = 0; i < els.length; i++) {
+        els[i].innerHTML = "MIDI NOT PRESENT";
+      }
+    }
+  }; //addLoadEvent(addDelegates);
+
+})();
+
+module.exports = midi;
+
+/***/ }),
+
+/***/ "./src/midi/abc_midi_create.js":
+/*!*************************************!*\
+  !*** ./src/midi/abc_midi_create.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+//    abc_midi_create.js: Turn a linear series of events into a midi file.
+//    Copyright (C) 2010-2018 Gregory Dyke (gregdyke at gmail dot com) and Paul Rosen
+//
+//    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+//    documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+//    the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+//    to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+//    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//
+//    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+//    BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+//    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+var flatten = __webpack_require__(/*! ./abc_midi_flattener */ "./src/midi/abc_midi_flattener.js");
+
+var Preparer = __webpack_require__(/*! ./abc_midi_js_preparer */ "./src/midi/abc_midi_js_preparer.js");
+
+var rendererFactory = __webpack_require__(/*! ./abc_midi_renderer */ "./src/midi/abc_midi_renderer.js");
+
+var sequence = __webpack_require__(/*! ./abc_midi_sequencer */ "./src/midi/abc_midi_sequencer.js");
+
+var create;
+
+(function () {
+  "use strict";
+
+  var baseDuration = 480 * 4; // nice and divisible, equals 1 whole note
+
+  create = function create(abcTune, options) {
+    if (options === undefined) options = {};
+    var sequenceInst = sequence(abcTune, options);
+    var commands = flatten(sequenceInst, options);
+    var midi = rendererFactory();
+    var midiJs = new Preparer();
+    var title = abcTune.metaText ? abcTune.metaText.title : undefined;
+    if (title && title.length > 128) title = title.substring(0, 124) + '...';
+    midi.setGlobalInfo(commands.tempo, title);
+    midiJs.setGlobalInfo(commands.tempo, title);
+
+    for (var i = 0; i < commands.tracks.length; i++) {
+      midi.startTrack();
+      midiJs.startTrack();
+
+      for (var j = 0; j < commands.tracks[i].length; j++) {
+        var event = commands.tracks[i][j];
+
+        switch (event.cmd) {
+          case 'program':
+            midi.setChannel(event.channel);
+            midi.setInstrument(event.instrument);
+            midiJs.setChannel(event.channel);
+            midiJs.setInstrument(event.instrument);
+            break;
+
+          case 'start':
+            midi.startNote(convertPitch(event.pitch), event.volume);
+            midiJs.startNote(convertPitch(event.pitch), event.volume);
+            break;
+
+          case 'stop':
+            midi.endNote(convertPitch(event.pitch), 0); // TODO-PER: Refactor: the old midi used a duration here.
+
+            midiJs.endNote(convertPitch(event.pitch));
+            break;
+
+          case 'move':
+            midi.addRest(event.duration * baseDuration);
+            midiJs.addRest(event.duration * baseDuration);
+            break;
+
+          default:
+            console.log("MIDI create Unknown: " + event.cmd);
+        }
+      }
+
+      midi.endTrack();
+      midiJs.endTrack();
+    }
+
+    var midiFile = midi.getData();
+    var midiInline = midiJs.getData();
+    if (options.generateInline === undefined) // default is to generate inline controls.
+      options.generateInline = true;
+    if (options.generateInline && options.generateDownload) return {
+      download: midiFile,
+      inline: midiInline
+    };else if (options.generateInline) return midiInline;else return midiFile;
+  };
+
+  function convertPitch(pitch) {
+    return 60 + pitch;
+  }
+})();
+
+module.exports = create;
+
+/***/ }),
+
 /***/ "./src/midi/abc_midi_flattener.js":
 /*!****************************************!*\
   !*** ./src/midi/abc_midi_flattener.js ***!
@@ -4368,6 +8466,451 @@ var flatten;
 })();
 
 module.exports = flatten;
+
+/***/ }),
+
+/***/ "./src/midi/abc_midi_js_preparer.js":
+/*!******************************************!*\
+  !*** ./src/midi/abc_midi_js_preparer.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+//    abc_midi_js_preparer.js: Create the structure that MIDI.js expects.
+//    Copyright (C) 2010-2018 Gregory Dyke (gregdyke at gmail dot com) and Paul Rosen
+//
+//    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+//    documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+//    the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+//    to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+//    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//
+//    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+//    BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+//    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+var Preparer;
+
+(function () {
+  "use strict";
+
+  Preparer = function Preparer() {
+    this.tempo = 0;
+    this.timeFactor = 0;
+    this.output = [];
+    this.currentChannel = 0;
+    this.currentInstrument = 0;
+    this.track = 0;
+    this.nextDuration = 0;
+    this.tracks = [[]];
+  };
+
+  Preparer.prototype.setInstrument = function (instrument) {
+    this.currentInstrument = instrument;
+    var ev = [{
+      ticksToEvent: 0,
+      track: this.track,
+      event: {
+        channel: this.currentChannel,
+        deltaTime: 0,
+        programNumber: this.currentInstrument,
+        subtype: 'programChange',
+        type: 'channel'
+      }
+    }, this.nextDuration * this.timeFactor];
+    this.tracks[this.track].push(ev);
+  };
+
+  Preparer.prototype.setChannel = function (channel) {
+    this.currentChannel = channel;
+  };
+
+  Preparer.prototype.startTrack = function () {
+    this.track++;
+    this.tracks[this.track] = [];
+    this.nextDuration = 0;
+  };
+
+  Preparer.prototype.setGlobalInfo = function (tempo, title) {
+    this.tempo = tempo;
+    var mspb = Math.round(1.0 / tempo * 60000000);
+    this.timeFactor = mspb / 480000;
+    var ev = [{
+      ticksToEvent: 0,
+      track: this.track,
+      event: {
+        deltaTime: 0,
+        microsecondsPerBeat: mspb,
+        subtype: 'setTempo',
+        type: 'meta'
+      }
+    }, this.nextDuration * this.timeFactor]; //		this.tracks[this.track].push(ev);
+
+    ev = [{
+      ticksToEvent: 0,
+      track: this.track,
+      event: {
+        deltaTime: 0,
+        subtype: 'trackName',
+        text: title,
+        type: 'meta'
+      }
+    }, this.nextDuration * this.timeFactor]; //		this.tracks[this.track].push(ev);
+
+    ev = [{
+      ticksToEvent: 0,
+      track: this.track,
+      event: {
+        deltaTime: 0,
+        subtype: 'endOfTrack',
+        type: 'meta'
+      }
+    }, this.nextDuration * this.timeFactor]; //		this.tracks[this.track].push(ev);
+  };
+
+  Preparer.prototype.startNote = function (pitch, volume) {
+    var deltaTime = Math.floor(this.nextDuration / 5) * 5;
+    var ev = [{
+      ticksToEvent: deltaTime,
+      track: this.track,
+      event: {
+        deltaTime: deltaTime,
+        channel: this.currentChannel,
+        type: "channel",
+        noteNumber: pitch,
+        velocity: volume,
+        subtype: "noteOn"
+      }
+    }, this.nextDuration * this.timeFactor];
+    this.tracks[this.track].push(ev);
+    this.nextDuration = 0;
+  };
+
+  Preparer.prototype.endNote = function (pitch) {
+    var deltaTime = Math.floor(this.nextDuration / 5) * 5;
+    var ev = [{
+      ticksToEvent: deltaTime,
+      track: this.track,
+      event: {
+        deltaTime: deltaTime,
+        channel: this.currentChannel,
+        type: "channel",
+        noteNumber: pitch,
+        velocity: 0,
+        subtype: "noteOff"
+      }
+    }, this.nextDuration * this.timeFactor];
+    this.tracks[this.track].push(ev);
+    this.nextDuration = 0;
+  };
+
+  Preparer.prototype.addRest = function (duration) {
+    this.nextDuration += duration;
+  };
+
+  Preparer.prototype.endTrack = function () {
+    var ev = [{
+      ticksToEvent: 0,
+      track: this.track,
+      event: {
+        deltaTime: 0,
+        type: "meta",
+        subtype: "endOfTrack"
+      }
+    }, 0]; //		this.tracks[this.track].push(ev);
+  };
+
+  function addAbsoluteTime(tracks) {
+    for (var i = 0; i < tracks.length; i++) {
+      var absTime = 0;
+
+      for (var j = 0; j < tracks[i].length; j++) {
+        absTime += tracks[i][j][1];
+        tracks[i][j].absTime = absTime;
+      }
+    }
+  }
+
+  function combineTracks(tracks) {
+    var output = [];
+
+    for (var i = 0; i < tracks.length; i++) {
+      for (var j = 0; j < tracks[i].length; j++) {
+        output.push(tracks[i][j]);
+      }
+    }
+
+    return output;
+  }
+
+  function sortTracks(output) {
+    // First sort by time. If the time is the same, sort by channel, if the channel is the same, put the programChange first.
+    return output.sort(function (a, b) {
+      if (a.absTime > b.absTime) return 1;
+
+      if (a.absTime === b.absTime) {
+        if (a.length > 0 && b.length > 0 && a[0].event && b[0].event) {
+          // I think that there will always be at least one event, but testing just in case.
+          var aChannel = a[0].event.channel;
+          var bChannel = b[0].event.channel;
+          if (aChannel > bChannel) return 1;else if (aChannel < bChannel) return -1;else {
+            var bIsPreferred = b[0].event.subtype === "programChange";
+            if (bIsPreferred) return 1;
+          }
+        }
+      }
+
+      return -1;
+    });
+  }
+
+  function adjustTime(output) {
+    var lastTime = 0;
+
+    for (var i = 0; i < output.length; i++) {
+      var thisTime = output[i].absTime;
+      output[i][1] = thisTime - lastTime;
+      lastTime = thisTime;
+    }
+  }
+
+  function weaveTracks(tracks) {
+    // Each track has a progression of delta times. To combine them, first assign an absolute time to each event,
+    // then make one large track of all the tracks, sort it by absolute time, then adjust the amount of time each
+    // event causes time to move. That is, the movement was figured out as the distance from the last note in the track,
+    // but now we want the distance from the last note on ANY track.
+    addAbsoluteTime(tracks);
+    var output = combineTracks(tracks);
+    output = sortTracks(output);
+    adjustTime(output);
+    return output;
+  }
+
+  Preparer.prototype.getData = function () {
+    return weaveTracks(this.tracks);
+  };
+})();
+
+module.exports = Preparer;
+
+/***/ }),
+
+/***/ "./src/midi/abc_midi_renderer.js":
+/*!***************************************!*\
+  !*** ./src/midi/abc_midi_renderer.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+//    abc_midi_renderer.js: Create the actual format for the midi.
+//    Copyright (C) 2010-2018 Gregory Dyke (gregdyke at gmail dot com) and Paul Rosen
+//
+//    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+//    documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+//    the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+//    to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+//    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//
+//    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+//    BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+//    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+var rendererFactory;
+
+(function () {
+  "use strict";
+
+  function setAttributes(elm, attrs) {
+    for (var attr in attrs) {
+      if (attrs.hasOwnProperty(attr)) elm.setAttribute(attr, attrs[attr]);
+    }
+
+    return elm;
+  }
+
+  function Midi() {
+    this.trackstrings = "";
+    this.trackcount = 0;
+    this.noteOnAndChannel = "%90";
+  }
+
+  Midi.prototype.setTempo = function (qpm) {
+    //console.log("setTempo",qpm);
+    if (this.trackcount === 0) {
+      this.startTrack();
+      this.track += "%00%FF%51%03" + toHex(Math.round(60000000 / qpm), 6);
+      this.endTrack();
+    }
+  };
+
+  Midi.prototype.setGlobalInfo = function (qpm, name) {
+    //console.log("setGlobalInfo",qpm, key, time, name);
+    if (this.trackcount === 0) {
+      this.startTrack();
+      this.track += "%00%FF%51%03" + toHex(Math.round(60000000 / qpm), 6); // TODO-PER: we could also store the key and time signatures, something like:
+      //00 FF 5902 03 00 - key signature
+      //00 FF 5804 04 02 30 08 - time signature
+
+      if (name) {
+        // If there are multi-byte chars, we don't know how long the string will be until we create it.
+        var nameArray = "";
+
+        for (var i = 0; i < name.length; i++) {
+          nameArray += toHex(name.charCodeAt(i), 2);
+        }
+
+        this.track += "%00%FF%03" + toHex(nameArray.length / 3, 2); // Each byte is represented by three chars "%XX", so divide by 3 to get the length.
+
+        this.track += nameArray;
+      }
+
+      this.endTrack();
+    }
+  };
+
+  Midi.prototype.startTrack = function () {
+    //console.log("startTrack");
+    this.track = "";
+    this.silencelength = 0;
+    this.trackcount++;
+    this.first = true;
+
+    if (this.instrument) {
+      this.setInstrument(this.instrument);
+    }
+  };
+
+  Midi.prototype.endTrack = function () {
+    //console.log("endTrack");
+    var tracklength = toHex(this.track.length / 3 + 4, 8);
+    this.track = "MTrk" + tracklength + // track header
+    this.track + '%00%FF%2F%00'; // track end
+
+    this.trackstrings += this.track;
+  };
+
+  Midi.prototype.setInstrument = function (number) {
+    //console.log("setInstrument", number);
+    if (this.track) this.track = "%00%C0" + toHex(number, 2) + this.track;else this.track = "%00%C0" + toHex(number, 2);
+    this.instrument = number;
+  };
+
+  Midi.prototype.setChannel = function (number) {
+    this.channel = number;
+    this.noteOnAndChannel = "%9" + this.channel.toString(16);
+  };
+
+  Midi.prototype.startNote = function (pitch, loudness) {
+    //console.log("startNote", pitch, loudness);
+    this.track += toDurationHex(this.silencelength); // only need to shift by amount of silence (if there is any)
+
+    this.silencelength = 0;
+
+    if (this.first) {
+      this.first = false;
+      this.track += this.noteOnAndChannel;
+    }
+
+    this.track += "%" + pitch.toString(16) + toHex(loudness, 2); //note
+  };
+
+  Midi.prototype.endNote = function (pitch, length) {
+    //console.log("endNote", pitch, length);
+    this.track += toDurationHex(this.silencelength + length); // only need to shift by amount of silence (if there is any)
+
+    this.silencelength = 0; //		this.track += toDurationHex(length); //duration
+
+    this.track += "%" + pitch.toString(16) + "%00"; //end note
+  };
+
+  Midi.prototype.addRest = function (length) {
+    //console.log("addRest", length);
+    this.silencelength += length;
+  };
+
+  Midi.prototype.getData = function () {
+    return "data:audio/midi," + "MThd%00%00%00%06%00%01" + toHex(this.trackcount, 4) + "%01%e0" + // header
+    this.trackstrings;
+  };
+
+  Midi.prototype.embed = function (parent, noplayer) {
+    var data = this.getData();
+    var link = setAttributes(document.createElement('a'), {
+      href: data
+    });
+    link.innerHTML = "download midi";
+    parent.insertBefore(link, parent.firstChild);
+    if (noplayer) return;
+    var embed = setAttributes(document.createElement('embed'), {
+      src: data,
+      type: 'video/quicktime',
+      controller: 'true',
+      autoplay: 'false',
+      loop: 'false',
+      enablejavascript: 'true',
+      style: 'display:block; height: 20px;'
+    });
+    parent.insertBefore(embed, parent.firstChild);
+  }; // s is assumed to be of even length
+
+
+  function encodeHex(s) {
+    var ret = "";
+
+    for (var i = 0; i < s.length; i += 2) {
+      ret += "%";
+      ret += s.substr(i, 2);
+    }
+
+    return ret;
+  }
+
+  function toHex(n, padding) {
+    var s = n.toString(16);
+
+    while (s.length < padding) {
+      s = "0" + s;
+    }
+
+    return encodeHex(s);
+  }
+
+  function toDurationHex(n) {
+    var res = 0;
+    var a = []; // cut up into 7 bit chunks;
+
+    while (n !== 0) {
+      a.push(n & 0x7F);
+      n = n >> 7;
+    } // join the 7 bit chunks together, all but last chunk get leading 1
+
+
+    for (var i = a.length - 1; i >= 0; i--) {
+      res = res << 8;
+      var bits = a[i];
+
+      if (i !== 0) {
+        bits = bits | 0x80;
+      }
+
+      res = res | bits;
+    }
+
+    var padding = res.toString(16).length;
+    padding += padding % 2;
+    return toHex(res, padding);
+  }
+
+  rendererFactory = function rendererFactory() {
+    return new Midi();
+  };
+})();
+
+module.exports = rendererFactory;
 
 /***/ }),
 
@@ -13569,6 +18112,45 @@ module.exports = downloadBuffer;
 
 /***/ }),
 
+/***/ "./src/synth/get-midi-file.js":
+/*!************************************!*\
+  !*** ./src/synth/get-midi-file.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var tunebook = __webpack_require__(/*! ../api/abc_tunebook */ "./src/api/abc_tunebook.js");
+
+var midi = __webpack_require__(/*! ../midi/abc_midi_controls */ "./src/midi/abc_midi_controls.js");
+
+var midiCreate = __webpack_require__(/*! ../midi/abc_midi_create */ "./src/midi/abc_midi_create.js");
+
+var getMidiFile = function getMidiFile(abcString, options) {
+  var params = {};
+
+  if (options) {
+    for (var key in options) {
+      if (options.hasOwnProperty(key)) {
+        params[key] = options[key];
+      }
+    }
+  }
+
+  params.generateInline = false;
+
+  function callback(div, tune, index, abcString) {
+    var downloadMidi = midiCreate(tune, params);
+    if (params.generateLink) return midi.generateMidiDownloadLink(tune, params, downloadMidi, index);
+    return downloadMidi;
+  }
+
+  return tunebook.renderEngine(callback, "*", abcString, params);
+};
+
+module.exports = getMidiFile;
+
+/***/ }),
+
 /***/ "./src/synth/instrument-index-to-name.js":
 /*!***********************************************!*\
   !*** ./src/synth/instrument-index-to-name.js ***!
@@ -14884,6 +19466,8 @@ AbsoluteElement.prototype.isIE =
 false; //IE detector
 
 AbsoluteElement.prototype.setClass = function (addClass, removeClass, color) {
+  if (!this.elemset) return;
+
   for (var i = 0; i < this.elemset.length; i++) {
     var el = this.elemset[i];
     el.setAttribute("fill", color);
@@ -15873,19 +20457,31 @@ var AbstractEngraver;
     var chordMargin = 8; // If there are chords next to each other, this is how close they can get.
 
     for (var i = 0; i < elem.chord.length; i++) {
+      var chord = elem.chord[i];
       var x = 0;
       var y;
-      var dim = this.renderer.getTextSize(elem.chord[i].name, 'annotationfont', "annotation");
+      var font;
+      var klass;
+
+      if (chord.position === "left" || chord.position === "right" || chord.position === "below" || chord.position === "above") {
+        font = 'annotationfont';
+        klass = "annotation";
+      } else {
+        font = 'gchordfont';
+        klass = "chord";
+      }
+
+      var dim = this.renderer.getTextSize(chord.name, 'annotationfont', "annotation");
       var chordWidth = dim.width;
       var chordHeight = dim.height / spacing.STEP;
 
-      switch (elem.chord[i].position) {
+      switch (chord.position) {
         case "left":
           roomTaken += chordWidth + 7;
           x = -roomTaken; // TODO-PER: This is just a guess from trial and error
 
           y = elem.averagepitch;
-          abselem.addExtra(new RelativeElement(elem.chord[i].name, x, chordWidth + 4, y, {
+          abselem.addExtra(new RelativeElement(chord.name, x, chordWidth + 4, y, {
             type: "text",
             height: chordHeight
           }));
@@ -15896,7 +20492,7 @@ var AbstractEngraver;
           x = roomTakenRight; // TODO-PER: This is just a guess from trial and error
 
           y = elem.averagepitch;
-          abselem.addRight(new RelativeElement(elem.chord[i].name, x, chordWidth + 4, y, {
+          abselem.addRight(new RelativeElement(chord.name, x, chordWidth + 4, y, {
             type: "text",
             height: chordHeight
           }));
@@ -15904,7 +20500,7 @@ var AbstractEngraver;
 
         case "below":
           // setting the y-coordinate to undefined for now: it will be overwritten later on, after we figure out what the highest element on the line is.
-          abselem.addRight(new RelativeElement(elem.chord[i].name, 0, chordWidth + chordMargin, undefined, {
+          abselem.addRight(new RelativeElement(chord.name, 0, chordWidth + chordMargin, undefined, {
             type: "text",
             position: "below",
             height: chordHeight
@@ -15913,17 +20509,17 @@ var AbstractEngraver;
 
         case "above":
           // setting the y-coordinate to undefined for now: it will be overwritten later on, after we figure out what the highest element on the line is.
-          abselem.addRight(new RelativeElement(elem.chord[i].name, 0, chordWidth + chordMargin, undefined, {
+          abselem.addRight(new RelativeElement(chord.name, 0, chordWidth + chordMargin, undefined, {
             type: "text",
             height: chordHeight
           }));
           break;
 
         default:
-          if (elem.chord[i].rel_position) {
-            var relPositionY = elem.chord[i].rel_position.y + 3 * spacing.STEP; // TODO-PER: this is a fudge factor to make it line up with abcm2ps
+          if (chord.rel_position) {
+            var relPositionY = chord.rel_position.y + 3 * spacing.STEP; // TODO-PER: this is a fudge factor to make it line up with abcm2ps
 
-            abselem.addChild(new RelativeElement(elem.chord[i].name, x + elem.chord[i].rel_position.x, 0, elem.minpitch + relPositionY / spacing.STEP, {
+            abselem.addChild(new RelativeElement(chord.name, x + chord.rel_position.x, 0, elem.minpitch + relPositionY / spacing.STEP, {
               type: "text",
               height: chordHeight
             }));
@@ -15931,11 +20527,7 @@ var AbstractEngraver;
             // setting the y-coordinate to undefined for now: it will be overwritten later on, after we figure out what the highest element on the line is.
             var pos2 = 'above';
             if (elem.positioning && elem.positioning.chordPosition) pos2 = elem.positioning.chordPosition;
-            dim = this.renderer.getTextSize(elem.chord[i].name, 'gchordfont', "chord");
-            chordHeight = dim.height / spacing.STEP;
-            chordWidth = dim.width; // Since the chord is centered, we only use half the width.
-
-            abselem.addCentered(new RelativeElement(elem.chord[i].name, x, chordWidth, undefined, {
+            abselem.addCentered(new RelativeElement(chord.name, x, chordWidth, undefined, {
               type: "chord",
               position: pos2,
               height: chordHeight
@@ -16263,8 +20855,9 @@ var AbstractEngraver;
   };
 
   AbstractEngraver.prototype.addMeasureNumber = function (number, abselem) {
-    var measureNumHeight = this.renderer.getTextSize(number, "measurefont", 'bar-number');
-    abselem.addChild(new RelativeElement(number, 0, 0, 11 + measureNumHeight.height / spacing.STEP, {
+    var measureNumDim = this.renderer.getTextSize(number, "measurefont", 'bar-number');
+    var dx = measureNumDim.width > 18 && abselem.abcelem.type === "treble" ? -7 : 0;
+    abselem.addChild(new RelativeElement(number, dx, measureNumDim.width, 11 + measureNumDim.height / spacing.STEP, {
       type: "barNumber"
     }));
   };
@@ -17214,7 +21807,8 @@ CrescendoElem.prototype.drawLine = function (renderer, y1, y2) {
   renderer.printPath({
     path: pathString,
     stroke: "#000000",
-    'class': renderer.addClasses('decoration')
+    'class': renderer.addClasses('decoration'),
+    notSelectable: true
   });
 };
 
@@ -18061,22 +22655,132 @@ EngraverController.prototype.engraveTune = function (abctune, tuneNumber) {
 
   this.renderer.engraveExtraText(this.width, abctune);
   this.renderer.setPaperSize(maxWidth, scale, this.responsive);
+
+  if (this.dragging) {
+    for (var h = 0; h < this.history.length; h++) {
+      var hist = this.history[h];
+
+      if (!hist.svgEl.getAttribute("notSelectable")) {
+        hist.svgEl.setAttribute("tabindex", 0);
+        hist.svgEl.setAttribute("data-index", h);
+        hist.svgEl.addEventListener("keydown", keyboardDown.bind(this));
+        hist.svgEl.addEventListener("keyup", keyboardSelection.bind(this));
+        hist.svgEl.addEventListener("focus", elementFocused.bind(this));
+      }
+    }
+  }
+
   this.renderer.paper.svg.addEventListener('mousedown', mouseDown.bind(this));
   this.renderer.paper.svg.addEventListener('mousemove', mouseMove.bind(this));
   this.renderer.paper.svg.addEventListener('mouseup', mouseUp.bind(this));
 };
 
+function getCoord(ev) {
+  var x = ev.offsetX;
+  var y = ev.offsetY; // TODO-PER: This only works for Firefox, not Chrome.
+  // The target might be the SVG that we want, or it could be an item in the SVG (usually a path). If it is not the SVG then
+  // add an offset to the coordinates.
+  //console.log(x, y, ev.target.tagName, ev, ev.target.getBoundingClientRect())
+
+  if (ev.target.tagName.toLowerCase() !== 'svg') {
+    var box = ev.target.getBBox();
+    var absRect = ev.target.getBoundingClientRect();
+    var offsetX = ev.clientX - absRect.left;
+    var offsetY = ev.clientY - absRect.top;
+    x = offsetX + box.x;
+    y = offsetY + box.y;
+  }
+
+  return [x, y];
+}
+
+function elementFocused(ev) {
+  // If there had been another element focused and is being dragged, then report that before setting the new element up.
+  if (this.dragMechanism === "keyboard" && this.dragStep !== 0) this.notifySelect(this.dragTarget, this.dragStep);
+  this.dragStep = 0;
+}
+
+function keyboardDown(ev) {
+  // Swallow the up and down arrow events - they will be used for dragging with the keyboard
+  switch (ev.keyCode) {
+    case 38:
+    case 40:
+      ev.preventDefault();
+  }
+}
+
+function keyboardSelection(ev) {
+  // "this" is the EngraverController because of the bind(this) when setting the event listener.
+  var handled = false;
+  var index = ev.target.dataset.index;
+
+  switch (ev.keyCode) {
+    case 13:
+    case 32:
+      handled = true;
+      this.dragTarget = this.history[index];
+      this.dragMechanism = "keyboard";
+      mouseUp.bind(this)();
+      break;
+
+    case 38:
+      // arrow up
+      handled = true;
+      this.dragTarget = this.history[index];
+      this.dragMechanism = "keyboard";
+
+      if (this.dragTarget.isDraggable) {
+        if (this.dragging && this.dragTarget.isDraggable) this.dragTarget.absEl.highlight(undefined, this.dragColor);
+        this.dragStep--;
+        this.dragTarget.svgEl.setAttribute("transform", "translate(0," + this.dragStep * spacing.STEP + ")");
+      }
+
+      break;
+
+    case 40:
+      // arrow down
+      handled = true;
+      this.dragTarget = this.history[index];
+      this.dragMechanism = "keyboard";
+
+      if (this.dragTarget.isDraggable) {
+        if (this.dragging && this.dragTarget.isDraggable) this.dragTarget.absEl.highlight(undefined, this.dragColor);
+        this.dragStep++;
+        this.dragTarget.svgEl.setAttribute("transform", "translate(0," + this.dragStep * spacing.STEP + ")");
+      }
+
+      break;
+
+    case 9:
+      // tab
+      // This is losing focus - if there had been dragging, then do the callback
+      if (this.dragStep !== 0) {
+        mouseUp.bind(this)();
+      }
+
+      break;
+
+    default:
+      //console.log(ev);
+      break;
+  }
+
+  if (handled) ev.preventDefault();
+}
+
 function mouseDown(ev) {
   // "this" is the EngraverController because of the bind(this) when setting the event listener.
-  //	console.log(this.history)
-  var x = ev.offsetX;
-  var y = ev.offsetY;
+  var box = getCoord(ev);
+  var x = box[0];
+  var y = box[1];
   var minDistance = 9999999;
   var closestIndex = -1;
 
   for (var i = 0; i < this.history.length && minDistance > 0; i++) {
     var el = this.history[i];
     if (!el.selectable) continue; // See if it is a direct hit on an element - if so, definitely take it (there are no overlapping elements)
+
+    getDim(el);
 
     if (el.dim.left < x && el.dim.right > x && el.dim.top < y && el.dim.bottom > y) {
       closestIndex = i;
@@ -18096,17 +22800,25 @@ function mouseDown(ev) {
 
   if (closestIndex >= 0) {
     this.dragTarget = this.history[closestIndex];
+    this.dragMechanism = "mouse";
     this.dragMouseStart = {
       x: x,
       y: y
     };
-    if (this.dragging && this.dragTarget.isDraggable) this.dragTarget.absEl.highlight(undefined, this.dragColor);
+
+    if (this.dragging && this.dragTarget.isDraggable) {
+      this.renderer.addGlobalClass("abcjs-dragging-in-progress");
+      this.dragTarget.absEl.highlight(undefined, this.dragColor);
+    }
   }
 }
 
 function mouseMove(ev) {
-  if (!this.dragTarget || !this.dragging || !this.dragTarget.isDraggable) return;
-  var yDist = Math.round((ev.offsetY - this.dragMouseStart.y) / spacing.STEP);
+  if (!this.dragTarget || !this.dragging || !this.dragTarget.isDraggable || this.dragMechanism !== 'mouse') return;
+  var box = getCoord(ev);
+  var x = box[0];
+  var y = box[1];
+  var yDist = Math.round((y - this.dragMouseStart.y) / spacing.STEP);
 
   if (yDist !== this.dragYStep) {
     this.dragStep = yDist;
@@ -18124,25 +22836,35 @@ function mouseUp(ev) {
   }
 
   this.notifySelect(this.dragTarget, this.dragStep);
+  this.dragTarget.svgEl.focus();
   this.dragTarget = null;
+  this.renderer.removeGlobalClass("abcjs-dragging-in-progress");
 }
 
 EngraverController.prototype.recordHistory = function (svgEl, notSelectable) {
   var isNote = this.currentAbsEl && this.currentAbsEl.abcelem && this.currentAbsEl.abcelem.el_type === "note" && !this.currentAbsEl.abcelem.rest;
-  var box = svgEl.getBBox();
   this.history.push({
     absEl: this.currentAbsEl,
     svgEl: svgEl,
-    dim: {
-      left: Math.round(box.x),
-      top: Math.round(box.y),
-      right: Math.round(box.x + box.width),
-      bottom: Math.round(box.y + box.height)
-    },
     selectable: notSelectable !== true,
     isDraggable: isNote
   });
 };
+
+function getDim(historyEl) {
+  // Get the dimensions on demand because the getBBox call is expensive.
+  if (!historyEl.dim) {
+    var box = historyEl.svgEl.getBBox();
+    historyEl.dim = {
+      left: Math.round(box.x),
+      top: Math.round(box.y),
+      right: Math.round(box.x + box.width),
+      bottom: Math.round(box.y + box.height)
+    };
+  }
+
+  return historyEl.dim;
+}
 
 EngraverController.prototype.combineHistory = function (len, svgEl) {
   if (len < 2) return;
@@ -18150,6 +22872,10 @@ EngraverController.prototype.combineHistory = function (len, svgEl) {
 
   for (var i = 0; i < len; i++) {
     items.push(this.history.pop());
+  }
+
+  for (i = 0; i < items.length; i++) {
+    getDim(items[i]);
   }
 
   for (i = 1; i < items.length; i++) {
@@ -18255,10 +22981,26 @@ EngraverController.prototype.notifySelect = function (target, dragStep) {
     }
   }
 
+  var analysis = {};
+
+  for (var ii = 0; ii < classes.length; ii++) {
+    findNumber(classes[ii], "abcjs-v", analysis, "voice");
+    findNumber(classes[ii], "abcjs-l", analysis, "line");
+    findNumber(classes[ii], "abcjs-m", analysis, "measure");
+  }
+
   for (var i = 0; i < this.listeners.length; i++) {
-    this.listeners[i](target.absEl.abcelem, target.absEl.tuneNumber, classes, dragStep);
+    this.listeners[i](target.absEl.abcelem, target.absEl.tuneNumber, classes.join(' '), analysis, dragStep);
   }
 };
+
+function findNumber(klass, match, target, name) {
+  if (klass.indexOf(match) === 0) {
+    var value = klass.replace(match, '');
+    var num = parseInt(value, 10);
+    if ('' + num === value) target[name] = num;
+  }
+}
 /**
  * Called by the Abstract Engraving Structure to say it was modified (e.g. notehead dragged)
  * @protected
@@ -19172,7 +23914,7 @@ RelativeElement.prototype.draw = function (renderer, bartop) {
       break;
 
     case "ledger":
-      this.graphelem = renderer.printStaveLine(this.x, this.x + this.w, this.pitch);
+      this.graphelem = renderer.printStaveLine(this.x, this.x + this.w, this.pitch, renderer.addClasses("ledger"));
       break;
   }
 
@@ -19218,6 +23960,8 @@ var spacing = __webpack_require__(/*! ./abc_spacing */ "./src/write/abc_spacing.
 var sprintf = __webpack_require__(/*! ./sprintf */ "./src/write/sprintf.js");
 
 var Svg = __webpack_require__(/*! ./svg */ "./src/write/svg.js");
+
+var AbsoluteElement = __webpack_require__(/*! ./abc_absolute_element */ "./src/write/abc_absolute_element.js");
 /**
  * Implements the API for rendering ABCJS Abstract Rendering Structure to a canvas/paper (e.g. SVG, Raphael, etc)
  * @param {Object} paper
@@ -19298,7 +24042,10 @@ Renderer.prototype.setPaperSize = function (maxwidth, scale, responsive) {
 
   var text = "Sheet Music";
   if (this.abctune && this.abctune.metaText && this.abctune.metaText.title) text += " for \"" + this.abctune.metaText.title + '"';
-  this.paper.setTitle(text);
+  this.paper.setTitle(text); // for dragging - don't select during drag
+
+  var styles = ["-webkit-touch-callout: none;", "-webkit-user-select: none;", "-khtml-user-select: none;", "-moz-user-select: none;", "-ms-user-select: none;", "user-select: none;"];
+  this.paper.insertStyles(".abcjs-dragging-in-progress text, .abcjs-dragging-in-progress tspan {" + styles.join(" ") + ")}");
   var parentStyles = {
     overflow: "hidden"
   };
@@ -19317,6 +24064,47 @@ Renderer.prototype.setPaperSize = function (maxwidth, scale, responsive) {
 
   this.paper.setScale(scale);
   this.paper.setParentStyles(parentStyles);
+};
+
+function getClassSet(el) {
+  var oldClass = el.getAttribute('class');
+  if (!oldClass) oldClass = "";
+  var klasses = oldClass.split(" ");
+  var obj = {};
+
+  for (var i = 0; i < klasses.length; i++) {
+    obj[klasses[i]] = true;
+  }
+
+  return obj;
+}
+
+function setClassSet(el, klassSet) {
+  var klasses = [];
+
+  for (var key in klassSet) {
+    if (klassSet.hasOwnProperty(key)) klasses.push(key);
+  }
+
+  el.setAttribute('class', klasses.join(' '));
+}
+
+Renderer.prototype.addGlobalClass = function (klass) {
+  // Can't use classList on IE
+  if (this.paper) {
+    var obj = getClassSet(this.paper.svg);
+    obj[klass] = true;
+    setClassSet(this.paper.svg, obj);
+  }
+};
+
+Renderer.prototype.removeGlobalClass = function (klass) {
+  // Can't use classList on IE
+  if (this.paper) {
+    var obj = getClassSet(this.paper.svg);
+    delete obj[klass];
+    setClassSet(this.paper.svg, obj);
+  }
 };
 /**
  * Set the padding
@@ -19510,33 +24298,25 @@ Renderer.prototype.engraveTopText = function (width, abctune) {
   if (this.isPrint) this.moveY(this.spacing.top);
 
   if (abctune.metaText.title) {
-    this.controller.currentAbsEl = {
-      tuneNumber: this.controller.engraver.tuneNumber,
-      elemset: [],
-      abcelem: {
-        el_type: "title",
-        startChar: -1,
-        endChar: -1,
-        text: abctune.metaText.title
-      }
-    };
-    el = this.outputTextIf(this.padding.left + width / 2, abctune.metaText.title, 'titlefont', 'title meta-top', this.spacing.title, 0, 'middle');
-    this.controller.currentAbsEl.elemset.push(el[2]);
+    this.wrapInAbsElem({
+      el_type: "title",
+      startChar: -1,
+      endChar: -1,
+      text: abctune.metaText.title
+    }, 'title meta-top', function () {
+      return this.outputTextIf(this.padding.left + width / 2, abctune.metaText.title, 'titlefont', 'title meta-top', this.spacing.title, 0, 'middle')[2];
+    });
   }
 
   if (abctune.lines[0] && abctune.lines[0].subtitle) {
-    this.controller.currentAbsEl = {
-      tuneNumber: this.controller.engraver.tuneNumber,
-      elemset: [],
-      abcelem: {
-        el_type: "subtitle",
-        startChar: -1,
-        endChar: -1,
-        text: abctune.lines[0].subtitle
-      }
-    };
-    el = this.outputTextIf(this.padding.left + width / 2, abctune.lines[0].subtitle, 'subtitlefont', 'text meta-top subtitle', this.spacing.subtitle, 0, 'middle');
-    this.controller.currentAbsEl.elemset.push(el[2]);
+    this.wrapInAbsElem({
+      el_type: "subtitle",
+      startChar: -1,
+      endChar: -1,
+      text: abctune.lines[0].subtitle
+    }, 'text meta-top subtitle', function () {
+      return this.outputTextIf(this.padding.left + width / 2, abctune.lines[0].subtitle, 'subtitlefont', 'text meta-top subtitle', this.spacing.subtitle, 0, 'middle')[2];
+    });
   }
 
   if (abctune.metaText.rhythm || abctune.metaText.origin || abctune.metaText.composer) {
@@ -19544,18 +24324,15 @@ Renderer.prototype.engraveTopText = function (width, abctune) {
     var rSpace;
 
     if (abctune.metaText.rhythm && abctune.metaText.rhythm.length > 0) {
-      this.controller.currentAbsEl = {
-        tuneNumber: this.controller.engraver.tuneNumber,
-        elemset: [],
-        abcelem: {
-          el_type: "rhythm",
-          startChar: -1,
-          endChar: -1,
-          text: abctune.metaText.rhythm
-        }
-      };
-      rSpace = this.outputTextIf(this.padding.left, abctune.metaText.rhythm, 'infofont', 'meta-top rhythm', 0, null, "start");
-      this.controller.currentAbsEl.elemset.push(rSpace[2]);
+      this.wrapInAbsElem({
+        el_type: "rhythm",
+        startChar: -1,
+        endChar: -1,
+        text: abctune.metaText.rhythm
+      }, 'meta-top rhythm', function () {
+        rSpace = this.outputTextIf(this.padding.left, abctune.metaText.rhythm, 'infofont', 'meta-top rhythm', 0, null, "start");
+        return rSpace[2];
+      });
     }
 
     var composerLine = "";
@@ -19563,18 +24340,16 @@ Renderer.prototype.engraveTopText = function (width, abctune) {
     if (abctune.metaText.origin) composerLine += ' (' + abctune.metaText.origin + ')';
 
     if (composerLine.length > 0) {
-      this.controller.currentAbsEl = {
-        tuneNumber: this.controller.engraver.tuneNumber,
-        elemset: [],
-        abcelem: {
-          el_type: "composer",
-          startChar: -1,
-          endChar: -1,
-          text: composerLine
-        }
-      };
-      var space = this.outputTextIf(this.padding.left + width, composerLine, 'composerfont', 'meta-top composer', 0, null, "end");
-      this.controller.currentAbsEl.elemset.push(space[2]);
+      var space;
+      this.wrapInAbsElem({
+        el_type: "composer",
+        startChar: -1,
+        endChar: -1,
+        text: composerLine
+      }, 'meta-top rhythm', function () {
+        space = this.outputTextIf(this.padding.left + width, composerLine, 'composerfont', 'meta-top composer', 0, null, "end");
+        return space[2];
+      });
       this.moveY(space[1]);
     } else {
       this.moveY(rSpace[1]);
@@ -19589,34 +24364,36 @@ Renderer.prototype.engraveTopText = function (width, abctune) {
   }
 
   if (abctune.metaText.author && abctune.metaText.author.length > 0) {
-    this.controller.currentAbsEl = {
-      tuneNumber: this.controller.engraver.tuneNumber,
-      elemset: [],
-      abcelem: {
-        el_type: "author",
-        startChar: -1,
-        endChar: -1,
-        text: abctune.metaText.author
-      }
-    };
-    var space3 = this.outputTextIf(this.padding.left + width, abctune.metaText.author, 'composerfont', 'meta-top author', 0, 0, "end");
-    this.controller.currentAbsEl.elemset.push(space3[2]);
+    var space3;
+    this.wrapInAbsElem({
+      el_type: "author",
+      startChar: -1,
+      endChar: -1,
+      text: abctune.metaText.author
+    }, 'meta-top author', function () {
+      space3 = this.outputTextIf(this.padding.left + width, abctune.metaText.author, 'composerfont', 'meta-top author', 0, 0, "end");
+      return space3[2];
+    });
   }
 
   if (abctune.metaText.partOrder && abctune.metaText.partOrder.length > 0) {
-    this.controller.currentAbsEl = {
-      tuneNumber: this.controller.engraver.tuneNumber,
-      elemset: [],
-      abcelem: {
-        el_type: "partOrder",
-        startChar: -1,
-        endChar: -1,
-        text: abctune.metaText.partOrder
-      }
-    };
-    var space4 = this.outputTextIf(this.padding.left, abctune.metaText.partOrder, 'partsfont', 'meta-top part-order', 0, 0, "start");
-    this.controller.currentAbsEl.elemset.push(space4[2]);
+    var space4;
+    this.wrapInAbsElem({
+      el_type: "partOrder",
+      startChar: -1,
+      endChar: -1,
+      text: abctune.metaText.partOrder
+    }, 'meta-top part-order', function () {
+      space4 = this.outputTextIf(this.padding.left, abctune.metaText.partOrder, 'partsfont', 'meta-top part-order', 0, 0, "start");
+      return space4[2];
+    });
   }
+};
+
+Renderer.prototype.wrapInAbsElem = function (abcelem, klass, creator) {
+  this.controller.currentAbsEl = new AbsoluteElement(abcelem, 0, 0, klass, this.controller.engraver.tuneNumber, {});
+  var el = creator.bind(this)();
+  this.controller.currentAbsEl.elemset = [el];
 };
 /**
  * Text that goes below the score
@@ -19631,69 +24408,51 @@ Renderer.prototype.engraveExtraText = function (width, abctune) {
   this.noteNumber = null;
   this.voiceNumber = null;
 
-  if (abctune.metaText.unalignedWords) {
-    this.controller.currentAbsEl = {
-      tuneNumber: this.controller.engraver.tuneNumber,
-      elemset: [],
-      abcelem: {
-        el_type: "unalignedWords",
-        startChar: -1,
-        endChar: -1,
-        text: abctune.metaText.unalignedWords
-      }
-    };
-    var hash = this.getFontAndAttr("wordsfont", 'meta-bottom unaligned-words');
-    var space = this.getTextSize("i", 'wordsfont', 'meta-bottom unaligned-words');
-    if (abctune.metaText.unalignedWords.length > 0) this.moveY(this.spacing.words, 1);
-    var el;
-    var historyLen = this.controller.history.length;
-    if (abctune.metaText.unalignedWords.length > 0) this.createElemSet({
-      klass: "abcjs-unaligned-words"
-    });
+  if (abctune.metaText.unalignedWords && abctune.metaText.unalignedWords.length > 0) {
+    this.wrapInAbsElem({
+      el_type: "unalignedWords",
+      startChar: -1,
+      endChar: -1
+    }, 'meta-bottom extra-text', function () {
+      var hash = this.getFontAndAttr("wordsfont", 'meta-bottom unaligned-words');
+      var space = this.getTextSize("i", 'wordsfont', 'meta-bottom unaligned-words');
+      this.moveY(this.spacing.words, 1);
+      var historyLen = this.controller.history.length;
+      this.createElemSet({
+        klass: "abcjs-unaligned-words"
+      });
 
-    for (var j = 0; j < abctune.metaText.unalignedWords.length; j++) {
-      if (abctune.metaText.unalignedWords[j] === '') this.moveY(hash.font.size, 1);else if (typeof abctune.metaText.unalignedWords[j] === 'string') {
-        el = this.outputTextIf(this.padding.left + spacing.INDENT, abctune.metaText.unalignedWords[j], 'wordsfont', 'meta-bottom unaligned-words', 0, 0, "start");
-        if (el[2]) this.controller.currentAbsEl.elemset.push(el[2]);
-      } else {
-        var largestY = 0;
-        var offsetX = 0;
+      for (var j = 0; j < abctune.metaText.unalignedWords.length; j++) {
+        if (abctune.metaText.unalignedWords[j] === '') this.moveY(hash.font.size, 1);else if (typeof abctune.metaText.unalignedWords[j] === 'string') {
+          this.outputTextIf(this.padding.left + spacing.INDENT, abctune.metaText.unalignedWords[j], 'wordsfont', 'meta-bottom unaligned-words', 0, 0, "start");
+        } else {
+          var largestY = 0;
+          var offsetX = 0;
 
-        for (var k = 0; k < abctune.metaText.unalignedWords[j].length; k++) {
-          var thisWord = abctune.metaText.unalignedWords[j][k];
-          var type = thisWord.font ? thisWord.font : "wordsfont";
-          var el = this.renderText(this.padding.left + spacing.INDENT + offsetX, this.y, thisWord.text, type, 'meta-bottom unaligned-words', false);
-          this.controller.currentAbsEl.elemset.push(el);
-          var size = this.getTextSize(thisWord.text, type, 'meta-bottom unaligned-words');
-          largestY = Math.max(largestY, size.height);
-          offsetX += size.width; // If the phrase ends in a space, then that is not counted in the width, so we need to add that in ourselves.
+          for (var k = 0; k < abctune.metaText.unalignedWords[j].length; k++) {
+            var thisWord = abctune.metaText.unalignedWords[j][k];
+            var type = thisWord.font ? thisWord.font : "wordsfont";
+            this.renderText(this.padding.left + spacing.INDENT + offsetX, this.y, thisWord.text, type, 'meta-bottom unaligned-words', false);
+            var size = this.getTextSize(thisWord.text, type, 'meta-bottom unaligned-words');
+            largestY = Math.max(largestY, size.height);
+            offsetX += size.width; // If the phrase ends in a space, then that is not counted in the width, so we need to add that in ourselves.
 
-          if (thisWord.text[thisWord.text.length - 1] === ' ') {
-            offsetX += space.width;
+            if (thisWord.text[thisWord.text.length - 1] === ' ') {
+              offsetX += space.width;
+            }
           }
+
+          this.moveY(largestY, 1);
         }
-
-        this.moveY(largestY, 1);
       }
-    }
 
-    if (abctune.metaText.unalignedWords.length > 0) {
       this.moveY(hash.font.size, 2);
-      var unalignedGroup = this.closeElemSet();
-      this.controller.combineHistory(this.controller.history.length - historyLen, unalignedGroup);
-    }
+      var g = this.closeElemSet();
+      this.controller.combineHistory(this.controller.history.length - historyLen, g);
+      return g;
+    });
   }
 
-  this.controller.currentAbsEl = {
-    tuneNumber: this.controller.engraver.tuneNumber,
-    elemset: [],
-    abcelem: {
-      el_type: "extraText",
-      startChar: -1,
-      endChar: -1,
-      text: ""
-    }
-  };
   var extraText = "";
   if (abctune.metaText.book) extraText += "Book: " + abctune.metaText.book + "\n";
   if (abctune.metaText.source) extraText += "Source: " + abctune.metaText.source + "\n";
@@ -19706,11 +24465,16 @@ Renderer.prototype.engraveExtraText = function (width, abctune) {
   if (abctune.metaText['abc-edited-by']) extraText += "Edited By: " + abctune.metaText['abc-edited-by'] + "\n";
 
   if (extraText.length > 0) {
-    this.controller.currentAbsEl.abcelem.text = extraText;
+    this.wrapInAbsElem({
+      el_type: "extraText",
+      startChar: -1,
+      endChar: -1
+    }, 'meta-bottom extra-text', function () {
+      var el = this.outputTextIf(this.padding.left, extraText, 'historyfont', 'meta-bottom extra-text', this.spacing.info, 0, "start");
+      this.controller.recordHistory(el[2]);
+      return el[2];
+    });
   }
-
-  el = this.outputTextIf(this.padding.left, extraText, 'historyfont', 'meta-bottom extra-text', this.spacing.info, 0, "start");
-  if (el[2]) this.controller.currentAbsEl.elemset.push(el[2]);
 
   if (abctune.metaText.footer && this.isPrint) {
     this.controller.currentAbsEl = {
@@ -19954,7 +24718,6 @@ Renderer.prototype.printSymbol = function (x, offset, symbol, scalex, scaley, kl
       var s = symbol.charAt(i);
       ycorr = glyphs.getYCorr(s);
       el = glyphs.printSymbol(x + dx, this.calcY(offset + ycorr), s, this.paper, klass);
-      this.controller.recordHistory(el);
 
       if (el) {
         if (this.doRegression) this.addToRegression(el); //elemset.push(el);
@@ -19965,8 +24728,9 @@ Renderer.prototype.printSymbol = function (x, offset, symbol, scalex, scaley, kl
       }
     }
 
-    this.controller.recordHistory(el.parentNode);
-    return this.paper.closeGroup();
+    var g = this.paper.closeGroup();
+    this.controller.recordHistory(g);
+    return g;
   } else {
     ycorr = glyphs.getYCorr(symbol);
 
@@ -20001,40 +24765,39 @@ Renderer.prototype.printPath = function (attrs) {
 
 Renderer.prototype.drawBrace = function (xLeft, yTop, yBottom) {
   //Tony
-  var yHeight = yBottom - yTop;
-  var xCurve = [7.5, -8, 21, 0, 18.5, -10.5, 7.5];
-  var yCurve = [0, yHeight / 5.5, yHeight / 3.14, yHeight / 2, yHeight / 2.93, yHeight / 4.88, 0];
-  this.controller.currentAbsEl = {
-    tuneNumber: this.controller.engraver.tuneNumber,
-    elemset: [],
-    abcelem: {
-      el_type: "brace",
-      startChar: -1,
-      endChar: -1
-    }
-  };
-  this.createElemSet({
-    klass: 'brace'
+  var ret1;
+  var ret2;
+  this.wrapInAbsElem({
+    el_type: "brace",
+    startChar: -1,
+    endChar: -1
+  }, 'brace', function () {
+    var yHeight = yBottom - yTop;
+    var xCurve = [7.5, -8, 21, 0, 18.5, -10.5, 7.5];
+    var yCurve = [0, yHeight / 5.5, yHeight / 3.14, yHeight / 2, yHeight / 2.93, yHeight / 4.88, 0];
+    this.createElemSet({
+      klass: 'brace'
+    });
+    var pathString = sprintf("M %f %f C %f %f %f %f %f %f C %f %f %f %f %f %f z", xLeft + xCurve[0], yTop + yCurve[0], xLeft + xCurve[1], yTop + yCurve[1], xLeft + xCurve[2], yTop + yCurve[2], xLeft + xCurve[3], yTop + yCurve[3], xLeft + xCurve[4], yTop + yCurve[4], xLeft + xCurve[5], yTop + yCurve[5], xLeft + xCurve[6], yTop + yCurve[6]);
+    ret1 = this.paper.path({
+      path: pathString,
+      stroke: "#000000",
+      fill: "#000000",
+      'class': this.addClasses('brace')
+    });
+    xCurve = [0, 17.5, -7.5, 6.6, -5, 20, 0];
+    yCurve = [yHeight / 2, yHeight / 1.46, yHeight / 1.22, yHeight, yHeight / 1.19, yHeight / 1.42, yHeight / 2];
+    pathString = sprintf("M %f %f C %f %f %f %f %f %f C %f %f %f %f %f %f z", xLeft + xCurve[0], yTop + yCurve[0], xLeft + xCurve[1], yTop + yCurve[1], xLeft + xCurve[2], yTop + yCurve[2], xLeft + xCurve[3], yTop + yCurve[3], xLeft + xCurve[4], yTop + yCurve[4], xLeft + xCurve[5], yTop + yCurve[5], xLeft + xCurve[6], yTop + yCurve[6]);
+    ret2 = this.paper.path({
+      path: pathString,
+      stroke: "#000000",
+      fill: "#000000",
+      'class': this.addClasses('brace')
+    });
+    var g = this.closeElemSet();
+    this.controller.recordHistory(g);
+    return g;
   });
-  var pathString = sprintf("M %f %f C %f %f %f %f %f %f C %f %f %f %f %f %f z", xLeft + xCurve[0], yTop + yCurve[0], xLeft + xCurve[1], yTop + yCurve[1], xLeft + xCurve[2], yTop + yCurve[2], xLeft + xCurve[3], yTop + yCurve[3], xLeft + xCurve[4], yTop + yCurve[4], xLeft + xCurve[5], yTop + yCurve[5], xLeft + xCurve[6], yTop + yCurve[6]);
-  var ret1 = this.paper.path({
-    path: pathString,
-    stroke: "#000000",
-    fill: "#000000",
-    'class': this.addClasses('brace')
-  });
-  xCurve = [0, 17.5, -7.5, 6.6, -5, 20, 0];
-  yCurve = [yHeight / 2, yHeight / 1.46, yHeight / 1.22, yHeight, yHeight / 1.19, yHeight / 1.42, yHeight / 2];
-  pathString = sprintf("M %f %f C %f %f %f %f %f %f C %f %f %f %f %f %f z", xLeft + xCurve[0], yTop + yCurve[0], xLeft + xCurve[1], yTop + yCurve[1], xLeft + xCurve[2], yTop + yCurve[2], xLeft + xCurve[3], yTop + yCurve[3], xLeft + xCurve[4], yTop + yCurve[4], xLeft + xCurve[5], yTop + yCurve[5], xLeft + xCurve[6], yTop + yCurve[6]);
-  var ret2 = this.paper.path({
-    path: pathString,
-    stroke: "#000000",
-    fill: "#000000",
-    'class': this.addClasses('brace')
-  });
-  var g = this.closeElemSet();
-  this.controller.recordHistory(g);
-  this.controller.currentAbsEl.elemset.push(g);
 
   if (this.doRegression) {
     this.addToRegression(ret1);
@@ -20192,8 +24955,10 @@ Renderer.prototype.getTextSize = function (text, type, klass, el) {
   var size = this.paper.getTextSize(text, hash.attr, el);
 
   if (hash.font.box) {
-    size.height += 8;
-    size.width += 8;
+    return {
+      height: size.height + 8,
+      width: size.width + 8
+    };
   }
 
   return size;
@@ -20214,34 +24979,37 @@ Renderer.prototype.renderText = function (x, y, text, type, klass, anchor, cente
 
   text = text.replace(/\n\n/g, "\n \n");
   text = text.replace(/^\n/, "\xA0\n");
+  var klass2 = hash.attr['class'];
 
   if (hash.font.box) {
     hash.attr.x += 2;
     hash.attr.y += 4;
-    this.createElemSet();
+    delete hash.attr['class'];
+    this.createElemSet({
+      klass: klass2,
+      fill: "#000000"
+    });
   }
 
   var el = this.paper.text(text, hash.attr);
   var elem = el;
 
   if (hash.font.box) {
-    var size = this.getTextSize(text, type, klass);
+    var size = this.getTextSize(text, type, klass); // This size already has the box factored in, so the needs to be taken into consideration.
+
     var padding = 2;
-    var margin = 2;
     this.paper.rect({
       x: x - padding,
       y: y,
-      width: size.width + padding * 2,
-      height: size.height + padding * 2 - margin,
-      stroke: "#888888",
-      fill: "transparent"
+      width: size.width - padding,
+      height: size.height - 8
     });
     elem = this.closeElemSet();
   }
 
   this.controller.recordHistory(elem, notSelectable);
   if (this.doRegression) this.addToRegression(el);
-  return el;
+  return elem;
 };
 
 Renderer.prototype.moveY = function (em, numLines) {
@@ -20282,17 +25050,12 @@ Renderer.prototype.outputTextIf = function (x, str, kind, klass, marginTop, marg
 };
 
 Renderer.prototype.addInvisibleMarker = function (className) {
-  var dy = 0.35;
-  var fill = "rgba(0,0,0,0)";
-  var y = this.y;
-  y = Math.round(y);
-  var x1 = 0;
-  var x2 = 100;
-  var pathString = sprintf("M %f %f L %f %f L %f %f L %f %f z", x1, y - dy, x1 + x2, y - dy, x2, y + dy, x1, y + dy);
+  var y = Math.round(this.y);
   this.paper.pathToBack({
-    path: pathString,
+    path: "M 0 " + y + " L 0 0",
     stroke: "none",
-    fill: fill,
+    fill: "none",
+    "stroke-opacity": 0,
     "fill-opacity": 0,
     'class': this.addClasses(className),
     'data-vertical': y
@@ -21118,7 +25881,7 @@ var TempoElement;
     }
 
     if (this.note) {
-      if (this.note) this.note.setX(x);
+      this.note.setX(x);
 
       for (var i = 0; i < this.note.children.length; i++) {
         this.note.children[i].draw(renderer, x);
@@ -22045,6 +26808,12 @@ Svg.prototype.setScale = function (scale) {
   }
 };
 
+Svg.prototype.insertStyles = function (styles) {
+  var el = document.createElementNS(svgNS, "style");
+  el.textContent = styles;
+  this.svg.prepend(el);
+};
+
 Svg.prototype.setParentStyles = function (attr) {
   // This is needed to get the size right when there is scaling involved.
   for (var key in attr) {
@@ -22061,19 +26830,29 @@ Svg.prototype.setParentStyles = function (attr) {
   }
 };
 
+function constructHLine(x1, y1, x2) {
+  return "M " + x1 + " " + y1 + " L " + x2 + ' ' + y1 + " L " + x2 + " " + (y1 + 1) + " " + " L " + x1 + " " + (y1 + 1) + " " + " z ";
+}
+
+function constructVLine(x1, y1, y2) {
+  return "M " + x1 + " " + y1 + " L " + x1 + ' ' + y2 + " L " + (x1 + 1) + " " + y2 + " " + " L " + (x1 + 1) + " " + y1 + " " + " z ";
+}
+
 Svg.prototype.rect = function (attr) {
-  var el = document.createElementNS(svgNS, "rect");
-
-  for (var key in attr) {
-    if (attr.hasOwnProperty(key)) {
-      var tmp = "" + attr[key];
-      if (tmp.indexOf("NaN") >= 0) debugger;
-      el.setAttributeNS(null, key, attr[key]);
-    }
-  }
-
-  this.append(el);
-  return el;
+  // This uses path instead of rect so that it can be hollow and the color changes with "fill" instead of "stroke".
+  var lines = [];
+  var x1 = attr.x;
+  var y1 = attr.y;
+  var x2 = attr.x + attr.width;
+  var y2 = attr.y + attr.height;
+  lines.push(constructHLine(x1, y1, x2));
+  lines.push(constructHLine(x1, y2, x2));
+  lines.push(constructVLine(x1, y1, y2));
+  lines.push(constructVLine(x2, y1, y2));
+  return this.path({
+    path: lines.join(" "),
+    stroke: "none"
+  });
 };
 
 Svg.prototype.text = function (text, attr, target) {
@@ -22138,12 +26917,22 @@ Svg.prototype.createDummySvg = function () {
   return this.dummySvg;
 };
 
+var sizeCache = {};
+
 Svg.prototype.getTextSize = function (text, attr, el) {
   if (typeof text === 'number') text = '' + text;
   if (!text || text.match(/^\s+$/)) return {
     width: 0,
     height: 0
   };
+  var key;
+
+  if (text.length < 20) {
+    // The short text tends to be repetitive and getBBox is really slow, so lets cache.
+    key = text + JSON.stringify(attr);
+    if (sizeCache[key]) return sizeCache[key];
+  }
+
   var removeLater = !el;
   if (!el) el = this.text(text, attr);
   var size;
@@ -22162,6 +26951,7 @@ Svg.prototype.getTextSize = function (text, attr, el) {
     if (this.currentGroup) this.currentGroup.removeChild(el);else this.svg.removeChild(el);
   }
 
+  if (key) sizeCache[key] = size;
   return size;
 };
 
@@ -22169,6 +26959,7 @@ Svg.prototype.openGroup = function (options) {
   options = options ? options : {};
   var el = document.createElementNS(svgNS, "g");
   if (options.klass) el.setAttribute("class", options.klass);
+  if (options.fill) el.setAttribute("fill", options.fill);
   if (options.prepend) this.svg.insertBefore(el, this.svg.firstChild);else this.svg.appendChild(el);
   this.currentGroup = el;
   return el;

@@ -67,11 +67,12 @@ export function update_selection() {
   }
 }
 
-export function element_click(abcElem, tuneNumber, classes, move) {
-  console.log('Click', abcElem, tuneNumber, classes, move);
+export function element_click(abcElem, tuneNumber, classes, pos, move) {
+  console.log('Click', abcElem, tuneNumber, classes, pos, move);
   clicked.element = abcElem;
   clicked.classes = classes;
-  clicked.voice = get_voice(classes);
+  clicked.voice = pos.voice;
+  //clicked.voice = get_voice(classes);
   clicked.note = null;
   if (typeof clicked.element.clefPos !== 'undefined') {
     showClefsModal(nd.voices[clicked.voice]);
