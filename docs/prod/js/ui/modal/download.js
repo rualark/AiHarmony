@@ -8,7 +8,7 @@ let exportFormats = [
   {name: 'Download as MusicXML', func: downloadAsMusicXml },
   {name: 'Download as SVG', func: downloadAsSvg },
   {name: 'Download as ABC', func: downloadAsAbc },
-  // {name: 'Download as MIDI', func: downloadAsMidi },
+   {name: 'Download as MIDI', link: linkAsMidi },
   {name: 'Download as PDF', func: downloadAsPdf },
   // {name: 'Download as WAV', func: downloadAsABC },
 ];
@@ -44,19 +44,24 @@ function downloadAsAbc() {
   saveAs(new Blob([dataToAbc()], {type: "text/abc"}), name2filename(nd.name, nd.filename) + '.abc');
 }
 
-function downloadAsMidi() {
-  ABCJS.renderMidi("midi-download", dataToAbc(), { generateDownload: true, generateInline: false });
-  let el = $('.abcjs-download-midi > a');
-  el.attr('download', name2filename(nd.name, nd.filename) + '.mid');
-  el[0].click();
+function linkAsMidi() {
+  return {
+    href: ABCJS.synth.getMidiFile(dataToAbc(), {generateLink: false}),
+    download: name2filename(nd.name, nd.filename) + '.mid'
+  };
 }
 
 export function showDownloadModal() {
   let st = '';
   for (const i in exportFormats) {
     st += `<p style='text-align: center'>`;
-    //st += `<a href="${getDataUrl(dataToMusicXml(), 'data:attachment/file')}" download="1.xml">AAA</a> `;
-    st += `<a id=adownload${i} class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;
+    if (exportFormats[i].link != null) {
+      let link = exportFormats[i].link();
+      st += `<a id=adownload${i} href="${link.href}" download="${link.download}" class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;
+    }
+    else {
+      st += `<a id=adownload${i} class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;
+    }
     st += `<b>${exportFormats[i].name}</b>`;
     st += '</a></p>';
   }
@@ -65,9 +70,11 @@ export function showDownloadModal() {
   document.getElementById("ModalTitle").innerHTML = 'Download music';
   document.getElementById("ModalBody").innerHTML = st;
   for (const i in exportFormats) {
-    document.getElementById('adownload' + i).onclick=function() {
+    document.getElementById('adownload' + i).onclick = function () {
       $('#Modal').modal('hide');
-      exportFormats[i].func();
+      if (exportFormats[i].func != null) {
+        exportFormats[i].func();
+      }
     };
   }
   $('#Modal').modal();

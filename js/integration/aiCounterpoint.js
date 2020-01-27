@@ -21,6 +21,7 @@ function setAicState(state) {
   }
   let passed = (new Date() - aic.sendTime) / 1000;
   if (passed > 5) {
+    console.log(passed);
     if (state === 'sent') setAicIcon('img/progress/progress11c.gif');
     if (state === 'queued') setAicIcon('img/progress/progress9c.gif');
     return;
@@ -30,6 +31,7 @@ function setAicState(state) {
 
 export function sendToAic(openPdf=true) {
   aic.openPdf = openPdf;
+  aic.sendTime = new Date();
   let xml;
   if (aic.state !== 'ready') {
     alertify.error('Please wait for analysis task to finish');
@@ -80,7 +82,6 @@ function getAicData(data) {
   }
   aic.u_name = spl[0];
   aic.f_id = spl[3];
-  aic.timeStarted = new Date();
   aic.warnedQueue = false;
   aic.sendTime = new Date();
   if (aic.u_name === 'robot_aih') {

@@ -185,6 +185,9 @@ export function storage_utf16(utf16) {
 export function storage2state() {
   try {
     let utf16 = localStorage.getItem('aih');
+    if (utf16 == null) {
+      throw "No previous state stored in this browser";
+    }
     let plain = storage_utf16(utf16);
     return {plain: plain, utf16: utf16};
   }
