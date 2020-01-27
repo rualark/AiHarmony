@@ -23,6 +23,7 @@ import {add_part, del_bar, del_part, new_file, stop_advancing, voiceChange} from
 import {toggle_tie} from "./edit/editTie.js";
 import {next_note, prev_note} from "./edit/move.js";
 import {set_len, toggle_dot} from "./edit/editLen.js";
+import {name2filename} from "../core/string.js";
 
 let mobileOpt = {
   true: {
@@ -155,6 +156,7 @@ export function initFilenameClick() {
         enableKeys(true);
         if (value == null) return;
         nd.name = value;
+        nd.filename = name2filename(value);
         $('#filename').html('&nbsp;&nbsp;' + nd.name);
       }
     });

@@ -7,6 +7,7 @@ import {storage2state, url2state} from "../state/state.js";
 import {async_redraw, clicked} from "../abc/abchelper.js";
 import {saveState} from "../state/history.js";
 import {start_counter} from "../core/time.js";
+import {name2filename} from "../core/string.js";
 
 export let xmlLoadWarnings = new Set();
 
@@ -29,7 +30,7 @@ export function readMusicXml(xml, filename) {
       }
     }
     if (!nd.name) nd.name = nd.filename;
-    if (!nd.filename) nd.filename = nd.name;
+    if (!nd.filename) nd.filename = name2filename(nd.name);
     clicked.note = {voice: 0, note: 0};
     saveState();
   } catch (e) {
