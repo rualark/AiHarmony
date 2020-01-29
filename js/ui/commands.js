@@ -24,6 +24,7 @@ import {toggle_tie} from "./edit/editTie.js";
 import {next_note, prev_note} from "./edit/move.js";
 import {set_len, toggle_dot} from "./edit/editLen.js";
 import {name2filename} from "../core/string.js";
+import {sendToAis} from "../integration/aiStudio.js";
 
 let mobileOpt = {
   true: {
@@ -372,14 +373,6 @@ export let commands = [
   },
   { separator: true },
   {
-    id: 'keysig',
-    toolbar: {type: 'image'},
-    keys: ['K'],
-    command: () => { showKeysigModal() },
-    name: 'Key signature',
-  },
-  { separator: true },
-  {
     id: 'up8',
     toolbar: {type: 'text', text: '+8ve', fontSize: 1.2},
     keys: ['Shift+UpArrow'],
@@ -400,6 +393,14 @@ export let commands = [
     keys: ['0', 'Numpad0'],
     command: () => { set_rest(true) },
     name: 'Input rest',
+  },
+  { separator: true },
+  {
+    id: 'keysig',
+    toolbar: {type: 'image'},
+    keys: ['K'],
+    command: () => { showKeysigModal() },
+    name: 'Key signature',
   },
   { separator: true },
   {
@@ -447,15 +448,13 @@ export let commands = [
     command: () => { window.open('https://github.com/rualark/AiHarmony/issues', '_blank') },
     name: 'Create support request',
   },
-  /*
   {
-    id: 'play_hq',
+    id: 'ais',
     toolbar: {type: 'image'},
     keys: ['Ctrl+Space'],
-    command: () => { play() },
+    command: () => { sendToAis() },
     name: 'Playback (high quality)',
   },
-   */
   {
     keys: ['Ctrl+UpArrow'],
     command: () => { voiceChange(-1) },

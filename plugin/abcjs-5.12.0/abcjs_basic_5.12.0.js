@@ -18140,7 +18140,30 @@ var getMidiFile = function getMidiFile(abcString, options) {
 
   function callback(div, tune, index, abcString) {
     var downloadMidi = midiCreate(tune, params);
-    if (params.generateLink) return midi.generateMidiDownloadLink(tune, params, downloadMidi, index);
+
+    switch (params.midiOutputType) {
+      case "link":
+        return midi.generateMidiDownloadLink(tune, params, downloadMidi, index);
+
+      case "encoded":
+        return downloadMidi;
+
+      case "binary":
+        var decoded = downloadMidi.replace("data:audio/midi,", "");
+        decoded = decoded.replace(/MThd/g, "%4d%54%68%64");
+        decoded = decoded.replace(/MTrk/g, "%4d%54%72%6b");
+        var buffer = new ArrayBuffer(decoded.length / 3);
+        var output = new Uint8Array(buffer);
+
+        for (var i = 0; i < decoded.length / 3; i++) {
+          var p = i * 3 + 1;
+          var d = parseInt(decoded.substring(p, p + 2), 16);
+          output[i] = d;
+        }
+
+        return output;
+    }
+
     return downloadMidi;
   }
 
@@ -26324,7 +26347,7 @@ VoiceElement.prototype.addChild = function (child) {
     var firstItem = true;
 
     for (var i = 0; firstItem && i < this.children.length; i++) {
-      if (this.children[i].type !== "staff-extra" && this.children[i].type !== "tempo") firstItem = false;
+      if (this.children[i].type.indexOf("staff-extra") < 0 && this.children[i].type !== "tempo") firstItem = false;
     }
 
     if (!firstItem) {
@@ -26518,6 +26541,16 @@ VoiceElement.prototype.draw = function (renderer, bartop) {
   if (this.header) {
     // print voice name
     var textpitch = 14 - (this.voicenumber + 1) * (12 / (this.voicetotal + 1));
+    renderer.controller.currentAbsEl = {
+      tuneNumber: renderer.controller.engraver.tuneNumber,
+      elemset: [],
+      abcelem: {
+        el_type: "voice-name",
+        startChar: -1,
+        endChar: -1,
+        text: this.header
+      }
+    };
     renderer.renderText(renderer.padding.left, renderer.calcY(textpitch), this.header, 'voicefont', 'staff-extra voice-name', 'start');
   }
 

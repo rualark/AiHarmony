@@ -3,15 +3,23 @@ import {name2filename} from "../../core/string.js";
 import {nd} from "../../notes/NotesData.js";
 import {dataToAbc} from "../../abc/dataToAbc.js";
 import "../../../plugin/FileSaver.js-2.0.2/FileSaver.js";
+import {ais} from "../../integration/aiStudio.js";
 
 let exportFormats = [
   {name: 'Download as MusicXML', func: downloadAsMusicXml },
   {name: 'Download as SVG', func: downloadAsSvg },
   {name: 'Download as ABC', func: downloadAsAbc },
-   {name: 'Download as MIDI', link: linkAsMidi },
+  {name: 'Download as MIDI', link: linkAsMidi },
   {name: 'Download as PDF', func: downloadAsPdf },
-  // {name: 'Download as WAV', func: downloadAsABC },
+  {name: 'Download as MP3', link: linkAsMp3 },
 ];
+
+function linkAsMp3() {
+  return {
+    href: ais.j_url,
+    download: name2filename(nd.name, nd.filename) + '.mp3'
+  };
+}
 
 function downloadAsPdf() {
   window.print();
@@ -46,7 +54,7 @@ function downloadAsAbc() {
 
 function linkAsMidi() {
   return {
-    href: ABCJS.synth.getMidiFile(dataToAbc(), {generateLink: false}),
+    href: ABCJS.synth.getMidiFile(dataToAbc(), {midiOutputType: 'encoded'}),
     download: name2filename(nd.name, nd.filename) + '.mid'
   };
 }
@@ -54,8 +62,10 @@ function linkAsMidi() {
 export function showDownloadModal() {
   let st = '';
   for (const i in exportFormats) {
+    console.log(exportFormats[i]);
+    if (exportFormats[i].func == null && exportFormats[i].link() == null) continue;
     st += `<p style='text-align: center'>`;
-    if (exportFormats[i].link != null) {
+    if (exportFormats[i].func == null) {
       let link = exportFormats[i].link();
       st += `<a id=adownload${i} href="${link.href}" download="${link.download}" class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;
     }
@@ -70,6 +80,7 @@ export function showDownloadModal() {
   document.getElementById("ModalTitle").innerHTML = 'Download music';
   document.getElementById("ModalBody").innerHTML = st;
   for (const i in exportFormats) {
+    if (exportFormats[i].func == null && exportFormats[i].link() == null) continue;
     document.getElementById('adownload' + i).onclick = function () {
       $('#Modal').modal('hide');
       if (exportFormats[i].func != null) {
