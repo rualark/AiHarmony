@@ -60,7 +60,7 @@ async function waitForState(stage, obj, vals, pause, timeout) {
 function assert2strings(stage, st1, st2, max_diff=0) {
   if (st1 !== st2) {
     let patch = makePatch(st1, st2);
-    let diff = st1.length - patch.p1 - patch.p2;
+    let diff = st1.length - patch.p1 - patch.p2 - 1;
     if (diff <= max_diff) return;
     console.log(patch, st1, st2);
     throw stage + ` does not match ${diff} chars`;
@@ -164,6 +164,10 @@ async function test_framework() {
   }
 }
 
+function removeStateFromXml(xml) {
+  return xml.replace(/<software>AIHS:.*<\/software>/, '');
+}
+
 async function test_do(test_level) {
   const STATE_IGNORE_SUFFIX = 16;
   console.log('START TEST');
@@ -187,8 +191,8 @@ async function test_do(test_level) {
     await httpRequestNoCache('GET', 'test_data/test2.plain'),
     data2string().slice(0, -STATE_IGNORE_SUFFIX));
   assert2strings('Edited XML',
-    await httpRequestNoCache('GET', 'test_data/test2.xml'),
-    dataToMusicXml('NO DATE'), 6);
+    removeStateFromXml(await httpRequestNoCache('GET', 'test_data/test2.xml')),
+    removeStateFromXml(dataToMusicXml('NO DATE')));
   for (let i=0; i<34; ++i) {
     await waitForState('undo', state, ['ready'], 50, 5000);
     undoState();
@@ -199,14 +203,14 @@ async function test_do(test_level) {
     try {
       await waitForState('PDF', aic, ['ready'], 50, 10000);
     } catch (e) {
-      console.log('Aic is probably busy, check for first responce');
+      console.log('Aic is probably busy, check for first response');
       await waitForState('PDF', aic, ['queued', 'running', 'ready'], 50, 5000);
     }
     sendToAis(false);
     try {
       await waitForState('MP3', aic, ['ready'], 50, 10000);
     } catch (e) {
-      console.log('Ais is probably busy, check for first responce');
+      console.log('Ais is probably busy, check for first response');
       await waitForState('MP3', aic, ['queued', 'running', 'ready'], 50, 5000);
     }
   }
