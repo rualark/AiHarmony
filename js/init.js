@@ -9,6 +9,8 @@ import {initTooltips} from "./ui/lib/tooltips.js";
 import {element_click} from "./ui/notation.js";
 import {debugError} from "./core/debug.js";
 import {analyse} from "./analysis/analyse.js";
+import {ais} from "./integration/aiStudio.js";
+import {showMp3Player} from "./audio/mp3Player.js";
 
 function init() {
   initKeyCodes();

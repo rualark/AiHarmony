@@ -1,6 +1,7 @@
 import {nd} from "../notes/NotesData.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
 import {aic} from "./aiCounterpoint.js";
+import {showMp3Player} from "../audio/mp3Player.js";
 
 export let ais = {
   state: 'ready',
@@ -98,6 +99,7 @@ function getAisUpdate(data) {
   ais.j_state = Number(spl[3]);
   ais.j_result = Number(spl[4]);
   ais.j_url = 'https://artinfuser.com/studio/' + spl[5];
+  ais.j_url_png = ais.j_url.replace('.mp3', '_.png');
   ais.passedTime = spl[6];
   ais.j_progress = spl[7];
   if (ais.j_state === 1) {
@@ -142,10 +144,6 @@ function waitForAis() {
 function finishAis() {
   setAisState('ready');
   if (ais.openMp3) {
-    let url = ais.j_url;
-    let newWin = window.open(url, '_blank');
-    if(!newWin || newWin.closed || typeof newWin.closed=='undefined') {
-      alertify.error(`Popup blocked by your browser. Please allow popups or <a href="${url}" target=_blank>click here</a> to open file manually`, 45);
-    }
+    showMp3Player();
   }
 }
