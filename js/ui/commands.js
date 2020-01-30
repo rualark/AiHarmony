@@ -119,7 +119,7 @@ export function initCommands() {
     if (!mobileOrTablet) {
       let title = command.name;
       if (command.keys != null && command.keys.length) {
-        title += '<br>(shortcut ' + command.keys[0] + ')';
+        title += '<br>(shortcut: ' + command.keys[0] + ')';
       }
       tooltip = `data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${title}"`;
     }
@@ -440,6 +440,13 @@ export let commands = [
     command: () => { play() },
     name: 'Playback',
   },
+  {
+    id: 'ais',
+    toolbar: {type: 'image'},
+    keys: ['Ctrl+Space'],
+    command: () => { sendToAis() },
+    name: 'Playback (high quality)',
+  },
   { separator: true },
   {
     id: 'support',
@@ -447,13 +454,6 @@ export let commands = [
     keys: [],
     command: () => { window.open('https://github.com/rualark/AiHarmony/issues', '_blank') },
     name: 'Create support request',
-  },
-  {
-    id: 'ais',
-    toolbar: {type: 'image'},
-    keys: ['Ctrl+Space'],
-    command: () => { sendToAis() },
-    name: 'Playback (high quality)',
   },
   {
     keys: ['Ctrl+UpArrow'],

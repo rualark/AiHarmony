@@ -23,6 +23,7 @@ import {keysigs} from "../ui/modal/keysig.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
 import {waitForVar} from "../core/promise.js";
 import {makePatch} from "../core/string.js";
+import {sendToAis} from "../integration/aiStudio.js";
 
 export let testState = {
   testing: false
@@ -56,10 +57,13 @@ async function waitForState(stage, obj, vals, pause, timeout) {
   }
 }
 
-function assert2strings(stage, st1, st2) {
+function assert2strings(stage, st1, st2, max_diff=0) {
   if (st1 !== st2) {
-    console.log(makePatch(st1, st2), st1, st2);
-    throw stage + " does not match";
+    let patch = makePatch(st1, st2);
+    let diff = st1.length - patch.p1 - patch.p2 - 1;
+    if (diff <= max_diff) return;
+    console.log(patch, st1, st2);
+    throw stage + ` does not match ${diff} chars`;
   }
 }
 
@@ -160,7 +164,12 @@ async function test_framework() {
   }
 }
 
+function removeStateFromXml(xml) {
+  return xml.replace(/<software>AIHS:.*<\/software>/, '');
+}
+
 async function test_do(test_level) {
+  const STATE_IGNORE_SUFFIX = 16;
   console.log('START TEST');
   await test_framework();
   await waitForState('new_file', state, ['ready'], 50, 5000);
@@ -168,7 +177,7 @@ async function test_do(test_level) {
   await waitForState('readRemoteMusicXmlFile', state, ['ready'], 50, 5000);
   readRemoteMusicXmlFile('musicxml/good-cp5-extract.xml');
   await waitForState('next_note', state, ['ready'], 50, 5000);
-  let loaded_plain = data2string().slice(0, -STATE_VOLATILE_SUFFIX);
+  let loaded_plain = data2string().slice(0, -STATE_IGNORE_SUFFIX);
   assert2strings('Loaded plain',
     await httpRequestNoCache('GET', 'test_data/test1.plain'),
     loaded_plain);
@@ -180,22 +189,29 @@ async function test_do(test_level) {
   await test_actions();
   assert2strings('Edited plain',
     await httpRequestNoCache('GET', 'test_data/test2.plain'),
-    data2string().slice(0, -STATE_VOLATILE_SUFFIX));
+    data2string().slice(0, -STATE_IGNORE_SUFFIX));
   assert2strings('Edited XML',
-    await httpRequestNoCache('GET', 'test_data/test2.xml'),
-    dataToMusicXml('NO DATE'));
+    removeStateFromXml(await httpRequestNoCache('GET', 'test_data/test2.xml')),
+    removeStateFromXml(dataToMusicXml('NO DATE')));
   for (let i=0; i<34; ++i) {
     await waitForState('undo', state, ['ready'], 50, 5000);
     undoState();
   }
-  assert2strings('Undo plain', loaded_plain, data2string().slice(0, -STATE_VOLATILE_SUFFIX));
+  assert2strings('Undo plain', loaded_plain, data2string().slice(0, -STATE_IGNORE_SUFFIX));
   if (test_level > 1) {
     sendToAic(false);
     try {
       await waitForState('PDF', aic, ['ready'], 50, 10000);
     } catch (e) {
-      console.log('Aic is probably busy, check for first responce');
+      console.log('Aic is probably busy, check for first response');
       await waitForState('PDF', aic, ['queued', 'running', 'ready'], 50, 5000);
+    }
+    sendToAis(false);
+    try {
+      await waitForState('MP3', aic, ['ready'], 50, 10000);
+    } catch (e) {
+      console.log('Ais is probably busy, check for first response');
+      await waitForState('MP3', aic, ['queued', 'running', 'ready'], 50, 5000);
     }
   }
   stop_counter();

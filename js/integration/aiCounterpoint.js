@@ -155,7 +155,7 @@ function finishAic() {
     //window.location.href = url;
     let newWin = window.open(url, '_blank');
     if(!newWin || newWin.closed || typeof newWin.closed=='undefined') {
-      alertify.error(`Popup blocked by your browser. Please allow popups or <a href="${url}" target=_blank>click here</a> to open file manually`, 45);
+      alertify.error(`Popup blocked by your browser. Please allow popups or <a style='color: white' href="${url}" target=_blank><b><u>click here</u></b></a> to open file manually`, 45);
     }
   }
 }

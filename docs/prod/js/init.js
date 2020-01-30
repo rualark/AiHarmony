@@ -8,7 +8,7 @@ import {loadState, saveState} from "./state/history.js";
 import {initTooltips} from "./ui/lib/tooltips.js";
 import {element_click} from "./ui/notation.js";
 import {debugError} from "./core/debug.js";
-import {analyse} from "./analysis/analyse.js";
+import {analyse} from "./analysis/musicAnalysis.js";
 
 function init() {
   initKeyCodes();
@@ -34,15 +34,15 @@ function init() {
   if (getUrlParam('action') === 'shortcuts') {
     setTimeout(showShortcutsModal, 0);
   }
-  setTimeout(after_init, 0);
+  setTimeout(after_init, 1000);
 }
 
 async function after_init() {
+  if (debugError) throw "debug_test_exception";
 }
 
 window.addEventListener('DOMContentLoaded', async function() {
   initTooltips(800, 100);
-  if (debugError) throw "debug_test_exception";
   if (getUrlParam('test') != null) {
     let testModule = await import("./test/test.js");
     await testModule.test(getUrlParam('test'));

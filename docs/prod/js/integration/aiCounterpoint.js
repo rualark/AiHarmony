@@ -1,5 +1,6 @@
 import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
 import {nd} from "../notes/NotesData.js";
+import {ais} from "./aiStudio.js";
 
 export let aic = {
   state: 'ready',
@@ -34,7 +35,7 @@ export function sendToAic(openPdf=true) {
   aic.sendTime = new Date();
   let xml;
   if (aic.state !== 'ready') {
-    alertify.error('Please wait for analysis task to finish');
+    alertify.notify('Analysis state: ' + aic.j_progress);
     return;
   }
   setAicState('sent');
@@ -95,7 +96,7 @@ function getAicData(data) {
 function getAicUpdate(data) {
   //console.log(data);
   let spl = data.split('\n');
-  if (spl.length < 7) {
+  if (spl.length < 8) {
     aic.f_id = 0;
     setAicState('ready');
     return;
@@ -103,8 +104,9 @@ function getAicUpdate(data) {
   aic.j_id = Number(spl[2]);
   aic.j_state = Number(spl[3]);
   aic.j_result = Number(spl[4]);
-  aic.j_url = spl[5];
+  aic.j_url = 'https://artinfuser.com/counterpoint/' + spl[5];
   aic.passedTime = spl[6];
+  aic.j_progress = spl[7];
   if (aic.j_state === 1) {
     setAicState('queued');
   }
@@ -147,13 +149,13 @@ function waitForAic() {
 function finishAic() {
   setAicState('ready');
   if (aic.openPdf) {
-    let url = 'https://artinfuser.com/counterpoint/' + aic.j_url;
+    let url = aic.j_url;
     // Changing href will open PDF in same window
     // Headers for PDF can be changed to download instead, but this can be not comfortable for other users
     //window.location.href = url;
     let newWin = window.open(url, '_blank');
     if(!newWin || newWin.closed || typeof newWin.closed=='undefined') {
-      alertify.error(`Popup blocked by your browser. Please allow popups or <a href="${url}" target=_blank>click here</a> to open file manually`, 45);
+      alertify.error(`Popup blocked by your browser. Please allow popups or <a style='color: white' href="${url}" target=_blank><b><u>click here</u></b></a> to open file manually`, 45);
     }
   }
 }
