@@ -9,4 +9,5 @@ if (getEnvironment() === 'prod') {
       console.log('Logrocket integrated with sentry');
     });
   });
+  console.log('Logrocket initialized');
 }

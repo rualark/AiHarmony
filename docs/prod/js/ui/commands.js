@@ -119,7 +119,7 @@ export function initCommands() {
     if (!mobileOrTablet) {
       let title = command.name;
       if (command.keys != null && command.keys.length) {
-        title += '<br>(shortcut ' + command.keys[0] + ')';
+        title += '<br>(shortcut: ' + command.keys[0] + ')';
       }
       tooltip = `data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${title}"`;
     }

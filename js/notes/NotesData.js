@@ -73,9 +73,10 @@ class NotesData {
     let mlen = this.timesig.measure_len;
     vc.clef = this.voices[v - 1].clef;
     vc.name = this.voices[v - 1].name;
+    vc.species = this.voices[v - 1].species;
     vc.notes = [];
     let len = this.get_voice_len(0);
-    let measures = Math.floor(len / mlen)
+    let measures = Math.floor(len / mlen);
     for (let m = 0; m < measures; ++m) {
       vc.notes.push({d: 0, alter: 10, len: mlen, startsTie: false});
     }
@@ -137,6 +138,7 @@ class NotesData {
       }
     }
     this.keysig = keysig;
+    this.modes[0] = keysig;
     this.saveState();
   }
 
@@ -174,12 +176,18 @@ class NotesData {
   reset() {
     this.name = "New exercise";
     this.filename = "New-exercise";
+    this.algo = 'CA3';
+    this.algoMode = 0;
+    this.phrases = [ 0 ];
     this.keysig = {
       name: 'Am',
       mode: 9, // 0 - major, 2 - dorian, 9 - aeolian
       fifths: 0, // Number of alterations near key
       base_note: 9, // Base tonic note (C - 0, Am - 9)
     };
+    this.modes = [
+      this.keysig
+    ];
     this.timesig = {
       beats_per_measure: 4,
       beat_type: 4,
@@ -189,6 +197,7 @@ class NotesData {
       {
         clef: 'treble',
         name: 'Sop.',
+        species: 5,
         notes: [
           {d: 0, alter: 0, len: 16, startsTie: false},
           {d: 0, alter: 0, len: 16, startsTie: false},
@@ -199,6 +208,7 @@ class NotesData {
       {
         clef: 'treble',
         name: 'Alt.',
+        species: 5,
         notes: [
           {d: 0, alter: 0, len: 16, startsTie: false},
           {d: 0, alter: 0, len: 16, startsTie: false},
@@ -209,6 +219,7 @@ class NotesData {
       {
         clef: 'treble-8',
         name: 'Ten.',
+        species: 5,
         notes: [
           {d: 0, alter: 0, len: 16, startsTie: false},
           {d: 0, alter: 0, len: 16, startsTie: false},
@@ -219,6 +230,7 @@ class NotesData {
       {
         clef: 'bass',
         name: 'Bas.',
+        species: 0,
         notes: [
           {d: 0, alter: 0, len: 16, startsTie: false},
           {d: 0, alter: 0, len: 16, startsTie: false},

@@ -3,7 +3,7 @@ import {b64_unicode, unicode_b64} from "./base64.js";
 import {async_redraw, clicked, engraverParams} from "../abc/abchelper.js";
 import {currentTimestamp, start_counter} from "../core/time.js";
 
-const ENCODING_VERSION = 5;
+const ENCODING_VERSION = 6;
 export const STATE_VOLATILE_SUFFIX = 12;
 
 let b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -46,6 +46,10 @@ function b64_ui(st, pos, chars) {
   return res;
 }
 
+function safeShortString_b64(st) {
+  return ui_b64(st.length, 1) + st;
+}
+
 function safeString_b64(st) {
   return ui_b64(st.length, 2) + st;
 }
@@ -62,6 +66,13 @@ function b64_string(st, pos) {
   return res;
 }
 
+function b64_safeShortString(st, pos) {
+  let chars = b64_ui(st, pos, 1);
+  let res = st.substr(pos[0], chars);
+  pos[0] += chars;
+  return res;
+}
+
 function alter2contig(alt) {
   if (alt === 10) return 0;
   return alt + 3;
@@ -75,16 +86,27 @@ function contig2alter(con) {
 export function data2string() {
   let st = '';
   st += ui_b64(ENCODING_VERSION, 2);
-  //console.log(ENCODING_VERSION);
+  st += safeShortString_b64(nd.algo);
+  st += ui_b64(nd.algoMode, 1);
+  st += ui_b64(nd.phrases.length, 2);
+  for (let i=0; i<nd.phrases.length; ++i) {
+    st += ui_b64(nd.phrases[i], 3);
+  }
   st += string_b64(nd.name);
   st += string_b64(nd.filename);
   st += ui_b64(nd.keysig.fifths + 10, 1);
   st += ui_b64(nd.keysig.mode, 1);
+  st += ui_b64(nd.modes.length, 2);
+  for (let i=0; i<nd.modes.length; ++i) {
+    st += ui_b64(nd.modes[i].fifths + 10, 1);
+    st += ui_b64(nd.modes[i].mode, 1);
+  }
   st += ui_b64(nd.timesig.beats_per_measure, 1);
   st += ui_b64(nd.timesig.beat_type, 1);
   st += ui_b64(nd.voices.length, 1);
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
+    st += ui_b64(vc.species, 1);
     st += string_b64(nd.voices[v].clef);
     st += string_b64(nd.voices[v].name);
     //st += ui_b64(nd.voices[v].notes.length, 4);
@@ -115,23 +137,42 @@ function string2data(st, pos) {
   if (saved_encoding_version !== ENCODING_VERSION) {
     throw('version');
   }
+  nd.algo = b64_safeShortString(st, pos);
+  nd.algoMode = b64_ui(st, pos, 1);
+  let pcount = b64_ui(st, pos, 2);
+  nd.phrases = [];
+  for (let i = 0; i<pcount; ++i) {
+    nd.phrases.push(b64_ui(st, pos, 3));
+  }
   nd.name = b64_string(st, pos);
   nd.filename = b64_string(st, pos);
   let fifths = b64_ui(st, pos, 1) - 10;
   let mode = b64_ui(st, pos, 1);
   nd.build_keysig(fifths, mode);
+  let mcount = b64_ui(st, pos, 2);
+  nd.modes = [];
+  for (let i = 0; i<mcount; ++i) {
+    let fifths = b64_ui(st, pos, 1) - 10;
+    let mode = b64_ui(st, pos, 1);
+    nd.modes.push({
+      fifths: fifths,
+      mode: mode
+    });
+  }
   let beats_per_measure = b64_ui(st, pos, 1);
   let beat_type = b64_ui(st, pos, 1);
   nd.build_timesig(beats_per_measure, beat_type);
   let vcount = b64_ui(st, pos, 1);
   nd.voices = [];
   for (let v=0; v<vcount; ++v) {
+    let species = b64_ui(st, pos, 1);
     let clef = b64_string(st, pos);
     let name = b64_string(st, pos);
     //let ncount = b64_ui(st, pos, 4);
     nd.voices.push({
       clef: clef,
       name: name,
+      species: species,
       notes: []
     });
     for (let n = 0; n < 1000000; ++n) {
@@ -157,6 +198,7 @@ function string2data(st, pos) {
   }
   //let time = b64_ui(st, pos, 6);
   //console.log('Decoded time:', time, timestamp2date(time));
+  console.log(nd);
 }
 
 export function utf16_storage(utf16) {
