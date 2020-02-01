@@ -67,7 +67,7 @@ export function data2plain() {
   return st;
 }
 
-function plain2data(st, pos) {
+export function plain2data(st, pos) {
   let saved_encoding_version = b256_ui(st, pos, 1);
   if (saved_encoding_version !== ENCODING_VERSION) {
     throw('version');

@@ -1,4 +1,5 @@
 import {async_redraw} from "../../abc/abchelper.js";
+import {saveState} from "../../state/history.js";
 
 export let clefs = {
   'treble': {name: 'Treble', transpose: 0},
@@ -32,6 +33,7 @@ export function showClefsModal(voice) {
     document.getElementById('aclef' + i).onclick=function() {
       $('#Modal').modal('hide');
       voice.clef = clef;
+      saveState();
       async_redraw();
     };
     ++i;

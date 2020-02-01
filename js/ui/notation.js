@@ -10,7 +10,7 @@ import {
 } from "./edit/editNote.js";
 import {saveState} from "../state/history.js";
 import {button_enabled, button_enabled_active} from "./lib/uilib.js";
-import {stop_advancing} from "./edit/editScore.js";
+import {rename_part, stop_advancing} from "./edit/editScore.js";
 import {can_pre_tie, can_tie, is_pre_tie} from "./edit/editTie.js";
 import {can_dot, can_len} from "./edit/editLen.js";
 
@@ -74,13 +74,16 @@ export function element_click(abcElem, tuneNumber, classes, pos, move) {
   clicked.voice = pos.voice;
   //clicked.voice = get_voice(classes);
   clicked.note = null;
-  if (typeof clicked.element.clefPos !== 'undefined') {
+  if (abcElem['el_type'] === 'voice-name') {
+    rename_part();
+  }
+  else if (typeof clicked.element.clefPos !== 'undefined') {
     showClefsModal(nd.voices[clicked.voice]);
   }
-  if (typeof clicked.element.value !== 'undefined') {
+  else if (typeof clicked.element.value !== 'undefined') {
     showTimesigModal();
   }
-  if (typeof clicked.element.mode !== 'undefined') {
+  else if (typeof clicked.element.mode !== 'undefined') {
     showKeysigModal();
   }
   if (clicked.element.duration != null) {

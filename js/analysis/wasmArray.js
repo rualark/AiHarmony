@@ -1,4 +1,4 @@
-function ccallArrays (func, returnType, paramTypes, params, {heapIn="HEAPF32", heapOut="HEAPF32", returnSizeElements=1}={}) {
+function ccallArrays (func, returnType, paramTypes, params, {heapIn="HEAPF32", heapOut="HEAPF32"}={}) {
 
   const heapMap = {};
   heapMap.HEAP8 = Int8Array; // int8_t
@@ -19,12 +19,18 @@ function ccallArrays (func, returnType, paramTypes, params, {heapIn="HEAPF32", h
   try {
     if (params) {
       for (let p=0; p<params.length; p++) {
-
-        if (paramTypes[p] === "array" || Array.isArray(params[p])) {
-
-          const typedArray = new heapMap[heapIn](params[p]);
+        if (paramTypes[p] === "array" || paramTypes[p] === "string" || Array.isArray(params[p])) {
+          let typedArray;
+          if (paramTypes[p] === "string") {
+            typedArray = new heapMap[heapIn](params[p].length);
+            for (let i=0; i<params[p].length; ++i) {
+              typedArray[i] = params[p].charCodeAt(i);
+            }
+          }
+          else {
+            typedArray = new heapMap[heapIn](params[p]);
+          }
           const buf = Module._malloc(typedArray.length * typedArray.BYTES_PER_ELEMENT);
-
           switch (heapIn) {
             case "HEAP8": case "HEAPU8":
               Module[heapIn].set(typedArray, buf);
@@ -62,20 +68,31 @@ function ccallArrays (func, returnType, paramTypes, params, {heapIn="HEAPF32", h
 
   if (error) throw error;
 
-  if (returnType === "array") {
-    const returnData = [];
+  if (returnType === "array" || returnType === "string") {
 
     let bpEl = heapMap[heapOut].BYTES_PER_ELEMENT;
     let size = 0;
+    let returnSizeElements = Module[heapOut][res / bpEl];
     for (let v=0; v<returnSizeElements; v++) {
       size *= Math.pow(256, bpEl);
-      size += Module[heapOut][res / bpEl + v];
+      let val = Module[heapOut][res / bpEl + v + 1];
+      size += val;
+      console.log(val, size);
     }
-    for (let v=0; v<size; v++) {
-      returnData.push(Module[heapOut][res/bpEl + returnSizeElements + v])
+    if (returnType === "string") {
+      let returnData = '';
+      for (let v=0; v<size; v++) {
+        returnData += String.fromCharCode(Module[heapOut][res/bpEl + returnSizeElements + v + 1])
+      }
+      return returnData;
     }
-
-    return returnData;
+    else {
+      const returnData = [];
+      for (let v=0; v<size; v++) {
+        returnData.push(Module[heapOut][res/bpEl + returnSizeElements + v + 1])
+      }
+      return returnData;
+    }
   } else {
     return res;
   }

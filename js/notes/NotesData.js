@@ -287,11 +287,13 @@ class NotesData {
 
   set_name(st) {
     if (st == null) this.name = '';
+    else if (st === '') this.name = '-';
     else this.name = st.substr(0, 255);
   }
 
   set_fileName(st) {
     if (st == null) this.fileName = '';
+    else if (st === '') this.fileName = '-';
     else this.fileName = st.substr(0, 255);
   }
 

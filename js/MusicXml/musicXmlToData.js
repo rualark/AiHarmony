@@ -29,8 +29,10 @@ export function readMusicXml(xml, filename) {
         nd.set_fileName(filename);
       }
     }
-    if (!nd.name) nd.set_name(nd.filename);
-    if (!nd.fileName) nd.set_fileName(name2filename(nd.name));
+    else {
+      nd.set_fileName(name2filename(nd.name));
+    }
+    if (!nd.name) nd.set_name(nd.fileName);
     clicked.note = {voice: 0, note: 0};
     saveState();
   } catch (e) {

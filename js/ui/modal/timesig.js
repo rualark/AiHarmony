@@ -1,5 +1,6 @@
 import {async_redraw} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
+import {saveState} from "../../state/history.js";
 
 export let timesigs = [
   {beats_per_measure: 2, beat_type: 4, measure_len: 8},
@@ -48,6 +49,7 @@ export function showTimesigModal() {
     document.getElementById('atimesig' + i).onclick=function() {
       $('#Modal').modal('hide');
       nd.set_timesig(timesigs[i]);
+      saveState();
       async_redraw();
     };
   }

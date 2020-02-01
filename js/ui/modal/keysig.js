@@ -1,5 +1,6 @@
 import {async_redraw} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
+import {saveState} from "../../state/history.js";
 
 export let keysigs = {
   'C#': {name: 'C#', fifths: 7, mode: 0, base_note: 1},
@@ -93,6 +94,7 @@ export function showKeysigModal() {
     document.getElementById('akeysig' + i).onclick=function() {
       $('#Modal').modal('hide');
       nd.set_keysig(keysigs[keysig]);
+      saveState();
       async_redraw();
     };
     ++i;

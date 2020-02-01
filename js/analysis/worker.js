@@ -95,16 +95,17 @@ function message(type, modName, funcName, data) {
 self.addEventListener('message', async function(event) {
   const { type, modName, funcName, data } = event.data;
   if (type === "CALL") {
+    console.log('Analyse2');
     try {
       if (workerState.state === 'init') {
         await initWasmModule(modName);
       }
-      const res = ccallArrays(funcName, "array", ["array"], [data], {
+      const res = ccallArrays(funcName, "string", ["string"], [data], {
         heapIn: "HEAPU8",
-        heapOut: "HEAPU8",
-        returnSizeElements: 2
+        heapOut: "HEAPU8"
       });
       //let res = callWasmFuncArrayToArray(Module, funcName, data);
+      console.log('Analyse3');
       message("RESULT", modName, funcName, res);
     }
     catch (e) {

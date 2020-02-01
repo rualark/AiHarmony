@@ -16,7 +16,7 @@ import {showKeysigModal} from "./modal/keysig.js";
 import {showOpenMusicXmlModal} from "../MusicXml/readLocalMusicXml.js";
 import {showDownloadModal} from "./modal/download.js";
 import {showShareModal} from "./modal/share.js";
-import {redoState, undoState} from "../state/history.js";
+import {redoState, saveState, undoState} from "../state/history.js";
 import {mobileOrTablet} from "../core/mobileCheck.js";
 import {sendToAic} from "../integration/aiCounterpoint.js";
 import {add_part, del_bar, del_part, new_file, stop_advancing, voiceChange} from "./edit/editScore.js";
@@ -159,6 +159,7 @@ export function initFilenameClick() {
         nd.set_name(value);
         nd.set_fileName(name2filename(value));
         $('#filename').html('&nbsp;&nbsp;' + nd.name);
+        saveState(false);
       }
     });
     return false;
