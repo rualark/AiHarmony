@@ -3,13 +3,15 @@ import {b64_unicode, unicode_b64} from "./base64.js";
 import {async_redraw, clicked, engraverParams} from "../abc/abchelper.js";
 import {currentTimestamp, start_counter} from "../core/time.js";
 
-const ENCODING_VERSION = 7;
+const ENCODING_VERSION = 9;
 export const STATE_VOLATILE_SUFFIX = 12;
 
 let b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 let fb64 = {};
 
 function ui_b64(num, chars) {
+  if (num == null) console.trace();
+  //num = num || 0;
   let i = Math.floor(num);
   if (i < 0) {
     throw("ui_b64 can convert to Base64 only non-negative numbers, but got " + i);
@@ -69,6 +71,7 @@ function b64_string(st, pos) {
 function b64_safeShortString(st, pos) {
   let chars = b64_ui(st, pos, 1);
   let res = st.substr(pos[0], chars);
+  //console.log('b64_safeShortString', chars, res);
   pos[0] += chars;
   return res;
 }
@@ -98,7 +101,7 @@ export function data2string() {
   st += ui_b64(nd.keysig.mode, 1);
   st += ui_b64(nd.modes.length, 2);
   for (let i=0; i<nd.modes.length; ++i) {
-    st += ui_b64(nd.modes[i].pos, 3);
+    st += ui_b64(nd.modes[i].step, 3);
     st += ui_b64(nd.modes[i].fifths + 10, 1);
     st += ui_b64(nd.modes[i].mode, 1);
   }
@@ -108,7 +111,7 @@ export function data2string() {
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
     st += ui_b64(vc.species, 1);
-    st += string_b64(nd.voices[v].clef);
+    st += safeShortString_b64(nd.voices[v].clef);
     st += string_b64(nd.voices[v].name);
     //st += ui_b64(nd.voices[v].notes.length, 4);
     for (let n = 0; n < vc.notes.length; ++n) {
@@ -169,7 +172,7 @@ function string2data(st, pos) {
   nd.voices = [];
   for (let v=0; v<vcount; ++v) {
     let species = b64_ui(st, pos, 1);
-    let clef = b64_string(st, pos);
+    let clef = b64_safeShortString(st, pos);
     let name = b64_string(st, pos);
     //let ncount = b64_ui(st, pos, 4);
     nd.voices.push({

@@ -86,7 +86,7 @@ export function loadState() {
   }
   catch (e) {
     if (e === 'version') {
-      alertify.error('You previous session was reset because new version of application does not support previous format. Please save your files before exiting to minimize this risk.', 20);
+      alertify.error('Your previous session was reset because new version of application does not support previous format. Please save your files before exiting to minimize this risk.', 20);
       nd.reset();
       saveState();
     }
