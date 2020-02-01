@@ -69,7 +69,8 @@ export function musicXmlToData(txt) {
   for (const vi in mxp.notes) {
     nd.voices.push({
       name: mxp.voices[vi].name,
-      notes: []
+      notes: [],
+      species: 10
     });
     nd.keysig.fifths = null;
     nd.voices[vi].notes = [];

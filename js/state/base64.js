@@ -1,4 +1,5 @@
-import {b64, fb64} from "./state.js";
+let b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+let fb64 = {};
 
 export function unicode_b64(str) {
   // first we use encodeURIComponent to get percent-encoded UTF-8,
@@ -82,4 +83,9 @@ export function b64_safeShortString(st, pos) {
   //console.log('b64_safeShortString', chars, res);
   pos[0] += chars;
   return res;
+}
+
+export function init_base64() {
+  for (let i = 0; i < b64.length; ++i) fb64[b64[i]] = i;
+  //console.log(fb64);
 }

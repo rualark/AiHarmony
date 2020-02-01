@@ -3,13 +3,10 @@ import {b64_safeShortString, b64_string, b64_ui, safeShortString_b64, string_b64
 import {async_redraw, clicked, engraverParams} from "../abc/abchelper.js";
 import {currentTimestamp, start_counter} from "../core/time.js";
 
-const ENCODING_VERSION = 9;
+const ENCODING_VERSION = 10;
 export const STATE_VOLATILE_SUFFIX = 12;
 
-export let b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-export let fb64 = {};
-
-function alter2c  ontig(alt) {
+function alter2contig(alt) {
   if (alt === 10) return 0;
   return alt + 3;
 }
@@ -19,7 +16,7 @@ function contig2alter(con) {
   return con - 3;
 }
 
-export function data2string() {
+export function data2plain() {
   let st = '';
   st += ui_b64(ENCODING_VERSION, 2);
   st += safeShortString_b64(nd.algo);
@@ -69,7 +66,7 @@ export function data2string() {
   return st;
 }
 
-function string2data(st, pos) {
+function plain2data(st, pos) {
   let saved_encoding_version = b64_ui(st, pos, 2);
   if (saved_encoding_version !== ENCODING_VERSION) {
     throw('version');
@@ -148,7 +145,7 @@ export function utf16_storage(utf16) {
 export function state2storage() {
   start_counter('save_state');
   let plain = '';
-  plain += data2string();
+  plain += data2plain();
   //console.log('state2storage plain', plain);
   let utf16 = LZString.compressToUTF16(plain);
   utf16_storage(utf16);
@@ -157,7 +154,7 @@ export function state2storage() {
 
 export function storage_utf16(utf16) {
   let plain = LZString.decompressFromUTF16(utf16);
-  string2data(plain, [0]);
+  plain2data(plain, [0]);
   async_redraw();
   return plain;
 }
@@ -179,7 +176,7 @@ export function storage2state() {
 
 export function state2url() {
   let plain = '';
-  plain += data2string();
+  plain += data2plain();
   //console.log(plain);
   let b64 = LZString.compressToBase64(plain);
   //console.log(url);
@@ -193,17 +190,12 @@ export function url2state(url) {
     //console.log(b64);
     let plain = LZString.decompressFromBase64(b64);
     //console.log('url2state plain', plain);
-    string2data(plain, [0]);
+    plain2data(plain, [0]);
   }
   catch (e) {
     nd.reset();
     alertify.error('Shared url is corrupted or expired');
     throw e;
   }
-}
-
-export function init_base64() {
-  for (let i=0; i<b64.length; ++i) fb64[b64[i]] = i;
-  //console.log(fb64);
 }
 

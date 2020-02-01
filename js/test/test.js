@@ -18,7 +18,7 @@ import {undoState} from "../state/history.js";
 import {aic, sendToAic} from "../integration/aiCounterpoint.js";
 import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
 import {httpRequestNoCache} from "../core/remote.js";
-import {data2string, STATE_VOLATILE_SUFFIX} from "../state/state.js";
+import {data2plain, STATE_VOLATILE_SUFFIX} from "../state/state.js";
 import {keysigs} from "../ui/modal/keysig.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
 import {waitForVar} from "../core/promise.js";
@@ -177,7 +177,7 @@ async function test_do(test_level) {
   await waitForState('readRemoteMusicXmlFile', state, ['ready'], 50, 5000);
   readRemoteMusicXmlFile('musicxml/good-cp5-extract.xml');
   await waitForState('next_note', state, ['ready'], 50, 5000);
-  let loaded_plain = data2string().slice(0, -STATE_IGNORE_SUFFIX);
+  let loaded_plain = data2plain().slice(0, -STATE_IGNORE_SUFFIX);
   assert2strings('Loaded plain',
     await httpRequestNoCache('GET', 'test_data/test1.plain'),
     loaded_plain);
@@ -189,7 +189,7 @@ async function test_do(test_level) {
   await test_actions();
   assert2strings('Edited plain',
     await httpRequestNoCache('GET', 'test_data/test2.plain'),
-    data2string().slice(0, -STATE_IGNORE_SUFFIX));
+    data2plain().slice(0, -STATE_IGNORE_SUFFIX));
   assert2strings('Edited XML',
     removeStateFromXml(await httpRequestNoCache('GET', 'test_data/test2.xml')),
     removeStateFromXml(dataToMusicXml('NO DATE')));
@@ -197,7 +197,7 @@ async function test_do(test_level) {
     await waitForState('undo', state, ['ready'], 50, 5000);
     undoState();
   }
-  assert2strings('Undo plain', loaded_plain, data2string().slice(0, -STATE_IGNORE_SUFFIX));
+  assert2strings('Undo plain', loaded_plain, data2plain().slice(0, -STATE_IGNORE_SUFFIX));
   if (test_level > 1) {
     sendToAic(false);
     try {
