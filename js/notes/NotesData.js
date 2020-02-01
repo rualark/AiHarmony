@@ -72,7 +72,7 @@ class NotesData {
     let vc = this.voices[v];
     let mlen = this.timesig.measure_len;
     vc.clef = this.voices[v - 1].clef;
-    vc.name = this.voices[v - 1].name;
+    vc.set_voiceName(this.voices[v - 1].name);
     vc.species = this.voices[v - 1].species;
     vc.notes = [];
     let len = this.get_voice_len(0);
@@ -174,8 +174,8 @@ class NotesData {
   }
 
   reset() {
-    this.name = "New exercise";
-    this.filename = "New-exercise";
+    this.set_name("New exercise");
+    this.set_fileName("New-exercise");
     this.algo = 'CA3';
     this.algoMode = 0;
     this.phrases = [ 0 ];
@@ -282,6 +282,21 @@ class NotesData {
 
   constructor() {
     this.reset();
+  }
+
+  set_name(st) {
+    if (st == null) this.name = '';
+    else this.name = st.substr(0, 255);
+  }
+
+  set_fileName(st) {
+    if (st == null) this.fileName = '';
+    else this.fileName = st.substr(0, 255);
+  }
+
+  set_voiceName(v, st) {
+    if (st == null) this.voices[v].name = '';
+    else this.voices[v].name = st.substr(0, 255);
   }
 }
 

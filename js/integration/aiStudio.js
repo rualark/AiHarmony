@@ -48,7 +48,7 @@ export function sendToAis(openMp3=true) {
       robot: 'robot_aih',
       token: 'xaJD5Bm9LwuQwRQ9',
       acode: 'MP1',
-      fnm: nd.filename + '.mid',
+      fnm: nd.fileName + '.mid',
       submit: 'submit',
       start_class: 9,
       fdt: midi,

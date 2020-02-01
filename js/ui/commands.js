@@ -156,8 +156,8 @@ export function initFilenameClick() {
       callback: function(value) {
         enableKeys(true);
         if (value == null) return;
-        nd.name = value;
-        nd.filename = name2filename(value);
+        nd.set_name(value);
+        nd.set_fileName(name2filename(value));
         $('#filename').html('&nbsp;&nbsp;' + nd.name);
       }
     });

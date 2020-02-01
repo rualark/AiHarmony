@@ -19,7 +19,7 @@ export function b64_unicode(str) {
 }
 
 export function ui_b64(num, chars) {
-  if (num == null) console.trace();
+  if (num == null) throw "Trying to serialize null";
   //num = num || 0;
   let i = Math.floor(num);
   if (i < 0) {

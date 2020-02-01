@@ -54,7 +54,7 @@ export function sendToAic(openPdf=true) {
       robot: 'robot_aih',
       token: 'xaJD5Bm9LwuQwRQ9',
       acode: 'CA3',
-      fnm: nd.filename + '.xml',
+      fnm: nd.fileName + '.xml',
       submit: 'submit',
       start_class: 3,
       fdt: xml,

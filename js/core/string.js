@@ -25,7 +25,7 @@ export function name2filename(name, filename) {
   fname = fname.replace(/[^\w.]/g, '-');
   for (let i=0; i<10; ++i)
     fname = fname.replace('--', '-');
-  if (fname.length > 30) fname = fname.substr(0, 30);
+  if (fname.length > 60) fname = fname.substr(0, 60);
   if (fname.length < 4) fname = now.yyyymmdd('-') + ' ' + fname;
   return fname;
 }

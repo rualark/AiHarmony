@@ -1,7 +1,7 @@
 import {nd} from "../notes/NotesData.js";
-import {b64_safeShortString, b64_string, b64_ui, safeShortString_b64, string_b64, ui_b64} from "./base64.js";
 import {async_redraw, clicked, engraverParams} from "../abc/abchelper.js";
 import {currentTimestamp, start_counter} from "../core/time.js";
+import {b256_safeString, safeString_b256, ui_b256, b256_ui, b256_debug} from "./base256.js";
 
 const ENCODING_VERSION = 10;
 export const STATE_VOLATILE_SUFFIX = 12;
@@ -18,122 +18,130 @@ function contig2alter(con) {
 
 export function data2plain() {
   let st = '';
-  st += ui_b64(ENCODING_VERSION, 2);
-  st += safeShortString_b64(nd.algo);
-  st += ui_b64(nd.algoMode, 1);
-  st += ui_b64(nd.phrases.length, 2);
+  st += ui_b256(ENCODING_VERSION, 1);
+  st += safeString_b256(nd.algo, 1);
+  st += ui_b256(nd.algoMode, 1);
+  st += ui_b256(nd.phrases.length, 1);
   for (let i=0; i<nd.phrases.length; ++i) {
-    st += ui_b64(nd.phrases[i], 3);
+    st += ui_b256(nd.phrases[i], 2);
   }
-  st += string_b64(nd.name);
-  st += string_b64(nd.filename);
-  st += ui_b64(nd.keysig.fifths + 10, 1);
-  st += ui_b64(nd.keysig.mode, 1);
-  st += ui_b64(nd.modes.length, 2);
+  //console.log('keysig', nd.keysig.fifths, nd.keysig.mode, nd.keysig.fifths + 10 + nd.keysig.mode * 16);
+  st += ui_b256(nd.keysig.fifths + 10 + nd.keysig.mode * 16, 1);
+  st += ui_b256(nd.modes.length, 1);
   for (let i=0; i<nd.modes.length; ++i) {
-    st += ui_b64(nd.modes[i].step, 3);
-    st += ui_b64(nd.modes[i].fifths + 10, 1);
-    st += ui_b64(nd.modes[i].mode, 1);
+    st += ui_b256(nd.modes[i].step, 2);
+    st += ui_b256(nd.modes[i].fifths + 10 + nd.modes[i].mode * 16, 1);
   }
-  st += ui_b64(nd.timesig.beats_per_measure, 1);
-  st += ui_b64(nd.timesig.beat_type, 1);
-  st += ui_b64(nd.voices.length, 1);
+  st += ui_b256(nd.timesig.beats_per_measure, 1);
+  st += ui_b256(nd.timesig.beat_type, 1);
+  st += ui_b256(nd.voices.length, 1);
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
-    st += ui_b64(vc.species, 1);
-    st += safeShortString_b64(nd.voices[v].clef);
-    st += string_b64(nd.voices[v].name);
-    //st += ui_b64(nd.voices[v].notes.length, 4);
+    st += ui_b256(vc.species, 1);
+    st += safeString_b256(nd.voices[v].clef, 1);
     for (let n = 0; n < vc.notes.length; ++n) {
       let nt = vc.notes[n];
-      st += ui_b64(alter2contig(nt.alter || 0) * 4 + (nt.startsTie ? 2 : 0), 1);
-      st += ui_b64(nt.d ? nt.d - 4 : 0, 1);
-      //console.log('pack', nt.alter || 0, alter2contig(nt.alter || 0), nt.startsTie, nt.startsTie ? 1 : 0, alter2contig(nt.alter || 0) * 2 + (nt.startsTie ? 1 : 0));
-      st += ui_b64(nt.len, 1);
+      st += ui_b256(alter2contig(nt.alter || 0) * 4 + (nt.startsTie ? 2 : 0), 1);
+      st += ui_b256(nt.d, 1);
+      st += ui_b256(nt.len, 1);
     }
     // Write end of voice
-    st+= ui_b64(1, 1);
+    st+= ui_b256(1, 1);
   }
-  st += ui_b64(engraverParams.scale * 1000, 4);
+  for (let v=0; v<nd.voices.length; ++v) {
+    let vc = nd.voices[v];
+    st += safeString_b256(nd.voices[v].name, 1);
+  }
+  st += safeString_b256(nd.name, 1);
+  st += safeString_b256(nd.fileName, 1);
+  st += ui_b256(engraverParams.scale * 1000, 2);
   if (clicked.note == null) {
-    st += ui_b64(64*64 - 1, 2);
-    st += ui_b64(0, 4);
+    st += ui_b256(255, 1);
+    st += ui_b256(0, 2);
   } else {
-    st += ui_b64(clicked.note.voice, 2);
-    st += ui_b64(clicked.note.note, 4);
+    st += ui_b256(clicked.note.voice, 1);
+    st += ui_b256(clicked.note.note, 2);
   }
-  st += ui_b64(currentTimestamp(), 6);
+  st += ui_b256(currentTimestamp(), 4);
+  //console.log(st, b256_debug(st));
   return st;
 }
 
 function plain2data(st, pos) {
-  let saved_encoding_version = b64_ui(st, pos, 2);
+  let saved_encoding_version = b256_ui(st, pos, 1);
   if (saved_encoding_version !== ENCODING_VERSION) {
     throw('version');
   }
-  nd.algo = b64_safeShortString(st, pos);
-  nd.algoMode = b64_ui(st, pos, 1);
-  let pcount = b64_ui(st, pos, 2);
+  nd.algo = b256_safeString(st, pos, 1);
+  nd.algoMode = b256_ui(st, pos, 1);
+  let pcount = b256_ui(st, pos, 1);
   nd.phrases = [];
   for (let i = 0; i<pcount; ++i) {
-    nd.phrases.push(b64_ui(st, pos, 3));
+    nd.phrases.push(b256_ui(st, pos, 2));
   }
-  nd.name = b64_string(st, pos);
-  nd.filename = b64_string(st, pos);
-  let fifths = b64_ui(st, pos, 1) - 10;
-  let mode = b64_ui(st, pos, 1);
+  let packed = b256_ui(st, pos, 1);
+  let fifths = packed % 16 - 10;
+  let mode = Math.floor(packed / 16);
   nd.build_keysig(fifths, mode);
-  let mcount = b64_ui(st, pos, 2);
+  let mcount = b256_ui(st, pos, 1);
   nd.modes = [];
   for (let i = 0; i<mcount; ++i) {
-    let step = b64_ui(st, pos, 3);
-    let fifths = b64_ui(st, pos, 1) - 10;
-    let mode = b64_ui(st, pos, 1);
+    let step = b256_ui(st, pos, 2);
+    let packed = b256_ui(st, pos, 1);
+    let fifths = packed % 16 - 10;
+    let mode = Math.floor(packed / 16);
     nd.modes.push({
       fifths: fifths,
       mode: mode,
       step: step
     });
   }
-  let beats_per_measure = b64_ui(st, pos, 1);
-  let beat_type = b64_ui(st, pos, 1);
+  let beats_per_measure = b256_ui(st, pos, 1);
+  let beat_type = b256_ui(st, pos, 1);
   nd.build_timesig(beats_per_measure, beat_type);
-  let vcount = b64_ui(st, pos, 1);
+  let vcount = b256_ui(st, pos, 1);
   nd.voices = [];
   for (let v=0; v<vcount; ++v) {
-    let species = b64_ui(st, pos, 1);
-    let clef = b64_safeShortString(st, pos);
-    let name = b64_string(st, pos);
-    //let ncount = b64_ui(st, pos, 4);
+    let species = b256_ui(st, pos, 1);
+    let clef = b256_safeString(st, pos, 1);
+    //let ncount = b256_ui(st, pos, 4);
+    //console.log('Voice', clef, species);
     nd.voices.push({
       clef: clef,
-      name: name,
       species: species,
       notes: []
     });
     for (let n = 0; n < 1000000; ++n) {
-      let packed = b64_ui(st, pos, 1);
+      let packed = b256_ui(st, pos, 1);
       // Detect end of voice
       if (packed === 1) break;
-      let d = b64_ui(st, pos, 1);
-      let len = b64_ui(st, pos, 1);
+      let d = b256_ui(st, pos, 1);
+      let len = b256_ui(st, pos, 1);
+      //console.log('Note', d, len, contig2alter(Math.floor(packed / 4)), !!(packed % 4));
       nd.voices[v].notes.push({
-        d: d ? d + 4 : 0,
+        d: d,
         len: len,
         alter: contig2alter(Math.floor(packed / 4)),
         startsTie: !!(packed % 4)
       });
     }
   }
-  engraverParams.scale = b64_ui(st, pos, 4) / 1000;
-  let v = b64_ui(st, pos, 2);
-  let n = b64_ui(st, pos, 4);
+  for (let v=0; v<vcount; ++v) {
+    let name = b256_safeString(st, pos, 1);
+    nd.set_voiceName(v, name);
+  }
+  nd.set_name(b256_safeString(st, pos, 1));
+  nd.set_fileName(b256_safeString(st, pos, 1));
+  engraverParams.scale = b256_ui(st, pos, 2) / 1000;
+  let v = b256_ui(st, pos, 1);
+  let n = b256_ui(st, pos, 2);
   clicked.note = {voice: v, note: n};
-  if (clicked.note.voice === 64*64 - 1) {
+  if (clicked.note.voice === 255) {
     clicked.note = null;
   }
-  //let time = b64_ui(st, pos, 6);
+  //let time = b256_ui(st, pos, 4);
   //console.log('Decoded time:', time, timestamp2date(time));
+  //console.log(nd);
 }
 
 export function utf16_storage(utf16) {
@@ -198,4 +206,3 @@ export function url2state(url) {
     throw e;
   }
 }
-

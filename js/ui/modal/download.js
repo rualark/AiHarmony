@@ -17,7 +17,7 @@ let exportFormats = [
 function linkAsMp3() {
   return {
     href: ais.j_url,
-    download: name2filename(nd.name, nd.filename) + '.mp3'
+    download: name2filename(nd.name, nd.fileName) + '.mp3'
   };
 }
 
@@ -34,7 +34,7 @@ function downloadAsMusicXml() {
     alertify.alert("Error exporting MusicXML", e.toString());
     throw e;
   }
-  saveAs(new Blob([xml], {type: "text/xml"}), name2filename(nd.name, nd.filename) + '.xml');
+  saveAs(new Blob([xml], {type: "text/xml"}), name2filename(nd.name, nd.fileName) + '.xml');
 }
 
 function saveSvg(svgEl, name) {
@@ -45,17 +45,17 @@ function saveSvg(svgEl, name) {
 }
 
 function downloadAsSvg() {
-  saveSvg($('#abc').children()[0], name2filename(nd.name, nd.filename) + '.svg');
+  saveSvg($('#abc').children()[0], name2filename(nd.name, nd.fileName) + '.svg');
 }
 
 function downloadAsAbc() {
-  saveAs(new Blob([dataToAbc()], {type: "text/abc"}), name2filename(nd.name, nd.filename) + '.abc');
+  saveAs(new Blob([dataToAbc()], {type: "text/abc"}), name2filename(nd.name, nd.fileName) + '.abc');
 }
 
 function linkAsMidi() {
   return {
     href: ABCJS.synth.getMidiFile(dataToAbc(), {midiOutputType: 'encoded'}),
-    download: name2filename(nd.name, nd.filename) + '.mid'
+    download: name2filename(nd.name, nd.fileName) + '.mid'
   };
 }
 
