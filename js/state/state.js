@@ -3,7 +3,7 @@ import {b64_unicode, unicode_b64} from "./base64.js";
 import {async_redraw, clicked, engraverParams} from "../abc/abchelper.js";
 import {currentTimestamp, start_counter} from "../core/time.js";
 
-const ENCODING_VERSION = 6;
+const ENCODING_VERSION = 7;
 export const STATE_VOLATILE_SUFFIX = 12;
 
 let b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -98,6 +98,7 @@ export function data2string() {
   st += ui_b64(nd.keysig.mode, 1);
   st += ui_b64(nd.modes.length, 2);
   for (let i=0; i<nd.modes.length; ++i) {
+    st += ui_b64(nd.modes[i].pos, 3);
     st += ui_b64(nd.modes[i].fifths + 10, 1);
     st += ui_b64(nd.modes[i].mode, 1);
   }
@@ -152,11 +153,13 @@ function string2data(st, pos) {
   let mcount = b64_ui(st, pos, 2);
   nd.modes = [];
   for (let i = 0; i<mcount; ++i) {
+    let step = b64_ui(st, pos, 3);
     let fifths = b64_ui(st, pos, 1) - 10;
     let mode = b64_ui(st, pos, 1);
     nd.modes.push({
       fifths: fifths,
-      mode: mode
+      mode: mode,
+      step: step
     });
   }
   let beats_per_measure = b64_ui(st, pos, 1);
@@ -198,7 +201,6 @@ function string2data(st, pos) {
   }
   //let time = b64_ui(st, pos, 6);
   //console.log('Decoded time:', time, timestamp2date(time));
-  console.log(nd);
 }
 
 export function utf16_storage(utf16) {

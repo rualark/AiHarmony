@@ -1,6 +1,7 @@
 import {enableKeys} from "../ui/commands.js";
-import {getCookie, getEnvironment, pageLoadTime} from "../core/remote.js";
+import {getCookie, getEnvironment, pageLoadTime, urlNoParams} from "../core/remote.js";
 import {debugError} from "../core/debug.js";
+import {state2url} from "../state/state.js";
 
 window.showReportDialog = function (eventId) {
   try {
@@ -22,6 +23,13 @@ if (getEnvironment() === 'prod') {
       if (event.exception && !debugError && (now - pageLoadTime > 5000)) {
         console.log(event.event_id);
         alertify.error(`Problem occured and was reported to site administrator. <a style='color: white' href=# onclick='window.showReportDialog("${event.event_id}"); return false;'><b><u>Сlick here</u></b></a> to add details and track this issue.`, 45);
+      }
+      try {
+        event.tags = event.tags || {};
+        event.tags['stateUrl'] = urlNoParams() + '?state=' + state2url();
+      }
+      catch (e) {
+        console.log(e);
       }
       return event;
     }

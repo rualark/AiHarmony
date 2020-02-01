@@ -185,8 +185,10 @@ class NotesData {
       fifths: 0, // Number of alterations near key
       base_note: 9, // Base tonic note (C - 0, Am - 9)
     };
+    let mode = this.keysig;
+    mode.step = 0;
     this.modes = [
-      this.keysig
+      mode
     ];
     this.timesig = {
       beats_per_measure: 4,
