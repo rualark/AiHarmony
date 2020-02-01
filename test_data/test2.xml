@@ -2,7 +2,7 @@
 <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
 <score-partwise version="3.0">
  <work>
-  <work-title>good-cp5-extract</work-title>
+  <work-title></work-title>
  </work>
  <identification>
   <creator type="composer"></creator>
@@ -12,7 +12,7 @@
    <encoding-date>NO DATE</encoding-date>
    <encoder></encoder>
    <software>Artinfuser Harmony</software>
-   <software>AIHS:IIMWE0C0CYE4DdIGECMArAxgEQKoBdIANACwAYMBbENAE2AF56IYFl1t8izLq7GBRAFL9-WYAEkaACUEAbcBQAesiTgDis4gCMKADnoBZYPxxp-wAA5IDARyTAKIgNZqAigCc1R.t98VxBk7iAPIAdgGhPhTWstaOgT6yPjbmFj4A9j7hgQFoIf4G8bGBMQEUrkYVwK4AQhLScgrKqhraeobVlUY1RgAKXZ2DVcMDw3XiCiAAXhgA7owtmjr6BuAVkK7BAIYVWz3A.TQVGK7AWrvrFWujdQfpwLfASDUApgYA5rMAckA</software>
+   
    <encoding-description>Artinfuser Harmony / MusicXML 3.0</encoding-description>
    <supports element="print" type="yes" value="yes" attribute="new-system" />
    <supports element="print" type="yes" value="yes" attribute="new-page" />

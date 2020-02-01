@@ -90,7 +90,7 @@ export function loadState() {
       nd.reset();
       saveState();
     }
-    else console.log(e);
+    else console.trace(e);
   }
 }
 
@@ -100,7 +100,7 @@ export function saveState(doAnalysis=true) {
     if (doAnalysis) analyse();
   }
   catch (e) {
-    console.error(e);
+    throw e;
   }
 }
 

@@ -72,7 +72,7 @@ class NotesData {
     let vc = this.voices[v];
     let mlen = this.timesig.measure_len;
     vc.clef = this.voices[v - 1].clef;
-    vc.set_voiceName(this.voices[v - 1].name);
+    this.set_voiceName(v, this.voices[v - 1].name);
     vc.species = this.voices[v - 1].species;
     vc.notes = [];
     let len = this.get_voice_len(0);
@@ -139,6 +139,7 @@ class NotesData {
     }
     this.keysig = keysig;
     this.modes[0] = keysig;
+    this.modes[0].step = 0;
     this.saveState();
   }
 

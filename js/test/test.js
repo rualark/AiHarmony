@@ -24,6 +24,7 @@ import {dataToAbc} from "../abc/dataToAbc.js";
 import {waitForVar} from "../core/promise.js";
 import {makePatch} from "../core/string.js";
 import {sendToAis} from "../integration/aiStudio.js";
+import {unicode_b64} from "../state/base64.js";
 
 export let testState = {
   testing: false
@@ -47,23 +48,31 @@ function console2html() {
 async function waitForState(stage, obj, vals, pause, timeout) {
   // Check for abc redraw error
   if (state.error != null) {
-    throw state.error;
+    throw {
+      message: state.error
+    };
   }
   try {
     await waitForVar(obj, 'state', vals, pause, timeout);
   }
   catch (e) {
-    throw `${stage}. Timeout ${timeout} waiting for state (current ${obj.state}) with pause ${pause}`;
+    throw {
+      message: `${stage}. Timeout ${timeout} waiting for state (current ${obj.state}) with pause ${pause}`
+    };
   }
 }
 
-function assert2strings(stage, st1, st2, max_diff=0) {
+function assert2strings(stage, fname, st1, st2, max_diff=0) {
   if (st1 !== st2) {
     let patch = makePatch(st1, st2);
     let diff = st1.length - patch.p1 - patch.p2 - 1;
     if (diff <= max_diff) return;
     console.log(patch, st1, st2);
-    throw stage + ` does not match ${diff} chars`;
+    throw {
+      message: stage + ` does not match ${diff} chars`,
+      fname: fname,
+      data: st2
+    };
   }
 }
 
@@ -149,7 +158,7 @@ async function test_framework() {
     );
   }
   catch (e) {
-    throw e;
+    throw { message: e };
   }
   let timeouted = 0;
   try {
@@ -160,7 +169,7 @@ async function test_framework() {
     console.log('+ Successfully timeouted waitForVar');
   }
   if (!timeouted) {
-    throw 'This test should timeout';
+    throw { message: 'This test should timeout'};
   }
 }
 
@@ -178,26 +187,26 @@ async function test_do(test_level) {
   readRemoteMusicXmlFile('musicxml/good-cp5-extract.xml');
   await waitForState('next_note', state, ['ready'], 50, 5000);
   let loaded_plain = data2plain().slice(0, -STATE_IGNORE_SUFFIX);
-  assert2strings('Loaded plain',
+  assert2strings('Loaded plain', 'test1.plain',
     await httpRequestNoCache('GET', 'test_data/test1.plain'),
     loaded_plain);
-  assert2strings('Loaded abc',
+  assert2strings('Loaded abc', 'test1.abc',
     await httpRequestNoCache('GET', 'test_data/test1.abc'),
     dataToAbc());
-  assert2strings('Base64 compression', loaded_plain, LZString.decompressFromBase64(LZString.compressToBase64(loaded_plain)));
-  assert2strings('UTF16 compression', loaded_plain, LZString.decompressFromUTF16(LZString.compressToUTF16(loaded_plain)));
+  assert2strings('Base64 compression', '', loaded_plain, LZString.decompressFromBase64(LZString.compressToBase64(loaded_plain)));
+  assert2strings('UTF16 compression', '', loaded_plain, LZString.decompressFromUTF16(LZString.compressToUTF16(loaded_plain)));
   await test_actions();
-  assert2strings('Edited plain',
+  assert2strings('Edited plain', 'test2.plain',
     await httpRequestNoCache('GET', 'test_data/test2.plain'),
     data2plain().slice(0, -STATE_IGNORE_SUFFIX));
-  assert2strings('Edited XML',
+  assert2strings('Edited XML', 'test2.xml',
     removeStateFromXml(await httpRequestNoCache('GET', 'test_data/test2.xml')),
     removeStateFromXml(dataToMusicXml('NO DATE')));
   for (let i=0; i<34; ++i) {
     await waitForState('undo', state, ['ready'], 50, 5000);
     undoState();
   }
-  assert2strings('Undo plain', loaded_plain, data2plain().slice(0, -STATE_IGNORE_SUFFIX));
+  assert2strings('Undo plain', '', loaded_plain, data2plain().slice(0, -STATE_IGNORE_SUFFIX));
   if (test_level > 1) {
     sendToAic(false);
     try {
@@ -225,7 +234,20 @@ export async function test(test_level) {
     await test_do(test_level);
   }
   catch (e) {
-    document.getElementById("testResult").innerHTML = e.toString();
+    if (e != null) {
+      let st = '';
+      if (e.message != null) {
+        st = e.message.toString();
+      }
+      else {
+        st = e.toString();
+      }
+      if (e.fname != null) {
+        st += ` <a href="data:text/plain;base64,${unicode_b64(e.data)}" download="${e.fname}">Canonize this test</a>`;
+      }
+      document.getElementById("testResult").innerHTML = st;
+    }
+    console.trace();
     throw e;
   }
   console.log('TEST PASSED');

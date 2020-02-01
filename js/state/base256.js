@@ -1,5 +1,8 @@
 export function ui_b256(num, chars=1) {
-  if (num == null) throw "Trying to serialize null";
+  if (num == null) {
+    console.trace();
+    throw "Trying to serialize null";
+  }
   //console.log('ui_b256', num);
   //num = num || 0;
   let i = Math.floor(num);
