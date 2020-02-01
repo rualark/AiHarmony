@@ -2011,11 +2011,11 @@ asm["__wasm_call_ctors"] = function() {
   return real____wasm_call_ctors.apply(null, arguments);
 };
 
-var real___Z12doubleValuesPfi = asm["_Z12doubleValuesPfi"];
-asm["_Z12doubleValuesPfi"] = function() {
+var real___Z12doubleValuesPhi = asm["_Z12doubleValuesPhi"];
+asm["_Z12doubleValuesPhi"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return real___Z12doubleValuesPfi.apply(null, arguments);
+  return real___Z12doubleValuesPhi.apply(null, arguments);
 };
 
 var real__main = asm["main"];
@@ -2102,10 +2102,10 @@ var ___wasm_call_ctors = Module["___wasm_call_ctors"] = function() {
   return Module["asm"]["__wasm_call_ctors"].apply(null, arguments)
 };
 
-var __Z12doubleValuesPfi = Module["__Z12doubleValuesPfi"] = function() {
+var __Z12doubleValuesPhi = Module["__Z12doubleValuesPhi"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-  return Module["asm"]["_Z12doubleValuesPfi"].apply(null, arguments)
+  return Module["asm"]["_Z12doubleValuesPhi"].apply(null, arguments)
 };
 
 var _main = Module["_main"] = function() {

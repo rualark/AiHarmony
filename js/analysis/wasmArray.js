@@ -1,4 +1,4 @@
-const ccallArrays = (func, returnType, paramTypes=[], params, {heapIn="HEAPF32", heapOut="HEAPF32", returnArraySize=1}={}) => {
+function ccallArrays (func, returnType, paramTypes, params, {heapIn="HEAPF32", heapOut="HEAPF32", returnSizeElements=1}={}) {
 
   const heapMap = {};
   heapMap.HEAP8 = Int8Array; // int8_t
@@ -12,9 +12,8 @@ const ccallArrays = (func, returnType, paramTypes=[], params, {heapIn="HEAPF32",
 
   let res;
   let error;
-  const returnTypeParam = returnType === "array" ? "number" : returnType;
+  paramTypes = paramTypes || [];
   const parameters = [];
-  const parameterTypes = [];
   const bufs = [];
 
   try {
@@ -23,12 +22,7 @@ const ccallArrays = (func, returnType, paramTypes=[], params, {heapIn="HEAPF32",
 
         if (paramTypes[p] === "array" || Array.isArray(params[p])) {
 
-          const typedArray = new heapMap[heapIn](params[p].length);
-
-          for (let i=0; i<params[p].length; i++) {
-            typedArray[i] = params[p][i]
-          }
-
+          const typedArray = new heapMap[heapIn](params[p]);
           const buf = Module._malloc(typedArray.length * typedArray.BYTES_PER_ELEMENT);
 
           switch (heapIn) {
@@ -43,23 +37,21 @@ const ccallArrays = (func, returnType, paramTypes=[], params, {heapIn="HEAPF32",
               break;
             case "HEAPF64":
               Module[heapIn].set(typedArray, buf >> 3);
-              break
+              break;
           }
 
           bufs.push(buf);
           parameters.push(buf);
           parameters.push(params[p].length);
-          parameterTypes.push("number");
-          parameterTypes.push("number")
 
         } else {
           parameters.push(params[p]);
-          parameterTypes.push(paramTypes[p] == null ? "number" : paramTypes[p])
         }
       }
     }
 
-    res = Module.ccall(func, returnTypeParam, parameterTypes, parameters)
+    console.log(parameters);
+    res = Module[func](...parameters);
   } catch (e) {
     error = e
   } finally {
@@ -73,18 +65,22 @@ const ccallArrays = (func, returnType, paramTypes=[], params, {heapIn="HEAPF32",
   if (returnType === "array") {
     const returnData = [];
 
-    for (let v=0; v<returnArraySize; v++) {
-      returnData.push(Module[heapOut][res/heapMap[heapOut].BYTES_PER_ELEMENT+v])
+    let bpEl = heapMap[heapOut].BYTES_PER_ELEMENT;
+    let size = 0;
+    for (let v=0; v<returnSizeElements; v++) {
+      size *= Math.pow(256, bpEl);
+      size += Module[heapOut][res / bpEl + v];
+    }
+    for (let v=0; v<size; v++) {
+      returnData.push(Module[heapOut][res/bpEl + returnSizeElements + v])
     }
 
-    return returnData
+    return returnData;
   } else {
-    return res
+    return res;
   }
-};
+}
 
-// Wrap around cwrap also, as a bonus
-const cwrapArrays = (func, returnType, paramTypes, {heapIn="HEAPF32", heapOut="HEAPF32", returnArraySize=1}={}) => {
+function cwrapArrays(func, returnType, paramTypes, {heapIn="HEAPF32", heapOut="HEAPF32", returnArraySize=1}={}) {
   return params => ccallArrays(func, returnType, paramTypes, params, {heapIn, heapOut, returnArraySize})
-};
-
+}

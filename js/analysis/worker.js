@@ -27,6 +27,7 @@ function waitForVar(obj, field, vals, pause, timeout) {
 async function initWasmModule(modName) {
   workerState = {};
   workerState.state = 'loading js';
+  importScripts('wasmArray.js');
   importScripts('modules/' + modName + '.js');
   if (Module == null) {
     throw 'Error loading worker js module';
@@ -63,6 +64,7 @@ function callWasmFuncArray(wasmMod, funcName, arr) {
   let arrayOnHeap;
   try {
     arrayOnHeap = transferToHeap(wasmMod, arr);
+    console.log(arrayOnHeap, arr.length);
     return wasmMod[funcName](arrayOnHeap, arr.length);
   }
   finally {
@@ -97,7 +99,12 @@ self.addEventListener('message', async function(event) {
       if (workerState.state === 'init') {
         await initWasmModule(modName);
       }
-      let res = callWasmFuncArrayToArray(Module, funcName, data);
+      const res = ccallArrays(funcName, "array", ["array"], [data], {
+        heapIn: "HEAPU8",
+        heapOut: "HEAPU8",
+        returnSizeElements: 2
+      });
+      //let res = callWasmFuncArrayToArray(Module, funcName, data);
       message("RESULT", modName, funcName, res);
     }
     catch (e) {

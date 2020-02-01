@@ -1,82 +1,15 @@
 import {nd} from "../notes/NotesData.js";
-import {b64_unicode, unicode_b64} from "./base64.js";
+import {b64_safeShortString, b64_string, b64_ui, safeShortString_b64, string_b64, ui_b64} from "./base64.js";
 import {async_redraw, clicked, engraverParams} from "../abc/abchelper.js";
 import {currentTimestamp, start_counter} from "../core/time.js";
 
 const ENCODING_VERSION = 9;
 export const STATE_VOLATILE_SUFFIX = 12;
 
-let b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-let fb64 = {};
+export let b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+export let fb64 = {};
 
-function ui_b64(num, chars) {
-  if (num == null) console.trace();
-  //num = num || 0;
-  let i = Math.floor(num);
-  if (i < 0) {
-    throw("ui_b64 can convert to Base64 only non-negative numbers, but got " + i);
-  }
-  let st = '';
-  for (let c=0; c<chars; ++c) {
-    let data = i % 64;
-    //console.log(num, i, c, data, b64[data], b64);
-    st = b64[data] + st;
-    i = Math.floor(i / 64);
-  }
-  if (i > 0) {
-    throw(`ui_b64 cannot convert number ${num} to ${chars} base64 characters due to overflow`);
-  }
-  //console.log('ui_b64', num, chars, st);
-  return st;
-}
-
-function b64_single(char) {
-  if (char in fb64) return fb64[char];
-  throw(`Cannot convert symbol ${char} from Base64`);
-}
-
-function b64_ui(st, pos, chars) {
-  let res = 0;
-  let pow = 1;
-  for (let c=0; c<chars; ++c) {
-    let data = b64_single(st[pos[0] + chars - 1 - c]);
-    res += data * pow;
-    pow *= 64;
-  }
-  pos[0] += chars;
-  //console.log('b64_ui', pos[0] - chars, chars, st.substr(pos[0] - chars, chars), res);
-  return res;
-}
-
-function safeShortString_b64(st) {
-  return ui_b64(st.length, 1) + st;
-}
-
-function safeString_b64(st) {
-  return ui_b64(st.length, 2) + st;
-}
-
-function string_b64(st) {
-  return safeString_b64(unicode_b64(st));
-}
-
-function b64_string(st, pos) {
-  let chars = b64_ui(st, pos, 2);
-  let res = b64_unicode(st.substr(pos[0], chars));
-  pos[0] += chars;
-  //console.log('b64_string', pos[0] - chars, chars, st.substr(pos[0] - chars, chars), res);
-  return res;
-}
-
-function b64_safeShortString(st, pos) {
-  let chars = b64_ui(st, pos, 1);
-  let res = st.substr(pos[0], chars);
-  //console.log('b64_safeShortString', chars, res);
-  pos[0] += chars;
-  return res;
-}
-
-function alter2contig(alt) {
+function alter2c  ontig(alt) {
   if (alt === 10) return 0;
   return alt + 3;
 }
