@@ -15,7 +15,7 @@ import {showTimesigModal} from "./modal/timesig.js";
 import {showKeysigModal} from "./modal/keysig.js";
 import {showOpenMusicXmlModal} from "../MusicXml/readLocalMusicXml.js";
 import {showDownloadModal} from "./modal/download.js";
-import {showShareModal} from "./modal/share.js";
+import {showShareModal} from "./modal/shareModal.js";
 import {redoState, saveState, undoState} from "../state/history.js";
 import {mobileOrTablet} from "../core/mobileCheck.js";
 import {sendToAic} from "../integration/aiCounterpoint.js";

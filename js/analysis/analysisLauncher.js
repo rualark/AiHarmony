@@ -1,6 +1,8 @@
 import {debugLog} from "../core/debug.js";
 import {plain2data} from "../state/state.js";
 import {async_redraw} from "../abc/abchelper.js";
+import {b256_debug} from "../core/base256.js";
+import {ares} from "./AnalysisResults.js";
 
 let workers = {};
 
@@ -14,18 +16,21 @@ async function workerMessageReceiver(event) {
     debugLog(5, modName, funcName, data);
   }
   if (type === 'RESULT') {
-    //plain2data(data, [0]);
+    debugLog(10, 'Debug result:' + b256_debug(data), data.length);
+    ares.import(data);
+    ares.printFlags();
+    console.log(ares);
     async_redraw();
   }
   console.log(event.data);
 }
 
 export function launchAnalysis(modName, funcName, data) {
-  if (workers.modName == null) {
+  if (workers[modName] == null) {
     workers[modName] = {};
     workers[modName].worker = createWorker();
   }
-  console.log('AnalyseL');
+  //console.log('AnalyseL');
   let worker = workers[modName].worker;
   worker.addEventListener('message', workerMessageReceiver);
   worker.postMessage({

@@ -2,7 +2,7 @@ import {MusicXmlParser} from "./MusicXmlParser.js";
 import {nd, supportedNoteLen} from "../notes/NotesData.js";
 import {timesigs} from "../ui/modal/timesig.js";
 import {getBestClef} from "../notes/bestClef.js";
-import {d2c, keysig_imprint} from "../notes/notehelper.js";
+import {d2c, keysig_imprint} from "../notes/noteHelper.js";
 import {storage2state, url2state} from "../state/state.js";
 import {async_redraw, clicked} from "../abc/abchelper.js";
 import {saveState} from "../state/history.js";
@@ -75,6 +75,7 @@ export function musicXmlToData(txt) {
       species: 10
     });
     nd.keysig.fifths = null;
+    nd.keysig.mode = 13;
     nd.voices[vi].notes = [];
     let ncount = 0;
     for (let m=1; m<mxp.notes[vi].length; ++m) {
@@ -91,7 +92,7 @@ export function musicXmlToData(txt) {
         if (note.fifths !== 100) {
           if (nd.keysig.fifths == null) {
             nd.build_keysig(note.fifths, 0);
-            ki = keysig_imprint(nd.keysig.fifths);
+            ki = nd.keysig.imprint;
             //console.log(note.fifths, fifths2keysig[note.fifths]);
           } else if (nd.keysig.fifths !== note.fifths) {
             xmlLoadWarnings.add("Key signature changes in MusicXml: ignoring");

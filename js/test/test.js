@@ -24,7 +24,7 @@ import {dataToAbc} from "../abc/dataToAbc.js";
 import {waitForVar} from "../core/promise.js";
 import {makePatch} from "../core/string.js";
 import {sendToAis} from "../integration/aiStudio.js";
-import {unicode_b64} from "../state/base64.js";
+import {unicode_b64} from "../core/base64.js";
 
 export let testState = {
   testing: false

@@ -10,5 +10,5 @@ export function analyse() {
   let st = '';
   for (let i=0; i<20000; ++i) st += '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789';
   */
-  launchAnalysis('CA3', '__Z12doubleValuesPhi', data2plain());
+  launchAnalysis('CA3', '__Z7analysePhi', data2plain());
 }

@@ -13,7 +13,7 @@ window.showReportDialog = function (eventId) {
   Sentry.showReportDialog({eventId: eventId});
 };
 
-if (getEnvironment() !== 'prod') {
+if (getEnvironment() === 'prod') {
   Sentry.init({
     dsn: 'https://ad05883cb9534743b6ca504ece76bba6@sentry.io/1894684',
     environment: getEnvironment(),
@@ -27,6 +27,7 @@ if (getEnvironment() !== 'prod') {
       try {
         event.tags = event.tags || {};
         event.tags['stateUrl'] = urlNoParams() + '?state=' + state2url();
+        //console.log('Sentry stateUrl', event.tags['stateUrl']);
       }
       catch (e) {
         console.log(e);

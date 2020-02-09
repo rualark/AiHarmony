@@ -60,6 +60,8 @@ function notation_redraw() {
   }
   catch (e) {
     state.error = e;
+    state.state = 'ready';
+    throw e;
   }
   state.state = 'ready';
 }
@@ -92,6 +94,7 @@ export function init_abcjs(clickListener) {
     clickListener: clickListener,
     add_classes: true,
     dragging: true,
+    selectAll: true,
     selectionColor: "#33AAFF",
     dragColor: "#3399FF",
     staffwidth: window.innerWidth - 60,

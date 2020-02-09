@@ -1242,7 +1242,7 @@ var Tune = function Tune() {
     var beatsPerMeasure;
     var meter = this.getMeterFraction();
 
-    if (meter.den === 8) {
+    if (meter.num % 3 === 0) {
       beatsPerMeasure = meter.num / 3;
     } else {
       beatsPerMeasure = meter.num;
@@ -2578,7 +2578,7 @@ var Tune = function Tune() {
 
       var meter = this.getMeterFraction();
 
-      if (meter && meter.den === 8) {
+      if (meter && meter.num % 3 === 0) {
         bpm = 120;
       }
     }
@@ -3201,7 +3201,9 @@ var create;
     var midiJs = new Preparer();
     var title = abcTune.metaText ? abcTune.metaText.title : undefined;
     if (title && title.length > 128) title = title.substring(0, 124) + '...';
-    midi.setGlobalInfo(commands.tempo, title);
+    var key = abcTune.getKeySignature();
+    var time = abcTune.getMeterFraction();
+    midi.setGlobalInfo(commands.tempo, title, key, time);
     midiJs.setGlobalInfo(commands.tempo, title);
 
     for (var i = 0; i < commands.tracks.length; i++) {
@@ -3212,6 +3214,10 @@ var create;
         var event = commands.tracks[i][j];
 
         switch (event.cmd) {
+          case 'text':
+            midi.setText(event.type, event.text);
+            break;
+
           case 'program':
             midi.setChannel(event.channel);
             midi.setInstrument(event.instrument);
@@ -3309,6 +3315,7 @@ var flatten;
   var pitchesTied;
   var lastNoteDurationPosition;
   var currentTrackCounter;
+  var currentTrackName;
   var meter = {
     num: 4,
     den: 4
@@ -3350,6 +3357,7 @@ var flatten;
 
     currentTrack = undefined;
     currentTrackCounter = undefined;
+    currentTrackName = undefined;
     pitchesTied = {}; // For resolving chords.
 
     meter = {
@@ -3388,12 +3396,21 @@ var flatten;
         instrument: instrument
       }];
       currentTrackCounter = 0;
+      currentTrackName = undefined;
       pitchesTied = {};
 
       for (var j = 0; j < voice.length; j++) {
         var element = voice[j];
 
         switch (element.el_type) {
+          case "name":
+            currentTrackName = {
+              cmd: 'text',
+              type: "name",
+              text: element.trackName
+            };
+            break;
+
           case "note":
             writeNote(element, options.voicesOff);
             break;
@@ -3492,6 +3509,7 @@ var flatten;
       }
 
       if (currentTrack[0].instrument === undefined) currentTrack[0].instrument = instrument ? instrument : 0;
+      if (currentTrackName) currentTrack.unshift(currentTrackName);
       tracks.push(currentTrack);
       if (chordTrack.length > 0) // Don't do chords on more than one track, so turn off chord detection after we create it.
         chordTrackFinished = true;
@@ -4876,10 +4894,10 @@ var rendererFactory;
     this.trackstrings = "";
     this.trackcount = 0;
     this.noteOnAndChannel = "%90";
+    this.noteOffAndChannel = "%80";
   }
 
   Midi.prototype.setTempo = function (qpm) {
-    //console.log("setTempo",qpm);
     if (this.trackcount === 0) {
       this.startTrack();
       this.track += "%00%FF%51%03" + toHex(Math.round(60000000 / qpm), 6);
@@ -4887,25 +4905,16 @@ var rendererFactory;
     }
   };
 
-  Midi.prototype.setGlobalInfo = function (qpm, name) {
-    //console.log("setGlobalInfo",qpm, key, time, name);
+  Midi.prototype.setGlobalInfo = function (qpm, name, key, time) {
     if (this.trackcount === 0) {
       this.startTrack();
-      this.track += "%00%FF%51%03" + toHex(Math.round(60000000 / qpm), 6); // TODO-PER: we could also store the key and time signatures, something like:
-      //00 FF 5902 03 00 - key signature
-      //00 FF 5804 04 02 30 08 - time signature
+      var divisions = Math.round(60000000 / qpm);
+      this.track += "%00%FF%51%03" + toHex(divisions, 6);
+      if (key) this.track += keySignature(key);
+      if (time) this.track += timeSignature(time);
 
       if (name) {
-        // If there are multi-byte chars, we don't know how long the string will be until we create it.
-        var nameArray = "";
-
-        for (var i = 0; i < name.length; i++) {
-          nameArray += toHex(name.charCodeAt(i), 2);
-        }
-
-        this.track += "%00%FF%03" + toHex(nameArray.length / 3, 2); // Each byte is represented by three chars "%XX", so divide by 3 to get the length.
-
-        this.track += nameArray;
+        this.track += encodeString(name, "%01");
       }
 
       this.endTrack();
@@ -4913,11 +4922,11 @@ var rendererFactory;
   };
 
   Midi.prototype.startTrack = function () {
-    //console.log("startTrack");
     this.track = "";
+    this.trackName = "";
+    this.trackInstrument = "";
     this.silencelength = 0;
     this.trackcount++;
-    this.first = true;
 
     if (this.instrument) {
       this.setInstrument(this.instrument);
@@ -4925,7 +4934,7 @@ var rendererFactory;
   };
 
   Midi.prototype.endTrack = function () {
-    //console.log("endTrack");
+    this.track = this.trackName + this.trackInstrument + this.track;
     var tracklength = toHex(this.track.length / 3 + 4, 8);
     this.track = "MTrk" + tracklength + // track header
     this.track + '%00%FF%2F%00'; // track end
@@ -4933,42 +4942,51 @@ var rendererFactory;
     this.trackstrings += this.track;
   };
 
+  Midi.prototype.setText = function (type, text) {
+    // MIDI defines the following types of events:
+    //FF 01 len text Text Event
+    //FF 02 len text Copyright Notice
+    //FF 03 len text Sequence/Track Name
+    //FF 04 len text Instrument Name
+    //FF 05 len text Lyric
+    //FF 06 len text Marker
+    //FF 07 len text Cue Point
+    switch (type) {
+      case 'name':
+        this.trackName = encodeString(text, "%03");
+        break;
+    }
+  };
+
   Midi.prototype.setInstrument = function (number) {
-    //console.log("setInstrument", number);
-    if (this.track) this.track = "%00%C0" + toHex(number, 2) + this.track;else this.track = "%00%C0" + toHex(number, 2);
+    this.trackInstrument = "%00%C0" + toHex(number, 2);
     this.instrument = number;
   };
 
   Midi.prototype.setChannel = function (number) {
     this.channel = number;
     this.noteOnAndChannel = "%9" + this.channel.toString(16);
+    this.noteOffAndChannel = "%8" + this.channel.toString(16);
   };
 
   Midi.prototype.startNote = function (pitch, loudness) {
-    //console.log("startNote", pitch, loudness);
     this.track += toDurationHex(this.silencelength); // only need to shift by amount of silence (if there is any)
 
     this.silencelength = 0;
-
-    if (this.first) {
-      this.first = false;
-      this.track += this.noteOnAndChannel;
-    }
-
+    this.track += this.noteOnAndChannel;
     this.track += "%" + pitch.toString(16) + toHex(loudness, 2); //note
   };
 
   Midi.prototype.endNote = function (pitch, length) {
-    //console.log("endNote", pitch, length);
     this.track += toDurationHex(this.silencelength + length); // only need to shift by amount of silence (if there is any)
 
     this.silencelength = 0; //		this.track += toDurationHex(length); //duration
 
+    this.track += this.noteOffAndChannel;
     this.track += "%" + pitch.toString(16) + "%00"; //end note
   };
 
   Midi.prototype.addRest = function (length) {
-    //console.log("addRest", length);
     this.silencelength += length;
   };
 
@@ -4995,7 +5013,83 @@ var rendererFactory;
       style: 'display:block; height: 20px;'
     });
     parent.insertBefore(embed, parent.firstChild);
-  }; // s is assumed to be of even length
+  };
+
+  function encodeString(str, cmdType) {
+    // If there are multi-byte chars, we don't know how long the string will be until we create it.
+    var nameArray = "";
+
+    for (var i = 0; i < str.length; i++) {
+      nameArray += toHex(str.charCodeAt(i), 2);
+    }
+
+    return "%00%FF" + cmdType + toHex(nameArray.length / 3, 2) + nameArray; // Each byte is represented by three chars "%XX", so divide by 3 to get the length.
+  }
+
+  function keySignature(key) {
+    //00 FF 5902 03 00 - key signature
+    if (!key || !key.accidentals) return "";
+    var hex = "%00%FF%59%02";
+    var sharpCount = 0;
+    var flatCount = 256;
+
+    for (var i = 0; i < key.accidentals.length; i++) {
+      if (key.accidentals[i].acc === "sharp") sharpCount++;else if (key.accidentals[i].acc === "flat") flatCount--;
+    }
+
+    var sig = flatCount !== 256 ? toHex(flatCount, 2) : toHex(sharpCount, 2);
+    var mode = key.mode === "m" ? "%01" : "%00";
+    return hex + sig + mode;
+  }
+
+  function timeSignature(time) {
+    //00 FF 58 04 04 02 30 08 - time signature
+    var hex = "%00%FF%58%04" + toHex(time.num, 2);
+    var dens = {
+      1: 0,
+      2: 1,
+      4: 2,
+      8: 3,
+      16: 4,
+      32: 5
+    };
+    var den = dens[time.den];
+    if (!den) return ""; // the denominator is not supported, so just don't include this.
+
+    hex += toHex(den, 2);
+    var clocks;
+
+    switch (time.num + "/" + time.den) {
+      case "2/4":
+      case "3/4":
+      case "4/4":
+      case "5/4":
+        clocks = 24;
+        break;
+
+      case "6/4":
+        clocks = 72;
+        break;
+
+      case "2/2":
+      case "3/2":
+      case "4/2":
+        clocks = 48;
+        break;
+
+      case "3/8":
+      case "6/8":
+      case "9/8":
+      case "12/8":
+        clocks = 36;
+        break;
+    }
+
+    if (!clocks) return ""; // time sig is not supported.
+
+    hex += toHex(clocks, 2);
+    return hex + "%08";
+  } // s is assumed to be of even length
 
 
   function encodeHex(s) {
@@ -5022,6 +5116,8 @@ var rendererFactory;
   function toDurationHex(n) {
     var res = 0;
     var a = []; // cut up into 7 bit chunks;
+
+    n = Math.round(n);
 
     while (n !== 0) {
       a.push(n & 0x7F);
@@ -5095,6 +5191,7 @@ var sequence;
 
     var transpose = options.midiTranspose || 0;
     var channel = options.channel || 0;
+    var channelExplicitlySet = false;
     var drumPattern = options.drum || "";
     var drumBars = options.drumBars || 1;
     var drumIntro = options.drumIntro || 0;
@@ -5137,10 +5234,17 @@ var sequence;
           program = globals.program[1];
           channel = globals.program[0];
         }
+
+        channelExplicitlySet = true;
       }
 
       if (globals.transpose) transpose = globals.transpose[0];
-      if (globals.channel) channel = globals.channel[0];
+
+      if (globals.channel) {
+        channel = globals.channel[0];
+        channelExplicitlySet = true;
+      }
+
       if (globals.drum) drumPattern = globals.drum;
       if (globals.drumbars) drumBars = globals.drumbars[0];
       if (globals.drumon) drumOn = true;
@@ -5220,9 +5324,14 @@ var sequence;
 
             if (!voices[voiceNumber]) {
               voices[voiceNumber] = [].concat(JSON.parse(JSON.stringify(startVoice)));
+              var voiceName = getTrackTitle(line.staffGroup, voiceNumber);
+              if (voiceName) voices[voiceNumber].unshift({
+                el_type: "name",
+                trackName: voiceName
+              });
             }
 
-            if (staff.clef && staff.clef.type === 'perc') {
+            if (staff.clef && staff.clef.type === 'perc' && !channelExplicitlySet) {
               for (var cl = 0; cl < voices[voiceNumber].length; cl++) {
                 if (voices[voiceNumber][cl].el_type === 'instrument') voices[voiceNumber][cl].program = PERCUSSION_PROGRAM;
               }
@@ -5446,6 +5555,7 @@ var sequence;
                         el_type: 'instrument',
                         program: elem.params[0]
                       });
+                      channelExplicitlySet = true;
                       break;
 
                     case "transpose":
@@ -5571,6 +5681,18 @@ var sequence;
 
     return voices;
   };
+
+  function getTrackTitle(staffGroup, voiceNumber) {
+    if (!staffGroup || !staffGroup.staffs) return undefined;
+
+    for (var i = 0; i < staffGroup.staffs.length; i++) {
+      var staff = staffGroup.staffs[i];
+
+      for (var j = 0; j < staff.voices.length; j++) {
+        if (staff.voices[j] === voiceNumber) return staffGroup.voices[staff.voices[j]].header;
+      }
+    }
+  }
 
   function interpretTempo(element) {
     var duration = 1 / 4;
@@ -15630,6 +15752,13 @@ AbsoluteElement.prototype.draw = function (renderer, bartop) {
 
   var g = renderer.endGroup(klass);
   if (g) this.elemset.push(g);
+
+  if (klass === "tempo" && this.children.length > 0) {
+    renderer.controller.currentAbsEl.elemset[0] = this.elemset[0]; // Combine any tempo elements that are in a row. TODO-PER: this is a hack because the tempo note is an AbsoluteElement so there are nested AbsoluteElements here.
+
+    this.children[0].adjustElements(renderer);
+  }
+
   if (this.klass) this.setClass("mark", "", "#00ff00");
   if (this.hint) this.setClass("abcjs-hint", "", null);
   this.abcelem.abselem = this;
@@ -17964,32 +18093,23 @@ CrescendoElem.prototype.draw = function (renderer) {
   var y = renderer.calcY(this.pitch) + 4; // This is the top pixel to use (it is offset a little so that it looks good with the volume marks.)
 
   var height = 8;
-  renderer.createElemSet({
-    klass: "dynamics"
-  });
 
   if (this.dir === "<") {
-    this.drawLine(renderer, y + height / 2, y);
-    this.drawLine(renderer, y + height / 2, y + height);
+    this.drawLine(renderer, y + height / 2, y, y + height / 2, y + height);
   } else {
-    this.drawLine(renderer, y, y + height / 2);
-    this.drawLine(renderer, y + height, y + height / 2);
+    this.drawLine(renderer, y, y + height / 2, y + height, y + height / 2);
   }
-
-  var g = renderer.closeElemSet();
-  renderer.controller.recordHistory(g);
 };
 
-CrescendoElem.prototype.drawLine = function (renderer, y1, y2) {
+CrescendoElem.prototype.drawLine = function (renderer, y1, y2, y3, y4) {
   // TODO-PER: This is just a quick hack to make the dynamic marks not crash if they are mismatched. See the slur treatment for the way to get the beginning and end.
   var left = this.anchor1 ? this.anchor1.x : 0;
   var right = this.anchor2 ? this.anchor2.x : 800;
-  var pathString = sprintf("M %f %f L %f %f", left, y1, right, y2);
+  var pathString = sprintf("M %f %f L %f %f M %f %f L %f %f", left, y1, right, y2, left, y3, right, y4);
   renderer.printPath({
     path: pathString,
     stroke: "#000000",
-    'class': renderer.addClasses('decoration'),
-    notSelectable: true
+    'class': renderer.addClasses('dynamics decoration')
   });
 };
 
@@ -18589,7 +18709,8 @@ var EngraverController = function EngraverController(paper, params) {
   params = params || {};
   this.selectionColor = params.selectionColor;
   this.dragColor = params.dragColor ? params.dragColor : params.selectionColor;
-  this.dragging = params.dragging;
+  this.dragging = !!params.dragging;
+  this.selectAll = !!params.selectAll;
   this.responsive = params.responsive;
   this.space = 3 * spacing.SPACE;
   this.scale = params.scale ? parseFloat(params.scale) : 0;
@@ -18841,7 +18962,7 @@ EngraverController.prototype.engraveTune = function (abctune, tuneNumber) {
     for (var h = 0; h < this.history.length; h++) {
       var hist = this.history[h];
 
-      if (!hist.svgEl.getAttribute("notSelectable")) {
+      if (hist.selectable) {
         hist.svgEl.setAttribute("tabindex", 0);
         hist.svgEl.setAttribute("data-index", h);
         hist.svgEl.addEventListener("keydown", keyboardDown.bind(this));
@@ -18858,19 +18979,16 @@ EngraverController.prototype.engraveTune = function (abctune, tuneNumber) {
 
 function getCoord(ev) {
   var x = ev.offsetX;
-  var y = ev.offsetY; // TODO-PER: This only works for Firefox, not Chrome.
-  // The target might be the SVG that we want, or it could be an item in the SVG (usually a path). If it is not the SVG then
+  var y = ev.offsetY; // The target might be the SVG that we want, or it could be an item in the SVG (usually a path). If it is not the SVG then
   // add an offset to the coordinates.
-  //console.log(x, y, ev.target.tagName, ev, ev.target.getBoundingClientRect())
-
-  if (ev.target.tagName.toLowerCase() !== 'svg') {
-    var box = ev.target.getBBox();
-    var absRect = ev.target.getBoundingClientRect();
-    var offsetX = ev.clientX - absRect.left;
-    var offsetY = ev.clientY - absRect.top;
-    x = offsetX + box.x;
-    y = offsetY + box.y;
-  }
+  // if (ev.target.tagName.toLowerCase() !== 'svg') {
+  // 	var box = ev.target.getBBox();
+  // 	var absRect = ev.target.getBoundingClientRect();
+  // 	var offsetX = ev.clientX - absRect.left;
+  // 	var offsetY = ev.clientY - absRect.top;
+  // 	x = offsetX + box.x;
+  // 	y = offsetY + box.y;
+  // }
 
   return [x, y];
 }
@@ -19023,13 +19141,20 @@ function mouseUp(ev) {
 }
 
 EngraverController.prototype.recordHistory = function (svgEl, notSelectable) {
-  var isNote = this.currentAbsEl && this.currentAbsEl.abcelem && this.currentAbsEl.abcelem.el_type === "note" && !this.currentAbsEl.abcelem.rest;
+  var isNote = this.currentAbsEl && this.currentAbsEl.abcelem && this.currentAbsEl.abcelem.el_type === "note" && !this.currentAbsEl.abcelem.rest && svgEl.tagName !== 'text';
+  var selectable = notSelectable !== true;
+
+  if (!this.selectAll) {
+    if (!this.currentAbsEl || this.currentAbsEl.abcelem.el_type !== "note" && this.currentAbsEl.abcelem.el_type !== "bar") selectable = false;
+  }
+
   this.history.push({
     absEl: this.currentAbsEl,
     svgEl: svgEl,
-    selectable: notSelectable !== true,
+    selectable: selectable,
     isDraggable: isNote
-  });
+  }); //var last = this.history[this.history.length-1];
+  //console.log(last.svgEl, { selectable: last.selectable, isDraggable: last.isDraggable});
 };
 
 function getDim(historyEl) {
@@ -20939,7 +21064,7 @@ Renderer.prototype.scaleExistingElem = function (elem, scaleX, scaleY, x, y) {
 
 Renderer.prototype.printPath = function (attrs) {
   var ret = this.paper.path(attrs);
-  if (!attrs.notSelectable) this.controller.recordHistory(ret, true);else this.controller.recordHistory(ret);
+  this.controller.recordHistory(ret, attrs.notSelectable);
   if (this.doRegression) this.addToRegression(ret);
   return ret;
 };
@@ -20952,12 +21077,12 @@ Renderer.prototype.drawBrace = function (xLeft, yTop, yBottom) {
     el_type: "brace",
     startChar: -1,
     endChar: -1
-  }, 'brace', function () {
+  }, 'abcjs-brace', function () {
     var yHeight = yBottom - yTop;
     var xCurve = [7.5, -8, 21, 0, 18.5, -10.5, 7.5];
     var yCurve = [0, yHeight / 5.5, yHeight / 3.14, yHeight / 2, yHeight / 2.93, yHeight / 4.88, 0];
     this.createElemSet({
-      klass: 'brace'
+      klass: 'abcjs-brace'
     });
     var pathString = sprintf("M %f %f C %f %f %f %f %f %f C %f %f %f %f %f %f z", xLeft + xCurve[0], yTop + yCurve[0], xLeft + xCurve[1], yTop + yCurve[1], xLeft + xCurve[2], yTop + yCurve[2], xLeft + xCurve[3], yTop + yCurve[3], xLeft + xCurve[4], yTop + yCurve[4], xLeft + xCurve[5], yTop + yCurve[5], xLeft + xCurve[6], yTop + yCurve[6]);
     ret1 = this.paper.path({
@@ -20976,7 +21101,7 @@ Renderer.prototype.drawBrace = function (xLeft, yTop, yBottom) {
       'class': this.addClasses('brace')
     });
     var g = this.closeElemSet();
-    this.controller.recordHistory(g);
+    this.controller.recordHistory(g, true);
     return g;
   });
 
@@ -21926,6 +22051,8 @@ var TempoElement;
 
   TempoElement = function TempoElement(tempo, tuneNumber, createNoteHead) {
     this.tempo = tempo;
+    this.tempo.type = "tempo"; /// TODO-PER: this should be set earlier, in the parser, probably.
+
     this.tuneNumber = tuneNumber;
     this.tempoHeightAbove = totalHeightInPitches;
     this.pitch = undefined; // This will be set later
@@ -22045,45 +22172,74 @@ var TempoElement;
   TempoElement.prototype.draw = function (renderer) {
     var x = this.x;
     if (this.pitch === undefined) window.console.error("Tempo Element y-coordinate not set.");
-    var historyLen = renderer.controller.history.length;
-    renderer.createElemSet({
-      klass: "abcjs-tempo"
-    });
-    var y = renderer.calcY(this.pitch);
-    var text;
+    var self = this;
+    var tempoGroup;
+    renderer.wrapInAbsElem(this.tempo, "abcjs-tempo", function () {
+      renderer.createElemSet({
+        klass: "abcjs-tempo"
+      });
+      var y = renderer.calcY(self.pitch);
+      var text;
 
-    if (this.tempo.preString) {
-      text = renderer.renderText(x, y, this.tempo.preString, 'tempofont', 'tempo', "start");
-      var size = renderer.getTextSize(this.tempo.preString, 'tempofont', 'tempo', text);
-      var preWidth = size.width;
-      var charWidth = preWidth / this.tempo.preString.length; // Just get some average number to increase the spacing.
+      if (self.tempo.preString) {
+        text = renderer.renderText(x, y, self.tempo.preString, 'tempofont', 'tempo', "start");
+        var size = renderer.getTextSize(self.tempo.preString, 'tempofont', 'tempo', text);
+        var preWidth = size.width;
+        var charWidth = preWidth / self.tempo.preString.length; // Just get some average number to increase the spacing.
 
-      x += preWidth + charWidth;
-    }
-
-    if (this.note) {
-      this.note.setX(x);
-
-      for (var i = 0; i < this.note.children.length; i++) {
-        this.note.children[i].draw(renderer, x);
+        x += preWidth + charWidth;
       }
 
-      x += this.note.w + 5;
-      var str = "= " + this.tempo.bpm;
-      text = renderer.renderText(x, y, str, 'tempofont', 'tempo', "start");
-      size = renderer.getTextSize(str, 'tempofont', 'tempo', text);
-      var postWidth = size.width;
-      var charWidth2 = postWidth / str.length; // Just get some average number to increase the spacing.
+      if (self.note) {
+        self.note.setX(x);
 
-      x += postWidth + charWidth2;
+        for (var i = 0; i < self.note.children.length; i++) {
+          self.note.children[i].draw(renderer, x);
+        }
+
+        x += self.note.w + 5;
+        var str = "= " + self.tempo.bpm;
+        text = renderer.renderText(x, y, str, 'tempofont', 'tempo', "start");
+        size = renderer.getTextSize(str, 'tempofont', 'tempo', text);
+        var postWidth = size.width;
+        var charWidth2 = postWidth / str.length; // Just get some average number to increase the spacing.
+
+        x += postWidth + charWidth2;
+      }
+
+      if (self.tempo.postString) {
+        renderer.renderText(x, y, self.tempo.postString, 'tempofont', 'tempo', "start");
+      }
+
+      tempoGroup = renderer.closeElemSet();
+    });
+    return tempoGroup;
+  };
+
+  TempoElement.prototype.adjustElements = function (renderer) {
+    // TODO-PER: This straightens out the tempo elements because they are written in the wrong order.
+    for (var i = renderer.controller.history.length - 1; i >= 0; i--) {
+      if (renderer.controller.history[i].absEl.abcelem.type !== "tempo") break;
     }
 
-    if (this.tempo.postString) {
-      renderer.renderText(x, y, this.tempo.postString, 'tempofont', 'tempo', "start");
+    var group;
+
+    for (var ii = i + 1; ii < renderer.controller.history.length; ii++) {
+      var hist = renderer.controller.history[ii];
+      var inGroup = hist.svgEl.parentNode.tagName.toLowerCase() === 'g';
+      if (inGroup) group = hist.svgEl.parentNode;else if (group) {
+        group.appendChild(hist.svgEl);
+      }
+      var classes = hist.svgEl.getAttribute("class");
+      classes = classes.replace("abcjs-tempo", '');
+      hist.svgEl.setAttribute("class", classes);
     }
 
-    var tempoGroup = renderer.closeElemSet();
-    renderer.controller.combineHistory(renderer.controller.history.length - historyLen, tempoGroup);
+    var len = renderer.controller.history.length - i - 1;
+
+    if (group && len > 1) {
+      renderer.controller.combineHistory(len, group);
+    }
   };
 })();
 
@@ -22416,7 +22572,7 @@ var TripletElem;
       drawBracket(renderer, this.anchor1.x, this.startNote, this.anchor2.x + this.anchor2.w, this.endNote, this.duration);
     }
 
-    renderer.renderText(xTextPos, renderer.calcY(this.yTextPos), "" + this.number, 'tripletfont', "", "middle", true);
+    renderer.renderText(xTextPos, renderer.calcY(this.yTextPos), "" + this.number, 'tripletfont', "", "middle", true, true);
     renderer.closeElemSet();
   };
 
@@ -22477,8 +22633,6 @@ module.exports = TripletElem;
 //    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/abc_common.js");
-
-var AbsoluteElement = __webpack_require__(/*! ./abc_absolute_element */ "./src/write/abc_absolute_element.js");
 
 var VoiceElement = function VoiceElement(voicenumber, voicetotal) {
   this.children = [];
@@ -22714,7 +22868,6 @@ VoiceElement.prototype.draw = function (renderer, bartop) {
       text: this.header
     }, 'meta-bottom extra-text', function () {
       var textEl = renderer.renderText(renderer.padding.left, renderer.calcY(textpitch), self.header, 'voicefont', 'staff-extra voice-name', 'start');
-      this.controller.recordHistory(textEl);
       return textEl;
     });
   }

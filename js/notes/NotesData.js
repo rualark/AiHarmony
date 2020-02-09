@@ -1,4 +1,4 @@
-import {fifths2keysig, keysig_imprint} from "./notehelper.js";
+import {fifths2keysig, keysig_imprint} from "./noteHelper.js";
 import {saveState} from "../state/history.js";
 import {clicked} from "../abc/abchelper.js";
 
@@ -101,6 +101,7 @@ class NotesData {
     this.keysig.fifths = fifths;
     this.keysig.mode = mode;
     this.keysig.name = fifths2keysig[fifths];
+    this.keysig.imprint = keysig_imprint(this.keysig.fifths);
   }
 
   build_timesig(beats_per_measure, beat_type) {
@@ -138,9 +139,17 @@ class NotesData {
       }
     }
     this.keysig = keysig;
+    this.keysig.imprint = ki2;
     this.modes[0] = keysig;
     this.modes[0].step = 0;
     this.saveState();
+  }
+
+  get_realAlter(v, n) {
+    if (this.voices[v].notes[n].alter === 10) {
+      return this.keysig.imprint[this.voices[v].notes[n].d % 7];
+    }
+    return this.voices[v].notes[n].alter;
   }
 
   set_timesig(timesig) {
@@ -181,8 +190,8 @@ class NotesData {
     this.algoMode = 0;
     this.phrases = [ 0 ];
     this.keysig = {
-      name: 'Am',
-      mode: 9, // 0 - major, 2 - dorian, 9 - aeolian
+      name: 'C',
+      mode: 13, // 0 - major, 2 - dorian, 9 - aeolian, 13 - undefined (can detect)
       fifths: 0, // Number of alterations near key
       base_note: 9, // Base tonic note (C - 0, Am - 9)
     };
@@ -200,7 +209,7 @@ class NotesData {
       {
         clef: 'treble',
         name: 'Sop.',
-        species: 5,
+        species: 10,
         notes: [
           {d: 0, alter: 0, len: 16, startsTie: false},
           {d: 0, alter: 0, len: 16, startsTie: false},
@@ -211,7 +220,7 @@ class NotesData {
       {
         clef: 'treble',
         name: 'Alt.',
-        species: 5,
+        species: 10,
         notes: [
           {d: 0, alter: 0, len: 16, startsTie: false},
           {d: 0, alter: 0, len: 16, startsTie: false},
@@ -222,7 +231,7 @@ class NotesData {
       {
         clef: 'treble-8',
         name: 'Ten.',
-        species: 5,
+        species: 10,
         notes: [
           {d: 0, alter: 0, len: 16, startsTie: false},
           {d: 0, alter: 0, len: 16, startsTie: false},
@@ -233,7 +242,7 @@ class NotesData {
       {
         clef: 'bass',
         name: 'Bas.',
-        species: 0,
+        species: 10,
         notes: [
           {d: 0, alter: 0, len: 16, startsTie: false},
           {d: 0, alter: 0, len: 16, startsTie: false},
@@ -255,8 +264,11 @@ class NotesData {
     return len;
   }
 
-  getClosestNote(v, pos) {
-    for (let n = 0; n < this.voices[v].notes.length; ++n) {
+  getClosestNote(v, pos, hint=0) {
+    if (!this.voices[v].notes.length) return;
+    // Reset hint if it is wrong
+    if (this.voices[v].notes.length <= hint || this.voices[v].notes[hint].step > pos) hint = 0;
+    for (let n = hint; n < this.voices[v].notes.length; ++n) {
       let nt = this.voices[v].notes[n];
       if (nt.step <= pos && nt.step + nt.len > pos) return n;
     }

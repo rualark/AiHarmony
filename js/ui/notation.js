@@ -13,6 +13,7 @@ import {button_enabled, button_enabled_active} from "./lib/uilib.js";
 import {rename_part, stop_advancing} from "./edit/editScore.js";
 import {can_pre_tie, can_tie, is_pre_tie} from "./edit/editTie.js";
 import {can_dot, can_len} from "./edit/editLen.js";
+import {showFlagsModal} from "./modal/flagsModal.js";
 
 window.onresize = function() {
   async_redraw();
@@ -65,6 +66,10 @@ export function update_selection() {
   } else {
     button_enabled_active('tie', can_tie(), clicked.element.abselem && clicked.element.abselem.startTie);
   }
+  if (clicked.note != null && clicked.note.note != null) {
+    $('.ares').css({"font-weight": ''});
+    $('.ares_' + clicked.note.voice + '_' + clicked.note.note).css({"font-weight": 'bold'});
+  }
 }
 
 export function element_click(abcElem, tuneNumber, classes, pos, move) {
@@ -95,7 +100,7 @@ export function element_click(abcElem, tuneNumber, classes, pos, move) {
     async_redraw();
     return;
   } else {
-    saveState();
+    saveState(false);
   }
   update_selection();
 }

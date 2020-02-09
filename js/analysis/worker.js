@@ -25,7 +25,6 @@ function waitForVar(obj, field, vals, pause, timeout) {
 }
 
 async function initWasmModule(modName) {
-  workerState = {};
   workerState.state = 'loading js';
   importScripts('wasmArray.js');
   importScripts('modules/' + modName + '.js');
@@ -34,9 +33,11 @@ async function initWasmModule(modName) {
   }
   workerState.state = 'loading wasm';
   Module.onRuntimeInitialized = function() {
+    // Will be called before main()
     workerState.state = 'ready';
   };
   await waitForVar(workerState, 'state', ['ready'], 50, 4000);
+  // Here main() will usually be finished
 }
 
 function toInt32Arr(arr) {
@@ -95,9 +96,10 @@ function message(type, modName, funcName, data) {
 self.addEventListener('message', async function(event) {
   const { type, modName, funcName, data } = event.data;
   if (type === "CALL") {
-    console.log('Analyse2');
+    //console.log('Analyse2');
     try {
       if (workerState.state === 'init') {
+        console.log('initWasmModule0', workerState.state);
         await initWasmModule(modName);
       }
       const res = ccallArrays(funcName, "string", ["string"], [data], {
@@ -105,7 +107,7 @@ self.addEventListener('message', async function(event) {
         heapOut: "HEAPU8"
       });
       //let res = callWasmFuncArrayToArray(Module, funcName, data);
-      console.log('Analyse3');
+      //console.log('Analyse3');
       message("RESULT", modName, funcName, res);
     }
     catch (e) {

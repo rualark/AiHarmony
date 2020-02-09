@@ -10,7 +10,6 @@ export let aic = {
 
 function setAicIcon(img) {
   if (document.getElementById("aici").src.endsWith(img)) return;
-  console.log('Set icon');
   document.getElementById("aici").src = img;
 }
 

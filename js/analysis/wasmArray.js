@@ -56,10 +56,9 @@ function ccallArrays (func, returnType, paramTypes, params, {heapIn="HEAPF32", h
       }
     }
 
-    console.log(parameters);
     res = Module[func](...parameters);
   } catch (e) {
-    error = e
+    error = e;
   } finally {
     for (let b=0; b<bufs.length; b++) {
       Module._free(bufs[b])
@@ -77,13 +76,13 @@ function ccallArrays (func, returnType, paramTypes, params, {heapIn="HEAPF32", h
       size *= Math.pow(256, bpEl);
       let val = Module[heapOut][res / bpEl + v + 1];
       size += val;
-      console.log(val, size);
     }
     if (returnType === "string") {
       let returnData = '';
       for (let v=0; v<size; v++) {
         returnData += String.fromCharCode(Module[heapOut][res/bpEl + returnSizeElements + v + 1])
       }
+      //console.log('wasmArray', returnSizeElements, size, returnData);
       return returnData;
     }
     else {

@@ -1,7 +1,7 @@
 import {nd} from "../notes/NotesData.js";
 import {async_redraw, clicked, engraverParams} from "../abc/abchelper.js";
 import {currentTimestamp, start_counter} from "../core/time.js";
-import {b256_safeString, safeString_b256, ui_b256, b256_ui, b256_debug} from "./base256.js";
+import {b256_safeString, safeString_b256, ui_b256, b256_ui, b256_debug} from "../core/base256.js";
 
 const ENCODING_VERSION = 10;
 export const STATE_VOLATILE_SUFFIX = 12;

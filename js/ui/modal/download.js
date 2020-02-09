@@ -62,7 +62,6 @@ function linkAsMidi() {
 export function showDownloadModal() {
   let st = '';
   for (const i in exportFormats) {
-    console.log(exportFormats[i]);
     if (exportFormats[i].func == null && exportFormats[i].link() == null) continue;
     st += `<p style='text-align: center'>`;
     if (exportFormats[i].func == null) {
