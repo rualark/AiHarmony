@@ -91,7 +91,7 @@ export function musicXmlToData(txt) {
         let note = mxp.notes[vi][m][ni];
         if (note.fifths !== 100) {
           if (nd.keysig.fifths == null) {
-            nd.build_keysig(note.fifths, 0);
+            nd.build_keysig(note.fifths, 13);
             ki = nd.keysig.imprint;
             //console.log(note.fifths, fifths2keysig[note.fifths]);
           } else if (nd.keysig.fifths !== note.fifths) {

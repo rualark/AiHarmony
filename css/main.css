@@ -21,3 +21,6 @@ body {padding-top:4.3rem; background-color:white}
     word-wrap: break-word;
     color: #4f2f04;  background-color: #eda74c;  border-color: #bf781b;
 }
+path:focus, text:focus, g:focus {
+    outline: none;
+}

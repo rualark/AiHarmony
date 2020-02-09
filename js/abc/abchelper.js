@@ -23,6 +23,7 @@ export let clicked = {
 
 function getElementByStartChar(abcjs, startChar) {
   let engraver = abcjs[0].engraver;
+  //console.log(engraver);
   for (let line = 0; line < engraver.staffgroups.length; line++) {
     let voices = engraver.staffgroups[line].voices;
     for (let voice = 0; voice < voices.length; voice++) {

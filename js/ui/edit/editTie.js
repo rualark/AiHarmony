@@ -1,6 +1,7 @@
 import {async_redraw, clicked, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {future} from "./editNote.js";
+import {saveState} from "../../state/history.js";
 
 export function can_tie() {
   if (!clicked.element || !clicked.element.duration) return false;
@@ -38,5 +39,6 @@ export function toggle_tie() {
       if (can_tie()) notes[el.note].startsTie = true;
     }
   }
+  saveState();
   async_redraw();
 }

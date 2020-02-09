@@ -1,9 +1,17 @@
 import {b256_safeString, b256_ui} from "../core/base256.js";
 import {nd} from "../notes/NotesData.js";
-import {d2name} from "../notes/noteHelper.js";
+import {d2name, modeName} from "../notes/noteHelper.js";
 import {select_note} from "../ui/edit/move.js";
+import {settings} from "../state/settings.js";
 
-let ARES_ENCODING_VERSION = 1;
+let ARES_ENCODING_VERSION = 2;
+
+let vocra_name = {
+  1: 'Bas.',
+  2: 'Ten.',
+  3: 'Alt.',
+  4: 'Sop.'
+}
 
 class AnalysisResults {
   constructor() {
@@ -24,25 +32,35 @@ class AnalysisResults {
       });
     }
     this.av_cnt = b256_ui(st, pos, 1);
-    this.s_start = b256_ui(st, pos, 2);
+    this.s_start = b256_ui(st, pos, 2) * 2;
     this.c_len = b256_ui(st, pos, 2);
     this.mode = b256_ui(st, pos, 1);
+    const hli_size = b256_ui(st, pos, 2);
+    this.harm = [];
+    for (let hs=0; hs<hli_size; ++hs) {
+      this.harm[b256_ui(st, pos, 2) * 2] = b256_safeString(st, pos, 1);
+    }
     this.flag = [];
     this.vid = [];
+    this.vid2 = [];
     this.vsp = [];
+    this.vocra = [];
     for (let v=0; v<this.av_cnt; ++v) {
-      this.vid[v] = b256_ui(st, pos, 1);
+      let va = b256_ui(st, pos, 1);
+      this.vid2[va] = v;
+      this.vid[v] = va;
       this.vsp[v] = b256_ui(st, pos, 1);
+      this.vocra[v] = b256_ui(st, pos, 1);
       this.flag[v] = {};
       for (let s = 0; s < this.c_len; ++s) {
         let fcnt = b256_ui(st, pos, 1);
         if (!fcnt) continue;
-        this.flag[v][s] = [];
+        this.flag[v][s * 2] = [];
         for (let f = 0; f < fcnt; ++f) {
-          this.flag[v][s].push({
+          this.flag[v][s * 2].push({
             fl: b256_ui(st, pos, 2),
             fvl: b256_ui(st, pos, 1),
-            fsl: b256_ui(st, pos, 2),
+            fsl: b256_ui(st, pos, 2) * 2,
             accept: b256_ui(st, pos, 1) - 10,
             severity: b256_ui(st, pos, 1),
             name: b256_safeString(st, pos, 2),
@@ -55,31 +73,27 @@ class AnalysisResults {
 
   printFlags() {
     let st = '';
-    st += `Mode: ${this.mode}. Species: `;
-    for (let v in this.flag) {
-      st += this.vsp[v] + ' ';
-    }
-    st += "<br>";
+    $('#mode').html(modeName(nd.keysig.fifths, this.mode));
     for (const err of this.errors) {
       st += `<span style='color: red'><b>${err.level}: ${err.message}</b></span><br>`;
     }
     let fcnt = 0;
-    let npm = Math.floor(nd.timesig.measure_len / 2);
+    let npm = nd.timesig.measure_len;
     let onclick = {};
-    for (let v in this.flag) {
+    for (let v=this.flag.length - 1; v>=0; --v) {
       let vi = this.vid[v];
       let n = 0;
       let old_n = -1;
       for (let s in this.flag[v]) {
         let m = Math.floor(s / npm);
-        let beat = Math.floor((s % npm) / 2);
-        n = nd.getClosestNote(vi, s * 2, n);
+        let beat = s % npm;
+        n = nd.getClosestNote(vi, s, n);
         let noteName = d2name(nd.voices[vi].notes[n].d, nd.get_realAlter(vi, n));
         if (noteName !== 'rest') noteName = 'note ' + noteName;
         for (let f in this.flag[v][s]) {
           let fla = this.flag[v][s][f];
           let col = 'black';
-          if (fla.severity < 49) continue;
+          if (fla.severity < settings.show_min_severity) continue;
           if (fla.severity > 80) col = 'red';
           else col = 'orange';
           if (old_n !== n) {
@@ -104,27 +118,42 @@ class AnalysisResults {
     }
   }
 
-  getFlags(vi, pos) {
-    if (!this.flag || vi >= this.flag.length) return {};
-    if (!(pos in this.flag[vi])) return {};
+  getFlags(va, pos) {
+    pos -= this.s_start;
+    if (!this.flag || va >= this.flag.length) return {};
+    if (!(pos in this.flag[va])) return {};
     let yellow = 0;
     let red = 0;
-    for (const fla of this.flag[vi][pos]) {
+    for (const fla of this.flag[va][pos]) {
       if (fla.severity > 80) red++;
-      else if (fla.severity >= 49) yellow++;
+      else if (fla.severity >= settings.show_min_severity) yellow++;
     }
     return {red: red, yellow: yellow};
   }
 
-  getFlagsInInterval(vi, pos1, pos2) {
-    if (!this.flag || vi >= this.flag.length) return {};
+  getFlagsInInterval(v, pos1, pos2) {
+    if (this.vid2 == null || !(v in this.vid2)) return {};
+    let va = this.vid2[v];
+    if (!this.flag || va >= this.flag.length) return {};
     let total = {red: 0, yellow: 0};
     for (let pos = pos1; pos < pos2; ++pos) {
-      let flags = this.getFlags(vi, pos);
+      let flags = this.getFlags(va, pos);
       if (flags.red) total.red += flags.red;
       if (flags.yellow) total.yellow += flags.yellow;
     }
     return total;
+  }
+
+  getVocra(v) {
+    if (this.vid2 == null || !(v in this.vid2)) return;
+    let va = this.vid2[v];
+    return vocra_name[this.vocra[va]];
+  }
+
+  getSpecies(v) {
+    if (this.vid2 == null || !(v in this.vid2)) return;
+    let va = this.vid2[v];
+    return this.vsp[va];
   }
 }
 

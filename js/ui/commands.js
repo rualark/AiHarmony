@@ -170,6 +170,10 @@ export function initFilenameClick() {
     });
     return false;
   };
+  $('#mode').click(() => {
+    showKeysigModal();
+    return false;
+  });
 }
 
 export let commandKeyCodes = {};

@@ -6,6 +6,12 @@ const SETTINGS_ENCODING_VERSION = 1;
 
 class Settings {
   constructor() {
+    this.show_min_severity = 49;
+    this.show_allowed_flags = 0;
+    this.show_ignored_flags = 0;
+    this.harm_notation = 3;
+    // 0 - Show only rule name up to colon. Show only subrules starting with colon, 1 - Add subrules without colon, 2 - Add rule comments
+    this.rule_verbose = 1;
   }
 
   reset() {

@@ -265,7 +265,7 @@ class NotesData {
   }
 
   getClosestNote(v, pos, hint=0) {
-    if (!this.voices[v].notes.length) return;
+    if (this.voices.length <= v || !this.voices[v].notes.length) return;
     // Reset hint if it is wrong
     if (this.voices[v].notes.length <= hint || this.voices[v].notes[hint].step > pos) hint = 0;
     for (let n = hint; n < this.voices[v].notes.length; ++n) {
@@ -312,6 +312,10 @@ class NotesData {
   set_voiceName(v, st) {
     if (st == null) this.voices[v].name = '';
     else this.voices[v].name = st.substr(0, 255);
+  }
+
+  set_species(v, sp) {
+    this.voices[v].species = sp;
   }
 }
 

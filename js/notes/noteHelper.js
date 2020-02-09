@@ -1,4 +1,5 @@
 import {nd} from "./NotesData.js";
+import {keysigs} from "../ui/modal/keysig.js";
 
 let abc_d = {c: 0, d: 1, e: 2, f: 3, g: 4, a: 5, b: 6};
 let d_abc = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
@@ -84,4 +85,24 @@ function alter2name(alter) {
   if (alter === 1) return "#";
   if (alter === 2) return "x";
   return "";
+}
+
+export function modeName(fifths, mode) {
+  for (const name in keysigs) {
+    if (keysigs[name].fifths === fifths && keysigs[name].mode === mode)
+      return fullModeName(keysigs[name]);
+  }
+}
+
+function fullModeName(keysig) {
+  let st = keysig.name;
+  if (keysig.mode === 0) st += ' major';
+  if (st.endsWith('m')) st = st.slice(0, -1) + ' minor';
+  st = st.replace('mix', 'mixolydian');
+  st = st.replace('lyd', 'lydian');
+  st = st.replace('loc', 'locrian');
+  st = st.replace('dor', 'dorian');
+  st = st.replace('phr', 'phrygian');
+  st = st.replace('mix', 'mixolydian');
+  return st;
 }

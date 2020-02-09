@@ -50,8 +50,7 @@ export function select_note(v, n) {
   if (state.state !== 'ready') return;
   if (nd.voices.length <= v) return;
   if (nd.voices[v].notes.length <= n) return;
-  clicked.note.voice = v;
-  clicked.note.note = n;
+  clicked.note = {voice: v, note: n};
   find_selection();
   stop_advancing();
   saveState(false);

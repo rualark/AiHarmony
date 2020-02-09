@@ -11,7 +11,19 @@ export function dataToAbc() {
   abc += 'L:1/16\n';
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
-    abc += `V: V${v} clef=${vc.clef} name="${vc.name}"\n`;
+    let name = vc.name;
+    let vocra = ares.getVocra(v);
+    let spec = ares.getSpecies(v);
+    if (vocra != null) name += ` [${vocra}]`;
+    if (spec != null) {
+      if (spec === 0) {
+        name += ` (c.f.)`;
+      }
+      else {
+        name += ` (sp. ${spec})`;
+      }
+    }
+    abc += `V: V${v} clef=${vc.clef} name="${name}"\n`;
   }
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
@@ -19,22 +31,24 @@ export function dataToAbc() {
     let s = 0;
     for (let n=0; n<vc.notes.length; ++n) {
       let nt = vc.notes[n];
-      //else abc += '^" "';
       nt.step = s;
-      let flags = ares.getFlagsInInterval(v, Math.floor(s / 2), Math.floor((s + nt.len) / 2));
-      let charStarts = abc.length;
-      if (flags.red > 0) {
-        abc += '^"!"';
-        // TODO: remove after bug fix in abcjs
-        charStarts++;
+      nd.abc_charStarts[abc.length] = {voice: v, note: n};
+      nt.abc_charStarts = abc.length;
+      let flags = ares.getFlagsInInterval(v, s, s + nt.len);
+      if (flags.red > 0) abc += '"^!"';
+      else if (flags.yellow > 0) abc += '"^?"';
+      let sa = s - ares.s_start;
+      if (ares.harm != null && sa in ares.harm && ares.vid != null && v === ares.vid[0]) {
+        let harm_st = '';
+        for (let s2 = 0; s2 < nt.len; ++s2) {
+          if (!((sa + s2) in ares.harm)) continue;
+          if (harm_st !== '') {
+            harm_st += ', ';
+          }
+          harm_st += ares.harm[sa];
+        }
+        abc += `"_${harm_st}"`;
       }
-      else if (flags.yellow > 0) {
-        abc += '^"?"';
-        // TODO: remove after bug fix in abcjs
-        charStarts++;
-      }
-      nd.abc_charStarts[charStarts] = {voice: v, note: n};
-      nt.abc_charStarts = charStarts;
       let d = nt.d;
       if (d) {
         let abc_note = d2abc(d - clefs[vc.clef].transpose);
@@ -51,6 +65,5 @@ export function dataToAbc() {
     }
     abc += '\n';
   }
-  console.log(abc, nd);
   return abc;
 }

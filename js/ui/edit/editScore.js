@@ -5,6 +5,7 @@ import {update_selection} from "../notation.js";
 import {future} from "./editNote.js";
 import {name2filename} from "../../core/string.js";
 import {enableKeys} from "../commands.js";
+import {showPartModal} from "../modal/partModal.js";
 
 export function stop_advancing() {
   future.advancing = false;
@@ -69,18 +70,6 @@ export function add_part() {
 
 export function rename_part() {
   if (state.state !== 'ready') return;
-  enableKeys(false);
-  bootbox.prompt({
-    title: "Part name",
-    value: nd.voices[clicked.voice].name,
-    callback: function(value) {
-      enableKeys(true);
-      if (value == null) return;
-      nd.set_voiceName(clicked.voice, value.substr(0, 100));
-      saveState();
-      async_redraw();
-    }
-  });
-  return false;
+  showPartModal(clicked.voice);
 }
 
