@@ -112,7 +112,7 @@ export function undoState(doAnalysis=true) {
     history_pos--;
     let utf16 = getHistoryUtf16(history_pos);
     storage_utf16(utf16);
-    utf16_storage(utf16);
+    utf16_storage('aih', utf16);
     stop_advancing();
     updateUndoRedoButtons();
     if (doAnalysis) analyse();
@@ -133,7 +133,7 @@ export function redoState(doAnalysis=true) {
   history_pos++;
   let utf16 = getHistoryUtf16(history_pos);
   storage_utf16(utf16);
-  utf16_storage(utf16);
+  utf16_storage('aih', utf16);
   stop_advancing();
   updateUndoRedoButtons();
   if (doAnalysis) analyse();

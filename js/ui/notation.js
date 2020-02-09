@@ -47,18 +47,18 @@ export function update_selection() {
   }
   //console.log('nl', future.advancing, future.len);
   if (future.advancing && future.len) {
-    button_enabled_active('len2', clicked.element.duration, [1].includes(future.len));
-    button_enabled_active('len3', can_len(2), [2, 3].includes(future.len));
-    button_enabled_active('len4', can_len(4), [4, 6].includes(future.len));
-    button_enabled_active('len5', can_len(8), [8, 12].includes(future.len));
-    button_enabled_active('len6', can_len(16), [16, 24].includes(future.len));
+    button_enabled_active('16th', clicked.element.duration, [1].includes(future.len));
+    button_enabled_active('8th', can_len(2), [2, 3].includes(future.len));
+    button_enabled_active('quarter', can_len(4), [4, 6].includes(future.len));
+    button_enabled_active('half', can_len(8), [8, 12].includes(future.len));
+    button_enabled_active('whole', can_len(16), [16, 24].includes(future.len));
     button_enabled_active('dot', can_dot(), [3, 6, 12, 24].includes(future.len));
   } else {
-    button_enabled_active('len2', clicked.element.duration, [0.0625].includes(clicked.element.duration));
-    button_enabled_active('len3', can_len(2), [0.125, 0.1875].includes(clicked.element.duration));
-    button_enabled_active('len4', can_len(4), [0.25, 0.375].includes(clicked.element.duration));
-    button_enabled_active('len5', can_len(8), [0.5, 0.75].includes(clicked.element.duration));
-    button_enabled_active('len6', can_len(16), [1, 1.5].includes(clicked.element.duration));
+    button_enabled_active('16th', clicked.element.duration, [0.0625].includes(clicked.element.duration));
+    button_enabled_active('8th', can_len(2), [0.125, 0.1875].includes(clicked.element.duration));
+    button_enabled_active('quarter', can_len(4), [0.25, 0.375].includes(clicked.element.duration));
+    button_enabled_active('half', can_len(8), [0.5, 0.75].includes(clicked.element.duration));
+    button_enabled_active('whole', can_len(16), [1, 1.5].includes(clicked.element.duration));
     button_enabled_active('dot', can_dot(), [0.375, 0.75, 1.5].includes(clicked.element.duration));
   }
   if (future.advancing && future.len) {

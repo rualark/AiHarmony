@@ -10,13 +10,13 @@ import {element_click} from "./ui/notation.js";
 import {debugError} from "./core/debug.js";
 import {analyse} from "./analysis/musicAnalysis.js";
 import {init_base64} from "./core/base64.js";
+import {settings} from "./state/settings.js";
 
 function init() {
-  initKeyCodes();
-  initCommands();
+  init_base64();
+  settings.storage2settings();
   initFilenameClick();
   init_abcjs(element_click);
-  init_base64();
   loadState();
   if (getUrlParam('state')) {
     url2state(getUrlParam('state'));

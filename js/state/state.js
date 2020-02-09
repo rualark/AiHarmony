@@ -3,7 +3,7 @@ import {async_redraw, clicked, engraverParams} from "../abc/abchelper.js";
 import {currentTimestamp, start_counter} from "../core/time.js";
 import {b256_safeString, safeString_b256, ui_b256, b256_ui, b256_debug} from "../core/base256.js";
 
-const ENCODING_VERSION = 10;
+const ENCODING_VERSION = 11;
 export const STATE_VOLATILE_SUFFIX = 12;
 
 function alter2contig(alt) {
@@ -54,7 +54,6 @@ export function data2plain() {
   }
   st += safeString_b256(nd.name, 1);
   st += safeString_b256(nd.fileName, 1);
-  st += ui_b256(engraverParams.scale * 1000, 2);
   if (clicked.note == null) {
     st += ui_b256(255, 1);
     st += ui_b256(0, 2);
@@ -132,7 +131,6 @@ export function plain2data(st, pos) {
   }
   nd.set_name(b256_safeString(st, pos, 1));
   nd.set_fileName(b256_safeString(st, pos, 1));
-  engraverParams.scale = b256_ui(st, pos, 2) / 1000;
   let v = b256_ui(st, pos, 1);
   let n = b256_ui(st, pos, 2);
   clicked.note = {voice: v, note: n};
@@ -144,20 +142,18 @@ export function plain2data(st, pos) {
   //console.log(nd);
 }
 
-export function utf16_storage(utf16) {
-  localStorage.setItem('aih', utf16);
-  //stop_counter();
-  //console.log(`Saved state: ${utf16.length} bytes`);
-}
-
 export function state2storage() {
   start_counter('save_state');
   let plain = '';
   plain += data2plain();
   //console.log('state2storage plain', plain);
   let utf16 = LZString.compressToUTF16(plain);
-  utf16_storage(utf16);
+  utf16_storage('aih', utf16);
   return {plain: plain, utf16: utf16};
+}
+
+export function utf16_storage(name, utf16) {
+  localStorage.setItem(name, utf16);
 }
 
 export function storage_utf16(utf16) {

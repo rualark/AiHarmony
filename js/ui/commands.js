@@ -25,6 +25,7 @@ import {next_note, prev_note} from "./edit/move.js";
 import {set_len, toggle_dot} from "./edit/editLen.js";
 import {name2filename} from "../core/string.js";
 import {sendToAis} from "../integration/aiStudio.js";
+import {showSettingsModal} from "./modal/settingsModal.js";
 
 let mobileOpt = {
   true: {
@@ -81,6 +82,10 @@ export function enableKeys(enable = true) {
 }
 
 export function initKeyCodes() {
+  commandKeyCodes = {};
+  commandCtrlKeyCodes = {};
+  commandAltKeyCodes = {};
+  commandShiftKeyCodes = {};
   for (let command of commands) {
     if (command.keys == null) continue;
     for (let key of command.keys) {
@@ -135,6 +140,7 @@ export function initCommands() {
   //console.log(st);
   document.getElementById("toolbar").innerHTML = st;
   for (let command of commands) {
+    if (!command.onclick) continue;
     if (command.toolbar != null && command.toolbar.dev != null) {
       if (mobileOrTablet && !(command.toolbar.dev & 1)) continue;
       if (!mobileOrTablet && !(command.toolbar.dev & 2)) continue;
@@ -175,6 +181,7 @@ export let commands = [
   {
     id: 'logo',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: [],
     command: () => { window.open('https://artinfuser.com', '_blank') },
     name: '',
@@ -182,6 +189,7 @@ export let commands = [
   {
     id: 'question',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['F1'],
     command: () => { showShortcutsModal() },
     name: 'Help',
@@ -189,6 +197,7 @@ export let commands = [
   {
     id: 'new',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['Alt+N'],
     command: () => { new_file() },
     name: 'New file',
@@ -196,13 +205,15 @@ export let commands = [
   {
     id: 'open',
     toolbar: {type: 'image'},
-    keys: ['Ctrl+O'],
+    onclick: true,
+    keys: ['Ctrl+O', 'Alt+O'],
     command: () => { showOpenMusicXmlModal() },
     name: 'Open MusicXml file',
   },
   {
     id: 'download',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['Ctrl+S'],
     command: () => { showDownloadModal() },
     name: 'Download music',
@@ -210,6 +221,7 @@ export let commands = [
   {
     id: 'share',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['Ctrl+R'],
     command: () => { showShareModal() },
     name: 'Share music',
@@ -217,14 +229,24 @@ export let commands = [
   {
     id: 'aic',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['Ctrl+A'],
     command: () => { sendToAic() },
     name: 'Artinfuser Counterpoint analysis',
+  },
+  {
+    id: 'settings',
+    toolbar: {type: 'image'},
+    onclick: true,
+    keys: [],
+    command: () => { showSettingsModal() },
+    name: 'Settings',
   },
   { separator: true },
   {
     id: 'undo',
     toolbar: {type: 'image', disabled: true},
+    onclick: true,
     keys: ['Ctrl+Z'],
     command: () => { undoState() },
     name: 'Undo',
@@ -232,42 +254,48 @@ export let commands = [
   {
     id: 'redo',
     toolbar: {type: 'image', disabled: true},
+    onclick: true,
     keys: ['Ctrl+Y'],
     command: () => { redoState() },
     name: 'Redo',
   },
   { separator: true },
   {
-    id: 'len6',
+    id: 'whole',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['1', 'Numpad1'],
     command: () => { set_len(16) },
     name: 'Input whole note',
   },
   {
-    id: 'len5',
+    id: 'half',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['2', 'Numpad2'],
     command: () => { set_len(8) },
     name: 'Input half note',
   },
   {
-    id: 'len4',
+    id: 'quarter',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['4', 'Numpad4'],
     command: () => { set_len(4) },
     name: 'Input quarter note',
   },
   {
-    id: 'len3',
+    id: '8th',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['8', 'Numpad8'],
     command: () => { set_len(2) },
     name: 'Input 1/8 note',
   },
   {
-    id: 'len2',
+    id: '16th',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['6', 'Numpad6'],
     command: () => { set_len(1) },
     name: 'Input 1/16 note',
@@ -275,6 +303,7 @@ export let commands = [
   {
     id: 'dot',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['Period', 'NumpadDecimalPoint'],
     command: () => { toggle_dot() },
     name: 'Input dotted note',
@@ -282,6 +311,7 @@ export let commands = [
   {
     id: 'tie',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['Backslash', 'NumpadDivide'],
     command: () => { toggle_tie() },
     name: 'Input tie between notes',
@@ -290,6 +320,7 @@ export let commands = [
   {
     id: 'note_c',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['C'],
     command: () => { set_note(0) },
     name: 'Input note C',
@@ -297,6 +328,7 @@ export let commands = [
   {
     id: 'note_d',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['D'],
     command: () => { set_note(1) },
     name: 'Input note D',
@@ -304,6 +336,7 @@ export let commands = [
   {
     id: 'note_e',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['E'],
     command: () => { set_note(2) },
     name: 'Input note E',
@@ -311,6 +344,7 @@ export let commands = [
   {
     id: 'note_f',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['F'],
     command: () => { set_note(3) },
     name: 'Input note F',
@@ -318,6 +352,7 @@ export let commands = [
   {
     id: 'note_g',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['G'],
     command: () => { set_note(4) },
     name: 'Input note G',
@@ -325,6 +360,7 @@ export let commands = [
   {
     id: 'note_a',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['A'],
     command: () => { set_note(5) },
     name: 'Input note A',
@@ -332,6 +368,7 @@ export let commands = [
   {
     id: 'note_b',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['B'],
     command: () => { set_note(6) },
     name: 'Input note B',
@@ -340,6 +377,7 @@ export let commands = [
   {
     id: 'dblflat',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: [],
     command: () => { toggle_alter(-2) },
     name: 'Input double flat',
@@ -347,6 +385,7 @@ export let commands = [
   {
     id: 'flat',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['Dash', 'NumpadSubtract'],
     command: () => { toggle_alter(-1) },
     name: 'Input flat',
@@ -354,6 +393,7 @@ export let commands = [
   {
     id: 'natural',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['N', 'EqualSign'],
     command: () => { toggle_alter(0) },
     name: 'Input natural',
@@ -361,6 +401,7 @@ export let commands = [
   {
     id: 'sharp',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['Shift+EqualSign', 'NumpadAdd'],
     command: () => { toggle_alter(1) },
     name: 'Input sharp',
@@ -368,6 +409,7 @@ export let commands = [
   {
     id: 'dblsharp',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: [],
     command: () => { toggle_alter(2) },
     name: 'Input double sharp',
@@ -376,6 +418,7 @@ export let commands = [
   {
     id: 'up8',
     toolbar: {type: 'text', text: '+8ve', fontSize: 1.2},
+    onclick: true,
     keys: ['Shift+UpArrow'],
     command: () => { increment_octave(1) },
     name: 'Move note up an octave',
@@ -383,6 +426,7 @@ export let commands = [
   {
     id: 'down8',
     toolbar: {type: 'text', text: '-8ve', fontSize: 1.2},
+    onclick: true,
     keys: ['Shift+DownArrow'],
     command: () => { increment_octave(-1) },
     name: 'Move note down an octave',
@@ -391,6 +435,7 @@ export let commands = [
   {
     id: 'rest',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['0', 'Numpad0'],
     command: () => { set_rest(true) },
     name: 'Input rest',
@@ -399,6 +444,7 @@ export let commands = [
   {
     id: 'keysig',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['K'],
     command: () => { showKeysigModal() },
     name: 'Key signature',
@@ -407,6 +453,7 @@ export let commands = [
   {
     id: 'add_bar',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['Ctrl+B'],
     command: () => { nd.append_measure(); async_redraw(); },
     name: 'Add bar at end',
@@ -414,6 +461,7 @@ export let commands = [
   {
     id: 'del_bar',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['Ctrl+Delete'],
     command: () => { del_bar(); },
     name: 'Delete current bar',
@@ -422,6 +470,7 @@ export let commands = [
   {
     id: 'add_part',
     toolbar: {type: 'text', text: '+P', fontSize: 1.4},
+    onclick: true,
     keys: [],
     command: () => { add_part() },
     name: 'Add part below selected part',
@@ -429,6 +478,7 @@ export let commands = [
   {
     id: 'del_part',
     toolbar: {type: 'text', text: '-P', fontSize: 1.4},
+    onclick: true,
     keys: [],
     command: () => { del_part() },
     name: 'Delete selected part',
@@ -437,6 +487,7 @@ export let commands = [
   {
     id: 'play',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['Space'],
     command: () => { play() },
     name: 'Playback',
@@ -444,6 +495,7 @@ export let commands = [
   {
     id: 'ais',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: ['Ctrl+Space'],
     command: () => { sendToAis() },
     name: 'Playback (high quality)',
@@ -452,16 +504,19 @@ export let commands = [
   {
     id: 'support',
     toolbar: {type: 'image'},
+    onclick: true,
     keys: [],
     command: () => { window.open('https://github.com/rualark/AiHarmony/issues', '_blank') },
     name: 'Create support request',
   },
   {
+    id: 'up_part',
     keys: ['Ctrl+UpArrow'],
     command: () => { voiceChange(-1) },
     name: 'Move to higher voice',
   },
   {
+    id: 'down_part',
     keys: ['Ctrl+DownArrow'],
     command: () => { voiceChange(1) },
     name: 'Move to lower voice',
@@ -472,11 +527,13 @@ export let commands = [
     name: 'Delete note',
   },
   {
+    id: 'repeat',
     keys: ['R'],
     command: () => { repeat_element() },
     name: 'Repeat element',
   },
   {
+    id: 'timesig',
     keys: ['T'],
     command: () => { showTimesigModal() },
     name: 'Change time signature',
@@ -503,12 +560,14 @@ export let commands = [
   },
   {
     id: 'zoom-in',
+    onclick: true,
     keys: ['Ctrl+NumpadAdd'],
     command: () => { notation_zoom(1.1) },
     name: 'Zoom in',
   },
   {
     id: 'zoom-out',
+    onclick: true,
     keys: ['Ctrl+NumpadSubtract'],
     command: () => { notation_zoom(0.9) },
     name: 'Zoom out',
