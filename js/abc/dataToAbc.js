@@ -37,15 +37,14 @@ export function dataToAbc() {
       let flags = ares.getFlagsInInterval(v, s, s + nt.len);
       if (flags.red > 0) abc += '"^!"';
       else if (flags.yellow > 0) abc += '"^?"';
-      let sa = s - ares.s_start;
-      if (ares.harm != null && sa in ares.harm && ares.vid != null && v === ares.vid[0]) {
+      if (ares.harm != null && s in ares.harm && ares.vid != null && v === ares.vid[0]) {
         let harm_st = '';
         for (let s2 = 0; s2 < nt.len; ++s2) {
-          if (!((sa + s2) in ares.harm)) continue;
+          if (!((s + s2) in ares.harm)) continue;
           if (harm_st !== '') {
             harm_st += ', ';
           }
-          harm_st += ares.harm[sa];
+          harm_st += ares.harm[s];
         }
         abc += `"_${harm_st}"`;
       }

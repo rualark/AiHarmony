@@ -55,16 +55,19 @@ class AnalysisResults {
       for (let s = 0; s < this.c_len; ++s) {
         let fcnt = b256_ui(st, pos, 1);
         if (!fcnt) continue;
-        this.flag[v][s * 2] = [];
+        this.flag[v][s * 2 + this.s_start] = [];
         for (let f = 0; f < fcnt; ++f) {
-          this.flag[v][s * 2].push({
+          this.flag[v][s * 2 + this.s_start].push({
             fl: b256_ui(st, pos, 2),
             fvl: b256_ui(st, pos, 1),
-            fsl: b256_ui(st, pos, 2) * 2,
+            fsl: b256_ui(st, pos, 2) * 2 + this.s_start,
             accept: b256_ui(st, pos, 1) - 10,
             severity: b256_ui(st, pos, 1),
+            class: b256_safeString(st, pos, 1),
             name: b256_safeString(st, pos, 2),
             subName: b256_safeString(st, pos, 2),
+            comment: b256_safeString(st, pos, 2),
+            subComment: b256_safeString(st, pos, 2),
           });
         }
       }
@@ -86,7 +89,7 @@ class AnalysisResults {
       let old_n = -1;
       for (let s in this.flag[v]) {
         let m = Math.floor(s / npm);
-        let beat = s % npm;
+        let beat = Math.floor((s % npm) / 4);
         n = nd.getClosestNote(vi, s, n);
         let noteName = d2name(nd.voices[vi].notes[n].d, nd.get_realAlter(vi, n));
         if (noteName !== 'rest') noteName = 'note ' + noteName;
@@ -98,9 +101,55 @@ class AnalysisResults {
           else col = 'orange';
           if (old_n !== n) {
             old_n = n;
-            st += `<a href=# class='ares ares_${vi}_${n}' style='color: black'>${nd.voices[vi].name} [bar ${m + 1}, beat ${beat + 1}] ${noteName}</a><br>`;
+            st += `<a href=# class='ares ares_${vi}_${n}' style='color: black'>`;
+            if (this.flag.length > 1) {
+              st += `${nd.voices[vi].name} `;
+            }
+            st += `[bar ${m + 1}, beat ${beat + 1}] ${noteName}</a><br>`;
           }
-          st += `<a href=# class='ares ares_${vi}_${n}' style='color: ${col}'>${fla.name}: ${fla.subName}</a><br>`;
+          let ruleName = fla.name;
+          if (!settings.rule_verbose) {
+            if (ruleName.includes(":")) {
+              ruleName = ruleName.slice(0, ruleName.indexOf(':'));
+            }
+          }
+          st += `<a href=# class='ares ares_${vi}_${n}' style='color: ${col}'>`;
+          st += `${fla.class}: ${ruleName}`;
+          let subName = fla.subName;
+          // Always hide hidden subrule names starting with /
+          if (subName.charAt(0) === '/') subName = '';
+          // If minimum verbosity, hide all subrule names except starting with :
+          if (!settings.rule_verbose) {
+            if (subName.charAt(0) !== ':') subName = '';
+          }
+          if (subName) {
+            // Always remove :
+            if (subName.charAt(0) === ':') {
+              subName = subName.slice(1);
+            }
+            st += " (" + subName + ")";
+          }
+          if (settings.rule_verbose > 1 && fla.comment)
+            st += ". " + fla.comment;
+          if (settings.rule_verbose > 1 && fla.subComment)
+            st += " (" + fla.subComment + ")";
+          let sl_st = '';
+          sl_st = `bar ${Math.floor(fla.fsl / npm) + 1}, beat ${Math.floor((fla.fsl % npm) / 4) + 1}`;
+          if (this.flag.length > 2 && fla.fvl !== v) {
+            st += " - with " + nd.voices[this.vid[fla.fvl]].name;
+            if (fla.fsl !== s) {
+              st += ", " + sl_st;
+            }
+          }
+          else {
+            if (fla.fsl < s) {
+              st += " - from " + sl_st;
+            }
+            else if (fla.fsl > s) {
+              st += " - to " + sl_st;
+            }
+          }
+          st += `</a><br>`;
           onclick[`ares_${vi}_${n}`] = {n: n, v: vi};
           fcnt++;
         }
@@ -119,7 +168,6 @@ class AnalysisResults {
   }
 
   getFlags(va, pos) {
-    pos -= this.s_start;
     if (!this.flag || va >= this.flag.length) return {};
     if (!(pos in this.flag[va])) return {};
     let yellow = 0;

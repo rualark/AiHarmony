@@ -2,7 +2,7 @@ import {b256_safeString, b256_ui, safeString_b256, ui_b256} from "../core/base25
 import {engraverParams} from "../abc/abchelper.js";
 import {applyShortcutsLayout} from "../ui/shortcutsLayouts.js";
 
-const SETTINGS_ENCODING_VERSION = 1;
+const SETTINGS_ENCODING_VERSION = 2;
 
 class Settings {
   constructor() {
@@ -26,6 +26,7 @@ class Settings {
   settings2plain() {
     let st = '';
     st += ui_b256(SETTINGS_ENCODING_VERSION, 1);
+    st += ui_b256(this.rule_verbose, 1);
     st += ui_b256(engraverParams.scale * 1000, 2);
     st += safeString_b256(this.shortcutsLayout, 1);
     return st;
@@ -36,6 +37,7 @@ class Settings {
     if (saved_encoding_version !== SETTINGS_ENCODING_VERSION) {
       throw('version');
     }
+    this.rule_verbose = b256_ui(st, pos, 1);
     engraverParams.scale = b256_ui(st, pos, 2) / 1000;
     this.setShortcutsLayout(b256_safeString(st, pos, 1));
   }
