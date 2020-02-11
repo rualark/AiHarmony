@@ -22,17 +22,21 @@ function showSelectSpecies(v) {
   st += `<div class="form-group">`;
   st += `<label for="sel_partSpecies"><b>Counterpoint species</b></label>`;
   st += `<select class="form-control custom-select" id=sel_partSpecies name=sel_partSpecies>`;
+  let cur_sp = nd.voices[v].species;
+  if (cur_sp == null || cur_sp === 10) {
+    cur_sp = ares.getSpecies(v);
+  }
+  let selected = "";
+  if (cur_sp === 0) selected = "selected";
+  st += `<option value=0 ${selected}>Cantus firmus</option>`;
   for (let sp=1; sp<6; ++sp) {
-    let selected = "";
-    let cur_sp = nd.voices[v].species;
-    if (cur_sp == null || cur_sp === 10) {
-      cur_sp = ares.getSpecies(v);
-    }
+    selected = "";
     if (sp === cur_sp) selected = "selected";
     st += `<option value=${sp} ${selected}>Counterpoint species ${sp}</option>`;
   }
   st += `</select>`;
   st += `</div>`;
+  console.log(cur_sp, st);
   return st;
 }
 
@@ -50,8 +54,7 @@ export function showPartModal(v) {
   $('#modalOk').click(() => {
     enableKeys(true);
     nd.set_voiceName(v, $('#input_partName').val().substr(0, 50));
-    console.log('v', $("#sel_partSpecies option:selected").val());
-    nd.set_species(v, $("#sel_partSpecies option:selected").val());
+    nd.set_species(v, Number($("#sel_partSpecies option:selected").val()));
     $('#Modal').modal('hide');
     document.getElementById("ModalFooter").innerHTML = "";
     saveState();

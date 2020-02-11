@@ -13,20 +13,32 @@ let vocra_name = {
   2: 'Ten.',
   3: 'Alt.',
   4: 'Sop.'
-}
+};
 
 class AnalysisResults {
   constructor() {
   }
 
+  reset() {
+    this.errors = [];
+    this.pFlag = [];
+    this.harm = [];
+    this.flag = [];
+    this.vid = [];
+    this.vid2 = [];
+    this.vsp = [];
+    this.vocra = [];
+    this.pFlagCur = -1;
+  }
+
   import(st) {
+    this.reset();
     let pos = [0];
     let received_encoding_version = b256_ui(st, pos, 1);
     if (received_encoding_version !== ARES_ENCODING_VERSION) {
       throw(`Analysis results version: got ${received_encoding_version}, should be ${ARES_ENCODING_VERSION}`);
     }
     let ecnt = b256_ui(st, pos, 2);
-    this.errors = [];
     for (let i=0; i<ecnt; ++i) {
       this.errors.push({
         level: b256_ui(st, pos, 1),
@@ -38,15 +50,9 @@ class AnalysisResults {
     this.c_len = b256_ui(st, pos, 2);
     this.mode = b256_ui(st, pos, 1);
     const hli_size = b256_ui(st, pos, 2);
-    this.harm = [];
     for (let hs=0; hs<hli_size; ++hs) {
       this.harm[b256_ui(st, pos, 2) * 2] = b256_safeString(st, pos, 1);
     }
-    this.flag = [];
-    this.vid = [];
-    this.vid2 = [];
-    this.vsp = [];
-    this.vocra = [];
     for (let v=0; v<this.av_cnt; ++v) {
       let va = b256_ui(st, pos, 1);
       this.vid2[va] = v;
@@ -85,8 +91,6 @@ class AnalysisResults {
     let fcnt = 0;
     let npm = nd.timesig.measure_len;
     let noteClick = [];
-    this.pFlag = [];
-    this.pFlagCur = -1;
     for (let v=this.flag.length - 1; v>=0; --v) {
       let vi = this.vid[v];
       let n = 0;
@@ -259,7 +263,7 @@ function notifyFlag(pf) {
   alertify.dismissAll();
   let color = '#A36F00';
   if (pf.severity > 80) color = 'red';
-  alertify.notify(`<span style='color: ${color}'><b>${pf.text}</b></span>`, 'custom', 30);
+  alertify.notify(`<span style='color: ${color}'><b>${pf.text}</b></span>`, 'custom', 60);
 }
 
 export let ares = new AnalysisResults();
