@@ -20,6 +20,7 @@ let vocra_name = {
 
 class AnalysisResults {
   constructor() {
+    this.reset();
   }
 
   reset() {
@@ -32,6 +33,7 @@ class AnalysisResults {
     this.vsp = [];
     this.vocra = [];
     this.pFlagCur = -1;
+    this.state = 'clean';
   }
 
   import(st) {
@@ -197,6 +199,7 @@ class AnalysisResults {
         return false;
       });
     }
+    this.state = 'ready';
   }
 
   getFlags(va, pos) {

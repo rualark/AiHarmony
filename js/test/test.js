@@ -21,10 +21,11 @@ import {httpRequestNoCache} from "../core/remote.js";
 import {data2plain, STATE_VOLATILE_SUFFIX} from "../state/state.js";
 import {keysigs} from "../ui/modal/keysig.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
-import {waitForVar} from "../core/promise.js";
+import {sleep, waitForVar} from "../core/promise.js";
 import {makePatch} from "../core/string.js";
 import {sendToAis} from "../integration/aiStudio.js";
 import {unicode_b64} from "../core/base64.js";
+import {ares} from "../analysis/AnalysisResults.js";
 
 export let testState = {
   testing: false
@@ -60,6 +61,8 @@ async function waitForState(stage, obj, vals, pause, timeout) {
       message: `${stage}. Timeout ${timeout} waiting for state (current ${obj.state}) with pause ${pause}`
     };
   }
+  //console.log(stage);
+  //await sleep(200);
 }
 
 function assert2strings(stage, fname, st1, st2, max_diff=0) {
@@ -184,8 +187,9 @@ async function test_do(test_level) {
   await waitForState('new_file', state, ['ready'], 50, 5000);
   new_file();
   await waitForState('readRemoteMusicXmlFile', state, ['ready'], 50, 5000);
-  readRemoteMusicXmlFile('musicxml/good-cp5-extract.xml');
-  await waitForState('next_note', state, ['ready'], 50, 5000);
+  readRemoteMusicXmlFile('musicxml/ca3/good-cp5-extract.xml');
+  await waitForState('data2plain', state, ['ready'], 50, 5000);
+  await waitForState('analysis', ares, ['ready'], 50, 5000);
   let loaded_plain = data2plain().slice(0, -STATE_IGNORE_SUFFIX);
   assert2strings('Loaded plain', 'test1.plain',
     await httpRequestNoCache('GET', 'test_data/test1.plain'),
@@ -193,15 +197,22 @@ async function test_do(test_level) {
   assert2strings('Loaded abc', 'test1.abc',
     await httpRequestNoCache('GET', 'test_data/test1.abc'),
     dataToAbc());
+  assert2strings('Loaded ca3', 'test1.ca3',
+    await httpRequestNoCache('GET', 'test_data/test1.ca3'),
+    $('#analysisConsole').html());
   assert2strings('Base64 compression', '', loaded_plain, LZString.decompressFromBase64(LZString.compressToBase64(loaded_plain)));
   assert2strings('UTF16 compression', '', loaded_plain, LZString.decompressFromUTF16(LZString.compressToUTF16(loaded_plain)));
   await test_actions();
+  await waitForState('analysis', ares, ['ready'], 50, 5000);
   assert2strings('Edited plain', 'test2.plain',
     await httpRequestNoCache('GET', 'test_data/test2.plain'),
     data2plain().slice(0, -STATE_IGNORE_SUFFIX));
   assert2strings('Edited XML', 'test2.xml',
     removeStateFromXml(await httpRequestNoCache('GET', 'test_data/test2.xml')),
     removeStateFromXml(dataToMusicXml('NO DATE')));
+  assert2strings('Loaded ca3', 'test2.ca3',
+    await httpRequestNoCache('GET', 'test_data/test2.ca3'),
+    $('#analysisConsole').html());
   for (let i=0; i<34; ++i) {
     await waitForState('undo', state, ['ready'], 50, 5000);
     undoState();

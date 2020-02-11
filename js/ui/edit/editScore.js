@@ -40,7 +40,7 @@ export function voiceChange(dv) {
   let note = nd.voices[selected.note.voice].notes[selected.note.note];
   selected.note = {
     voice: selected.note.voice + dv,
-    note: nd.getClosestNote(selected.note.voice, note.step)
+    note: nd.getClosestNote(selected.note.voice + dv, note.step)
   };
   highlightNote();
   stop_advancing();

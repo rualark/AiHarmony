@@ -19,7 +19,7 @@ async function workerMessageReceiver(event) {
     //debugLog(10, 'Debug result:' + b256_debug(data), data.length);
     ares.import(data);
     ares.printFlags();
-    console.log(ares);
+    //console.log(ares);
     async_redraw();
   }
   console.log(event.data);

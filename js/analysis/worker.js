@@ -65,7 +65,7 @@ function callWasmFuncArray(wasmMod, funcName, arr) {
   let arrayOnHeap;
   try {
     arrayOnHeap = transferToHeap(wasmMod, arr);
-    console.log(arrayOnHeap, arr.length);
+    //console.log(arrayOnHeap, arr.length);
     return wasmMod[funcName](arrayOnHeap, arr.length);
   }
   finally {
