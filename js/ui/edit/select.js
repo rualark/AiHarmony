@@ -66,7 +66,7 @@ export function select_note(v, n) {
   update_selection();
 }
 
-export function select_range(v1, v2, s1, s2) {
+export function select_range(v1, v2, s1, s2, severity) {
   if (state.state !== 'ready') return;
   if (nd.voices.length <= v1) return;
   if (nd.voices.length <= v2) return;
@@ -80,7 +80,7 @@ export function select_range(v1, v2, s1, s2) {
     n21: nd.getClosestNote(v2, s1),
     n22: nd.getClosestNote(v2, s2)
   };
-  highlightRange();
+  highlightRange(severity);
   stop_advancing();
   saveState(false);
   update_selection();

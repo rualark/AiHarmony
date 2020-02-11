@@ -7,6 +7,9 @@ import {selected} from "../abc/abchelper.js";
 import {xmlLoadWarnings} from "../MusicXml/musicXmlToData.js";
 
 let ARES_ENCODING_VERSION = 2;
+export let SEVERITY_RED = 80;
+export let SEVERITY_RED_COLOR = "red";
+export let SEVERITY_YELLOW_COLOR = "#F19900";
 
 let vocra_name = {
   1: 'Bas.',
@@ -105,8 +108,8 @@ class AnalysisResults {
           let fla = this.flag[v][s][f];
           let col = 'black';
           if (fla.severity < settings.show_min_severity) continue;
-          if (fla.severity > 80) col = 'red';
-          else col = 'orange';
+          if (fla.severity > SEVERITY_RED) col = SEVERITY_RED_COLOR;
+          else col = SEVERITY_YELLOW_COLOR;
           if (old_n !== n) {
             old_n = n;
             st += `<a href=# class='ares ares_${vi}_${n}' style='color: black'>`;
@@ -202,7 +205,7 @@ class AnalysisResults {
     let yellow = 0;
     let red = 0;
     for (const fla of this.flag[va][pos]) {
-      if (fla.severity > 80) red++;
+      if (fla.severity > SEVERITY_RED) red++;
       else if (fla.severity >= settings.show_min_severity) yellow++;
     }
     return {red: red, yellow: yellow};
@@ -256,13 +259,13 @@ function selectFlag(pf) {
   let id = '.ares_' + pf.vi1 + '_' + pf.s1 + '_' + pf.f;
   $('.ares').css({"font-weight": ''});
   $(id).css({"font-weight": 'bold'});
-  select_range(pf.vi1, pf.vi2, pf.s1, pf.s2);
+  select_range(pf.vi1, pf.vi2, pf.s1, pf.s2, pf.severity);
 }
 
 function notifyFlag(pf) {
   alertify.dismissAll();
   let color = '#A36F00';
-  if (pf.severity > 80) color = 'red';
+  if (pf.severity > SEVERITY_RED) color = 'red';
   alertify.notify(`<span style='color: ${color}'><b>${pf.text}</b></span>`, 'custom', 60);
 }
 

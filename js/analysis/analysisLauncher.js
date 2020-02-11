@@ -16,7 +16,7 @@ async function workerMessageReceiver(event) {
     debugLog(5, modName, funcName, data);
   }
   if (type === 'RESULT') {
-    debugLog(10, 'Debug result:' + b256_debug(data), data.length);
+    //debugLog(10, 'Debug result:' + b256_debug(data), data.length);
     ares.import(data);
     ares.printFlags();
     console.log(ares);

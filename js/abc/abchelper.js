@@ -4,6 +4,7 @@ import {saveState} from "../state/history.js";
 import {start_counter} from "../core/time.js";
 import {update_selection} from "../ui/notation.js";
 import {settings} from "../state/settings.js";
+import {SEVERITY_RED, SEVERITY_RED_COLOR, SEVERITY_YELLOW_COLOR} from "../analysis/AnalysisResults.js";
 
 export let MAX_ABC_NOTE = 60;
 export let MIN_ABC_NOTE = 1;
@@ -37,7 +38,7 @@ function getElementByStartChar(abcjs, startChar) {
   }
 }
 
-function abcRangeHighlight(start, end, clear=true) {
+function abcRangeHighlight(start, end, color, clear=true) {
   let engraver = abcjs[0].engraver;
   if (clear) engraver.clearSelection();
   for (let line = 0; line < engraver.staffgroups.length; line++) {
@@ -52,7 +53,7 @@ function abcRangeHighlight(start, end, clear=true) {
         if (end > elStart && start < elEnd || end === start && end === elEnd) {
           //		if (elems[elem].abcelem.startChar>=start && elems[elem].abcelem.endChar<=end) {
           engraver.selected[engraver.selected.length] = elems[elem];
-          elems[elem].highlight(undefined, engraver.selectionColor);
+          elems[elem].highlight(undefined, color);
         }
       }
     }
@@ -67,18 +68,27 @@ export function highlightNote() {
   selected.classes = "";
 }
 
-export function highlightRange() {
+export function highlightRange(severity) {
   let nt11 = nd.voices[selected.note.v1].notes[selected.note.n11];
   let nt12 = nd.voices[selected.note.v1].notes[selected.note.n12];
   let nt21 = nd.voices[selected.note.v2].notes[selected.note.n21];
   let nt22 = nd.voices[selected.note.v2].notes[selected.note.n22];
+  let color;
+  if (severity > SEVERITY_RED) {
+    color = SEVERITY_RED_COLOR;
+  }
+  else {
+    color = SEVERITY_YELLOW_COLOR;
+  }
   abcRangeHighlight(
     Math.min(nt11.abc_charStarts, nt12.abc_charStarts),
-    Math.max(nt11.abc_charEnds, nt12.abc_charEnds)
+    Math.max(nt11.abc_charEnds, nt12.abc_charEnds),
+    color
   );
   abcRangeHighlight(
     Math.min(nt21.abc_charStarts, nt22.abc_charStarts),
     Math.max(nt21.abc_charEnds, nt22.abc_charEnds),
+    color,
     false
   );
   selected.element = null;
