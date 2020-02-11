@@ -1,4 +1,4 @@
-body {padding-top:4.3rem; background-color:white}
+body {padding-top:10px; background-color:white}
 .imgmo {-webkit-transition:all .5s ease; -moz-transition:all .5s ease; -o-transition:all .5s ease; -ms-transition:all .5s ease; transition:all .5s ease}
 .imgmo:hover {opacity:.5; filter:alpha(opacity=50)}
 .imgmo2 {-webkit-transition:all .5s ease; -moz-transition:all .5s ease; -o-transition:all .5s ease; -ms-transition:all .5s ease; transition:all .5s ease}

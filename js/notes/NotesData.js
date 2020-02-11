@@ -98,6 +98,7 @@ class NotesData {
   }
 
   build_keysig(fifths, mode) {
+    this.keysig = {};
     this.keysig.fifths = fifths;
     this.keysig.mode = mode;
     this.keysig.name = fifths2keysig[fifths];
@@ -189,12 +190,7 @@ class NotesData {
     this.algo = 'CA3';
     this.algoMode = 0;
     this.phrases = [ 0 ];
-    this.keysig = {
-      name: 'C',
-      mode: 13, // 0 - major, 2 - dorian, 9 - aeolian, 13 - undefined (can detect)
-      fifths: 0, // Number of alterations near key
-      base_note: 9, // Base tonic note (C - 0, Am - 9)
-    };
+    this.build_keysig(0, 13);
     let mode = this.keysig;
     mode.step = 0;
     this.modes = [

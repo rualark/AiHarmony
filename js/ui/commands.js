@@ -106,20 +106,21 @@ export function initKeyCodes() {
   }
 }
 
-export function initCommands() {
+function makeToolbar(toolbar_id) {
   let st = '';
   for (let command of commands) {
     if (command.toolbar != null && command.toolbar.dev != null) {
       if (mobileOrTablet && !(command.toolbar.dev & 1)) continue;
       if (!mobileOrTablet && !(command.toolbar.dev & 2)) continue;
     }
+    if (!command.toolbar) continue;
+    if (command.toolbar.toolbar_id !== toolbar_id) continue;
     let nbsp = '&nbsp;';
     //if (!mobileOrTablet) nbsp = '';
     if (command.separator) {
       st += `<div style='display: flex; justify-content: center; align-items: center;'><img src=img/color/gray.png style='opacity: 0.3' height=${mobileOpt[mobileOrTablet].toolbar_img_height - 4} width=1></div>${nbsp}`;
       continue;
     }
-    if (!command.toolbar) continue;
     if (!command.id) continue;
     let tooltip = '';
     if (!mobileOrTablet) {
@@ -138,8 +139,13 @@ export function initCommands() {
     }
     st += command.toolbar.html + `</a>${nbsp}`;
   }
+  return st;
+}
+
+export function initCommands() {
   //console.log(st);
-  document.getElementById("toolbar").innerHTML = st;
+  document.getElementById("toolbar").innerHTML = makeToolbar(1);
+  document.getElementById("toolbar2").innerHTML = makeToolbar(2);
   for (let command of commands) {
     if (!command.onclick) continue;
     if (command.toolbar != null && command.toolbar.dev != null) {
@@ -185,7 +191,7 @@ export let commandShiftKeyCodes = {};
 export let commands = [
   {
     id: 'logo',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: [],
     command: () => { window.open('https://artinfuser.com', '_blank') },
@@ -193,7 +199,7 @@ export let commands = [
   },
   {
     id: 'question',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['F1'],
     command: () => { showShortcutsModal() },
@@ -201,7 +207,7 @@ export let commands = [
   },
   {
     id: 'new',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 2},
     onclick: true,
     keys: ['Alt+N'],
     command: () => { new_file() },
@@ -209,7 +215,7 @@ export let commands = [
   },
   {
     id: 'open',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 2},
     onclick: true,
     keys: ['Ctrl+O', 'Alt+O'],
     command: () => { showOpenMusicXmlModal() },
@@ -217,7 +223,7 @@ export let commands = [
   },
   {
     id: 'download',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 2},
     onclick: true,
     keys: ['Ctrl+S'],
     command: () => { showDownloadModal() },
@@ -225,7 +231,7 @@ export let commands = [
   },
   {
     id: 'share',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 2},
     onclick: true,
     keys: ['Ctrl+R'],
     command: () => { showShareModal() },
@@ -233,7 +239,7 @@ export let commands = [
   },
   {
     id: 'aprev',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['Ctrl+LeftArrow'],
     command: () => { ares.prevFlag() },
@@ -241,7 +247,7 @@ export let commands = [
   },
   {
     id: 'anext',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['Ctrl+RightArrow'],
     command: () => { ares.nextFlag() },
@@ -249,7 +255,7 @@ export let commands = [
   },
   {
     id: 'aic',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 2},
     onclick: true,
     keys: ['Ctrl+A'],
     command: () => { sendToAic() },
@@ -257,16 +263,16 @@ export let commands = [
   },
   {
     id: 'settings',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 2},
     onclick: true,
     keys: [],
     command: () => { showSettingsModal() },
     name: 'Settings',
   },
-  { separator: true },
+  { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'undo',
-    toolbar: {type: 'image', disabled: true},
+    toolbar: {type: 'image', disabled: true, toolbar_id: 1},
     onclick: true,
     keys: ['Ctrl+Z'],
     command: () => { undoState() },
@@ -274,16 +280,16 @@ export let commands = [
   },
   {
     id: 'redo',
-    toolbar: {type: 'image', disabled: true},
+    toolbar: {type: 'image', disabled: true, toolbar_id: 1},
     onclick: true,
     keys: ['Ctrl+Y'],
     command: () => { redoState() },
     name: 'Redo',
   },
-  { separator: true },
+  { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'whole',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['1', 'Numpad1'],
     command: () => { set_len(16) },
@@ -291,7 +297,7 @@ export let commands = [
   },
   {
     id: 'half',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['2', 'Numpad2'],
     command: () => { set_len(8) },
@@ -299,7 +305,7 @@ export let commands = [
   },
   {
     id: 'quarter',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['4', 'Numpad4'],
     command: () => { set_len(4) },
@@ -307,7 +313,7 @@ export let commands = [
   },
   {
     id: '8th',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['8', 'Numpad8'],
     command: () => { set_len(2) },
@@ -315,7 +321,7 @@ export let commands = [
   },
   {
     id: '16th',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['6', 'Numpad6'],
     command: () => { set_len(1) },
@@ -323,7 +329,7 @@ export let commands = [
   },
   {
     id: 'dot',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['Period', 'NumpadDecimalPoint'],
     command: () => { toggle_dot() },
@@ -331,16 +337,16 @@ export let commands = [
   },
   {
     id: 'tie',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['Backslash', 'NumpadDivide'],
     command: () => { toggle_tie() },
     name: 'Input tie between notes',
   },
-  { separator: true },
+  { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'note_c',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['C'],
     command: () => { set_note(0) },
@@ -348,7 +354,7 @@ export let commands = [
   },
   {
     id: 'note_d',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['D'],
     command: () => { set_note(1) },
@@ -356,7 +362,7 @@ export let commands = [
   },
   {
     id: 'note_e',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['E'],
     command: () => { set_note(2) },
@@ -364,7 +370,7 @@ export let commands = [
   },
   {
     id: 'note_f',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['F'],
     command: () => { set_note(3) },
@@ -372,7 +378,7 @@ export let commands = [
   },
   {
     id: 'note_g',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['G'],
     command: () => { set_note(4) },
@@ -380,7 +386,7 @@ export let commands = [
   },
   {
     id: 'note_a',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['A'],
     command: () => { set_note(5) },
@@ -388,16 +394,16 @@ export let commands = [
   },
   {
     id: 'note_b',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['B'],
     command: () => { set_note(6) },
     name: 'Input note B',
   },
-  { separator: true },
+  { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'dblflat',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: [],
     command: () => { toggle_alter(-2) },
@@ -405,7 +411,7 @@ export let commands = [
   },
   {
     id: 'flat',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['Dash', 'NumpadSubtract'],
     command: () => { toggle_alter(-1) },
@@ -413,7 +419,7 @@ export let commands = [
   },
   {
     id: 'natural',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['N', 'EqualSign'],
     command: () => { toggle_alter(0) },
@@ -421,7 +427,7 @@ export let commands = [
   },
   {
     id: 'sharp',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['Shift+EqualSign', 'NumpadAdd'],
     command: () => { toggle_alter(1) },
@@ -429,16 +435,16 @@ export let commands = [
   },
   {
     id: 'dblsharp',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: [],
     command: () => { toggle_alter(2) },
     name: 'Input double sharp',
   },
-  { separator: true },
+  { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'up8',
-    toolbar: {type: 'text', text: '+8ve', fontSize: 1.2},
+    toolbar: {type: 'text', text: '+8ve', fontSize: 1.2, toolbar_id: 1},
     onclick: true,
     keys: ['Shift+UpArrow'],
     command: () => { increment_octave(1) },
@@ -446,34 +452,34 @@ export let commands = [
   },
   {
     id: 'down8',
-    toolbar: {type: 'text', text: '-8ve', fontSize: 1.2},
+    toolbar: {type: 'text', text: '-8ve', fontSize: 1.2, toolbar_id: 1},
     onclick: true,
     keys: ['Shift+DownArrow'],
     command: () => { increment_octave(-1) },
     name: 'Move note down an octave',
   },
-  { separator: true },
+  { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'rest',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['0', 'Numpad0'],
     command: () => { set_rest(true) },
     name: 'Input rest',
   },
-  { separator: true },
+  { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'keysig',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['K'],
     command: () => { showKeysigModal() },
     name: 'Key signature',
   },
-  { separator: true },
+  { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'add_bar',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['Ctrl+B'],
     command: () => { nd.append_measure(); async_redraw(); },
@@ -481,16 +487,16 @@ export let commands = [
   },
   {
     id: 'del_bar',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['Ctrl+Delete'],
     command: () => { del_bar(); },
     name: 'Delete current bar',
   },
-  { separator: true },
+  { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'add_part',
-    toolbar: {type: 'text', text: '+P', fontSize: 1.4},
+    toolbar: {type: 'text', text: '+P', fontSize: 1.4, toolbar_id: 1},
     onclick: true,
     keys: [],
     command: () => { add_part() },
@@ -498,16 +504,16 @@ export let commands = [
   },
   {
     id: 'del_part',
-    toolbar: {type: 'text', text: '-P', fontSize: 1.4},
+    toolbar: {type: 'text', text: '-P', fontSize: 1.4, toolbar_id: 1},
     onclick: true,
     keys: [],
     command: () => { del_part() },
     name: 'Delete selected part',
   },
-  { separator: true },
+  { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'play',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['Space'],
     command: () => { play() },
@@ -515,16 +521,16 @@ export let commands = [
   },
   {
     id: 'ais',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: ['Ctrl+Space'],
     command: () => { sendToAis() },
     name: 'Playback (high quality)',
   },
-  { separator: true },
+  { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'support',
-    toolbar: {type: 'image'},
+    toolbar: {type: 'image', toolbar_id: 2},
     onclick: true,
     keys: [],
     command: () => { window.open('https://github.com/rualark/AiHarmony/issues', '_blank') },
