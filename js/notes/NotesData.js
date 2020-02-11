@@ -1,6 +1,6 @@
 import {fifths2keysig, keysig_imprint} from "./noteHelper.js";
 import {saveState} from "../state/history.js";
-import {clicked} from "../abc/abchelper.js";
+import {selected} from "../abc/abchelper.js";
 
 export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
 
@@ -251,7 +251,7 @@ class NotesData {
         ]
       },
     ];
-    clicked.note = {voice: 0, note: 0};
+    selected.note = {voice: 0, note: 0};
     this.abc_charStarts = [];
   }
 

@@ -4,7 +4,7 @@ import {timesigs} from "../ui/modal/timesig.js";
 import {getBestClef} from "../notes/bestClef.js";
 import {d2c, keysig_imprint} from "../notes/noteHelper.js";
 import {storage2state, url2state} from "../state/state.js";
-import {async_redraw, clicked} from "../abc/abchelper.js";
+import {async_redraw, selected} from "../abc/abchelper.js";
 import {saveState} from "../state/history.js";
 import {start_counter} from "../core/time.js";
 import {name2filename} from "../core/string.js";
@@ -33,7 +33,7 @@ export function readMusicXml(xml, filename) {
       nd.set_fileName(name2filename(nd.name));
     }
     if (!nd.name) nd.set_name(nd.fileName);
-    clicked.note = {voice: 0, note: 0};
+    selected.note = {voice: 0, note: 0};
     saveState();
   } catch (e) {
     storage2state();

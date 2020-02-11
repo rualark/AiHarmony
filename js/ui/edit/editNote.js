@@ -1,8 +1,8 @@
 import {nd} from "../../notes/NotesData.js";
-import {async_redraw, clicked, find_selection, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "../../abc/abchelper.js";
+import {async_redraw, selected, highlightNote, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
 import {stop_advancing} from "./editScore.js";
-import {move_to_next_note, move_to_previous_note} from "./move.js";
+import {move_to_next_note, move_to_previous_note} from "./select.js";
 import {set_len} from "./editLen.js";
 
 export let future = {
@@ -13,8 +13,8 @@ export let future = {
 
 export function set_note(dc) {
   if (state.state !== 'ready') return;
-  if (!clicked.element || !clicked.element.duration) return;
-  let el = nd.abc_charStarts[clicked.element.startChar];
+  if (!selected.element || !selected.element.duration) return;
+  let el = nd.abc_charStarts[selected.element.startChar];
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   let pd = 35;
@@ -46,15 +46,15 @@ export function set_note(dc) {
 
 export function repeat_element() {
   if (state.state !== 'ready') return;
-  if (!clicked.element || !clicked.element.duration) return;
-  let el = nd.abc_charStarts[clicked.element.startChar];
+  if (!selected.element || !selected.element.duration) return;
+  let el = nd.abc_charStarts[selected.element.startChar];
   let notes = nd.voices[el.voice].notes;
   let n = el.note;
   if (future.advancing) {
     if (!n) return;
   } else {
     move_to_next_note();
-    find_selection();
+    highlightNote();
     future.advancing = true;
     future.len = notes[n].len;
     ++n;
@@ -71,8 +71,8 @@ export function repeat_element() {
 
 export function set_rest(advance) {
   if (state.state !== 'ready') return;
-  if (!clicked.element || !clicked.element.duration) return;
-  let el = nd.abc_charStarts[clicked.element.startChar];
+  if (!selected.element || !selected.element.duration) return;
+  let el = nd.abc_charStarts[selected.element.startChar];
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   nd.set_rest(el.voice, el.note, false);
@@ -95,8 +95,8 @@ export function set_rest(advance) {
 }
 
 export function can_increment_note(dnote) {
-  if (!clicked.element || !clicked.element.duration) return;
-  let el = nd.abc_charStarts[clicked.element.startChar];
+  if (!selected.element || !selected.element.duration) return;
+  let el = nd.abc_charStarts[selected.element.startChar];
   let n = el.note;
   if (future.advancing && el.note) {
     n = n - 1;
@@ -108,9 +108,9 @@ export function can_increment_note(dnote) {
 
 export function increment_octave(doct) {
   if (state.state !== 'ready') return;
-  if (!clicked.element || !clicked.element.duration) return;
+  if (!selected.element || !selected.element.duration) return;
   if (!can_increment_note(doct * 7)) return;
-  let el = nd.abc_charStarts[clicked.element.startChar];
+  let el = nd.abc_charStarts[selected.element.startChar];
   let n = el.note;
   if (future.advancing && el.note) {
     n = n - 1;
@@ -124,9 +124,9 @@ export function increment_octave(doct) {
 
 export function increment_note(dnote) {
   if (state.state !== 'ready') return;
-  if (!clicked.element || !clicked.element.duration) return;
+  if (!selected.element || !selected.element.duration) return;
   if (!can_increment_note(dnote)) return;
-  let el = nd.abc_charStarts[clicked.element.startChar];
+  let el = nd.abc_charStarts[selected.element.startChar];
   let n = el.note;
   if (future.advancing && el.note) {
     n = n - 1;
@@ -140,8 +140,8 @@ export function increment_note(dnote) {
 
 export function toggle_alter(alt) {
   if (state.state !== 'ready') return;
-  if (!clicked.element || !clicked.element.duration) return;
-  let el = nd.abc_charStarts[clicked.element.startChar];
+  if (!selected.element || !selected.element.duration) return;
+  let el = nd.abc_charStarts[selected.element.startChar];
   let note = nd.voices[el.voice].notes[el.note];
   if (!note.d) {
     future.advancing = true;

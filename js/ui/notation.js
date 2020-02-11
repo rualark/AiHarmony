@@ -1,4 +1,4 @@
-import {async_redraw, clicked, get_voice} from "../abc/abchelper.js";
+import {async_redraw, selected, get_voice} from "../abc/abchelper.js";
 import {showClefsModal} from "./modal/clefs.js";
 import {nd} from "../notes/NotesData.js";
 import {showTimesigModal} from "./modal/timesig.js";
@@ -13,86 +13,124 @@ import {button_enabled, button_enabled_active} from "./lib/uilib.js";
 import {rename_part, stop_advancing} from "./edit/editScore.js";
 import {can_pre_tie, can_tie, is_pre_tie} from "./edit/editTie.js";
 import {can_dot, can_len} from "./edit/editLen.js";
-import {showFlagsModal} from "./modal/flagsModal.js";
+import {ares} from "../analysis/AnalysisResults.js";
 
 window.onresize = function() {
   async_redraw();
 };
 
 export function update_selection() {
-  button_enabled('add_part', typeof clicked.element.abselem !== 'undefined' && nd.voices.length < 63);
-  button_enabled('del_part', typeof clicked.element.abselem !== 'undefined' && nd.voices.length > 1);
-  button_enabled_active('note_c', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 0);
-  button_enabled_active('note_d', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 1);
-  button_enabled_active('note_e', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 2);
-  button_enabled_active('note_f', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 3);
-  button_enabled_active('note_g', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 4);
-  button_enabled_active('note_a', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 5);
-  button_enabled_active('note_b', clicked.element.duration, clicked.element.pitches && (77 + clicked.element.pitches[0].pitch) % 7 === 6);
-  button_enabled_active('rest', clicked.element.duration, clicked.element.rest && clicked.element.rest.type === 'rest');
+  button_enabled('add_part',
+    selected.element != null && typeof selected.element.abselem !== 'undefined' && nd.voices.length < 63);
+  button_enabled('del_part',
+    selected.element != null && typeof selected.element.abselem !== 'undefined' && nd.voices.length > 1);
+  button_enabled_active('note_c',
+    selected.element != null && selected.element.duration,
+    selected.element != null && selected.element.pitches && (77 + selected.element.pitches[0].pitch) % 7 === 0);
+  button_enabled_active('note_d',
+    selected.element != null && selected.element.duration,
+    selected.element != null && selected.element.pitches && (77 + selected.element.pitches[0].pitch) % 7 === 1);
+  button_enabled_active('note_e',
+    selected.element != null && selected.element.duration,
+    selected.element != null && selected.element.pitches && (77 + selected.element.pitches[0].pitch) % 7 === 2);
+  button_enabled_active('note_f',
+    selected.element != null && selected.element.duration,
+    selected.element != null && selected.element.pitches && (77 + selected.element.pitches[0].pitch) % 7 === 3);
+  button_enabled_active('note_g',
+    selected.element != null && selected.element.duration,
+    selected.element != null && selected.element.pitches && (77 + selected.element.pitches[0].pitch) % 7 === 4);
+  button_enabled_active('note_a',
+    selected.element != null && selected.element.duration,
+    selected.element != null && selected.element.pitches && (77 + selected.element.pitches[0].pitch) % 7 === 5);
+  button_enabled_active('note_b',
+    selected.element != null && selected.element.duration,
+    selected.element != null && selected.element.pitches && (77 + selected.element.pitches[0].pitch) % 7 === 6);
+  button_enabled_active('rest',
+    selected.element != null && selected.element.duration,
+    selected.element != null && selected.element.rest && selected.element.rest.type === 'rest');
   button_enabled_active('up8', can_increment_note(7), false);
   button_enabled_active('down8', can_increment_note(-7), false);
-  if (clicked.element.rest && clicked.element.rest.type === 'rest' || future.advancing) {
-    button_enabled_active('dblflat', clicked.element.duration, future.alteration === -2);
-    button_enabled_active('flat', clicked.element.duration, future.alteration === -1);
-    button_enabled_active('natural', clicked.element.duration, future.alteration === 0);
-    button_enabled_active('sharp', clicked.element.duration, future.alteration === 1);
-    button_enabled_active('dblsharp', clicked.element.duration, future.alteration === 2);
+  if (selected.element != null && selected.element.rest && selected.element.rest.type === 'rest' || future.advancing) {
+    button_enabled_active('dblflat', selected.element.duration, future.alteration === -2);
+    button_enabled_active('flat', selected.element.duration, future.alteration === -1);
+    button_enabled_active('natural', selected.element.duration, future.alteration === 0);
+    button_enabled_active('sharp', selected.element.duration, future.alteration === 1);
+    button_enabled_active('dblsharp', selected.element.duration, future.alteration === 2);
   } else {
-    button_enabled_active('dblflat', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'dblflat');
-    button_enabled_active('flat', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'flat');
-    button_enabled_active('natural', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'natural');
-    button_enabled_active('sharp', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'sharp');
-    button_enabled_active('dblsharp', clicked.element.duration, clicked.element.pitches && clicked.element.pitches[0].accidental === 'dblsharp');
+    button_enabled_active('dblflat',
+      selected.element != null && selected.element.duration,
+      selected.element != null && selected.element.pitches && selected.element.pitches[0].accidental === 'dblflat');
+    button_enabled_active('flat',
+      selected.element != null && selected.element.duration,
+      selected.element != null && selected.element.pitches && selected.element.pitches[0].accidental === 'flat');
+    button_enabled_active('natural',
+      selected.element != null && selected.element.duration,
+      selected.element != null && selected.element.pitches && selected.element.pitches[0].accidental === 'natural');
+    button_enabled_active('sharp',
+      selected.element != null && selected.element.duration,
+      selected.element != null && selected.element.pitches && selected.element.pitches[0].accidental === 'sharp');
+    button_enabled_active('dblsharp',
+      selected.element != null && selected.element.duration,
+      selected.element != null && selected.element.pitches && selected.element.pitches[0].accidental === 'dblsharp');
   }
   //console.log('nl', future.advancing, future.len);
   if (future.advancing && future.len) {
-    button_enabled_active('16th', clicked.element.duration, [1].includes(future.len));
+    button_enabled_active('16th', selected.element.duration, [1].includes(future.len));
     button_enabled_active('8th', can_len(2), [2, 3].includes(future.len));
     button_enabled_active('quarter', can_len(4), [4, 6].includes(future.len));
     button_enabled_active('half', can_len(8), [8, 12].includes(future.len));
     button_enabled_active('whole', can_len(16), [16, 24].includes(future.len));
     button_enabled_active('dot', can_dot(), [3, 6, 12, 24].includes(future.len));
   } else {
-    button_enabled_active('16th', clicked.element.duration, [0.0625].includes(clicked.element.duration));
-    button_enabled_active('8th', can_len(2), [0.125, 0.1875].includes(clicked.element.duration));
-    button_enabled_active('quarter', can_len(4), [0.25, 0.375].includes(clicked.element.duration));
-    button_enabled_active('half', can_len(8), [0.5, 0.75].includes(clicked.element.duration));
-    button_enabled_active('whole', can_len(16), [1, 1.5].includes(clicked.element.duration));
-    button_enabled_active('dot', can_dot(), [0.375, 0.75, 1.5].includes(clicked.element.duration));
+    button_enabled_active('16th',
+      selected.element != null && selected.element.duration,
+      selected.element != null && [0.0625].includes(selected.element.duration));
+    button_enabled_active('8th', can_len(2),
+      selected.element != null && [0.125, 0.1875].includes(selected.element.duration));
+    button_enabled_active('quarter', can_len(4),
+      selected.element != null && [0.25, 0.375].includes(selected.element.duration));
+    button_enabled_active('half', can_len(8),
+      selected.element != null && [0.5, 0.75].includes(selected.element.duration));
+    button_enabled_active('whole', can_len(16),
+      selected.element != null && [1, 1.5].includes(selected.element.duration));
+    button_enabled_active('dot', can_dot(),
+      selected.element != null && [0.375, 0.75, 1.5].includes(selected.element.duration));
   }
   if (future.advancing && future.len) {
     button_enabled_active('tie', can_pre_tie(), is_pre_tie());
   } else {
-    button_enabled_active('tie', can_tie(), clicked.element.abselem && clicked.element.abselem.startTie);
+    button_enabled_active('tie', can_tie(),
+      selected.element != null && selected.element.abselem && selected.element.abselem.startTie);
   }
-  if (clicked.note != null && clicked.note.note != null) {
+  button_enabled('anext', ares.pFlag != null && ares.pFlagCur < ares.pFlag.length - 1);
+  button_enabled('aprev', ares.pFlag != null && ares.pFlagCur > 0);
+  if (selected.note != null && selected.note.v1 == null && selected.note.note != null) {
     $('.ares').css({"font-weight": ''});
-    $('.ares_' + clicked.note.voice + '_' + clicked.note.note).css({"font-weight": 'bold'});
+    $('.ares_' + selected.note.voice + '_' + selected.note.note).css({"font-weight": 'bold'});
   }
 }
 
 export function element_click(abcElem, tuneNumber, classes, pos, move) {
   console.log('Click', abcElem, tuneNumber, classes, pos, move);
-  clicked.element = abcElem;
-  clicked.classes = classes;
-  clicked.voice = pos.voice;
+  selected.element = abcElem;
+  selected.classes = classes;
+  selected.voice = pos.voice;
   //clicked.voice = get_voice(classes);
-  clicked.note = null;
+  selected.note = null;
   if (abcElem['el_type'] === 'voice-name') {
     rename_part();
   }
-  else if (typeof clicked.element.clefPos !== 'undefined') {
-    showClefsModal(nd.voices[clicked.voice]);
+  else if (typeof selected.element.clefPos !== 'undefined') {
+    showClefsModal(nd.voices[selected.voice]);
   }
-  else if (typeof clicked.element.value !== 'undefined') {
+  else if (typeof selected.element.value !== 'undefined') {
     showTimesigModal();
   }
-  else if (typeof clicked.element.mode !== 'undefined') {
+  else if (typeof selected.element.mode !== 'undefined') {
     showKeysigModal();
   }
-  if (clicked.element.duration != null) {
-    clicked.note = nd.abc_charStarts[clicked.element.startChar];
+  if (selected.element.duration != null) {
+    selected.note = nd.abc_charStarts[selected.element.startChar];
   }
   stop_advancing();
   if (move) {

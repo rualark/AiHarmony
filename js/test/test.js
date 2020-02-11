@@ -1,4 +1,4 @@
-import {next_note, prev_note} from "../ui/edit/move.js";
+import {next_note, prev_note} from "../ui/edit/select.js";
 import {start_counter, stop_counter} from "../core/time.js";
 import {readRemoteMusicXmlFile} from "../MusicXml/readRemoteMusicXml.js";
 import {async_redraw, state} from "../abc/abchelper.js";

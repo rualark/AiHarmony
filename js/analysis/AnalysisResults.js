@@ -1,8 +1,10 @@
 import {b256_safeString, b256_ui} from "../core/base256.js";
 import {nd} from "../notes/NotesData.js";
 import {d2name, modeName} from "../notes/noteHelper.js";
-import {select_note} from "../ui/edit/move.js";
+import {select_note, select_range} from "../ui/edit/select.js";
 import {settings} from "../state/settings.js";
+import {selected} from "../abc/abchelper.js";
+import {xmlLoadWarnings} from "../MusicXml/musicXmlToData.js";
 
 let ARES_ENCODING_VERSION = 2;
 
@@ -82,7 +84,9 @@ class AnalysisResults {
     }
     let fcnt = 0;
     let npm = nd.timesig.measure_len;
-    let onclick = {};
+    let noteClick = [];
+    this.pFlag = [];
+    this.pFlagCur = -1;
     for (let v=this.flag.length - 1; v>=0; --v) {
       let vi = this.vid[v];
       let n = 0;
@@ -106,6 +110,7 @@ class AnalysisResults {
               st += `${nd.voices[vi].name} `;
             }
             st += `[bar ${m + 1}, beat ${beat + 1}] ${noteName}</a><br>`;
+            noteClick.push({vi: vi, n: n});
           }
           let ruleName = fla.name;
           if (!settings.rule_verbose) {
@@ -113,8 +118,9 @@ class AnalysisResults {
               ruleName = ruleName.slice(0, ruleName.indexOf(':'));
             }
           }
-          st += `<a href=# class='ares ares_${vi}_${n}' style='color: ${col}'>`;
-          st += `${fla.class}: ${ruleName}`;
+          st += `<a href=# class='ares ares_${vi}_${s}_${f}' style='color: ${col}'>`;
+          let shortText = '';
+          shortText += `${fla.class}: ${ruleName}`;
           let subName = fla.subName;
           // Always hide hidden subrule names starting with /
           if (subName.charAt(0) === '/') subName = '';
@@ -127,8 +133,9 @@ class AnalysisResults {
             if (subName.charAt(0) === ':') {
               subName = subName.slice(1);
             }
-            st += " (" + subName + ")";
+            shortText += " (" + subName + ")";
           }
+          st += shortText;
           if (settings.rule_verbose > 1 && fla.comment)
             st += ". " + fla.comment;
           if (settings.rule_verbose > 1 && fla.subComment)
@@ -137,7 +144,7 @@ class AnalysisResults {
           sl_st = `bar ${Math.floor(fla.fsl / npm) + 1}, beat ${Math.floor((fla.fsl % npm) / 4) + 1}`;
           if (this.flag.length > 2 && fla.fvl !== v) {
             st += " - with " + nd.voices[this.vid[fla.fvl]].name;
-            if (fla.fsl !== s) {
+            if (fla.fsl != s) {
               st += ", " + sl_st;
             }
           }
@@ -149,8 +156,18 @@ class AnalysisResults {
               st += " - to " + sl_st;
             }
           }
+          st += ``;
           st += `</a><br>`;
-          onclick[`ares_${vi}_${n}`] = {n: n, v: vi};
+          this.pFlag.push({
+            vi1: vi,
+            vi2: this.vid[fla.fvl],
+            s1: s,
+            s2: fla.fsl,
+            f: f,
+            severity: fla.severity,
+            text: shortText,
+            num: this.pFlag.length
+          });
           fcnt++;
         }
       }
@@ -159,9 +176,17 @@ class AnalysisResults {
     // if (this.previous_print_st !== st) {
     // this.previous_print_st = st;
     document.getElementById('analysisConsole').innerHTML = st;
-    for (const id in onclick) {
-      $('.' + id).click(() => {
-        select_note(onclick[id].v, onclick[id].n);
+    for (const fc of noteClick) {
+      $('.ares_' + fc.vi + '_' + fc.n).click(() => {
+        select_note(fc.vi, fc.n);
+        return false;
+      });
+    }
+    for (const fc of this.pFlag) {
+      let id = '.ares_' + fc.vi1 + '_' + fc.s1 + '_' + fc.f;
+      $(id).click(() => {
+        selectFlag(fc);
+        this.pFlagCur = fc.num;
         return false;
       });
     }
@@ -203,6 +228,38 @@ class AnalysisResults {
     let va = this.vid2[v];
     return this.vsp[va];
   }
+
+  nextFlag() {
+    if (this.pFlag == null) return;
+    if (this.pFlagCur >= this.pFlag.length) return;
+    this.pFlagCur++;
+    let pf = this.pFlag[this.pFlagCur];
+    selectFlag(pf);
+    notifyFlag(pf);
+  }
+
+  prevFlag() {
+    if (this.pFlag == null) return;
+    if (this.pFlagCur <= 0) return;
+    this.pFlagCur--;
+    let pf = this.pFlag[this.pFlagCur];
+    selectFlag(pf);
+    notifyFlag(pf);
+  }
+}
+
+function selectFlag(pf) {
+  let id = '.ares_' + pf.vi1 + '_' + pf.s1 + '_' + pf.f;
+  $('.ares').css({"font-weight": ''});
+  $(id).css({"font-weight": 'bold'});
+  select_range(pf.vi1, pf.vi2, pf.s1, pf.s2);
+}
+
+function notifyFlag(pf) {
+  alertify.dismissAll();
+  let color = '#A36F00';
+  if (pf.severity > 80) color = 'red';
+  alertify.notify(`<span style='color: ${color}'><b>${pf.text}</b></span>`, 'custom', 30);
 }
 
 export let ares = new AnalysisResults();

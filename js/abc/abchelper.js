@@ -14,7 +14,7 @@ let parserParams = {};
 export let abcjs = {};
 export let state = {};
 
-export let clicked = {
+export let selected = {
   element: {},
   classes: '',
   note: {voice: 0, note: 0},
@@ -37,12 +37,52 @@ function getElementByStartChar(abcjs, startChar) {
   }
 }
 
-export function find_selection() {
-  let nt = nd.voices[clicked.note.voice].notes[clicked.note.note];
+function abcRangeHighlight(start, end, clear=true) {
+  let engraver = abcjs[0].engraver;
+  if (clear) engraver.clearSelection();
+  for (let line = 0; line < engraver.staffgroups.length; line++) {
+    let voices = engraver.staffgroups[line].voices;
+    for (let voice = 0; voice < voices.length; voice++) {
+      let elems = voices[voice].children;
+      for (let elem = 0; elem < elems.length; elem++) {
+        // Since the user can highlight more than an element, or part of an element, a hit is if any of the endpoints
+        // is inside the other range.
+        let elStart = elems[elem].abcelem.startChar;
+        let elEnd = elems[elem].abcelem.endChar;
+        if (end > elStart && start < elEnd || end === start && end === elEnd) {
+          //		if (elems[elem].abcelem.startChar>=start && elems[elem].abcelem.endChar<=end) {
+          engraver.selected[engraver.selected.length] = elems[elem];
+          elems[elem].highlight(undefined, engraver.selectionColor);
+        }
+      }
+    }
+  }
+}
+
+export function highlightNote() {
+  let nt = nd.voices[selected.note.voice].notes[selected.note.note];
   let el = getElementByStartChar(abcjs, nt.abc_charStarts);
   abcjs[0].engraver.rangeHighlight(nt.abc_charStarts, nt.abc_charEnds);
-  clicked.element = el.abcelem;
-  clicked.classes = "";
+  selected.element = el.abcelem;
+  selected.classes = "";
+}
+
+export function highlightRange() {
+  let nt11 = nd.voices[selected.note.v1].notes[selected.note.n11];
+  let nt12 = nd.voices[selected.note.v1].notes[selected.note.n12];
+  let nt21 = nd.voices[selected.note.v2].notes[selected.note.n21];
+  let nt22 = nd.voices[selected.note.v2].notes[selected.note.n22];
+  abcRangeHighlight(
+    Math.min(nt11.abc_charStarts, nt12.abc_charStarts),
+    Math.max(nt11.abc_charEnds, nt12.abc_charEnds)
+  );
+  abcRangeHighlight(
+    Math.min(nt21.abc_charStarts, nt22.abc_charStarts),
+    Math.max(nt21.abc_charEnds, nt22.abc_charEnds),
+    false
+  );
+  selected.element = null;
+  selected.classes = "";
 }
 
 function notation_redraw() {
@@ -52,11 +92,11 @@ function notation_redraw() {
     start_counter('renderAbc');
     abcjs = ABCJS.renderAbc('abc', dataToAbc(), parserParams, engraverParams);
     //stop_counter();
-    if (clicked.note) {
-      find_selection();
+    if (selected.note) {
+      highlightNote();
     } else {
-      clicked.element = {};
-      clicked.classes = "";
+      selected.element = {};
+      selected.classes = "";
     }
     update_selection();
   }

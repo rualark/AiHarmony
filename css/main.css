@@ -19,7 +19,7 @@ body {padding-top:4.3rem; background-color:white}
     width: calc(100vw - 40px);
     overflow-wrap:break-word;
     word-wrap: break-word;
-    color: #4f2f04;  background-color: #eda74c;  border-color: #bf781b;
+    color: #A36F00;  background-color: #FFF953;  border-color: #bf781b;
 }
 path:focus, text:focus, g:focus {
     outline: none;

@@ -21,11 +21,12 @@ import {mobileOrTablet} from "../core/mobileCheck.js";
 import {sendToAic} from "../integration/aiCounterpoint.js";
 import {add_part, del_bar, del_part, new_file, stop_advancing, voiceChange} from "./edit/editScore.js";
 import {toggle_tie} from "./edit/editTie.js";
-import {next_note, prev_note} from "./edit/move.js";
+import {next_note, prev_note} from "./edit/select.js";
 import {set_len, toggle_dot} from "./edit/editLen.js";
 import {name2filename} from "../core/string.js";
 import {sendToAis} from "../integration/aiStudio.js";
 import {showSettingsModal} from "./modal/settingsModal.js";
+import {ares} from "../analysis/AnalysisResults.js";
 
 let mobileOpt = {
   true: {
@@ -229,6 +230,22 @@ export let commands = [
     keys: ['Ctrl+R'],
     command: () => { showShareModal() },
     name: 'Share music',
+  },
+  {
+    id: 'aprev',
+    toolbar: {type: 'image'},
+    onclick: true,
+    keys: ['Ctrl+LeftArrow'],
+    command: () => { ares.prevFlag() },
+    name: 'Previous mistake',
+  },
+  {
+    id: 'anext',
+    toolbar: {type: 'image'},
+    onclick: true,
+    keys: ['Ctrl+RightArrow'],
+    command: () => { ares.nextFlag() },
+    name: 'Next mistake',
   },
   {
     id: 'aic',

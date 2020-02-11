@@ -1,5 +1,5 @@
 import {nd} from "../notes/NotesData.js";
-import {async_redraw, clicked, engraverParams} from "../abc/abchelper.js";
+import {async_redraw, selected, engraverParams} from "../abc/abchelper.js";
 import {currentTimestamp, start_counter} from "../core/time.js";
 import {b256_safeString, safeString_b256, ui_b256, b256_ui, b256_debug} from "../core/base256.js";
 
@@ -54,12 +54,12 @@ export function data2plain() {
   }
   st += safeString_b256(nd.name, 1);
   st += safeString_b256(nd.fileName, 1);
-  if (clicked.note == null) {
+  if (selected.note == null) {
     st += ui_b256(255, 1);
     st += ui_b256(0, 2);
   } else {
-    st += ui_b256(clicked.note.voice, 1);
-    st += ui_b256(clicked.note.note, 2);
+    st += ui_b256(selected.note.voice, 1);
+    st += ui_b256(selected.note.note, 2);
   }
   st += ui_b256(currentTimestamp(), 4);
   //console.log(st, b256_debug(st));
@@ -133,9 +133,9 @@ export function plain2data(st, pos) {
   nd.set_fileName(b256_safeString(st, pos, 1));
   let v = b256_ui(st, pos, 1);
   let n = b256_ui(st, pos, 2);
-  clicked.note = {voice: v, note: n};
-  if (clicked.note.voice === 255) {
-    clicked.note = null;
+  selected.note = {voice: v, note: n};
+  if (selected.note.voice === 255) {
+    selected.note = null;
   }
   //let time = b256_ui(st, pos, 4);
   //console.log('Decoded time:', time, timestamp2date(time));
