@@ -195,7 +195,7 @@ export let commands = [
     onclick: true,
     keys: [],
     command: () => { window.open('https://artinfuser.com', '_blank') },
-    name: '',
+    name: 'Artinfuser site',
   },
   {
     id: 'question',
