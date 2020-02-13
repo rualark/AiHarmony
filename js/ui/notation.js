@@ -15,10 +15,6 @@ import {can_pre_tie, can_tie, is_pre_tie} from "./edit/editTie.js";
 import {can_dot, can_len} from "./edit/editLen.js";
 import {ares} from "../analysis/AnalysisResults.js";
 
-window.onresize = function() {
-  async_redraw();
-};
-
 export function update_selection() {
   button_enabled('add_part',
     selected.element != null && typeof selected.element.abselem !== 'undefined' && nd.voices.length < 63);

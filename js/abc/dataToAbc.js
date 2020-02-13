@@ -44,7 +44,7 @@ export function dataToAbc() {
           if (harm_st !== '') {
             harm_st += ', ';
           }
-          harm_st += ares.harm[s];
+          harm_st += ares.harm[s + s2];
         }
         abc += `"_${harm_st}"`;
       }

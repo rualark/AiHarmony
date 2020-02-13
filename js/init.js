@@ -46,6 +46,7 @@ window.addEventListener('DOMContentLoaded', async function() {
   window.onresize = () => {
     console.log('resize');
     $('body').css('padding-top', $('#toolbar').height() + 4);
+    async_redraw();
   };
   $('body').css('padding-top', $('#toolbar').height() + 4);
   initTooltips(800, 100);
