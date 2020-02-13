@@ -158,10 +158,36 @@ class NotesData {
     let mlen = this.timesig.measure_len;
     for (let v=0; v<this.voices.length; ++v) {
       let vc = this.voices[v];
+      // Merge pauses
       let s2 = 0;
       for (let n = 0; n < vc.notes.length; ++n) {
         let nt = vc.notes[n];
         s2 = nt.step + nt.len;
+        if (n >= vc.notes.length - 1) break;
+        if (nt.d) continue;
+        let nt2 = vc.notes[n + 1];
+        if (nt2.d) continue;
+        // Merge second rest to first rest
+        nt.len += nt2.len;
+        // Remove second rest
+        vc.notes.splice(n + 1, 1);
+        // Return to first rest to check if there are more rests to merge
+        --n;
+      }
+      // Complete last measure
+      if (s2 % mlen) {
+        // If there is note in the end, append rest
+        if (vc.notes[vc.notes.length - 1].d) {
+          vc.notes.push({d: 0, alter: 10, len: mlen - s2 % mlen, startsTie: false});
+        }
+        // If there is rest in the end, grow rest length
+        else {
+          vc.notes[vc.notes.length - 1].len += mlen - s2 % mlen;
+        }
+      }
+      // Split notes
+      for (let n = 0; n < vc.notes.length; ++n) {
+        let nt = vc.notes[n];
         if (nt.step % mlen + nt.len > mlen) {
           let debt = nt.step % mlen + nt.len - mlen;
           nt.len -= debt;
@@ -176,10 +202,6 @@ class NotesData {
           }
         }
       }
-      if (s2 % mlen) {
-        vc.notes.push({d: 0, alter: 10, len: mlen - s2 % mlen, startsTie: false});
-      }
-      //console.log(vc.notes);
     }
     this.saveState();
   }
