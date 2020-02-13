@@ -27,6 +27,7 @@ import {name2filename} from "../core/string.js";
 import {sendToAis} from "../integration/aiStudio.js";
 import {showSettingsModal} from "./modal/settingsModal.js";
 import {ares} from "../analysis/AnalysisResults.js";
+import {openNewUrl} from "./lib/uilib.js";
 
 let mobileOpt = {
   true: {
@@ -194,7 +195,7 @@ export let commands = [
     toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
     keys: [],
-    command: () => { window.open('https://artinfuser.com', '_blank') },
+    command: () => { openNewUrl('https://artinfuser.com') },
     name: 'Artinfuser site',
   },
   {
@@ -237,6 +238,7 @@ export let commands = [
     command: () => { showShareModal() },
     name: 'Share music',
   },
+  { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'aprev',
     toolbar: {type: 'image', toolbar_id: 1},
@@ -253,6 +255,7 @@ export let commands = [
     command: () => { ares.nextFlag() },
     name: 'Next mistake',
   },
+  { separator: true, toolbar: {toolbar_id: 2} },
   {
     id: 'aic',
     toolbar: {type: 'image', toolbar_id: 2},
@@ -268,6 +271,23 @@ export let commands = [
     keys: [],
     command: () => { showSettingsModal() },
     name: 'Settings',
+  },
+  { separator: true, toolbar: {toolbar_id: 2} },
+  {
+    id: 'support',
+    toolbar: {type: 'image', toolbar_id: 2},
+    onclick: true,
+    keys: [],
+    command: () => { openNewUrl('https://github.com/rualark/AiHarmony/issues') },
+    name: 'Create support request',
+  },
+  {
+    id: 'docs',
+    toolbar: {type: 'image', toolbar_id: 2},
+    onclick: true,
+    keys: [],
+    command: () => { openNewUrl('https://artinfuser.com/counterpoint/docs.php?d=cp_analyse') },
+    name: 'Counterpoint documentation',
   },
   { separator: true, toolbar: {toolbar_id: 1} },
   {
@@ -528,14 +548,6 @@ export let commands = [
     name: 'Playback (high quality)',
   },
   { separator: true, toolbar: {toolbar_id: 1} },
-  {
-    id: 'support',
-    toolbar: {type: 'image', toolbar_id: 2},
-    onclick: true,
-    keys: [],
-    command: () => { window.open('https://github.com/rualark/AiHarmony/issues', '_blank') },
-    name: 'Create support request',
-  },
   {
     id: 'up_part',
     keys: ['Ctrl+UpArrow'],

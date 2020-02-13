@@ -1,6 +1,7 @@
 import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
 import {nd} from "../notes/NotesData.js";
 import {ais} from "./aiStudio.js";
+import {openNewUrl} from "../ui/lib/uilib.js";
 
 export let aic = {
   state: 'ready',
@@ -152,9 +153,6 @@ function finishAic() {
     // Changing href will open PDF in same window
     // Headers for PDF can be changed to download instead, but this can be not comfortable for other users
     //window.location.href = url;
-    let newWin = window.open(url, '_blank');
-    if(!newWin || newWin.closed || typeof newWin.closed=='undefined') {
-      alertify.error(`Popup blocked by your browser. Please allow popups or <a style='color: white' href="${url}" target=_blank><b><u>click here</u></b></a> to open file manually`, 45);
-    }
+    let newWin = openNewUrl(url);
   }
 }
