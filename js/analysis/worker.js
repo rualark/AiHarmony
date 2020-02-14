@@ -36,7 +36,7 @@ async function initWasmModule(modName) {
     // Will be called before main()
     workerState.state = 'ready';
   };
-  await waitForVar(workerState, 'state', ['ready'], 50, 4000);
+  await waitForVar(workerState, 'state', ['ready'], 50, 20000);
   // Here main() will usually be finished
 }
 
@@ -111,7 +111,7 @@ self.addEventListener('message', async function(event) {
         }
         // If I am the first in queue, wait and
         workerState.queuedData = data;
-        await waitForVar(workerState, 'state', ['ready'], 50, 10000);
+        await waitForVar(workerState, 'state', ['ready'], 50, 20000);
         // As soon as wasm is ready, get latest data and delete queue
         data = workerState.queuedData;
         workerState.queuedData = null;

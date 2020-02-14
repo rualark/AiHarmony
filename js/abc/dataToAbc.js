@@ -15,7 +15,7 @@ export function dataToAbc() {
     let vocra = ares.getVocra(v);
     let spec = ares.getSpecies(v);
     if (vocra != null) name += ` [${vocra}]`;
-    if (spec != null) {
+    if (spec != null && ares.av_cnt > 1) {
       if (spec === 0) {
         name += ` (c.f.)`;
       }

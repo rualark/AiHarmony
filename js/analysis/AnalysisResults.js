@@ -5,6 +5,7 @@ import {select_note, select_range} from "../ui/edit/select.js";
 import {settings} from "../state/settings.js";
 import {selected} from "../abc/abchelper.js";
 import {xmlLoadWarnings} from "../MusicXml/musicXmlToData.js";
+import {debugLevel} from "../core/debug.js";
 
 let ARES_ENCODING_VERSION = 2;
 export let SEVERITY_RED = 80;
@@ -98,12 +99,14 @@ class AnalysisResults {
     let noteClick = [];
     for (let v=this.flag.length - 1; v>=0; --v) {
       let vi = this.vid[v];
+      if (vi >= nd.voices.length) continue;
       let n = 0;
       let old_n = -1;
       for (let s in this.flag[v]) {
         let m = Math.floor(s / npm);
         let beat = Math.floor((s % npm) / 4);
         n = nd.getClosestNote(vi, s, n);
+        if (n >= nd.voices[vi].notes.length) continue;
         let noteName = d2name(nd.voices[vi].notes[n].d, nd.get_realAlter(vi, n));
         if (noteName !== 'rest') noteName = 'note ' + noteName;
         for (let f in this.flag[v][s]) {
@@ -128,6 +131,9 @@ class AnalysisResults {
             }
           }
           st += `<a href=# class='ares ares_${vi}_${s}_${f}' style='color: ${col}'>`;
+          if (debugLevel > 5) {
+            st += `[${fla.fl}] `;
+          }
           let shortText = '';
           shortText += `${fla.class}: ${ruleName}`;
           let subName = fla.subName;
@@ -152,9 +158,11 @@ class AnalysisResults {
           let sl_st = '';
           sl_st = `bar ${Math.floor(fla.fsl / npm) + 1}, beat ${Math.floor((fla.fsl % npm) / 4) + 1}`;
           if (this.flag.length > 2 && fla.fvl !== v) {
-            st += " - with " + nd.voices[this.vid[fla.fvl]].name;
-            if (fla.fsl != s) {
-              st += ", " + sl_st;
+            if (this.vid[fla.fvl] < nd.voices.length) {
+              st += " - with " + nd.voices[this.vid[fla.fvl]].name;
+              if (fla.fsl != s) {
+                st += ", " + sl_st;
+              }
             }
           }
           else {

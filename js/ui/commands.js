@@ -28,6 +28,7 @@ import {sendToAis} from "../integration/aiStudio.js";
 import {showSettingsModal} from "./modal/settingsModal.js";
 import {ares} from "../analysis/AnalysisResults.js";
 import {openNewUrl} from "./lib/uilib.js";
+import {trackEvent} from "../integration/tracking.js";
 
 let mobileOpt = {
   true: {
@@ -44,30 +45,32 @@ let mobileOpt = {
 
 export let keysEnabled = true;
 
+function executeCommand(command) {
+  command.command();
+  trackEvent('AiHarmony', 'action_shortcut', command.name);
+  return false;
+}
+
 window.onkeydown = function (e) {
   if (!keysEnabled) return true;
   if (e.ctrlKey || e.metaKey) {
     if (e.keyCode in commandCtrlKeyCodes) {
-      commandCtrlKeyCodes[e.keyCode].command();
-      return false;
+      return executeCommand(commandCtrlKeyCodes[e.keyCode]);
     }
   }
   else if (e.altKey) {
     if (e.keyCode in commandAltKeyCodes) {
-      commandAltKeyCodes[e.keyCode].command();
-      return false;
+      return executeCommand(commandAltKeyCodes[e.keyCode]);
     }
   }
   else if (e.shiftKey) {
     if (e.keyCode in commandShiftKeyCodes) {
-      commandShiftKeyCodes[e.keyCode].command();
-      return false;
+      return executeCommand(commandShiftKeyCodes[e.keyCode]);
     }
   }
   else {
     if (e.keyCode in commandKeyCodes) {
-      commandKeyCodes[e.keyCode].command();
-      return false;
+      return executeCommand(commandKeyCodes[e.keyCode]);
     }
   }
   return true;
@@ -156,6 +159,7 @@ export function initCommands() {
     if (!command.id) continue;
     document.getElementById(command.id).onclick=function(){
       command.command();
+      trackEvent('AiHarmony', 'action_click', command.name);
       return false;
     };
   }

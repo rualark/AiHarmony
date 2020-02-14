@@ -4,6 +4,7 @@ import {nd} from "../../notes/NotesData.js";
 import {dataToAbc} from "../../abc/dataToAbc.js";
 import "../../../plugin/FileSaver.js-2.0.2/FileSaver.js";
 import {ais} from "../../integration/aiStudio.js";
+import {trackEvent} from "../../integration/tracking.js";
 
 let exportFormats = [
   {name: 'Download as MusicXML', func: downloadAsMusicXml },
@@ -85,6 +86,7 @@ export function showDownloadModal() {
       if (exportFormats[i].func != null) {
         exportFormats[i].func();
       }
+      trackEvent('AiHarmony', 'download', exportFormats[i].name);
     };
   }
   $('#Modal').modal();

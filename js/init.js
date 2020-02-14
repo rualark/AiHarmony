@@ -11,6 +11,8 @@ import {debugError} from "./core/debug.js";
 import {analyse} from "./analysis/musicAnalysis.js";
 import {init_base64} from "./core/base64.js";
 import {settings} from "./state/settings.js";
+import {nd} from "./notes/NotesData.js";
+import {trackEvent} from "./integration/tracking.js";
 
 function init() {
   init_base64();
@@ -19,19 +21,27 @@ function init() {
   init_abcjs(element_click);
   loadState();
   if (getUrlParam('state')) {
-    url2state(getUrlParam('state'));
+    trackEvent('AiHarmony', 'open_shared');
+    try {
+      url2state(getUrlParam('state'));
+    }
+    catch (e) {
+      nd.reset();
+      alertify.error('Shared url is corrupted or expired');
+    }
     saveState();
     window.history.replaceState("", "", urlNoParams());
     async_redraw();
   }
   else if (getUrlParam('load')) {
-    readRemoteMusicXmlFile('musicxml/' + getUrlParam('load').replace('/', '') + '.xml');
+    trackEvent('AiHarmony', 'open', 'Open server MusicXML');
+    readRemoteMusicXmlFile('musicxml/' + getUrlParam('load').replace('..', '') + '.xml');
     window.history.replaceState("", "", urlNoParams());
   }
   else {
     async_redraw();
+    analyse();
   }
-  analyse();
   if (getUrlParam('action') === 'shortcuts') {
     setTimeout(showShortcutsModal, 0);
   }

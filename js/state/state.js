@@ -188,17 +188,10 @@ export function state2url() {
 }
 
 export function url2state(url) {
-  try {
-    //console.log(url);
-    let b64 = url.replace(/\./g, '/').replace(/_/g, '=').replace(/-/g, '+');
-    //console.log(b64);
-    let plain = LZString.decompressFromBase64(b64);
-    //console.log('url2state plain', plain);
-    plain2data(plain, [0]);
-  }
-  catch (e) {
-    nd.reset();
-    alertify.error('Shared url is corrupted or expired');
-    throw e;
-  }
+  //console.log(url);
+  let b64 = url.replace(/\./g, '/').replace(/_/g, '=').replace(/-/g, '+');
+  //console.log(b64);
+  let plain = LZString.decompressFromBase64(b64);
+  //console.log('url2state plain', plain);
+  plain2data(plain, [0]);
 }
