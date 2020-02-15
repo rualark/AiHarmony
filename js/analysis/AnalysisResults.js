@@ -6,6 +6,8 @@ import {settings} from "../state/settings.js";
 import {selected} from "../abc/abchelper.js";
 import {xmlLoadWarnings} from "../MusicXml/musicXmlToData.js";
 import {debugLevel} from "../core/debug.js";
+import {encodeHtmlSpecialChars} from "../core/string.js";
+import {initTooltips} from "../ui/lib/tooltips.js";
 
 let ARES_ENCODING_VERSION = 2;
 export let SEVERITY_RED = 80;
@@ -26,15 +28,15 @@ class AnalysisResults {
 
   reset() {
     this.errors = [];
-    this.pFlag = [];
     this.harm = [];
     this.flag = [];
     this.vid = [];
     this.vid2 = [];
     this.vsp = [];
     this.vocra = [];
-    this.pFlagCur = -1;
     this.state = 'clean';
+    this.pFlag = [];
+    this.pFlagCur = -1;
   }
 
   import(st) {
@@ -72,6 +74,8 @@ class AnalysisResults {
         this.flag[v][s * 2 + this.s_start] = [];
         for (let f = 0; f < fcnt; ++f) {
           this.flag[v][s * 2 + this.s_start].push({
+            s: s * 2 + this.s_start,
+            v: v,
             fl: b256_ui(st, pos, 2),
             fvl: b256_ui(st, pos, 1),
             fsl: b256_ui(st, pos, 2) * 2 + this.s_start,
@@ -88,7 +92,74 @@ class AnalysisResults {
     }
   }
 
+  getRuleString(fla, verbosity, showLinks) {
+    let npm = nd.timesig.measure_len;
+    let ruleName = fla.name;
+    if (!verbosity) {
+      if (ruleName.includes(":")) {
+        ruleName = ruleName.slice(0, ruleName.indexOf(':'));
+      }
+    }
+    let st = '';
+    st += `${fla.class}: ${ruleName}`;
+    let subName = fla.subName;
+    // Always hide hidden subrule names starting with /
+    if (subName.charAt(0) === '/') subName = '';
+    if (subName.charAt(0) === '/') subName = '';
+    // If minimum verbosity, hide all subrule names except starting with :
+    if (!verbosity) {
+      if (subName.charAt(0) !== ':') subName = '';
+    }
+    if (subName) {
+      // Always remove :
+      if (subName.charAt(0) === ':') {
+        subName = subName.slice(1);
+      }
+      st += " (" + subName + ")";
+    }
+    if (verbosity > 1 && fla.comment)
+      st += ". " + fla.comment;
+    if (verbosity > 1 && fla.subComment)
+      st += " (" + fla.subComment + ")";
+    if (!showLinks) return st;
+    let sl_st = '';
+    sl_st = `bar ${Math.floor(fla.fsl / npm) + 1}, beat ${Math.floor((fla.fsl % npm) / 4) + 1}`;
+    if (this.flag.length > 2 && fla.fvl !== fla.v) {
+      if (this.vid[fla.fvl] < nd.voices.length) {
+        st += " - with " + nd.voices[this.vid[fla.fvl]].name;
+        if (fla.fsl != fla.s) {
+          st += ", " + sl_st;
+        }
+      }
+    }
+    else {
+      if (fla.fsl < fla.s) {
+        st += " - from " + sl_st;
+      }
+      else if (fla.fsl > fla.s) {
+        st += " - to " + sl_st;
+      }
+    }
+    return st;
+  }
+
+  static getRuleTooltip(fla) {
+    let npm = nd.timesig.measure_len;
+    let ruleName = fla.name;
+    let st = '';
+    if (debugLevel > 5) {
+      st += `[${fla.fl}] `;
+    }
+    if (fla.comment)
+      st += fla.comment;
+    if (fla.subComment)
+      st += " (" + fla.subComment + ")";
+    return st;
+  }
+
   printFlags() {
+    this.pFlag = [];
+    this.pFlagCur = -1;
     let st = '';
     $('#mode').html(modeName(nd.keysig.fifths, this.mode));
     for (const err of this.errors) {
@@ -124,56 +195,11 @@ class AnalysisResults {
             st += `[bar ${m + 1}, beat ${beat + 1}] ${noteName}</a><br>`;
             noteClick.push({vi: vi, n: n});
           }
-          let ruleName = fla.name;
-          if (!settings.rule_verbose) {
-            if (ruleName.includes(":")) {
-              ruleName = ruleName.slice(0, ruleName.indexOf(':'));
-            }
-          }
-          st += `<a href=# class='ares ares_${vi}_${s}_${f}' style='color: ${col}'>`;
-          if (debugLevel > 5) {
-            st += `[${fla.fl}] `;
-          }
-          let shortText = '';
-          shortText += `${fla.class}: ${ruleName}`;
-          let subName = fla.subName;
-          // Always hide hidden subrule names starting with /
-          if (subName.charAt(0) === '/') subName = '';
-          // If minimum verbosity, hide all subrule names except starting with :
-          if (!settings.rule_verbose) {
-            if (subName.charAt(0) !== ':') subName = '';
-          }
-          if (subName) {
-            // Always remove :
-            if (subName.charAt(0) === ':') {
-              subName = subName.slice(1);
-            }
-            shortText += " (" + subName + ")";
-          }
-          st += shortText;
-          if (settings.rule_verbose > 1 && fla.comment)
-            st += ". " + fla.comment;
-          if (settings.rule_verbose > 1 && fla.subComment)
-            st += " (" + fla.subComment + ")";
-          let sl_st = '';
-          sl_st = `bar ${Math.floor(fla.fsl / npm) + 1}, beat ${Math.floor((fla.fsl % npm) / 4) + 1}`;
-          if (this.flag.length > 2 && fla.fvl !== v) {
-            if (this.vid[fla.fvl] < nd.voices.length) {
-              st += " - with " + nd.voices[this.vid[fla.fvl]].name;
-              if (fla.fsl != s) {
-                st += ", " + sl_st;
-              }
-            }
-          }
-          else {
-            if (fla.fsl < s) {
-              st += " - from " + sl_st;
-            }
-            else if (fla.fsl > s) {
-              st += " - to " + sl_st;
-            }
-          }
-          st += ``;
+          let alertText = this.getRuleString(fla, settings.rule_verbose, false, false);
+          let tooltipText = AnalysisResults.getRuleTooltip(fla);
+          let htmlText = this.getRuleString(fla, settings.rule_verbose, true, false);
+          st += `<a data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${encodeHtmlSpecialChars(tooltipText)}" href=# class='ares ares_${vi}_${s}_${f}' style='color: ${col}'>`;
+          st += encodeHtmlSpecialChars(htmlText);
           st += `</a><br>`;
           this.pFlag.push({
             vi1: vi,
@@ -182,7 +208,7 @@ class AnalysisResults {
             s2: fla.fsl,
             f: f,
             severity: fla.severity,
-            text: shortText,
+            text: encodeHtmlSpecialChars(alertText),
             num: this.pFlag.length
           });
           fcnt++;
@@ -202,11 +228,11 @@ class AnalysisResults {
     for (const fc of this.pFlag) {
       let id = '.ares_' + fc.vi1 + '_' + fc.s1 + '_' + fc.f;
       $(id).click(() => {
-        selectFlag(fc);
-        this.pFlagCur = fc.num;
+        this.selectFlag(fc);
         return false;
       });
     }
+    initTooltips(800, 100);
     this.state = 'ready';
   }
 
@@ -252,7 +278,7 @@ class AnalysisResults {
     if (this.pFlagCur >= this.pFlag.length) return;
     this.pFlagCur++;
     let pf = this.pFlag[this.pFlagCur];
-    selectFlag(pf);
+    this.selectFlag(pf);
     notifyFlag(pf);
   }
 
@@ -261,16 +287,17 @@ class AnalysisResults {
     if (this.pFlagCur <= 0) return;
     this.pFlagCur--;
     let pf = this.pFlag[this.pFlagCur];
-    selectFlag(pf);
+    this.selectFlag(pf);
     notifyFlag(pf);
   }
-}
 
-function selectFlag(pf) {
-  let id = '.ares_' + pf.vi1 + '_' + pf.s1 + '_' + pf.f;
-  $('.ares').css({"font-weight": ''});
-  $(id).css({"font-weight": 'bold'});
-  select_range(pf.vi1, pf.vi2, pf.s1, pf.s2, pf.severity);
+  selectFlag(pf) {
+    let id = '.ares_' + pf.vi1 + '_' + pf.s1 + '_' + pf.f;
+    $('.ares').css({"font-weight": ''});
+    $(id).css({"font-weight": 'bold'});
+    this.pFlagCur = pf.num;
+    select_range(pf.vi1, pf.vi2, pf.s1, pf.s2, pf.severity);
+  }
 }
 
 function notifyFlag(pf) {

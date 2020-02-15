@@ -38,7 +38,7 @@ function getElementByStartChar(abcjs, startChar) {
   }
 }
 
-function abcRangeHighlight(start, end, color, clear=true) {
+function abcRangeNotesHighlight(start, end, color, clear=true) {
   let engraver = abcjs[0].engraver;
   if (clear) engraver.clearSelection();
   for (let line = 0; line < engraver.staffgroups.length; line++) {
@@ -46,6 +46,7 @@ function abcRangeHighlight(start, end, color, clear=true) {
     for (let voice = 0; voice < voices.length; voice++) {
       let elems = voices[voice].children;
       for (let elem = 0; elem < elems.length; elem++) {
+        if (!elems[elem].duration) continue;
         // Since the user can highlight more than an element, or part of an element, a hit is if any of the endpoints
         // is inside the other range.
         let elStart = elems[elem].abcelem.startChar;
@@ -80,12 +81,12 @@ export function highlightRange(severity) {
   else {
     color = SEVERITY_YELLOW_COLOR;
   }
-  abcRangeHighlight(
+  abcRangeNotesHighlight(
     Math.min(nt11.abc_charStarts, nt12.abc_charStarts),
     Math.max(nt11.abc_charEnds, nt12.abc_charEnds),
     color
   );
-  abcRangeHighlight(
+  abcRangeNotesHighlight(
     Math.min(nt21.abc_charStarts, nt22.abc_charStarts),
     Math.max(nt21.abc_charEnds, nt22.abc_charEnds),
     color,

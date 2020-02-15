@@ -4,11 +4,13 @@ import {initTooltips} from "../lib/tooltips.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import {async_redraw} from "../../abc/abchelper.js";
+import {ares} from "../../analysis/AnalysisResults.js";
+import {update_selection} from "../notation.js";
 
 function showSelectShortcutsLayout() {
   let st = '';
   st += `<div class="form-group">`;
-  st += `<label for="sel_shortcutsLayout"><b>Keyboard shortcuts</b></label>`;
+  st += `<label for="sel_shortcutsLayout"><b>Keyboard shortcuts:</b></label>`;
   st += `<select class="form-control custom-select" id=sel_shortcutsLayout name=sel_shortcutsLayout>`;
   for (const layout in shortcutsLayouts) {
     let selected = "";
@@ -23,7 +25,7 @@ function showSelectShortcutsLayout() {
 function showSelectAlgo() {
   let st = '';
   st += `<div class="form-group">`;
-  st += `<label for="sel_algo"><b>Music analysis</b></label>`;
+  st += `<label for="sel_algo"><b>Music analysis:</b></label>`;
   st += `<select class="form-control custom-select" id=sel_algo name=sel_algo>`;
   st += `<option value='' ${nd.algo === '' ? "selected" : ""}>Disabled</option>`;
   st += `<option value=CA3 ${nd.algo === 'CA3' ? "selected" : ""}>Counterpoint analysis</option>`;
@@ -33,10 +35,24 @@ function showSelectAlgo() {
   return st;
 }
 
+function showSelectRuleVerbose() {
+  let st = '';
+  st += `<div class="form-group">`;
+  st += `<label for="sel_ruleVerbose"><b>Mistakes verbosity:</b></label>`;
+  st += `<select class="form-control custom-select" id=sel_ruleVerbose name=sel_ruleVerbose>`;
+  st += `<option value='0' ${settings.rule_verbose === 0 ? "selected" : ""}>Short mistake text</option>`;
+  st += `<option value='1' ${settings.rule_verbose === 1 ? "selected" : ""}>Medium mistake text</option>`;
+  st += `<option value='2' ${settings.rule_verbose === 2 ? "selected" : ""}>Long mistake text</option>`;
+  st += `</select>`;
+  st += `</div>`;
+  return st;
+}
+
 export function showSettingsModal() {
   let st = '';
   st += showSelectShortcutsLayout();
   st += showSelectAlgo();
+  st += showSelectRuleVerbose();
   document.getElementById("ModalTitle").innerHTML = 'Settings';
   document.getElementById("ModalBody").innerHTML = st;
   $('#sel_algo').change(() => {
@@ -48,6 +64,12 @@ export function showSettingsModal() {
     settings.setShortcutsLayout($("#sel_shortcutsLayout option:selected" ).val());
     settings.settings2storage();
     initTooltips(800, 100);
+  });
+  $('#sel_ruleVerbose').change(() => {
+    settings.rule_verbose = Number($("#sel_ruleVerbose option:selected" ).val());
+    settings.settings2storage();
+    ares.printFlags();
+    async_redraw();
   });
   $('#Modal').modal();
 }
