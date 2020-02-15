@@ -99,9 +99,6 @@ export function saveState(doAnalysis=true) {
     pushState(state2storage());
     if (doAnalysis) analyse();
   }
-  catch (e) {
-    throw e;
-  }
 }
 
 export function undoState(doAnalysis=true) {

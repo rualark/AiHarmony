@@ -1,6 +1,6 @@
 import {nd} from "../../notes/NotesData.js";
 import {enableKeys} from "../commands.js";
-import {async_redraw, selected} from "../../abc/abchelper.js";
+import {async_redraw} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
 import {ares} from "../../analysis/AnalysisResults.js";
 
@@ -23,13 +23,13 @@ function showSelectSpecies(v) {
   if (cur_sp == null || cur_sp === 10) {
     cur_sp = ares.getSpecies(v);
   }
-  let selected = "";
-  if (cur_sp === 0) selected = "selected";
-  st += `<option value=0 ${selected}>Cantus firmus</option>`;
+  let sel = "";
+  if (cur_sp === 0) sel = "selected";
+  st += `<option value=0 ${sel}>Cantus firmus</option>`;
   for (let sp=1; sp<6; ++sp) {
-    selected = "";
-    if (sp === cur_sp) selected = "selected";
-    st += `<option value=${sp} ${selected}>Counterpoint species ${sp}</option>`;
+    sel = "";
+    if (sp === cur_sp) sel = "selected";
+    st += `<option value=${sp} ${sel}>Counterpoint species ${sp}</option>`;
   }
   st += `</select>`;
   st += `</div>`;

@@ -50,7 +50,7 @@ export function data2plain() {
   }
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
-    st += safeString_b256(nd.voices[v].name, 1);
+    st += safeString_b256(vc.name, 1);
   }
   st += safeString_b256(nd.name, 1);
   st += safeString_b256(nd.fileName, 1);

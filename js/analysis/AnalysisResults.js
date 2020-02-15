@@ -142,8 +142,6 @@ class AnalysisResults {
   }
 
   static getRuleTooltip(fla) {
-    let npm = nd.timesig.measure_len;
-    let ruleName = fla.name;
     let st = '';
     if (debugLevel > 5) {
       st += `[${fla.fl}] `;
@@ -180,7 +178,7 @@ class AnalysisResults {
         if (noteName !== 'rest') noteName = 'note ' + noteName;
         for (let f in this.flag[v][s]) {
           let fla = this.flag[v][s][f];
-          let col = 'black';
+          let col;
           if (fla.severity < settings.show_min_severity) continue;
           if (fla.severity > SEVERITY_RED) col = SEVERITY_RED_COLOR;
           else col = SEVERITY_YELLOW_COLOR;

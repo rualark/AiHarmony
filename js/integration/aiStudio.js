@@ -33,7 +33,6 @@ function setAisState(state) {
 export function sendToAis(openMp3=true) {
   ais.openMp3 = openMp3;
   ais.sendTime = new Date();
-  let xml;
   if (ais.state !== 'ready') {
     alertify.notify('Rendering state: ' + ais.j_progress);
     return;

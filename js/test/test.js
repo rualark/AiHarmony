@@ -21,7 +21,7 @@ import {httpRequestNoCache} from "../core/remote.js";
 import {data2plain} from "../state/state.js";
 import {keysigs} from "../ui/modal/keysig.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
-import {sleep, waitForVar} from "../core/promise.js";
+import {waitForVar} from "../core/promise.js";
 import {makePatch} from "../core/string.js";
 import {sendToAis} from "../integration/aiStudio.js";
 import {unicode_b64} from "../core/base64.js";
