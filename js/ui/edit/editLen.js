@@ -1,7 +1,7 @@
 import {async_redraw, selected, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {future} from "./editNote.js";
-import {update_selection} from "../notation.js";
+import {update_selection} from "../selection.js";
 
 export function can_len(len) {
   if (!selected.element || !selected.element.duration) return false;

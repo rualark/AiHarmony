@@ -1,14 +1,13 @@
 import {async_redraw, selected, highlightNote, state, highlightRange} from "../../abc/abchelper.js";
 import {stop_advancing} from "./editScore.js";
 import {saveState} from "../../state/history.js";
-import {update_selection} from "../notation.js";
+import {update_selection} from "../selection.js";
 import {nd} from "../../notes/NotesData.js";
 
 export function move_to_next_note(saveState = true) {
-  if (!selected.element || !selected.element.duration) return;
-  let el = nd.abc_charStarts[selected.element.startChar];
-  let notes = nd.voices[el.voice].notes;
-  if (el.note === notes.length - 1) {
+  if (!selected.note) return false;
+  let notes = nd.voices[selected.note.voice].notes;
+  if (selected.note.note === notes.length - 1) {
     nd.append_measure(saveState);
     selected.note = {
       voice: selected.note.voice,
@@ -36,14 +35,11 @@ export function next_note() {
 }
 
 export function move_to_previous_note() {
-  if (!selected.element || !selected.element.duration) return;
-  let el = nd.abc_charStarts[selected.element.startChar];
-  if (el.note) {
-    selected.note = {
-      voice: selected.note.voice,
-      note: selected.note.note - 1
-    };
-  }
+  if (!selected.note) return;
+  selected.note = {
+    voice: selected.note.voice,
+    note: selected.note.note - 1
+  };
 }
 
 export function prev_note() {

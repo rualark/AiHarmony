@@ -6,7 +6,7 @@ import {url2state} from "./state/state.js";
 import {readRemoteMusicXmlFile} from "./MusicXml/readRemoteMusicXml.js";
 import {loadState, saveState} from "./state/history.js";
 import {initTooltips} from "./ui/lib/tooltips.js";
-import {element_click} from "./ui/notation.js";
+import {element_click} from "./ui/selection.js";
 import {debugError} from "./core/debug.js";
 import {analyse} from "./analysis/musicAnalysis.js";
 import {init_base64} from "./core/base64.js";

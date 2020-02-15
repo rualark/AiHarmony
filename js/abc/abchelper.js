@@ -1,7 +1,7 @@
 import {dataToAbc} from "./dataToAbc.js";
 import {nd} from "../notes/NotesData.js";
 import {start_counter} from "../core/time.js";
-import {update_selection} from "../ui/notation.js";
+import {update_selection} from "../ui/selection.js";
 import {settings} from "../state/settings.js";
 import {SEVERITY_RED, SEVERITY_RED_COLOR, SEVERITY_YELLOW_COLOR} from "../analysis/AnalysisResults.js";
 
@@ -61,6 +61,7 @@ function abcRangeNotesHighlight(start, end, color, clear=true) {
 }
 
 export function highlightNote() {
+  if (!selected.note) return;
   let nt = nd.voices[selected.note.voice].notes[selected.note.note];
   let el = getElementByStartChar(abcjs, nt.abc_charStarts);
   abcjs[0].engraver.rangeHighlight(nt.abc_charStarts, nt.abc_charEnds);

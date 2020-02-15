@@ -1,7 +1,7 @@
 import {async_redraw, selected, highlightNote, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
-import {update_selection} from "../notation.js";
+import {update_selection} from "../selection.js";
 import {future} from "./editNote.js";
 import {showPartModal} from "../modal/partModal.js";
 

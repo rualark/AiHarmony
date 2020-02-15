@@ -15,6 +15,19 @@ import {can_pre_tie, can_tie, is_pre_tie} from "./edit/editTie.js";
 import {can_dot, can_len} from "./edit/editLen.js";
 import {ares} from "../analysis/AnalysisResults.js";
 
+function selectionHasMistake() {
+  if (selected.note == null) return false;
+  if (!(selected.note.voice in ares.stepFlags)) return false;
+  let v = selected.note.voice;
+  let n = selected.note.note;
+  if (v >= nd.voices.length) return false;
+  if (n >= nd.voices[v].notes.length) return false;
+  let nt = nd.voices[v].notes[n];
+  let s = nt.step;
+  if (!(s in ares.stepFlags[v])) return false;
+  return true;
+}
+
 export function update_selection() {
   button_enabled('add_part',
     selected.element != null && typeof selected.element.abselem !== 'undefined' && nd.voices.length < 63);
@@ -100,6 +113,7 @@ export function update_selection() {
   }
   button_enabled('anext', ares.pFlag != null && ares.pFlagCur < ares.pFlag.length - 1);
   button_enabled('aprev', ares.pFlag != null && ares.pFlagCur > 0);
+  button_enabled('mistake', selectionHasMistake());
   if (selected.note != null && selected.note.v1 == null && selected.note.note != null) {
     $('.ares').css({"font-weight": ''});
     $('.ares_' + selected.note.voice + '_' + selected.note.note).css({"font-weight": 'bold'});

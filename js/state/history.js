@@ -95,10 +95,8 @@ export function loadState() {
 }
 
 export function saveState(doAnalysis=true) {
-  try {
-    pushState(state2storage());
-    if (doAnalysis) analyse();
-  }
+  pushState(state2storage());
+  if (doAnalysis) analyse();
 }
 
 export function undoState(doAnalysis=true) {

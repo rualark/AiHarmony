@@ -96,7 +96,7 @@ function message(type, modName, funcName, data) {
 self.addEventListener('message', async function(event) {
   let { type, modName, funcName, data } = event.data;
   if (type === "CALL") {
-    console.log('Worker call');
+    //console.log('Worker call');
     try {
       if (workerState.state === 'before_init') {
         console.log('initWasmModule0', workerState.state);
@@ -125,7 +125,7 @@ self.addEventListener('message', async function(event) {
         heapOut: "HEAPU8"
       });
       //let res = callWasmFuncArrayToArray(Module, funcName, data);
-      console.log('Worker result');
+      //console.log('Worker result');
       message("RESULT", modName, funcName, res);
     }
     catch (e) {

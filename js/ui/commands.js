@@ -252,6 +252,14 @@ export let commands = [
     name: 'Previous mistake',
   },
   {
+    id: 'mistake',
+    toolbar: {type: 'image', toolbar_id: 1},
+    onclick: true,
+    keys: ['F2'],
+    command: () => { ares.selectedFlags() },
+    name: 'Show selected mistakes',
+  },
+  {
     id: 'anext',
     toolbar: {type: 'image', toolbar_id: 1},
     onclick: true,
@@ -259,7 +267,6 @@ export let commands = [
     command: () => { ares.nextFlag() },
     name: 'Next mistake',
   },
-  { separator: true, toolbar: {toolbar_id: 2} },
   {
     id: 'aic',
     toolbar: {type: 'image', toolbar_id: 2},
@@ -268,6 +275,7 @@ export let commands = [
     command: () => { sendToAic() },
     name: 'Artinfuser Counterpoint analysis',
   },
+  { separator: true, toolbar: {toolbar_id: 2} },
   {
     id: 'settings',
     toolbar: {type: 'image', toolbar_id: 2},
@@ -617,7 +625,10 @@ export let commands = [
   },
   {
     keys: ['Esc'],
-    command: () => { stop_advancing() },
+    command: () => {
+      stop_advancing();
+      alertify.dismissAll();
+    },
     name: 'Stop advancing edit',
   },
 ];

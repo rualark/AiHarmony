@@ -6,6 +6,7 @@ import {settings} from "../state/settings.js";
 import {debugLevel} from "../core/debug.js";
 import {encodeHtmlSpecialChars} from "../core/string.js";
 import {initTooltips} from "../ui/lib/tooltips.js";
+import {selected} from "../abc/abchelper.js";
 
 let ARES_ENCODING_VERSION = 2;
 export let SEVERITY_RED = 80;
@@ -33,6 +34,7 @@ class AnalysisResults {
     this.vsp = [];
     this.vocra = [];
     this.state = 'clean';
+    this.stepFlags = {};
     this.pFlag = [];
     this.pFlagCur = -1;
   }
@@ -154,10 +156,16 @@ class AnalysisResults {
   }
 
   printFlags() {
+    this.stepFlags = {};
     this.pFlag = [];
     this.pFlagCur = -1;
     let st = '';
-    $('#mode').html(modeName(nd.keysig.fifths, this.mode));
+    if (nd.keysig.mode === this.mode) {
+      $('#mode').html('<b>' + modeName(nd.keysig.fifths, this.mode) + '</b>');
+    }
+    else {
+      $('#mode').html(modeName(nd.keysig.fifths, this.mode));
+    }
     for (const err of this.errors) {
       st += `<span style='color: red'><b>${err.level}: ${err.message}</b></span><br>`;
     }
@@ -197,7 +205,7 @@ class AnalysisResults {
           st += `<a data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${encodeHtmlSpecialChars(tooltipText)}" href=# class='ares ares_${vi}_${s}_${f}' style='color: ${col}'>`;
           st += encodeHtmlSpecialChars(htmlText);
           st += `</a><br>`;
-          this.pFlag.push({
+          let pf = {
             vi1: vi,
             vi2: this.vid[fla.fvl],
             s1: s,
@@ -206,7 +214,11 @@ class AnalysisResults {
             severity: fla.severity,
             text: encodeHtmlSpecialChars(alertText),
             num: this.pFlag.length
-          });
+          };
+          this.pFlag.push(pf);
+          if (!(vi in this.stepFlags)) this.stepFlags[vi] = {};
+          if (!(s in this.stepFlags[vi])) this.stepFlags[vi][s] = [];
+          this.stepFlags[vi][s].push(pf);
           fcnt++;
         }
       }
@@ -271,11 +283,11 @@ class AnalysisResults {
 
   nextFlag() {
     if (this.pFlag == null) return;
-    if (this.pFlagCur >= this.pFlag.length) return;
+    if (this.pFlagCur >= this.pFlag.length - 1) return;
     this.pFlagCur++;
     let pf = this.pFlag[this.pFlagCur];
     this.selectFlag(pf);
-    notifyFlag(pf);
+    AnalysisResults.notifyFlag(pf);
   }
 
   prevFlag() {
@@ -284,7 +296,7 @@ class AnalysisResults {
     this.pFlagCur--;
     let pf = this.pFlag[this.pFlagCur];
     this.selectFlag(pf);
-    notifyFlag(pf);
+    AnalysisResults.notifyFlag(pf);
   }
 
   selectFlag(pf) {
@@ -294,13 +306,50 @@ class AnalysisResults {
     this.pFlagCur = pf.num;
     select_range(pf.vi1, pf.vi2, pf.s1, pf.s2, pf.severity);
   }
-}
 
-function notifyFlag(pf) {
-  alertify.dismissAll();
-  let color = '#A36F00';
-  if (pf.severity > SEVERITY_RED) color = 'red';
-  alertify.notify(`<span style='color: ${color}'><b>${pf.text}</b></span>`, 'custom', 60);
+  selectedFlags(pf) {
+    if (!selected.element || !selected.element.duration) return;
+    let el = nd.abc_charStarts[selected.element.startChar];
+    let vi = el.voice;
+    let notes = nd.voices[vi].notes;
+    let note = notes[el.note];
+    let s = note.step;
+    if (!(vi in this.stepFlags)) return;
+    if (!(s in this.stepFlags[vi])) return;
+
+    $('.ares').css({"font-weight": ''});
+    let st = '';
+    for (let f=0; f<this.stepFlags[vi][s].length; ++f) {
+      let pf = this.stepFlags[vi][s][f];
+      console.log(pf);
+      // Select first flag
+      if (st === '') {
+        this.pFlagCur = pf.num;
+        select_range(pf.vi1, pf.vi2, pf.s1, pf.s2, pf.severity);
+      }
+      // Highlight all flags
+      let id = '.ares_' + pf.vi1 + '_' + pf.s1 + '_' + pf.f;
+      $(id).css({"font-weight": 'bold'});
+      // Build alert string
+      let color = '#A36F00';
+      if (pf.severity > SEVERITY_RED) color = 'red';
+      if (st !== '') st += '<br>';
+      st += `<span style='color: ${color}'><b>${pf.text}</b></span>`;
+    }
+    AnalysisResults.notifyFlags(st);
+  }
+
+  static notifyFlag(pf) {
+    alertify.dismissAll();
+    let color = '#A36F00';
+    if (pf.severity > SEVERITY_RED) color = 'red';
+    alertify.notify(`<span style='color: ${color}'><b>${pf.text}</b></span>`, 'custom', 60);
+  }
+
+  static notifyFlags(st) {
+    alertify.dismissAll();
+    alertify.notify(st, 'custom', 60);
+  }
 }
 
 export let ares = new AnalysisResults();
