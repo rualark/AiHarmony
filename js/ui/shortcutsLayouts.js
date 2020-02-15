@@ -12,7 +12,7 @@ export function applyShortcutsLayout(layout) {
 }
 
 export let shortcutsLayouts = {
-  'AiHarmony': {
+  'AiHarmony default': {
     'whole': ['1', 'Numpad1'],
     'half': ['2', 'Numpad2'],
     'quarter': ['4', 'Numpad4'],

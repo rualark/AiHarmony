@@ -35,6 +35,10 @@ class AnalysisResults {
     this.vocra = [];
     this.state = 'clean';
     this.stepFlags = {};
+    this.av_cnt = 0;
+    this.c_len = 0;
+    this.s_start = 0;
+    this.mode = null;
     this.pFlag = [];
     this.pFlagCur = -1;
   }
@@ -160,14 +164,19 @@ class AnalysisResults {
     this.pFlag = [];
     this.pFlagCur = -1;
     let st = '';
-    if (nd.keysig.mode === this.mode) {
+    if (this.mode == null || this.mode === 13) {
+      $('#mode').html('');
+    }
+    else if (nd.keysig.mode === this.mode) {
       $('#mode').html('<b>' + modeName(nd.keysig.fifths, this.mode) + '</b>');
     }
     else {
       $('#mode').html(modeName(nd.keysig.fifths, this.mode));
     }
     for (const err of this.errors) {
-      st += `<span style='color: red'><b>${err.level}: ${err.message}</b></span><br>`;
+      let color='black';
+        if (err.level > 50) color = 'red';
+      st += `<span style='color: ${color}'><b>${err.message}</b></span><br>`;
     }
     let fcnt = 0;
     let npm = nd.timesig.measure_len;

@@ -36,6 +36,7 @@ export function next_note() {
 
 export function move_to_previous_note() {
   if (!selected.note) return;
+  if (!selected.note.note) return;
   selected.note = {
     voice: selected.note.voice,
     note: selected.note.note - 1

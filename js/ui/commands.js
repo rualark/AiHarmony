@@ -29,6 +29,7 @@ import {showSettingsModal} from "./modal/settingsModal.js";
 import {ares} from "../analysis/AnalysisResults.js";
 import {openNewUrl} from "./lib/uilib.js";
 import {trackEvent} from "../integration/tracking.js";
+import {settings} from "../state/settings.js";
 
 let mobileOpt = {
   true: {
@@ -110,6 +111,30 @@ export function initKeyCodes() {
   }
 }
 
+export function toolbarButtonHtml(command) {
+  let st = '';
+  let tooltip = '';
+  if (!mobileOrTablet) {
+    let title = command.name;
+    if (command.keys != null && command.keys.length) {
+      title += '<br>(shortcut: ' + command.keys[0] + ')';
+    }
+    tooltip = `data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${title}"`;
+  }
+  st += `<a ${tooltip} id='${command.id}' class='btn btn-outline-white ${command.toolbar.disabled ? "disabled " : ""}p-1' href=# role='button' style='display: flex; justify-content: center; flex-shrink: 0; align-items: center; min-width: ${mobileOpt[mobileOrTablet].toolbar_button_width}px; font-size: ${command.toolbar.fontSize * mobileOpt[mobileOrTablet].toolbar_font_scale || '1'}em'>`;
+  if (command.toolbar.type === 'image') {
+    st += `<img id='${command.id}i' src=img/toolbar/${command.id}.png height=${mobileOpt[mobileOrTablet].toolbar_img_height}>`;
+    if (settings.toolbarHints && command.toolbar.hintText) {
+      st += `&nbsp;<span style='font-size: 0.8em'>${command.toolbar.hintText}</span>`;
+    }
+  }
+  if (command.toolbar.type === 'text') {
+    st += `${command.toolbar.text}`;
+  }
+  st += '</a>';
+  return st;
+}
+
 function makeToolbar(toolbar_id) {
   let st = '';
   for (let command of commands) {
@@ -126,22 +151,7 @@ function makeToolbar(toolbar_id) {
       continue;
     }
     if (!command.id) continue;
-    let tooltip = '';
-    if (!mobileOrTablet) {
-      let title = command.name;
-      if (command.keys != null && command.keys.length) {
-        title += '<br>(shortcut: ' + command.keys[0] + ')';
-      }
-      tooltip = `data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${title}"`;
-    }
-    st += `<a ${tooltip} id='${command.id}' class='btn btn-outline-white ${command.toolbar.disabled ? "disabled " : ""}p-1' href=# role='button' style='display: flex; justify-content: center; align-items: center; min-width: ${mobileOpt[mobileOrTablet].toolbar_button_width}px; font-size: ${command.toolbar.fontSize * mobileOpt[mobileOrTablet].toolbar_font_scale || '1'}em'>`;
-    if (command.toolbar.type === 'image') {
-      command.toolbar.html = `<img id='${command.id}i' src=img/toolbar/${command.id}.png height=${mobileOpt[mobileOrTablet].toolbar_img_height}>`;
-    }
-    if (command.toolbar.type === 'text') {
-      command.toolbar.html = `${command.toolbar.text}`;
-    }
-    st += command.toolbar.html + `</a>${nbsp}`;
+    st += toolbarButtonHtml(command) + `${nbsp}`;
   }
   return st;
 }
@@ -204,7 +214,7 @@ export let commands = [
   },
   {
     id: 'question',
-    toolbar: {type: 'image', toolbar_id: 1},
+    toolbar: {type: 'image', toolbar_id: 1, hintText: 'Help'},
     onclick: true,
     keys: ['F1'],
     command: () => { showShortcutsModal() },
@@ -212,7 +222,7 @@ export let commands = [
   },
   {
     id: 'new',
-    toolbar: {type: 'image', toolbar_id: 2},
+    toolbar: {type: 'image', toolbar_id: 2, hintText: 'New'},
     onclick: true,
     keys: ['Alt+N'],
     command: () => { new_file() },
@@ -220,7 +230,7 @@ export let commands = [
   },
   {
     id: 'open',
-    toolbar: {type: 'image', toolbar_id: 2},
+    toolbar: {type: 'image', toolbar_id: 2, hintText: 'Open'},
     onclick: true,
     keys: ['Ctrl+O', 'Alt+O'],
     command: () => { showOpenMusicXmlModal() },
@@ -228,7 +238,7 @@ export let commands = [
   },
   {
     id: 'download',
-    toolbar: {type: 'image', toolbar_id: 2},
+    toolbar: {type: 'image', toolbar_id: 2, hintText: 'Download'},
     onclick: true,
     keys: ['Ctrl+S'],
     command: () => { showDownloadModal() },
@@ -236,7 +246,7 @@ export let commands = [
   },
   {
     id: 'share',
-    toolbar: {type: 'image', toolbar_id: 2},
+    toolbar: {type: 'image', toolbar_id: 2, hintText: 'Share'},
     onclick: true,
     keys: ['Ctrl+R'],
     command: () => { showShareModal() },
@@ -253,7 +263,7 @@ export let commands = [
   },
   {
     id: 'mistake',
-    toolbar: {type: 'image', toolbar_id: 1},
+    toolbar: {type: 'image', toolbar_id: 1, hintText: 'Mistakes'},
     onclick: true,
     keys: ['F2'],
     command: () => { ares.selectedFlags() },
@@ -269,7 +279,7 @@ export let commands = [
   },
   {
     id: 'aic',
-    toolbar: {type: 'image', toolbar_id: 2},
+    toolbar: {type: 'image', toolbar_id: 2, hintText: 'Pdf'},
     onclick: true,
     keys: ['Ctrl+A'],
     command: () => { sendToAic() },
@@ -278,7 +288,7 @@ export let commands = [
   { separator: true, toolbar: {toolbar_id: 2} },
   {
     id: 'settings',
-    toolbar: {type: 'image', toolbar_id: 2},
+    toolbar: {type: 'image', toolbar_id: 2, hintText: 'Settings'},
     onclick: true,
     keys: [],
     command: () => { showSettingsModal() },
@@ -287,7 +297,7 @@ export let commands = [
   { separator: true, toolbar: {toolbar_id: 2} },
   {
     id: 'support',
-    toolbar: {type: 'image', toolbar_id: 2},
+    toolbar: {type: 'image', toolbar_id: 2, hintText: 'Support'},
     onclick: true,
     keys: [],
     command: () => { openNewUrl('https://github.com/rualark/AiHarmony/issues') },
@@ -295,7 +305,7 @@ export let commands = [
   },
   {
     id: 'docs',
-    toolbar: {type: 'image', toolbar_id: 2},
+    toolbar: {type: 'image', toolbar_id: 2, hintText: 'Docs'},
     onclick: true,
     keys: [],
     command: () => { openNewUrl('https://artinfuser.com/counterpoint/docs.php?d=cp_analyse') },
@@ -304,7 +314,7 @@ export let commands = [
   { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'undo',
-    toolbar: {type: 'image', disabled: true, toolbar_id: 1},
+    toolbar: {type: 'image', disabled: true, toolbar_id: 1, hintText: 'Undo'},
     onclick: true,
     keys: ['Ctrl+Z'],
     command: () => { undoState() },
@@ -502,7 +512,7 @@ export let commands = [
   { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'keysig',
-    toolbar: {type: 'image', toolbar_id: 1},
+    toolbar: {type: 'image', toolbar_id: 1, hintText: 'Key'},
     onclick: true,
     keys: ['K'],
     command: () => { showKeysigModal() },
@@ -528,7 +538,7 @@ export let commands = [
   { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'add_part',
-    toolbar: {type: 'text', text: '+P', fontSize: 1.4, toolbar_id: 1},
+    toolbar: {type: 'text', text: '+Part', fontSize: 1.4, toolbar_id: 1},
     onclick: true,
     keys: [],
     command: () => { add_part() },
@@ -536,7 +546,7 @@ export let commands = [
   },
   {
     id: 'del_part',
-    toolbar: {type: 'text', text: '-P', fontSize: 1.4, toolbar_id: 1},
+    toolbar: {type: 'text', text: '-Part', fontSize: 1.4, toolbar_id: 1},
     onclick: true,
     keys: [],
     command: () => { del_part() },

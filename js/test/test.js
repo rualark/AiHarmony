@@ -187,6 +187,7 @@ async function test_do(test_level) {
   await waitForState('new_file', state, ['ready'], 50, 5000);
   new_file();
   await waitForState('readRemoteMusicXmlFile', state, ['ready'], 50, 5000);
+  await waitForState('analysis', ares, ['ready'], 50, 5000);
   readRemoteMusicXmlFile('musicxml/ca3/good-cp5-extract.xml');
   await waitForState('data2plain', state, ['ready'], 50, 5000);
   await waitForState('analysis', ares, ['ready'], 50, 5000);
@@ -210,7 +211,7 @@ async function test_do(test_level) {
   assert2strings('Edited XML', 'test2.xml',
     removeStateFromXml(await httpRequestNoCache('GET', 'test_data/test2.xml')),
     removeStateFromXml(dataToMusicXml('NO DATE')));
-  assert2strings('Loaded ca3', 'test2.ca3',
+  assert2strings('Edited ca3', 'test2.ca3',
     await httpRequestNoCache('GET', 'test_data/test2.ca3'),
     $('#analysisConsole').html());
   for (let i=0; i<34; ++i) {

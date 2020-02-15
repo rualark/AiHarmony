@@ -5,6 +5,16 @@ import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import {async_redraw} from "../../abc/abchelper.js";
 import {ares} from "../../analysis/AnalysisResults.js";
+import {initCommands} from "../commands.js";
+
+function showCheckToolbarHints() {
+  let st = '';
+  st += `<div class="form-check">`;
+  st += `<input type="checkbox" class="form-check-input" name="check_toolbarHints" id="check_toolbarHints" ${settings.toolbarHints ? "checked" : ""}>`;
+  st += `<label class="form-check-label" for="check_toolbarHints">Show toolbar text hints</label>`;
+  st += `</div><br>`;
+  return st;
+}
 
 function showSelectShortcutsLayout() {
   let st = '';
@@ -49,11 +59,18 @@ function showSelectRuleVerbose() {
 
 export function showSettingsModal() {
   let st = '';
+  st += showCheckToolbarHints();
   st += showSelectShortcutsLayout();
   st += showSelectAlgo();
   st += showSelectRuleVerbose();
+  $('#modalDialog').removeClass("modal-lg");
   document.getElementById("ModalTitle").innerHTML = 'Settings';
   document.getElementById("ModalBody").innerHTML = st;
+  $('#check_toolbarHints').change(() => {
+    settings.toolbarHints = Number($('#check_toolbarHints').is(":checked"));
+    settings.settings2storage();
+    initCommands();
+  });
   $('#sel_algo').change(() => {
     nd.algo = $("#sel_algo option:selected" ).val();
     saveState();
