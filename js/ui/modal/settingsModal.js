@@ -5,7 +5,6 @@ import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import {async_redraw} from "../../abc/abchelper.js";
 import {ares} from "../../analysis/AnalysisResults.js";
-import {update_selection} from "../notation.js";
 
 function showSelectShortcutsLayout() {
   let st = '';

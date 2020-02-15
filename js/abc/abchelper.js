@@ -1,6 +1,5 @@
 import {dataToAbc} from "./dataToAbc.js";
 import {nd} from "../notes/NotesData.js";
-import {saveState} from "../state/history.js";
 import {start_counter} from "../core/time.js";
 import {update_selection} from "../ui/notation.js";
 import {settings} from "../state/settings.js";

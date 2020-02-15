@@ -1,5 +1,5 @@
 import {nd} from "../notes/NotesData.js";
-import {async_redraw, selected, engraverParams} from "../abc/abchelper.js";
+import {async_redraw, selected} from "../abc/abchelper.js";
 import {currentTimestamp, start_counter} from "../core/time.js";
 import {b256_safeString, safeString_b256, ui_b256, b256_ui, b256_debug} from "../core/base256.js";
 

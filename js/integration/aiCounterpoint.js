@@ -1,6 +1,5 @@
 import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
 import {nd} from "../notes/NotesData.js";
-import {ais} from "./aiStudio.js";
 import {openNewUrl} from "../ui/lib/uilib.js";
 
 export let aic = {
@@ -153,6 +152,6 @@ function finishAic() {
     // Changing href will open PDF in same window
     // Headers for PDF can be changed to download instead, but this can be not comfortable for other users
     //window.location.href = url;
-    let newWin = openNewUrl(url);
+    openNewUrl(url);
   }
 }

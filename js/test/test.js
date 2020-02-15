@@ -18,7 +18,7 @@ import {undoState} from "../state/history.js";
 import {aic, sendToAic} from "../integration/aiCounterpoint.js";
 import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
 import {httpRequestNoCache} from "../core/remote.js";
-import {data2plain, STATE_VOLATILE_SUFFIX} from "../state/state.js";
+import {data2plain} from "../state/state.js";
 import {keysigs} from "../ui/modal/keysig.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
 import {sleep, waitForVar} from "../core/promise.js";

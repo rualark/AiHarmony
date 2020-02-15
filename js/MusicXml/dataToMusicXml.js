@@ -1,5 +1,4 @@
 import {nd} from "../notes/NotesData.js";
-import {keysig_imprint} from "../notes/noteHelper.js";
 import {state2url} from "../state/state.js";
 
 export let xmlExportWarnings = new Set();

@@ -3,8 +3,6 @@ import {nd} from "../notes/NotesData.js";
 import {d2name, modeName} from "../notes/noteHelper.js";
 import {select_note, select_range} from "../ui/edit/select.js";
 import {settings} from "../state/settings.js";
-import {selected} from "../abc/abchelper.js";
-import {xmlLoadWarnings} from "../MusicXml/musicXmlToData.js";
 import {debugLevel} from "../core/debug.js";
 import {encodeHtmlSpecialChars} from "../core/string.js";
 import {initTooltips} from "../ui/lib/tooltips.js";

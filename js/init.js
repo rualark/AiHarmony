@@ -1,5 +1,5 @@
 import {async_redraw, init_abcjs} from "./abc/abchelper.js";
-import {initCommands, initFilenameClick, initKeyCodes} from "./ui/commands.js";
+import {initFilenameClick} from "./ui/commands.js";
 import {getUrlParam, urlNoParams} from "./core/remote.js";
 import {showShortcutsModal} from "./ui/modal/shortcutsModal.js";
 import {url2state} from "./state/state.js";

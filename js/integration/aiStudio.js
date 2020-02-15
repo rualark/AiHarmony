@@ -1,6 +1,5 @@
 import {nd} from "../notes/NotesData.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
-import {aic} from "./aiCounterpoint.js";
 import {showMp3Player} from "../audio/mp3Player.js";
 
 export let ais = {

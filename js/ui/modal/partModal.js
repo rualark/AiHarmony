@@ -1,6 +1,3 @@
-import {shortcutsLayouts} from "../shortcutsLayouts.js";
-import {settings} from "../../state/settings.js";
-import {initTooltips} from "../lib/tooltips.js";
 import {nd} from "../../notes/NotesData.js";
 import {enableKeys} from "../commands.js";
 import {async_redraw, selected} from "../../abc/abchelper.js";

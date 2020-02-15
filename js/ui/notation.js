@@ -1,4 +1,4 @@
-import {async_redraw, selected, get_voice} from "../abc/abchelper.js";
+import {async_redraw, selected} from "../abc/abchelper.js";
 import {showClefsModal} from "./modal/clefs.js";
 import {nd} from "../notes/NotesData.js";
 import {showTimesigModal} from "./modal/timesig.js";

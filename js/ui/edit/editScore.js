@@ -3,8 +3,6 @@ import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import {update_selection} from "../notation.js";
 import {future} from "./editNote.js";
-import {name2filename} from "../../core/string.js";
-import {enableKeys} from "../commands.js";
 import {showPartModal} from "../modal/partModal.js";
 
 export function stop_advancing() {
