@@ -1,6 +1,5 @@
 import {nd} from "../notes/NotesData.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
-import {aic} from "./aiCounterpoint.js";
 import {showMp3Player} from "../audio/mp3Player.js";
 
 export let ais = {
@@ -34,7 +33,6 @@ function setAisState(state) {
 export function sendToAis(openMp3=true) {
   ais.openMp3 = openMp3;
   ais.sendTime = new Date();
-  let xml;
   if (ais.state !== 'ready') {
     alertify.notify('Rendering state: ' + ais.j_progress);
     return;
@@ -48,7 +46,7 @@ export function sendToAis(openMp3=true) {
       robot: 'robot_aih',
       token: 'xaJD5Bm9LwuQwRQ9',
       acode: 'MP1',
-      fnm: nd.filename + '.mid',
+      fnm: nd.fileName + '.mid',
       submit: 'submit',
       start_class: 9,
       fdt: midi,

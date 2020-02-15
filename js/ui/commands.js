@@ -111,7 +111,7 @@ export function initKeyCodes() {
   }
 }
 
-export function toolbarButtonHtml(command) {
+export function toolbarButtonHtml(command, showHints) {
   let st = '';
   let tooltip = '';
   if (!mobileOrTablet) {
@@ -124,7 +124,7 @@ export function toolbarButtonHtml(command) {
   st += `<a ${tooltip} id='${command.id}' class='btn btn-outline-white ${command.toolbar.disabled ? "disabled " : ""}p-1' href=# role='button' style='display: flex; justify-content: center; flex-shrink: 0; align-items: center; min-width: ${mobileOpt[mobileOrTablet].toolbar_button_width}px; font-size: ${command.toolbar.fontSize * mobileOpt[mobileOrTablet].toolbar_font_scale || '1'}em'>`;
   if (command.toolbar.type === 'image') {
     st += `<img id='${command.id}i' src=img/toolbar/${command.id}.png height=${mobileOpt[mobileOrTablet].toolbar_img_height}>`;
-    if (settings.toolbarHints && command.toolbar.hintText) {
+    if (showHints && command.toolbar.hintText) {
       st += `&nbsp;<span style='font-size: 0.8em'>${command.toolbar.hintText}</span>`;
     }
   }
@@ -151,7 +151,7 @@ function makeToolbar(toolbar_id) {
       continue;
     }
     if (!command.id) continue;
-    st += toolbarButtonHtml(command) + `${nbsp}`;
+    st += toolbarButtonHtml(command, settings.toolbarHints) + `${nbsp}`;
   }
   return st;
 }

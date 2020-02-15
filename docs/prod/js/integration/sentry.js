@@ -27,6 +27,7 @@ if (getEnvironment() === 'prod') {
       try {
         event.tags = event.tags || {};
         event.tags['stateUrl'] = urlNoParams() + '?state=' + state2url();
+        //console.log('Sentry stateUrl', event.tags['stateUrl']);
       }
       catch (e) {
         console.log(e);

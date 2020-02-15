@@ -21,13 +21,15 @@ if (getEnvironment() === 'prod') {
       // Check if it is an exception, and if so, show the report dialog
       let now = new Date();
       if (event.exception && !debugError && (now - pageLoadTime > 5000)) {
-        console.log(event.event_id);
         alertify.error(`Problem occured and was reported to site administrator. <a style='color: white' href=# onclick='window.showReportDialog("${event.event_id}"); return false;'><b><u>Сlick here</u></b></a> to add details and track this issue.`, 45);
       }
       try {
-        event.tags = event.tags || {};
-        event.tags['stateUrl'] = urlNoParams() + '?state=' + state2url();
-        //console.log('Sentry stateUrl', event.tags['stateUrl']);
+        event.breadcrumbs.push({
+          timestamp: new Date(),
+          category: 'state',
+          message: urlNoParams() + '?state=' + state2url(),
+          level: Sentry.Severity.Info
+        });
       }
       catch (e) {
         console.log(e);
@@ -36,7 +38,7 @@ if (getEnvironment() === 'prod') {
     }
   });
 
-  let mgen_login = getCookie('mgen_login');
+  let mgen_login = decodeURIComponent(getCookie('mgen_login'));
   if (mgen_login) {
     Sentry.configureScope((scope) => {
       scope.setUser({

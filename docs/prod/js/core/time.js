@@ -53,3 +53,4 @@ Date.prototype.ymd_his = function() {
     (ii>9 ? '' : '0') + ii + ':' +
     (ss>9 ? '' : '0') + ss;
 };
+

@@ -1,6 +1,7 @@
 import {clefs} from "../ui/modal/clefs.js";
 import {nd} from "../notes/NotesData.js";
-import {alter2abc, d2abc} from "../notes/notehelper.js";
+import {alter2abc, d2abc} from "../notes/noteHelper.js";
+import {ares} from "../analysis/AnalysisResults.js";
 
 export function dataToAbc() {
   let abc = '';
@@ -10,7 +11,19 @@ export function dataToAbc() {
   abc += 'L:1/16\n';
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
-    abc += `V: V${v} clef=${vc.clef} name="${vc.name}"\n`;
+    let name = vc.name;
+    let vocra = ares.getVocra(v);
+    let spec = ares.getSpecies(v);
+    if (vocra != null) name += ` [${vocra}]`;
+    if (spec != null && ares.av_cnt > 1) {
+      if (spec === 0) {
+        name += ` (c.f.)`;
+      }
+      else {
+        name += ` (sp. ${spec})`;
+      }
+    }
+    abc += `V: V${v} clef=${vc.clef} name="${name}"\n`;
   }
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
@@ -21,6 +34,20 @@ export function dataToAbc() {
       nt.step = s;
       nd.abc_charStarts[abc.length] = {voice: v, note: n};
       nt.abc_charStarts = abc.length;
+      let flags = ares.getFlagsInInterval(v, s, s + nt.len);
+      if (flags.red > 0) abc += '"^!"';
+      else if (flags.yellow > 0) abc += '"^?"';
+      if (ares.harm != null && s in ares.harm && ares.vid != null && v === ares.vid[0]) {
+        let harm_st = '';
+        for (let s2 = 0; s2 < nt.len; ++s2) {
+          if (!((s + s2) in ares.harm)) continue;
+          if (harm_st !== '') {
+            harm_st += ', ';
+          }
+          harm_st += ares.harm[s + s2];
+        }
+        abc += `"_${harm_st}"`;
+      }
       let d = nt.d;
       if (d) {
         let abc_note = d2abc(d - clefs[vc.clef].transpose);
@@ -37,6 +64,5 @@ export function dataToAbc() {
     }
     abc += '\n';
   }
-  //console.log(abc);
   return abc;
 }

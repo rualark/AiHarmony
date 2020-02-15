@@ -18,18 +18,19 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body style='touch-action: pan-x pan-y;'>
-<div id=toolbar style='display: flex; position: fixed; top: 0; left: 0; z-index: 99; background-color: white; width: 100%; overflow: auto; white-space: nowrap; border:0px; border-bottom: 1px solid #dddddd; padding: 2px;'>
-</div>
+<div id=toolbar style='display: flex; position: fixed; top: 0; left: 0; z-index: 99; background-color: white; width: 100%; overflow: auto; white-space: nowrap; border:0px; border-bottom: 1px solid #dddddd; padding: 2px;'></div>
 
 <div style='position: fixed; bottom: 50px; right: 20px; z-index: 99'>
 <a href=# class=imgmo2 id=zoom-in><img alt='in' width=40 style='opacity: 0.15' align=right src=img/zoom-in.png></a><br>
 <a href=# class=imgmo2 id=zoom-out><img alt='out' width=40 style='opacity: 0.15' align=right src=img/zoom-out.png></a>
 </div>
 
+<div id=toolbar2 style='display: flex; width: 100%; overflow: auto; white-space: nowrap; border:0px; border-bottom: 1px solid #dddddd; padding: 2px;'></div>
 <div id=testResult></div>
 <b><a style='text-decoration: none; color: #2266aa' href=# id=filename></a></b><br>
 <div id="jquery_jplayer"></div>
 <div id="jplayer"></div>
+<div>&nbsp;&nbsp;<a href=# id=mode></a></div>
 <div style='border: 0px; position:relative; width: 100%; height: 100px; display: inline-block' id='abc'>
 </div>
 
@@ -71,11 +72,12 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body" id=ModalBody>
-      </div>
+      <div class="modal-body" id=ModalBody></div>
+      <div class="modal-footer" id=ModalFooter></div>
     </div>
   </div>
 </div>
 
+<div class=p-2 id=analysisConsole></div>
 <div id=console></div>
 </body>

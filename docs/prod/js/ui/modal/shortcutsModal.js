@@ -1,5 +1,5 @@
 import {keyicon} from "../lib/keys.js";
-import {commands} from "../commands.js";
+import {commands, toolbarButtonHtml} from "../commands.js";
 import {initTooltips} from "../lib/tooltips.js";
 
 export function showShortcutsModal() {
@@ -18,7 +18,7 @@ export function showShortcutsModal() {
     st += `<td>${command.name}`;
     st += "<td style='text-align: center'>";
     if (command.toolbar) {
-      st += `<div style='text-align: center; min-width: 40px;'>${command.toolbar.html}</div>`;
+      st += `<div style='text-align: center; min-width: 40px;'>${toolbarButtonHtml(command, false)}</div>`;
     }
     st += "<td style='text-align: center'>";
     if (command.keys) {

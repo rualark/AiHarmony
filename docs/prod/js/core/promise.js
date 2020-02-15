@@ -13,3 +13,7 @@ export function waitForVar(obj, field, vals, pause, timeout) {
     })();
   });
 }
+
+export function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

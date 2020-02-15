@@ -1,19 +1,19 @@
-import {async_redraw, clicked, state} from "../../abc/abchelper.js";
+import {async_redraw, selected, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {future} from "./editNote.js";
-import {update_selection} from "../notation.js";
+import {update_selection} from "../selection.js";
 
 export function can_len(len) {
-  if (!clicked.element || !clicked.element.duration) return false;
-  let el = nd.abc_charStarts[clicked.element.startChar];
+  if (!selected.element || !selected.element.duration) return false;
+  let el = nd.abc_charStarts[selected.element.startChar];
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   return note.step % nd.timesig.measure_len + len <= nd.timesig.measure_len;
 }
 
 export function can_dot() {
-  if (!clicked.element || !clicked.element.duration) return;
-  let el = nd.abc_charStarts[clicked.element.startChar];
+  if (!selected.element || !selected.element.duration) return;
+  let el = nd.abc_charStarts[selected.element.startChar];
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   if (note.len % 3 === 0) return true;
@@ -22,8 +22,8 @@ export function can_dot() {
 
 export function set_len(len, saveState = true) {
   if (state.state !== 'ready') return;
-  if (!clicked.element || !clicked.element.duration) return;
-  let el = nd.abc_charStarts[clicked.element.startChar];
+  if (!selected.element || !selected.element.duration) return;
+  let el = nd.abc_charStarts[selected.element.startChar];
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   //console.log(note.step, nd.time.measure_len, len);
@@ -40,8 +40,8 @@ export function set_len(len, saveState = true) {
 
 export function toggle_dot() {
   if (state.state !== 'ready') return;
-  if (!clicked.element || !clicked.element.duration) return;
-  let el = nd.abc_charStarts[clicked.element.startChar];
+  if (!selected.element || !selected.element.duration) return;
+  let el = nd.abc_charStarts[selected.element.startChar];
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   let len = note.len;

@@ -1,4 +1,4 @@
-body {padding-top:4.3rem; background-color:white}
+body {padding-top:10px; background-color:white}
 .imgmo {-webkit-transition:all .5s ease; -moz-transition:all .5s ease; -o-transition:all .5s ease; -ms-transition:all .5s ease; transition:all .5s ease}
 .imgmo:hover {opacity:.5; filter:alpha(opacity=50)}
 .imgmo2 {-webkit-transition:all .5s ease; -moz-transition:all .5s ease; -o-transition:all .5s ease; -ms-transition:all .5s ease; transition:all .5s ease}
@@ -19,5 +19,8 @@ body {padding-top:4.3rem; background-color:white}
     width: calc(100vw - 40px);
     overflow-wrap:break-word;
     word-wrap: break-word;
-    color: #4f2f04;  background-color: #eda74c;  border-color: #bf781b;
+    color: #A36F00;  background-color: #FFF953;  border-color: #bf781b;
+}
+path:focus, text:focus, g:focus {
+    outline: none;
 }

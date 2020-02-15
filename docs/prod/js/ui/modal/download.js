@@ -4,6 +4,7 @@ import {nd} from "../../notes/NotesData.js";
 import {dataToAbc} from "../../abc/dataToAbc.js";
 import "../../../plugin/FileSaver.js-2.0.2/FileSaver.js";
 import {ais} from "../../integration/aiStudio.js";
+import {trackEvent} from "../../integration/tracking.js";
 
 let exportFormats = [
   {name: 'Download as MusicXML', func: downloadAsMusicXml },
@@ -17,7 +18,7 @@ let exportFormats = [
 function linkAsMp3() {
   return {
     href: ais.j_url,
-    download: name2filename(nd.name, nd.filename) + '.mp3'
+    download: name2filename(nd.name, nd.fileName) + '.mp3'
   };
 }
 
@@ -34,7 +35,7 @@ function downloadAsMusicXml() {
     alertify.alert("Error exporting MusicXML", e.toString());
     throw e;
   }
-  saveAs(new Blob([xml], {type: "text/xml"}), name2filename(nd.name, nd.filename) + '.xml');
+  saveAs(new Blob([xml], {type: "text/xml"}), name2filename(nd.name, nd.fileName) + '.xml');
 }
 
 function saveSvg(svgEl, name) {
@@ -45,24 +46,23 @@ function saveSvg(svgEl, name) {
 }
 
 function downloadAsSvg() {
-  saveSvg($('#abc').children()[0], name2filename(nd.name, nd.filename) + '.svg');
+  saveSvg($('#abc').children()[0], name2filename(nd.name, nd.fileName) + '.svg');
 }
 
 function downloadAsAbc() {
-  saveAs(new Blob([dataToAbc()], {type: "text/abc"}), name2filename(nd.name, nd.filename) + '.abc');
+  saveAs(new Blob([dataToAbc()], {type: "text/abc"}), name2filename(nd.name, nd.fileName) + '.abc');
 }
 
 function linkAsMidi() {
   return {
     href: ABCJS.synth.getMidiFile(dataToAbc(), {midiOutputType: 'encoded'}),
-    download: name2filename(nd.name, nd.filename) + '.mid'
+    download: name2filename(nd.name, nd.fileName) + '.mid'
   };
 }
 
 export function showDownloadModal() {
   let st = '';
   for (const i in exportFormats) {
-    console.log(exportFormats[i]);
     if (exportFormats[i].func == null && exportFormats[i].link() == null) continue;
     st += `<p style='text-align: center'>`;
     if (exportFormats[i].func == null) {
@@ -86,6 +86,7 @@ export function showDownloadModal() {
       if (exportFormats[i].func != null) {
         exportFormats[i].func();
       }
+      trackEvent('AiHarmony', 'download', exportFormats[i].name);
     };
   }
   $('#Modal').modal();

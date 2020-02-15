@@ -1,7 +1,11 @@
+import {keysigs} from "../ui/modal/keysig.js";
+
 let abc_d = {c: 0, d: 1, e: 2, f: 3, g: 4, a: 5, b: 6};
 let d_abc = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
+export let d_ABC = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
-// Middle C: 60 in MIDI (c), 35 in diatonic (d), starts octave 4 in MusicXml, "C" in ABC notation
+// Middle C: 60 in MIDI (c), 35 in diatonic (d), starts octave 4 in MusicXml, "C" in ABC notation, https://en.wikipedia.org/wiki/C_(musical_note)
+// 60 in js (c), 48 in CA3 (c)
 
 // https://i.imgur.com/86u2JM2.png
 export function keysig_imprint(fifths) {
@@ -40,8 +44,10 @@ export function d2abc(d) {
   return st;
 }
 
+const chrom_to_dia = [ 0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6 ];
+
 export function d2c(d) {
-  return Math.floor(d * 12 / 7);
+  return dia_to_chrom[d % 7] + (Math.floor(d / 7) - 1) * 12;
 }
 
 export function alter2abc(alter) {
@@ -66,3 +72,36 @@ export let fifths2keysig = {
   '7': 'C#', '6': 'F#', '5': 'B', '4': 'E', '3': 'A', '2': 'D', '1': 'G', '0': 'C',
   '-1': 'F', '-2': 'Bb', '-3': 'Eb', '-4': 'Ab', '-5': 'Db', '-6': 'Gb', '-7': 'Cb'
 };
+
+export function d2name(d, alter) {
+  if (!d) return 'rest';
+  return d_ABC[d % 7] + alter2name(alter);
+}
+
+function alter2name(alter) {
+  if (alter === -2) return "bb";
+  if (alter === -1) return "b";
+  if (alter === 1) return "#";
+  if (alter === 2) return "x";
+  return "";
+}
+
+export function modeName(fifths, mode) {
+  for (const name in keysigs) {
+    if (keysigs[name].fifths === fifths && keysigs[name].mode === mode)
+      return fullModeName(keysigs[name]);
+  }
+}
+
+function fullModeName(keysig) {
+  let st = keysig.name;
+  if (keysig.mode === 0) st += ' major';
+  if (st.endsWith('m')) st = st.slice(0, -1) + ' minor';
+  st = st.replace('mix', 'mixolydian');
+  st = st.replace('lyd', 'lydian');
+  st = st.replace('loc', 'locrian');
+  st = st.replace('dor', 'dorian');
+  st = st.replace('phr', 'phrygian');
+  st = st.replace('mix', 'mixolydian');
+  return st;
+}

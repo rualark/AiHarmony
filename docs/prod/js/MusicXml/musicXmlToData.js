@@ -2,9 +2,9 @@ import {MusicXmlParser} from "./MusicXmlParser.js";
 import {nd, supportedNoteLen} from "../notes/NotesData.js";
 import {timesigs} from "../ui/modal/timesig.js";
 import {getBestClef} from "../notes/bestClef.js";
-import {d2c, keysig_imprint} from "../notes/notehelper.js";
+import {d2c} from "../notes/noteHelper.js";
 import {storage2state, url2state} from "../state/state.js";
-import {async_redraw, clicked} from "../abc/abchelper.js";
+import {async_redraw, selected} from "../abc/abchelper.js";
 import {saveState} from "../state/history.js";
 import {start_counter} from "../core/time.js";
 import {name2filename} from "../core/string.js";
@@ -24,14 +24,16 @@ export function readMusicXml(xml, filename) {
     }
     if (filename) {
       if (filename.endsWith('.xml')) {
-        nd.filename = filename.slice(0, -4);
+        nd.set_fileName(filename.slice(0, -4));
       } else {
-        nd.filename = filename;
+        nd.set_fileName(filename);
       }
     }
-    if (!nd.name) nd.name = nd.filename;
-    if (!nd.filename) nd.filename = name2filename(nd.name);
-    clicked.note = {voice: 0, note: 0};
+    else {
+      nd.set_fileName(name2filename(nd.name));
+    }
+    if (!nd.name) nd.set_name(nd.fileName);
+    selected.note = {voice: 0, note: 0};
     saveState();
   } catch (e) {
     storage2state();
@@ -69,9 +71,11 @@ export function musicXmlToData(txt) {
   for (const vi in mxp.notes) {
     nd.voices.push({
       name: mxp.voices[vi].name,
-      notes: []
+      notes: [],
+      species: 10
     });
     nd.keysig.fifths = null;
+    nd.keysig.mode = 13;
     nd.voices[vi].notes = [];
     let ncount = 0;
     for (let m=1; m<mxp.notes[vi].length; ++m) {
@@ -87,8 +91,8 @@ export function musicXmlToData(txt) {
         let note = mxp.notes[vi][m][ni];
         if (note.fifths !== 100) {
           if (nd.keysig.fifths == null) {
-            nd.build_keysig(note.fifths, 0);
-            ki = keysig_imprint(nd.keysig.fifths);
+            nd.build_keysig(note.fifths, 13);
+            ki = nd.keysig.imprint;
             //console.log(note.fifths, fifths2keysig[note.fifths]);
           } else if (nd.keysig.fifths !== note.fifths) {
             xmlLoadWarnings.add("Key signature changes in MusicXml: ignoring");
@@ -139,7 +143,7 @@ export function musicXmlToData(txt) {
 }
 
 function importWorkTitle(mxp) {
-  nd.name = mxp.work_title;
+  nd.set_name(mxp.work_title);
 }
 
 function accidental2alter(st) {

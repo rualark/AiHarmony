@@ -25,7 +25,7 @@ async function workerMessageReceiver(event) {
       worker.firstResultReceived = true;
     }
     debugLog(5, modName, funcName, data);
-    alertify.error(json_stringify_circular(data));
+    throw data;
   }
   if (type === 'RESULT') {
     if (worker.startedTime != null) {
@@ -44,20 +44,20 @@ async function workerMessageReceiver(event) {
     //console.log(ares);
     async_redraw();
   }
-  console.log(event.data);
+  console.log('Event from worker:', event.data.type, event.data.modName);
 }
 
 export function launchAnalysis(modName, funcName, data) {
   if (workers[modName] == null) {
     workers[modName] = {};
     workers[modName].worker = createWorker();
+    workers[modName].worker.addEventListener('message', workerMessageReceiver);
   }
-  //console.log('AnalyseL');
+  console.log('AnalyseL');
   let worker = workers[modName].worker;
   if (worker.startedTime == null) {
     worker.startedTime = new Date();
   }
-  worker.addEventListener('message', workerMessageReceiver);
   worker.postMessage({
     type: 'CALL',
     modName: modName,

@@ -15,3 +15,9 @@ export function button_enabled(id, enabled) {
   }
 }
 
+export function openNewUrl(url) {
+  let newWin = window.open(url, '_blank');
+  if(!newWin || newWin.closed || typeof newWin.closed == 'undefined') {
+    alertify.error(`Popup blocked by your browser. Please allow popups or <a style='color: white' href="${url}" target=_blank><b><u>click here</u></b></a> to open it manually`, 45);
+  }
+}

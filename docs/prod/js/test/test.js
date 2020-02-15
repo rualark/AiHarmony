@@ -1,4 +1,4 @@
-import {next_note, prev_note} from "../ui/edit/move.js";
+import {next_note, prev_note} from "../ui/edit/select.js";
 import {start_counter, stop_counter} from "../core/time.js";
 import {readRemoteMusicXmlFile} from "../MusicXml/readRemoteMusicXml.js";
 import {async_redraw, state} from "../abc/abchelper.js";
@@ -18,12 +18,14 @@ import {undoState} from "../state/history.js";
 import {aic, sendToAic} from "../integration/aiCounterpoint.js";
 import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
 import {httpRequestNoCache} from "../core/remote.js";
-import {data2string, STATE_VOLATILE_SUFFIX} from "../state/state.js";
+import {data2plain} from "../state/state.js";
 import {keysigs} from "../ui/modal/keysig.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
 import {waitForVar} from "../core/promise.js";
 import {makePatch} from "../core/string.js";
 import {sendToAis} from "../integration/aiStudio.js";
+import {unicode_b64} from "../core/base64.js";
+import {ares} from "../analysis/AnalysisResults.js";
 
 export let testState = {
   testing: false
@@ -47,23 +49,33 @@ function console2html() {
 async function waitForState(stage, obj, vals, pause, timeout) {
   // Check for abc redraw error
   if (state.error != null) {
-    throw state.error;
+    throw {
+      message: state.error
+    };
   }
   try {
     await waitForVar(obj, 'state', vals, pause, timeout);
   }
   catch (e) {
-    throw `${stage}. Timeout ${timeout} waiting for state (current ${obj.state}) with pause ${pause}`;
+    throw {
+      message: `${stage}. Timeout ${timeout} waiting for state (current ${obj.state}) with pause ${pause}`
+    };
   }
+  //console.log(stage);
+  //await sleep(50);
 }
 
-function assert2strings(stage, st1, st2, max_diff=0) {
+function assert2strings(stage, fname, st1, st2, max_diff=0) {
   if (st1 !== st2) {
     let patch = makePatch(st1, st2);
     let diff = st1.length - patch.p1 - patch.p2 - 1;
     if (diff <= max_diff) return;
     console.log(patch, st1, st2);
-    throw stage + ` does not match ${diff} chars`;
+    throw {
+      message: stage + ` does not match ${diff} chars`,
+      fname: fname,
+      data: st2
+    };
   }
 }
 
@@ -149,7 +161,7 @@ async function test_framework() {
     );
   }
   catch (e) {
-    throw e;
+    throw { message: e };
   }
   let timeouted = 0;
   try {
@@ -160,7 +172,7 @@ async function test_framework() {
     console.log('+ Successfully timeouted waitForVar');
   }
   if (!timeouted) {
-    throw 'This test should timeout';
+    throw { message: 'This test should timeout'};
   }
 }
 
@@ -175,29 +187,38 @@ async function test_do(test_level) {
   await waitForState('new_file', state, ['ready'], 50, 5000);
   new_file();
   await waitForState('readRemoteMusicXmlFile', state, ['ready'], 50, 5000);
-  readRemoteMusicXmlFile('musicxml/good-cp5-extract.xml');
-  await waitForState('next_note', state, ['ready'], 50, 5000);
-  let loaded_plain = data2string().slice(0, -STATE_IGNORE_SUFFIX);
-  assert2strings('Loaded plain',
+  await waitForState('analysis', ares, ['ready'], 50, 5000);
+  readRemoteMusicXmlFile('musicxml/ca3/good-cp5-extract.xml');
+  await waitForState('data2plain', state, ['ready'], 50, 5000);
+  await waitForState('analysis', ares, ['ready'], 50, 5000);
+  let loaded_plain = data2plain().slice(0, -STATE_IGNORE_SUFFIX);
+  assert2strings('Loaded plain', 'test1.plain',
     await httpRequestNoCache('GET', 'test_data/test1.plain'),
     loaded_plain);
-  assert2strings('Loaded abc',
+  assert2strings('Loaded abc', 'test1.abc',
     await httpRequestNoCache('GET', 'test_data/test1.abc'),
     dataToAbc());
-  assert2strings('Base64 compression', loaded_plain, LZString.decompressFromBase64(LZString.compressToBase64(loaded_plain)));
-  assert2strings('UTF16 compression', loaded_plain, LZString.decompressFromUTF16(LZString.compressToUTF16(loaded_plain)));
+  assert2strings('Loaded ca3', 'test1.ca3',
+    await httpRequestNoCache('GET', 'test_data/test1.ca3'),
+    $('#analysisConsole').html());
+  assert2strings('Base64 compression', '', loaded_plain, LZString.decompressFromBase64(LZString.compressToBase64(loaded_plain)));
+  assert2strings('UTF16 compression', '', loaded_plain, LZString.decompressFromUTF16(LZString.compressToUTF16(loaded_plain)));
   await test_actions();
-  assert2strings('Edited plain',
+  await waitForState('analysis', ares, ['ready'], 50, 5000);
+  assert2strings('Edited plain', 'test2.plain',
     await httpRequestNoCache('GET', 'test_data/test2.plain'),
-    data2string().slice(0, -STATE_IGNORE_SUFFIX));
-  assert2strings('Edited XML',
+    data2plain().slice(0, -STATE_IGNORE_SUFFIX));
+  assert2strings('Edited XML', 'test2.xml',
     removeStateFromXml(await httpRequestNoCache('GET', 'test_data/test2.xml')),
     removeStateFromXml(dataToMusicXml('NO DATE')));
+  assert2strings('Edited ca3', 'test2.ca3',
+    await httpRequestNoCache('GET', 'test_data/test2.ca3'),
+    $('#analysisConsole').html());
   for (let i=0; i<34; ++i) {
     await waitForState('undo', state, ['ready'], 50, 5000);
     undoState();
   }
-  assert2strings('Undo plain', loaded_plain, data2string().slice(0, -STATE_IGNORE_SUFFIX));
+  assert2strings('Undo plain', '', loaded_plain, data2plain().slice(0, -STATE_IGNORE_SUFFIX));
   if (test_level > 1) {
     sendToAic(false);
     try {
@@ -225,7 +246,20 @@ export async function test(test_level) {
     await test_do(test_level);
   }
   catch (e) {
-    document.getElementById("testResult").innerHTML = e.toString();
+    if (e != null) {
+      let st = '';
+      if (e.message != null) {
+        st = e.message.toString();
+      }
+      else {
+        st = e.toString();
+      }
+      if (e.fname != null) {
+        st += ` <a href="data:text/plain;base64,${unicode_b64(e.data)}" download="${e.fname}">Canonize this test</a>`;
+      }
+      document.getElementById("testResult").innerHTML = st;
+    }
+    console.trace();
     throw e;
   }
   console.log('TEST PASSED');

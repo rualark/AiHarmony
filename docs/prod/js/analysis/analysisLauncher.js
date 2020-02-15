@@ -1,4 +1,8 @@
 import {debugLog} from "../core/debug.js";
+import {async_redraw} from "../abc/abchelper.js";
+import {ares} from "./AnalysisResults.js";
+import {json_stringify_circular} from "../core/string.js";
+import {trackEvent} from "../integration/tracking.js";
 
 let workers = {};
 
@@ -8,24 +12,56 @@ function createWorker() {
 
 async function workerMessageReceiver(event) {
   const { type, modName, funcName, data } = event.data;
+  let worker = workers[modName].worker;
   if (type === 'ERROR') {
+    if (workers[modName].startedTime != null) {
+      if (worker.firstResultReceived == null) {
+        trackEvent('AiHarmony', 'analysis_error_first', modName, new Date() - worker.startedTime);
+      }
+      else {
+        trackEvent('AiHarmony', 'analysis_error', modName, new Date() - worker.startedTime);
+      }
+      worker.startedTime = null;
+      worker.firstResultReceived = true;
+    }
     debugLog(5, modName, funcName, data);
+    alertify.error(json_stringify_circular(data));
+  }
+  if (type === 'RESULT') {
+    if (worker.startedTime != null) {
+      if (worker.firstResultReceived == null) {
+        trackEvent('AiHarmony', 'analysis_first', modName, new Date() - worker.startedTime);
+      }
+      else {
+        trackEvent('AiHarmony', 'analysis', modName, new Date() - worker.startedTime);
+      }
+      worker.startedTime = null;
+      worker.firstResultReceived = true;
+    }
+    //debugLog(10, 'Debug result:' + b256_debug(data), data.length);
+    ares.import(data);
+    ares.printFlags();
+    //console.log(ares);
+    async_redraw();
   }
   console.log(event.data);
 }
 
 export function launchAnalysis(modName, funcName, data) {
-  if (workers.modName == null) {
+  if (workers[modName] == null) {
     workers[modName] = {};
     workers[modName].worker = createWorker();
   }
-  console.log('analyse', modName, funcName, data);
+  //console.log('AnalyseL');
   let worker = workers[modName].worker;
+  if (worker.startedTime == null) {
+    worker.startedTime = new Date();
+  }
   worker.addEventListener('message', workerMessageReceiver);
   worker.postMessage({
     type: 'CALL',
     modName: modName,
     funcName: funcName,
-    data: data,
+    data: data
   });
 }

@@ -1,6 +1,6 @@
-import {fifths2keysig, keysig_imprint} from "./notehelper.js";
+import {fifths2keysig, keysig_imprint} from "./noteHelper.js";
 import {saveState} from "../state/history.js";
-import {clicked} from "../abc/abchelper.js";
+import {selected} from "../abc/abchelper.js";
 
 export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
 
@@ -72,7 +72,7 @@ class NotesData {
     let vc = this.voices[v];
     let mlen = this.timesig.measure_len;
     vc.clef = this.voices[v - 1].clef;
-    vc.name = this.voices[v - 1].name;
+    this.set_voiceName(v, this.voices[v - 1].name);
     vc.species = this.voices[v - 1].species;
     vc.notes = [];
     let len = this.get_voice_len(0);
@@ -98,9 +98,11 @@ class NotesData {
   }
 
   build_keysig(fifths, mode) {
+    this.keysig = {};
     this.keysig.fifths = fifths;
     this.keysig.mode = mode;
     this.keysig.name = fifths2keysig[fifths];
+    this.keysig.imprint = keysig_imprint(this.keysig.fifths);
   }
 
   build_timesig(beats_per_measure, beat_type) {
@@ -138,8 +140,17 @@ class NotesData {
       }
     }
     this.keysig = keysig;
+    this.keysig.imprint = ki2;
     this.modes[0] = keysig;
+    this.modes[0].step = 0;
     this.saveState();
+  }
+
+  get_realAlter(v, n) {
+    if (this.voices[v].notes[n].alter === 10) {
+      return this.keysig.imprint[this.voices[v].notes[n].d % 7];
+    }
+    return this.voices[v].notes[n].alter;
   }
 
   set_timesig(timesig) {
@@ -147,10 +158,36 @@ class NotesData {
     let mlen = this.timesig.measure_len;
     for (let v=0; v<this.voices.length; ++v) {
       let vc = this.voices[v];
+      // Merge pauses
       let s2 = 0;
       for (let n = 0; n < vc.notes.length; ++n) {
         let nt = vc.notes[n];
         s2 = nt.step + nt.len;
+        if (n >= vc.notes.length - 1) break;
+        if (nt.d) continue;
+        let nt2 = vc.notes[n + 1];
+        if (nt2.d) continue;
+        // Merge second rest to first rest
+        nt.len += nt2.len;
+        // Remove second rest
+        vc.notes.splice(n + 1, 1);
+        // Return to first rest to check if there are more rests to merge
+        --n;
+      }
+      // Complete last measure
+      if (s2 % mlen) {
+        // If there is note in the end, append rest
+        if (vc.notes[vc.notes.length - 1].d) {
+          vc.notes.push({d: 0, alter: 10, len: mlen - s2 % mlen, startsTie: false});
+        }
+        // If there is rest in the end, grow rest length
+        else {
+          vc.notes[vc.notes.length - 1].len += mlen - s2 % mlen;
+        }
+      }
+      // Split notes
+      for (let n = 0; n < vc.notes.length; ++n) {
+        let nt = vc.notes[n];
         if (nt.step % mlen + nt.len > mlen) {
           let debt = nt.step % mlen + nt.len - mlen;
           nt.len -= debt;
@@ -165,26 +202,17 @@ class NotesData {
           }
         }
       }
-      if (s2 % mlen) {
-        vc.notes.push({d: 0, alter: 10, len: mlen - s2 % mlen, startsTie: false});
-      }
-      //console.log(vc.notes);
     }
     this.saveState();
   }
 
   reset() {
-    this.name = "New exercise";
-    this.filename = "New-exercise";
+    this.set_name("New exercise");
+    this.set_fileName("New-exercise");
     this.algo = 'CA3';
     this.algoMode = 0;
     this.phrases = [ 0 ];
-    this.keysig = {
-      name: 'Am',
-      mode: 9, // 0 - major, 2 - dorian, 9 - aeolian
-      fifths: 0, // Number of alterations near key
-      base_note: 9, // Base tonic note (C - 0, Am - 9)
-    };
+    this.build_keysig(0, 13);
     let mode = this.keysig;
     mode.step = 0;
     this.modes = [
@@ -199,7 +227,7 @@ class NotesData {
       {
         clef: 'treble',
         name: 'Sop.',
-        species: 5,
+        species: 10,
         notes: [
           {d: 0, alter: 0, len: 16, startsTie: false},
           {d: 0, alter: 0, len: 16, startsTie: false},
@@ -210,7 +238,7 @@ class NotesData {
       {
         clef: 'treble',
         name: 'Alt.',
-        species: 5,
+        species: 10,
         notes: [
           {d: 0, alter: 0, len: 16, startsTie: false},
           {d: 0, alter: 0, len: 16, startsTie: false},
@@ -221,7 +249,7 @@ class NotesData {
       {
         clef: 'treble-8',
         name: 'Ten.',
-        species: 5,
+        species: 10,
         notes: [
           {d: 0, alter: 0, len: 16, startsTie: false},
           {d: 0, alter: 0, len: 16, startsTie: false},
@@ -232,7 +260,7 @@ class NotesData {
       {
         clef: 'bass',
         name: 'Bas.',
-        species: 0,
+        species: 10,
         notes: [
           {d: 0, alter: 0, len: 16, startsTie: false},
           {d: 0, alter: 0, len: 16, startsTie: false},
@@ -241,7 +269,7 @@ class NotesData {
         ]
       },
     ];
-    clicked.note = {voice: 0, note: 0};
+    selected.note = {voice: 0, note: 0};
     this.abc_charStarts = [];
   }
 
@@ -254,8 +282,11 @@ class NotesData {
     return len;
   }
 
-  getClosestNote(v, pos) {
-    for (let n = 0; n < this.voices[v].notes.length; ++n) {
+  getClosestNote(v, pos, hint=0) {
+    if (this.voices.length <= v || !this.voices[v].notes.length) return;
+    // Reset hint if it is wrong
+    if (this.voices[v].notes.length <= hint || this.voices[v].notes[hint].step > pos) hint = 0;
+    for (let n = hint; n < this.voices[v].notes.length; ++n) {
       let nt = this.voices[v].notes[n];
       if (nt.step <= pos && nt.step + nt.len > pos) return n;
     }
@@ -282,6 +313,27 @@ class NotesData {
 
   constructor() {
     this.reset();
+  }
+
+  set_name(st) {
+    if (st == null) this.name = '';
+    else if (st === '') this.name = '-';
+    else this.name = st.substr(0, 255);
+  }
+
+  set_fileName(st) {
+    if (st == null) this.fileName = '';
+    else if (st === '') this.fileName = '-';
+    else this.fileName = st.substr(0, 255);
+  }
+
+  set_voiceName(v, st) {
+    if (st == null) this.voices[v].name = '';
+    else this.voices[v].name = st.substr(0, 255);
+  }
+
+  set_species(v, sp) {
+    this.voices[v].species = sp;
   }
 }
 

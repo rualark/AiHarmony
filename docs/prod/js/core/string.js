@@ -25,7 +25,7 @@ export function name2filename(name, filename) {
   fname = fname.replace(/[^\w.]/g, '-');
   for (let i=0; i<10; ++i)
     fname = fname.replace('--', '-');
-  if (fname.length > 30) fname = fname.substr(0, 30);
+  if (fname.length > 60) fname = fname.substr(0, 60);
   if (fname.length < 4) fname = now.yyyymmdd('-') + ' ' + fname;
   return fname;
 }
@@ -45,4 +45,13 @@ export function makePatch(st1, st2) {
   let patch = st2.slice(p1, st2.length - p2);
   //console.log('Patch', p1, p2, st1.length, st2.length, patch, st1, st2);
   return {p1: p1, p2: p2, patch: patch};
+}
+
+export function encodeHtmlSpecialChars(str) {
+  str = str.replace(/&/g, "&amp;");
+  str = str.replace(/>/g, "&gt;");
+  str = str.replace(/</g, "&lt;");
+  str = str.replace(/"/g, "&quot;");
+  str = str.replace(/'/g, "&#039;");
+  return str;
 }

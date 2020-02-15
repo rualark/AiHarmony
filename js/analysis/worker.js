@@ -99,7 +99,7 @@ self.addEventListener('message', async function(event) {
     //console.log('Worker call');
     try {
       if (workerState.state === 'before_init') {
-        console.log('initWasmModule0', workerState.state);
+        console.log('Loading wasm', modName);
         await initWasmModule(modName);
       }
       // If wasm is busy, queue

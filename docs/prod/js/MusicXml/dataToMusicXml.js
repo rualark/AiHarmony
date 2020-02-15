@@ -1,5 +1,4 @@
 import {nd} from "../notes/NotesData.js";
-import {keysig_imprint} from "../notes/notehelper.js";
 import {state2url} from "../state/state.js";
 
 export let xmlExportWarnings = new Set();
@@ -94,7 +93,7 @@ export function dataToMusicXml(date) {
    </part-abbreviation-display>
   </score-part>\n`;
   }
-  let ki = keysig_imprint(nd.keysig.fifths);
+  let ki = nd.keysig.imprint;
   st += ' </part-list>\n';
   for (const v in nd.voices) {
     st += ` <part id="P${v}">\n`;

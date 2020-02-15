@@ -1,5 +1,5 @@
 let workerState = {
-  state: 'init'
+  state: 'before_init'
 };
 
 var Module = {
@@ -25,17 +25,19 @@ function waitForVar(obj, field, vals, pause, timeout) {
 }
 
 async function initWasmModule(modName) {
-  workerState = {};
   workerState.state = 'loading js';
+  importScripts('wasmArray.js');
   importScripts('modules/' + modName + '.js');
   if (Module == null) {
     throw 'Error loading worker js module';
   }
   workerState.state = 'loading wasm';
   Module.onRuntimeInitialized = function() {
+    // Will be called before main()
     workerState.state = 'ready';
   };
-  await waitForVar(workerState, 'state', ['ready'], 50, 4000);
+  await waitForVar(workerState, 'state', ['ready'], 50, 20000);
+  // Here main() will usually be finished
 }
 
 function toInt32Arr(arr) {
@@ -63,6 +65,7 @@ function callWasmFuncArray(wasmMod, funcName, arr) {
   let arrayOnHeap;
   try {
     arrayOnHeap = transferToHeap(wasmMod, arr);
+    //console.log(arrayOnHeap, arr.length);
     return wasmMod[funcName](arrayOnHeap, arr.length);
   }
   finally {
@@ -91,13 +94,38 @@ function message(type, modName, funcName, data) {
 
 // Handle incoming messages
 self.addEventListener('message', async function(event) {
-  const { type, modName, funcName, data } = event.data;
+  let { type, modName, funcName, data } = event.data;
   if (type === "CALL") {
+    //console.log('Worker call');
     try {
-      if (workerState.state === 'init') {
+      if (workerState.state === 'before_init') {
+        console.log('Loading wasm', modName);
         await initWasmModule(modName);
       }
-      let res = callWasmFuncArrayToArray(Module, funcName, data);
+      // If wasm is busy, queue
+      if (workerState.state !== 'ready') {
+        // If queue is full, replace data and do not wait - queued process will process our new data
+        if (workerState.queuedData != null) {
+          workerState.queuedData = data;
+          return;
+        }
+        // If I am the first in queue, wait and
+        workerState.queuedData = data;
+        await waitForVar(workerState, 'state', ['ready'], 50, 20000);
+        // As soon as wasm is ready, get latest data and delete queue
+        data = workerState.queuedData;
+        workerState.queuedData = null;
+      }
+      // Assert ready state
+      if (workerState.state !== 'ready') {
+        throw "Error state: " + workerState.state;
+      }
+      const res = ccallArrays(funcName, "string", ["string"], [data], {
+        heapIn: "HEAPU8",
+        heapOut: "HEAPU8"
+      });
+      //let res = callWasmFuncArrayToArray(Module, funcName, data);
+      //console.log('Worker result');
       message("RESULT", modName, funcName, res);
     }
     catch (e) {
