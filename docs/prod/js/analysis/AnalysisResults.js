@@ -317,11 +317,10 @@ class AnalysisResults {
   }
 
   selectedFlags(pf) {
-    if (!selected.element || !selected.element.duration) return;
-    let el = nd.abc_charStarts[selected.element.startChar];
-    let vi = el.voice;
+    if (!selected.note) return;
+    let vi = selected.note.voice;
     let notes = nd.voices[vi].notes;
-    let note = notes[el.note];
+    let note = notes[selected.note.note];
     let s = note.step;
     if (!(vi in this.stepFlags)) return;
     if (!(s in this.stepFlags[vi])) return;
@@ -330,7 +329,7 @@ class AnalysisResults {
     let st = '';
     for (let f=0; f<this.stepFlags[vi][s].length; ++f) {
       let pf = this.stepFlags[vi][s][f];
-      console.log(pf);
+      //console.log(pf);
       // Select first flag
       if (st === '') {
         this.pFlagCur = pf.num;
