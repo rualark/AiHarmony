@@ -1,7 +1,6 @@
 import {debugLog} from "../core/debug.js";
 import {async_redraw} from "../abc/abchelper.js";
 import {ares} from "./AnalysisResults.js";
-import {json_stringify_circular} from "../core/string.js";
 import {trackEvent} from "../integration/tracking.js";
 
 let workers = {};

@@ -121,7 +121,7 @@ export function update_selection() {
 }
 
 export function element_click(abcElem, tuneNumber, classes, pos, move) {
-  console.log('Click', abcElem, tuneNumber, classes, pos, move);
+  //console.log('Click', abcElem, tuneNumber, classes, pos, move);
   selected.element = abcElem;
   selected.classes = classes;
   selected.voice = pos.voice;
