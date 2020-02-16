@@ -13,8 +13,8 @@ export function urlNoParams() {
 
 export function getEnvironment() {
   if (getUrlParam('test')) return "test";
-  //if (urlNoParams().includes("/harmony-dev")) return "dev";
-  //if (getCookie('mgen_login') && getCookie('mgen_login').startsWith('rualark')) return "prod-in";
+  if (urlNoParams().includes("/harmony-dev")) return "dev";
+  if (getCookie('mgen_login') && getCookie('mgen_login').startsWith('rualark')) return "prod-in";
   return "prod";
 }
 
