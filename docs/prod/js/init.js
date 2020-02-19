@@ -70,4 +70,3 @@ window.onload = function() {
 };
 
 init();
-
