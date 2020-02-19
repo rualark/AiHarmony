@@ -14,6 +14,7 @@ import {rename_part, stop_advancing} from "./edit/editScore.js";
 import {can_pre_tie, can_tie, is_pre_tie} from "./edit/editTie.js";
 import {can_dot, can_len} from "./edit/editLen.js";
 import {ares} from "../analysis/AnalysisResults.js";
+import {trackEvent} from "../integration/tracking.js";
 
 function selectionHasMistake() {
   if (selected.note == null) return false;
@@ -129,15 +130,19 @@ export function element_click(abcElem, tuneNumber, classes, pos, move) {
   selected.note = null;
   if (abcElem['el_type'] === 'voice-name') {
     rename_part();
+    trackEvent('AiHarmony', 'click_partname');
   }
   else if (typeof selected.element.clefPos !== 'undefined') {
     showClefsModal(nd.voices[selected.voice]);
+    trackEvent('AiHarmony', 'click_clef');
   }
   else if (typeof selected.element.value !== 'undefined') {
     showTimesigModal();
+    trackEvent('AiHarmony', 'click_timesig');
   }
   else if (typeof selected.element.mode !== 'undefined') {
     showKeysigModal();
+    trackEvent('AiHarmony', 'click_keysig');
   }
   if (selected.element.duration != null) {
     selected.note = nd.abc_charStarts[selected.element.startChar];
@@ -146,6 +151,7 @@ export function element_click(abcElem, tuneNumber, classes, pos, move) {
   if (move) {
     increment_note(-move);
     async_redraw();
+    trackEvent('AiHarmony', 'note_drag');
     return;
   } else {
     saveState(false);

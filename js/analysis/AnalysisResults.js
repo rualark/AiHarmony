@@ -7,6 +7,7 @@ import {debugLevel} from "../core/debug.js";
 import {encodeHtmlSpecialChars} from "../core/string.js";
 import {initTooltips} from "../ui/lib/tooltips.js";
 import {selected} from "../abc/abchelper.js";
+import {getEnvironment} from "../core/remote.js";
 
 let ARES_ENCODING_VERSION = 2;
 export let SEVERITY_RED = 80;
@@ -149,7 +150,7 @@ class AnalysisResults {
 
   static getRuleTooltip(fla) {
     let st = '';
-    if (debugLevel > 5) {
+    if (debugLevel > 5 && getEnvironment() !== 'prod') {
       st += `[${fla.fl}] `;
     }
     if (fla.comment)
@@ -176,7 +177,7 @@ class AnalysisResults {
     for (const err of this.errors) {
       let color='black';
         if (err.level > 50) color = 'red';
-      st += `<span style='color: ${color}'><b>${err.message}</b></span><br>`;
+      st += `<span style='color: ${color}'><b>- ${err.message}</b></span><br>`;
     }
     let fcnt = 0;
     let npm = nd.timesig.measure_len;
@@ -212,7 +213,7 @@ class AnalysisResults {
           let tooltipText = AnalysisResults.getRuleTooltip(fla);
           let htmlText = this.getRuleString(fla, settings.rule_verbose, true, false);
           st += `<a data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${encodeHtmlSpecialChars(tooltipText)}" href=# class='ares ares_${vi}_${s}_${f}' style='color: ${col}'>`;
-          st += encodeHtmlSpecialChars(htmlText);
+          st += '- ' + encodeHtmlSpecialChars(htmlText);
           st += `</a><br>`;
           let pf = {
             vi1: vi,

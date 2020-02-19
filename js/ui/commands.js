@@ -143,7 +143,13 @@ function makeToolbar(toolbar_id) {
       if (!mobileOrTablet && !(command.toolbar.dev & 2)) continue;
     }
     if (!command.toolbar) continue;
-    if (command.toolbar.toolbar_id !== toolbar_id) continue;
+    if (command.toolbar.toolbar_id !== toolbar_id) {
+      if (command.toolbar.toolbar_id === 'pc2-mobile1') {
+        if (!mobileOrTablet && toolbar_id !== 2) continue;
+        if (mobileOrTablet && toolbar_id !== 1) continue;
+      }
+      else continue;
+    }
     let nbsp = '&nbsp;';
     //if (!mobileOrTablet) nbsp = '';
     if (command.separator) {
@@ -206,7 +212,7 @@ export let commandShiftKeyCodes = {};
 export let commands = [
   {
     id: 'logo',
-    toolbar: {type: 'image', toolbar_id: 1},
+    toolbar: {type: 'image', toolbar_id: 2},
     onclick: true,
     keys: [],
     command: () => { openNewUrl('https://artinfuser.com') },
@@ -214,12 +220,13 @@ export let commands = [
   },
   {
     id: 'question',
-    toolbar: {type: 'image', toolbar_id: 1, hintText: 'Help'},
+    toolbar: {type: 'image', toolbar_id: 2, hintText: 'Help'},
     onclick: true,
     keys: ['F1'],
     command: () => { showShortcutsModal() },
     name: 'Help',
   },
+  { separator: true, toolbar: {toolbar_id: 2} },
   {
     id: 'new',
     toolbar: {type: 'image', toolbar_id: 2, hintText: 'New'},
@@ -252,7 +259,6 @@ export let commands = [
     command: () => { showShareModal() },
     name: 'Share music',
   },
-  { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'aprev',
     toolbar: {type: 'image', toolbar_id: 1},
@@ -385,10 +391,10 @@ export let commands = [
     command: () => { toggle_tie() },
     name: 'Input tie between notes',
   },
-  { separator: true, toolbar: {toolbar_id: 1} },
+  { separator: true, toolbar: {toolbar_id: 'pc2-mobile1'} },
   {
     id: 'note_c',
-    toolbar: {type: 'image', toolbar_id: 1},
+    toolbar: {type: 'image', toolbar_id: 'pc2-mobile1'},
     onclick: true,
     keys: ['C'],
     command: () => { set_note(0) },
@@ -396,7 +402,7 @@ export let commands = [
   },
   {
     id: 'note_d',
-    toolbar: {type: 'image', toolbar_id: 1},
+    toolbar: {type: 'image', toolbar_id: 'pc2-mobile1'},
     onclick: true,
     keys: ['D'],
     command: () => { set_note(1) },
@@ -404,7 +410,7 @@ export let commands = [
   },
   {
     id: 'note_e',
-    toolbar: {type: 'image', toolbar_id: 1},
+    toolbar: {type: 'image', toolbar_id: 'pc2-mobile1'},
     onclick: true,
     keys: ['E'],
     command: () => { set_note(2) },
@@ -412,7 +418,7 @@ export let commands = [
   },
   {
     id: 'note_f',
-    toolbar: {type: 'image', toolbar_id: 1},
+    toolbar: {type: 'image', toolbar_id: 'pc2-mobile1'},
     onclick: true,
     keys: ['F'],
     command: () => { set_note(3) },
@@ -420,7 +426,7 @@ export let commands = [
   },
   {
     id: 'note_g',
-    toolbar: {type: 'image', toolbar_id: 1},
+    toolbar: {type: 'image', toolbar_id: 'pc2-mobile1'},
     onclick: true,
     keys: ['G'],
     command: () => { set_note(4) },
@@ -428,7 +434,7 @@ export let commands = [
   },
   {
     id: 'note_a',
-    toolbar: {type: 'image', toolbar_id: 1},
+    toolbar: {type: 'image', toolbar_id: 'pc2-mobile1'},
     onclick: true,
     keys: ['A'],
     command: () => { set_note(5) },
@@ -436,7 +442,7 @@ export let commands = [
   },
   {
     id: 'note_b',
-    toolbar: {type: 'image', toolbar_id: 1},
+    toolbar: {type: 'image', toolbar_id: 'pc2-mobile1'},
     onclick: true,
     keys: ['B'],
     command: () => { set_note(6) },
@@ -509,10 +515,10 @@ export let commands = [
     command: () => { set_rest(true) },
     name: 'Input rest',
   },
-  { separator: true, toolbar: {toolbar_id: 1} },
+  { separator: true, toolbar: {toolbar_id: 'pc2-mobile1'} },
   {
     id: 'keysig',
-    toolbar: {type: 'image', toolbar_id: 1, hintText: 'Key'},
+    toolbar: {type: 'image', toolbar_id: 'pc2-mobile1', hintText: 'Key'},
     onclick: true,
     keys: ['K'],
     command: () => { showKeysigModal() },

@@ -63,7 +63,8 @@ function linkAsMidi() {
 export function showDownloadModal() {
   let st = '';
   for (const i in exportFormats) {
-    if (exportFormats[i].func == null && exportFormats[i].link() == null) continue;
+    if (exportFormats[i].func == null && exportFormats[i].link == null) continue;
+    if (exportFormats[i].link != null && exportFormats[i].link().href == null) continue;
     st += `<p style='text-align: center'>`;
     if (exportFormats[i].func == null) {
       let link = exportFormats[i].link();
@@ -80,7 +81,8 @@ export function showDownloadModal() {
   document.getElementById("ModalTitle").innerHTML = 'Download music';
   document.getElementById("ModalBody").innerHTML = st;
   for (const i in exportFormats) {
-    if (exportFormats[i].func == null && exportFormats[i].link() == null) continue;
+    if (exportFormats[i].func == null && exportFormats[i].link == null) continue;
+    if (exportFormats[i].link != null && exportFormats[i].link().href == null) continue;
     document.getElementById('adownload' + i).onclick = function () {
       $('#Modal').modal('hide');
       if (exportFormats[i].func != null) {

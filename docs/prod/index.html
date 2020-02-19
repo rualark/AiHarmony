@@ -33,11 +33,13 @@
         M.splice(1, 1, tem[1]);
       return {name:M[0], version:M[1]};
     })();
-    setTimeout(function() {
+    var checkUnsupportedBrowser = function() {
       if (document.getElementById("toolbar").innerHTML === '') {
         document.getElementById("testResult").innerHTML = "<span style='color: red'><b>There was a problem executing javascript. Try to reload page. If the problem persists, this may mean that this browser " + navigator.browserSpecs.name + " " + navigator.browserSpecs.version + " is not supported. Supported browsers: Chrome (65 and later), Safari (11 and later)</b></span>";
       }
-    }, 4000);
+    };
+    setTimeout(checkUnsupportedBrowser, 4000);
+    window.addEventListener('DOMContentLoaded', checkUnsupportedBrowser);
   </script>
 </head>
 <body style='touch-action: pan-x pan-y;'>
