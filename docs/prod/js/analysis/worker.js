@@ -36,7 +36,7 @@ async function initWasmModule(modName) {
     // Will be called before main()
     workerState.state = 'ready';
   };
-  await waitForVar(workerState, 'state', ['ready'], 50, 20000);
+  await waitForVar(workerState, 'state', ['ready'], 50, 60000);
   // Here main() will usually be finished
 }
 

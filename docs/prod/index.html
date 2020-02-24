@@ -39,8 +39,11 @@
         document.getElementById("testResult").innerHTML = "<span style='color: red'><b>There was a problem executing javascript. Try to reload page. If the problem persists, this may mean that this browser " + navigator.browserSpecs.name + " " + navigator.browserSpecs.version + " is not supported. Supported browsers: Chrome (65 and later), Safari (11 and later)</b></span>";
       }
     };
+    window.onload = function() {
+      checkUnsupportedBrowser();
+    };
     setTimeout(checkUnsupportedBrowser, 4000);
-    window.addEventListener('DOMContentLoaded', checkUnsupportedBrowser);
+    //window.addEventListener('DOMContentLoaded', checkUnsupportedBrowser);
   </script>
 </head>
 <body style='touch-action: pan-x pan-y;'>
