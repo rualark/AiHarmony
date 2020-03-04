@@ -5,6 +5,8 @@ let synthControl = {};
 
 export function play() {
   let synth = new ABCJS.synth.CreateSynth();
+  let AudioContext = window.AudioContext          // Default
+    || window.webkitAudioContext;  // Safari and old versions of Chrome
   let myContext = new AudioContext();
   synth.init({
     audioContext: myContext,
