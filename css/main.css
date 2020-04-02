@@ -1,4 +1,6 @@
 body {padding-top:10px; background-color:white}
+.jumbotron1{background-image:url(../img/bg.jpg);background-color:#000;margin-bottom:0;min-height:50%;background-repeat:no-repeat;background-position:center;-webkit-background-size:cover;background-size:cover}
+.jumbotron2{background-color:#fff;margin-bottom:0;min-height:50%}
 .imgmo {-webkit-transition:all .5s ease; -moz-transition:all .5s ease; -o-transition:all .5s ease; -ms-transition:all .5s ease; transition:all .5s ease}
 .imgmo:hover {opacity:.5; filter:alpha(opacity=50)}
 .imgmo2 {-webkit-transition:all .5s ease; -moz-transition:all .5s ease; -o-transition:all .5s ease; -ms-transition:all .5s ease; transition:all .5s ease}
