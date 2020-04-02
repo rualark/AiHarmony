@@ -48,6 +48,12 @@ export function dataToAbc() {
         }
         abc += `"_${harm_st}"`;
       }
+      if (nt.text) {
+        abc += `"^${nt.text}"`;
+      }
+      if (nt.lyric) {
+        abc += `"_${nt.lyric}"`;
+      }
       let d = nt.d;
       if (d) {
         let abc_note = d2abc(d - clefs[vc.clef].transpose);

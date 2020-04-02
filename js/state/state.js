@@ -3,7 +3,7 @@ import {async_redraw, selected} from "../abc/abchelper.js";
 import {currentTimestamp, start_counter} from "../core/time.js";
 import {b256_safeString, safeString_b256, ui_b256, b256_ui, b256_debug} from "../core/base256.js";
 
-const ENCODING_VERSION = 11;
+const ENCODING_VERSION = 12;
 export const STATE_VOLATILE_SUFFIX = 7;
 
 function alter2contig(alt) {
@@ -44,6 +44,8 @@ export function data2plain() {
       st += ui_b256(alter2contig(nt.alter || 0) * 4 + (nt.startsTie ? 2 : 0), 1);
       st += ui_b256(nt.d, 1);
       st += ui_b256(nt.len, 1);
+      st += safeString_b256(nt.text, 1);
+      st += safeString_b256(nt.lyric, 1);
     }
     // Write end of voice
     st+= ui_b256(1, 1);
@@ -121,7 +123,9 @@ export function plain2data(st, pos) {
         d: d,
         len: len,
         alter: contig2alter(Math.floor(packed / 4)),
-        startsTie: !!(packed % 4)
+        startsTie: !!(packed % 4),
+        text: b256_safeString(st, pos, 1),
+        lyric: b256_safeString(st, pos, 1),
       });
     }
   }

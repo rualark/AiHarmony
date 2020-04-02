@@ -27,6 +27,18 @@ class NotesData {
     this.saveState();
   }
 
+  set_text(v, n, st) {
+    if (st.length > 127) st = st.slice(0, 127);
+    this.voices[v].notes[n].text = st;
+    this.saveState();
+  }
+
+  set_lyric(v, n, st) {
+    if (st.length > 127) st = st.slice(0, 127);
+    this.voices[v].notes[n].lyric = st;
+    this.saveState();
+  }
+
   set_rest(v, n, saveState=true) {
     this.set_note(v, n, 0, saveState);
     this.voices[v].notes[n].alter = 10;

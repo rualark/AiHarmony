@@ -30,6 +30,7 @@ import {ares} from "../analysis/AnalysisResults.js";
 import {openNewUrl} from "./lib/uilib.js";
 import {trackEvent} from "../integration/tracking.js";
 import {settings} from "../state/settings.js";
+import { add_lyric, add_text } from "./edit/editText.js";
 
 let mobileOpt = {
   true: {
@@ -544,7 +545,7 @@ export let commands = [
   { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'add_part',
-    toolbar: {type: 'text', text: '+Part', fontSize: 1.4, toolbar_id: 1},
+    toolbar: {type: 'text', text: '+Part', fontSize: 1.3, toolbar_id: 1},
     onclick: true,
     keys: [],
     command: () => { add_part() },
@@ -552,11 +553,28 @@ export let commands = [
   },
   {
     id: 'del_part',
-    toolbar: {type: 'text', text: '-Part', fontSize: 1.4, toolbar_id: 1},
+    toolbar: {type: 'text', text: '-Part', fontSize: 1.3, toolbar_id: 1},
     onclick: true,
     keys: [],
     command: () => { del_part() },
     name: 'Delete selected part',
+  },
+  { separator: true, toolbar: {toolbar_id: 1} },
+  {
+    id: 'add_text',
+    toolbar: {type: 'text', text: 'Text', fontSize: 1.3, toolbar_id: 1},
+    onclick: true,
+    keys: [],
+    command: () => { add_text() },
+    name: 'Add text above note',
+  },
+  {
+    id: 'add_lyric',
+    toolbar: {type: 'text', text: 'Lyric', fontSize: 1.3, toolbar_id: 1},
+    onclick: true,
+    keys: [],
+    command: () => { add_lyric() },
+    name: 'Add lyric below note',
   },
   { separator: true, toolbar: {toolbar_id: 1} },
   {
