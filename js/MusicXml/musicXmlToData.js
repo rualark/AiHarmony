@@ -68,6 +68,7 @@ export function musicXmlToData(txt) {
   nd.timesig.measure_len = mxp.mea[1].measure_len * 16;
   nd.voices = [];
   let ki;
+  console.log(mxp);
   for (const vi in mxp.notes) {
     nd.voices.push({
       name: mxp.voices[vi].name,
@@ -112,25 +113,29 @@ export function musicXmlToData(txt) {
             xmlLoadWarnings.add("Clef changes in MusicXml: ignoring");
           }
         }
+        let nt;
         if (note.rest) {
-          nd.voices[vi].notes.push({
+          nt = {
             d: 0,
             len: Math.floor(note.dur * 4 / note.dur_div),
             startsTie: false
-          });
+          };
         } else {
           ++ncount;
           if (!ki) {
             return mxp.getErrPrefix(vi, m, ni) + ` Key signature should be specified before note`;
           }
           //accidental2alter(note.accidental)
-          nd.voices[vi].notes.push({
+          nt = {
             d: note.d,
             alter: note.alter === ki[note.d % 7] && !note.accidental ? 10 : note.alter,
             len: Math.floor(note.dur * 4 / note.dur_div),
             startsTie: note.tie_start
-          });
+          };
         }
+        nt.text = note.words;
+        nt.lyric = note.lyric;
+        nd.voices[vi].notes.push(nt);
       }
     }
     if (nd.voices[vi].clef == null) {

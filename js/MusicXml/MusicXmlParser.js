@@ -91,6 +91,8 @@ export class MusicXmlParser {
       if (el.nodeName === 'direction') {
         staff = this.xml.xpathFirstInner('staff', el) || staff;
         for (const word of this.xml.xpath('direction-type/words', el)) {
+          console.log('Words', staff, word.innerHTML);
+          if (!words[staff]) words[staff] = "";
           words[staff] += word.innerHTML + ' ';
         }
       }
@@ -183,6 +185,7 @@ export class MusicXmlParser {
         }
         this.notes[vi][m][ni].dur_div = divisions;
         this.notes[vi][m][ni].lyric = this.xml.xpathFirstInner('lyric/text', el);
+        console.log("Check words", staff, words[staff]);
         if (words[staff] !== "") {
           this.notes[vi][m][ni].words = words[staff];
           words[staff] = "";
@@ -495,4 +498,3 @@ export class MusicXmlParser {
     return [dur];
   }
 }
-

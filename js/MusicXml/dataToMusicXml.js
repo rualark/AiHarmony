@@ -129,6 +129,15 @@ export function dataToMusicXml(date) {
           st += `   <attributes />\n`;
         }
       }
+      if (note.text) {
+        st += `   <direction>\n`;
+        st += `    <direction-type>\n`;
+        st += `     <words>${note.text}</words>\n`;
+        st += `    </direction-type>\n`;
+        st += `     <voice>1</voice>\n`;
+        st += `     <staff>1</staff>\n`;
+        st += `   </direction>\n`;
+      }
       st += `   <note color="#000000">\n`;
       if (note.d) {
         st += `    <pitch>\n`;
@@ -174,6 +183,11 @@ export function dataToMusicXml(date) {
           }
           st += `    </notations>\n`;
         }
+      }
+      if (note.lyric) {
+        st += `    <lyric>\n`;
+        st += `     <text>${note.lyric}</text>\n`;
+        st += `    </lyric>\n`;
       }
       st += `   </note>\n`;
       s += note.len;
@@ -225,4 +239,3 @@ function d2name(d) {
   if (d === 6) return 'B';
   throw("Cannot parse pitch " + d);
 }
-
