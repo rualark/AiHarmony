@@ -1,6 +1,6 @@
 import {async_redraw, selected, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
-import {future} from "./editNote.js";
+import {future, check_voice_locked} from "./editNote.js";
 import {saveState} from "../../state/history.js";
 
 export function can_tie() {
@@ -30,7 +30,7 @@ export function toggle_tie() {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
-  if (nd.voices[el.voice].locked) return;
+  if (check_voice_locked(el)) return;
   let notes = nd.voices[el.voice].notes;
   if (future.advancing) {
     if (!el.note) return;

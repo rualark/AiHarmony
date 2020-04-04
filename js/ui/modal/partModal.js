@@ -50,9 +50,9 @@ function showSelectSpecies(v) {
 export function showPartModal(v) {
   enableKeys(false);
   let st = '';
-  st += showCheckLocked(v);
   st += showInputPartName(v);
   st += showSelectSpecies(v);
+  st += showCheckLocked(v);
   document.getElementById("ModalTitle").innerHTML = 'Part';
   document.getElementById("ModalBody").innerHTML = st;
   document.getElementById("ModalFooter").innerHTML = `

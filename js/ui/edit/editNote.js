@@ -18,11 +18,20 @@ export function is_locked() {
   return false;
 }
 
+export function check_voice_locked(el) {
+  if (nd.voices[el.voice].locked) {
+    alertify.error('This part is protected from changing notes. Please click part name and disable protection.');
+    async_redraw();
+    return true;
+  }
+  return false;
+}
+
 export function set_note(dc) {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
-  if (nd.voices[el.voice].locked) return;
+  if (check_voice_locked(el)) return;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   let pd = 35;
@@ -56,7 +65,7 @@ export function repeat_element() {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
-  if (nd.voices[el.voice].locked) return;
+  if (check_voice_locked(el)) return;
   let notes = nd.voices[el.voice].notes;
   let n = el.note;
   if (future.advancing) {
@@ -82,7 +91,7 @@ export function set_rest(advance) {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
-  if (nd.voices[el.voice].locked) return;
+  if (check_voice_locked(el)) return;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   nd.set_rest(el.voice, el.note, false);
@@ -122,7 +131,7 @@ export function increment_octave(doct) {
   if (!selected.element || !selected.element.duration) return;
   if (!can_increment_note(doct * 7)) return;
   let el = nd.abc_charStarts[selected.element.startChar];
-  if (nd.voices[el.voice].locked) return;
+  if (check_voice_locked(el)) return;
   let n = el.note;
   if (future.advancing && el.note) {
     n = n - 1;
@@ -137,9 +146,9 @@ export function increment_octave(doct) {
 export function increment_note(dnote) {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
-  if (!can_increment_note(dnote)) return;
   let el = nd.abc_charStarts[selected.element.startChar];
-  if (nd.voices[el.voice].locked) return;
+  if (check_voice_locked(el)) return;
+  if (!can_increment_note(dnote)) return;
   let n = el.note;
   if (future.advancing && el.note) {
     n = n - 1;
@@ -155,7 +164,7 @@ export function toggle_alter(alt) {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
-  if (nd.voices[el.voice].locked) return;
+  if (check_voice_locked(el)) return;
   let note = nd.voices[el.voice].notes[el.note];
   if (!note.d) {
     future.advancing = true;

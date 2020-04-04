@@ -176,4 +176,3 @@ export function init_abcjs(clickListener) {
 
   engraverParams = {scale: 1};
 }
-
