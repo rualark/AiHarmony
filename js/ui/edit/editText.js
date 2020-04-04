@@ -11,7 +11,6 @@ export function add_text() {
   let note = notes[el.note];
   stop_advancing();
   enableKeys(false);
-  alertify.success('You entered: ' + note.text);
   alertify.prompt('Text', 'Add text above note', note.text ? note.text : "",
     function(evt, value) {
       enableKeys(true);
@@ -32,7 +31,6 @@ export function add_lyric() {
   let note = notes[el.note];
   stop_advancing();
   enableKeys(false);
-  alertify.success('You entered: ' + note.lyric);
   alertify.prompt('Lyric', 'Add lyric below note', note.lyric ? note.lyric : "",
     function(evt, value) {
       enableKeys(true);

@@ -11,10 +11,18 @@ export let future = {
   len: 0
 };
 
+export function is_locked() {
+  if (!selected.element || !selected.element.duration) return false;
+  let el = nd.abc_charStarts[selected.element.startChar];
+  if (nd.voices[el.voice].locked) return true;
+  return false;
+}
+
 export function set_note(dc) {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (nd.voices[el.voice].locked) return;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   let pd = 35;
@@ -48,6 +56,7 @@ export function repeat_element() {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (nd.voices[el.voice].locked) return;
   let notes = nd.voices[el.voice].notes;
   let n = el.note;
   if (future.advancing) {
@@ -73,6 +82,7 @@ export function set_rest(advance) {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (nd.voices[el.voice].locked) return;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   nd.set_rest(el.voice, el.note, false);
@@ -95,8 +105,9 @@ export function set_rest(advance) {
 }
 
 export function can_increment_note(dnote) {
-  if (!selected.element || !selected.element.duration) return;
+  if (!selected.element || !selected.element.duration) return false;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (nd.voices[el.voice].locked) return false;
   let n = el.note;
   if (future.advancing && el.note) {
     n = n - 1;
@@ -111,6 +122,7 @@ export function increment_octave(doct) {
   if (!selected.element || !selected.element.duration) return;
   if (!can_increment_note(doct * 7)) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (nd.voices[el.voice].locked) return;
   let n = el.note;
   if (future.advancing && el.note) {
     n = n - 1;
@@ -127,6 +139,7 @@ export function increment_note(dnote) {
   if (!selected.element || !selected.element.duration) return;
   if (!can_increment_note(dnote)) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (nd.voices[el.voice].locked) return;
   let n = el.note;
   if (future.advancing && el.note) {
     n = n - 1;
@@ -142,6 +155,7 @@ export function toggle_alter(alt) {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (nd.voices[el.voice].locked) return;
   let note = nd.voices[el.voice].notes[el.note];
   if (!note.d) {
     future.advancing = true;
@@ -157,4 +171,3 @@ export function toggle_alter(alt) {
   }
   async_redraw();
 }
-

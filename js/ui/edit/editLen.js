@@ -6,14 +6,16 @@ import {update_selection} from "../selection.js";
 export function can_len(len) {
   if (!selected.element || !selected.element.duration) return false;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (nd.voices[el.voice].locked) return false;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   return note.step % nd.timesig.measure_len + len <= nd.timesig.measure_len;
 }
 
 export function can_dot() {
-  if (!selected.element || !selected.element.duration) return;
+  if (!selected.element || !selected.element.duration) return false;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (nd.voices[el.voice].locked) return false;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   if (note.len % 3 === 0) return true;
@@ -24,6 +26,7 @@ export function set_len(len, saveState = true) {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (nd.voices[el.voice].locked) return;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   //console.log(note.step, nd.time.measure_len, len);
@@ -42,6 +45,7 @@ export function toggle_dot() {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (nd.voices[el.voice].locked) return;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   let len = note.len;

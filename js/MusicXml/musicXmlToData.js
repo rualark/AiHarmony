@@ -68,7 +68,7 @@ export function musicXmlToData(txt) {
   nd.timesig.measure_len = mxp.mea[1].measure_len * 16;
   nd.voices = [];
   let ki;
-  console.log(mxp);
+  //console.log(mxp);
   for (const vi in mxp.notes) {
     nd.voices.push({
       name: mxp.voices[vi].name,

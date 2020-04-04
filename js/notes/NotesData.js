@@ -240,44 +240,48 @@ class NotesData {
         clef: 'treble',
         name: 'Sop.',
         species: 10,
+        locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
       {
         clef: 'treble',
         name: 'Alt.',
         species: 10,
+        locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
       {
         clef: 'treble-8',
         name: 'Ten.',
         species: 10,
+        locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
       {
         clef: 'bass',
         name: 'Bas.',
         species: 10,
+        locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
     ];
@@ -342,6 +346,10 @@ class NotesData {
   set_voiceName(v, st) {
     if (st == null) this.voices[v].name = '';
     else this.voices[v].name = st.substr(0, 255);
+  }
+
+  set_voiceLocked(v, locked) {
+    this.voices[v].locked = locked;
   }
 
   set_species(v, sp) {

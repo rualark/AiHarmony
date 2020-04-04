@@ -3,6 +3,16 @@ import {enableKeys} from "../commands.js";
 import {async_redraw} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
 import {ares} from "../../analysis/AnalysisResults.js";
+import { update_selection } from "../selection.js";
+
+function showCheckLocked(v) {
+  let st = '';
+  st += `<div class="form-check">`;
+  st += `<input type="checkbox" class="form-check-input" name="check_voiceLocked" id="check_voiceLocked" ${nd.voices[v].locked ? "checked" : ""}>`;
+  st += `<label class="form-check-label" for="check_voiceLocked">Protect this part from changing notes</label>`;
+  st += `</div><br>`;
+  return st;
+}
 
 function showInputPartName(v) {
   let st = '';
@@ -40,6 +50,7 @@ function showSelectSpecies(v) {
 export function showPartModal(v) {
   enableKeys(false);
   let st = '';
+  st += showCheckLocked(v);
   st += showInputPartName(v);
   st += showSelectSpecies(v);
   document.getElementById("ModalTitle").innerHTML = 'Part';
@@ -48,14 +59,20 @@ export function showPartModal(v) {
     <button type="button" class="btn btn-primary" id=modalOk>OK</button>
     <button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>
   `;
+  $('#check_voiceLocked').change(() => {
+    nd.set_voiceLocked(v, $('#check_voiceLocked').is(":checked"));
+    saveState();
+  });
   $('#modalOk').click(() => {
-    enableKeys(true);
     nd.set_voiceName(v, $('#input_partName').val().substr(0, 50));
     nd.set_species(v, Number($("#sel_partSpecies option:selected").val()));
     $('#Modal').modal('hide');
     document.getElementById("ModalFooter").innerHTML = "";
     saveState();
     async_redraw();
+  });
+  $('#Modal').on('hidden.bs.modal', () => {
+    enableKeys(true);
   });
   $('#Modal').modal();
 }

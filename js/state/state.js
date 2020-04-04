@@ -3,7 +3,7 @@ import {async_redraw, selected} from "../abc/abchelper.js";
 import {currentTimestamp, start_counter} from "../core/time.js";
 import {b256_safeString, safeString_b256, ui_b256, b256_ui, b256_debug} from "../core/base256.js";
 
-const ENCODING_VERSION = 12;
+const ENCODING_VERSION = 13;
 export const STATE_VOLATILE_SUFFIX = 7;
 
 function alter2contig(alt) {
@@ -37,7 +37,7 @@ export function data2plain() {
   st += ui_b256(nd.voices.length, 1);
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
-    st += ui_b256(vc.species, 1);
+    st += ui_b256(vc.species + (vc.locked ? 1 : 0) * 16, 1);
     st += safeString_b256(nd.voices[v].clef, 1);
     for (let n = 0; n < vc.notes.length; ++n) {
       let nt = vc.notes[n];
@@ -103,13 +103,14 @@ export function plain2data(st, pos) {
   let vcount = b256_ui(st, pos, 1);
   nd.voices = [];
   for (let v=0; v<vcount; ++v) {
-    let species = b256_ui(st, pos, 1);
+    let packed = b256_ui(st, pos, 1);
     let clef = b256_safeString(st, pos, 1);
     //let ncount = b256_ui(st, pos, 4);
     //console.log('Voice', clef, species);
     nd.voices.push({
       clef: clef,
-      species: species,
+      species: packed % 16,
+      locked: !!(Math.floor(packed / 16)),
       notes: []
     });
     for (let n = 0; n < 1000000; ++n) {

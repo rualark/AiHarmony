@@ -6,6 +6,7 @@ import {saveState} from "../../state/history.js";
 import {async_redraw} from "../../abc/abchelper.js";
 import {ares} from "../../analysis/AnalysisResults.js";
 import {initCommands} from "../commands.js";
+import { update_selection } from "../selection.js";
 
 function showCheckToolbarHints() {
   let st = '';
@@ -70,6 +71,7 @@ export function showSettingsModal() {
     settings.toolbarHints = Number($('#check_toolbarHints').is(":checked"));
     settings.settings2storage();
     initCommands();
+    update_selection();
   });
   $('#sel_algo').change(() => {
     nd.algo = $("#sel_algo option:selected" ).val();
