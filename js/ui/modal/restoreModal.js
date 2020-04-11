@@ -32,6 +32,7 @@ export function showRestoreModal() {
   $('#modalDialog').removeClass("modal-lg");
   document.getElementById("ModalTitle").innerHTML = 'Restore previous files';
   document.getElementById("ModalBody").innerHTML = st;
+  document.getElementById("ModalFooter").innerHTML = '';
   for (const i in archive) {
     document.getElementById('ver' + i).onclick=function() {
       $('#Modal').modal('hide');

@@ -36,5 +36,6 @@ export function showShareModal() {
   $('#modalDialog').removeClass("modal-lg");
   document.getElementById("ModalTitle").innerHTML = 'Share music';
   document.getElementById("ModalBody").innerHTML = st;
+  document.getElementById("ModalFooter").innerHTML = '';
   $('#Modal').modal();
 }

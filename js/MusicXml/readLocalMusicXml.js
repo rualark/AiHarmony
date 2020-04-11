@@ -55,6 +55,7 @@ export function showOpenMusicXmlModal() {
   st += '<a href=editor.html?load=sposobin-exercise-335-2>sposobin-exercise-335-2</a><br>';
 
   document.getElementById("ModalBody").innerHTML = st;
+  document.getElementById("ModalFooter").innerHTML = '';
   document.getElementById('mxml-file-input').addEventListener('change', readLocalMusicXmlFile, false);
   $('#Modal').modal();
   $('#mxml-file-input').click();

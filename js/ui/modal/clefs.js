@@ -27,6 +27,7 @@ export function showClefsModal(voice) {
   $('#modalDialog').removeClass("modal-lg");
   document.getElementById("ModalTitle").innerHTML = 'Choose clef';
   document.getElementById("ModalBody").innerHTML = st;
+  document.getElementById("ModalFooter").innerHTML = '';
   i = 0;
   for (const clef in clefs) {
     ABCJS.renderAbc(`clef${i}`, `V: V0 clef=${clef}\n[V: V0]x`, {staffwidth: 110});
@@ -40,4 +41,3 @@ export function showClefsModal(voice) {
   }
   $('#Modal').modal();
 }
-

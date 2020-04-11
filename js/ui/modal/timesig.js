@@ -45,6 +45,7 @@ export function showTimesigModal() {
   $('#modalDialog').removeClass("modal-lg");
   document.getElementById("ModalTitle").innerHTML = 'Choose time signature';
   document.getElementById("ModalBody").innerHTML = st;
+  document.getElementById("ModalFooter").innerHTML = '';
   for (const i in timesigs) {
     document.getElementById('atimesig' + i).onclick=function() {
       $('#Modal').modal('hide');

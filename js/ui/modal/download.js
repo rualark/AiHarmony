@@ -80,6 +80,7 @@ export function showDownloadModal() {
   $('#modalDialog').removeClass("modal-lg");
   document.getElementById("ModalTitle").innerHTML = 'Download music';
   document.getElementById("ModalBody").innerHTML = st;
+  document.getElementById("ModalFooter").innerHTML = '';
   for (const i in exportFormats) {
     if (exportFormats[i].func == null && exportFormats[i].link == null) continue;
     if (exportFormats[i].link != null && exportFormats[i].link().href == null) continue;

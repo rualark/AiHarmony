@@ -4,6 +4,7 @@ import {async_redraw} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
 import {ares} from "../../analysis/AnalysisResults.js";
 import { update_selection } from "../selection.js";
+import { settings } from "../../state/settings.js";
 
 function showCheckLocked(v) {
   let st = '';
@@ -51,7 +52,9 @@ export function showPartModal(v) {
   enableKeys(false);
   let st = '';
   st += showInputPartName(v);
-  st += showSelectSpecies(v);
+  if (settings.algo === 'CA3') {
+    st += showSelectSpecies(v);
+  }
   st += showCheckLocked(v);
   document.getElementById("ModalTitle").innerHTML = 'Part';
   document.getElementById("ModalBody").innerHTML = st;

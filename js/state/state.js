@@ -1,13 +1,13 @@
 import {nd, NotesData} from "../notes/NotesData.js";
 import {async_redraw, selected} from "../abc/abchelper.js";
-import {currentTimestamp, start_counter} from "../core/time.js";
+import {currentTimestamp, start_counter, stop_counter} from "../core/time.js";
 import {b256_safeString, safeString_b256, ui_b256, b256_ui, b256_debug} from "../core/base256.js";
 import { generateRandomId } from "../core/string.js";
 
 const ENCODING_VERSION = 13;
 export const STATE_VOLATILE_SUFFIX = 7;
-const MAX_ARCHIVE_COUNT = 30;
-const MAX_ARCHIVE_BYTES = 500000;
+const MAX_ARCHIVE_COUNT = 100;
+const MAX_ARCHIVE_BYTES = 200000;
 let session_id = generateRandomId(20);
 
 function alter2contig(alt) {
@@ -239,6 +239,7 @@ export function storage2archiveStorage() {
 }
 
 export function getArchiveStorage() {
+  start_counter('getArchiveStorage');
   let archive = JSON.parse(localStorage.getItem('aihArchive'));
   for (let ver of archive) {
     ver.nd = new NotesData();

@@ -157,6 +157,7 @@ export function showKeysigModal() {
   $('#modalDialog').addClass("modal-lg");
   document.getElementById("ModalTitle").innerHTML = 'Choose key signature';
   document.getElementById("ModalBody").innerHTML = st;
+  document.getElementById("ModalFooter").innerHTML = '';
   i = 0;
   for (const keysig in keysigs) {
     document.getElementById('akeysig' + i).onclick=function() {

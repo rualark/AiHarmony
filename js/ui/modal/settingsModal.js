@@ -75,6 +75,7 @@ export function showSettingsModal() {
   $('#modalDialog').removeClass("modal-lg");
   document.getElementById("ModalTitle").innerHTML = 'Settings';
   document.getElementById("ModalBody").innerHTML = st;
+  document.getElementById("ModalFooter").innerHTML = '';
   $('#check_toolbarHints').change(() => {
     settings.toolbarHints = Number($('#check_toolbarHints').is(":checked"));
     settings.settings2storage();
