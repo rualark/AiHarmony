@@ -202,19 +202,19 @@ class AnalysisResults {
           else col = SEVERITY_YELLOW_COLOR;
           if (old_n !== n) {
             old_n = n;
-            st += `<a href=# class='ares ares_${vi}_${n}' style='color: black'>`;
+            st += `<a href=# class='ares ares_${vi}_${n}' style='color: black'>\n`;
             if (this.flag.length > 1) {
               st += `${nd.voices[vi].name} `;
             }
-            st += `[bar ${m + 1}, beat ${beat + 1}] ${noteName}</a><br>`;
+            st += `[bar ${m + 1}, beat ${beat + 1}] ${noteName}</a><br>\n`;
             noteClick.push({vi: vi, n: n});
           }
           let alertText = this.getRuleString(fla, settings.rule_verbose, false, false);
           let tooltipText = AnalysisResults.getRuleTooltip(fla);
           let htmlText = this.getRuleString(fla, settings.rule_verbose, true, false);
-          st += `<a data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${encodeHtmlSpecialChars(tooltipText)}" href=# class='ares ares_${vi}_${s}_${f}' style='color: ${col}'>`;
+          st += `<a data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${encodeHtmlSpecialChars(tooltipText)}" href=# class='ares ares_${vi}_${s}_${f}' style='color: ${col}'>\n`;
           st += '- ' + encodeHtmlSpecialChars(htmlText);
-          st += `</a><br>`;
+          st += `</a><br>\n`;
           let pf = {
             vi1: vi,
             vi2: this.vid[fla.fvl],

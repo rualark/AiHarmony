@@ -79,6 +79,7 @@ export function musicXmlToData(txt) {
     nd.keysig.mode = 13;
     nd.voices[vi].notes = [];
     let ncount = 0;
+    let s = 0;
     for (let m=1; m<mxp.notes[vi].length; ++m) {
       if (
         nd.timesig.beats_per_measure !== mxp.mea[m].beats_per_measure ||
@@ -114,10 +115,12 @@ export function musicXmlToData(txt) {
           }
         }
         let nt;
+        let len = Math.floor(note.dur * 4 / note.dur_div);
         if (note.rest) {
           nt = {
             d: 0,
-            len: Math.floor(note.dur * 4 / note.dur_div),
+            len: len,
+            step: s,
             startsTie: false
           };
         } else {
@@ -129,10 +132,12 @@ export function musicXmlToData(txt) {
           nt = {
             d: note.d,
             alter: note.alter === ki[note.d % 7] && !note.accidental ? 10 : note.alter,
-            len: Math.floor(note.dur * 4 / note.dur_div),
+            len: len,
+            step: s,
             startsTie: note.tie_start
           };
         }
+        s += len;
         nt.text = note.words;
         nt.lyric = note.lyric;
         nd.voices[vi].notes.push(nt);
