@@ -9,7 +9,7 @@ function showCheckLocked(v) {
   let st = '';
   st += `<div class="form-check">`;
   st += `<input type="checkbox" class="form-check-input" name="check_voiceLocked" id="check_voiceLocked" ${nd.voices[v].locked ? "checked" : ""}>`;
-  st += `<label class="form-check-label" for="check_voiceLocked">Protect this part from changing notes</label>`;
+  st += `<label class="form-check-label" for="check_voiceLocked">Prohibit note editing in this part</label>`;
   st += `</div><br>`;
   return st;
 }

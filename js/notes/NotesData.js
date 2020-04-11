@@ -209,7 +209,11 @@ class NotesData {
             let new_note = {d: nt.d, alter: nt.alter, len: len};
             //console.log("Insert", v, n, nt.len, nt.step, len, debt, new_note);
             vc.notes.splice(n + 1, 0, new_note);
-            vc.notes[n].startsTie = true;
+            if (vc.notes[n].d) {
+              vc.notes[n].startsTie = true;
+            } else {
+              vc.notes[n].startsTie = false;
+            }
             ++n;
           }
         }
