@@ -166,7 +166,9 @@ class NotesData {
   }
 
   set_timesig(timesig) {
-    this.timesig = timesig;
+    this.timesig.beats_per_measure = timesig.beats_per_measure;
+    this.timesig.beat_type = timesig.beat_type;
+    this.timesig.measure_len = timesig.measure_len;
     let mlen = this.timesig.measure_len;
     for (let v=0; v<this.voices.length; ++v) {
       let vc = this.voices[v];
