@@ -6,7 +6,7 @@ export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
 
 // alter = 0 is natural. alter = 10 is no accidental (inherits key)
 
-class NotesData {
+export class NotesData {
   saveState() {
     saveState();
   }

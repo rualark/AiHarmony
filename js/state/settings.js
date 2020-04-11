@@ -47,7 +47,7 @@ class Settings {
 
   storage2settings() {
     try {
-      let utf16 = localStorage.getItem('aihset');
+      let utf16 = localStorage.getItem('aihSettings');
       if (utf16 == null) {
         throw "No previous settings stored in this browser";
       }
@@ -64,7 +64,7 @@ class Settings {
   settings2storage() {
     let plain = this.settings2plain();
     let utf16 = LZString.compressToUTF16(plain);
-    localStorage.setItem('aihset', utf16);
+    localStorage.setItem('aihSettings', utf16);
   }
 }
 

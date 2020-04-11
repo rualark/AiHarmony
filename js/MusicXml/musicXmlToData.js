@@ -3,7 +3,7 @@ import {nd, supportedNoteLen} from "../notes/NotesData.js";
 import {timesigs} from "../ui/modal/timesig.js";
 import {getBestClef} from "../notes/bestClef.js";
 import {d2c} from "../notes/noteHelper.js";
-import {storage2state, url2state} from "../state/state.js";
+import {storage2state, url2state, storage2archiveStorage} from "../state/state.js";
 import {async_redraw, selected} from "../abc/abchelper.js";
 import {saveState} from "../state/history.js";
 import {start_counter} from "../core/time.js";
@@ -46,6 +46,7 @@ export function readMusicXml(xml, filename) {
 }
 
 export function musicXmlToData(txt) {
+  storage2archiveStorage();
   xmlLoadWarnings.clear();
   let mxp = new MusicXmlParser(txt);
   if (mxp.urlState != null && mxp.urlState.length > 0 && mxp.urlState.startsWith('AIHS:')) {

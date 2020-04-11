@@ -7,6 +7,7 @@ import {async_redraw} from "../../abc/abchelper.js";
 import {ares} from "../../analysis/AnalysisResults.js";
 import {initCommands} from "../commands.js";
 import { update_selection } from "../selection.js";
+import { showRestoreModal } from "./restoreModal.js";
 
 function showCheckToolbarHints() {
   let st = '';
@@ -58,12 +59,19 @@ function showSelectRuleVerbose() {
   return st;
 }
 
+function showRestore() {
+  let st = '';
+  st += `<a id=restore href=#>Restore previous files</a>`
+  return st;
+}
+
 export function showSettingsModal() {
   let st = '';
   st += showCheckToolbarHints();
   st += showSelectShortcutsLayout();
   st += showSelectAlgo();
   st += showSelectRuleVerbose();
+  st += showRestore();
   $('#modalDialog').removeClass("modal-lg");
   document.getElementById("ModalTitle").innerHTML = 'Settings';
   document.getElementById("ModalBody").innerHTML = st;
@@ -88,6 +96,9 @@ export function showSettingsModal() {
     settings.settings2storage();
     ares.printFlags();
     async_redraw();
+  });
+  $('#restore').click(() => {
+    showRestoreModal();
   });
   $('#Modal').modal();
 }
