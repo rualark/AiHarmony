@@ -225,7 +225,6 @@ class NotesData {
   reset() {
     this.set_name("New exercise");
     this.set_fileName("New-exercise");
-    this.algo = 'CA3';
     this.algoMode = 0;
     this.phrases = [ 0 ];
     this.build_keysig(0, 13);
@@ -332,6 +331,8 @@ class NotesData {
   }
 
   constructor() {
+    // Set values that should not be reset on new score, but should be inherited from previous score
+    this.algo = 'CA3';
     this.reset();
   }
 
