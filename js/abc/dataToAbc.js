@@ -62,7 +62,9 @@ export function dataToAbc() {
         abc += 'z' + nt.len;
       }
       s += nt.len;
-      if (nt.startsTie) abc += '-';
+      if (nt.startsTie && n < vc.notes.length - 1 && vc.notes[n + 1].d) {
+        abc += '-';
+      }
       nt.abc_charEnds = abc.length;
       if (s % nd.timesig.measure_len === 0) {
         abc += '|';

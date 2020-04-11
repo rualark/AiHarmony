@@ -18,8 +18,12 @@ export function can_dot() {
   if (nd.voices[el.voice].locked) return false;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
-  if (note.len % 3 === 0) return true;
-  return can_len(Math.round(note.len * 1.5));
+  let len = note.len;
+  if (future.advancing) {
+    len = future.len;
+  }
+  if (len % 3 === 0) return true;
+  return can_len(Math.round(len * 1.5));
 }
 
 export function set_len(len, saveState = true) {
