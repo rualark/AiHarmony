@@ -164,6 +164,9 @@ export function increment_note(dnote) {
   let note = notes[n];
   let d = note.d;
   nd.set_note(el.voice, n, d + dnote);
+  if (dnote === 1 || dnote === -1) {
+    nd.set_alter(el.voice, n, 10);
+  }
   async_redraw();
 }
 

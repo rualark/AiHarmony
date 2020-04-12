@@ -37,14 +37,13 @@ export function showTextModal(v, n, type) {
   document.getElementById("ModalBody").innerHTML = st;
   document.getElementById("ModalFooter").innerHTML = footer;
   $("#textArea").keypress(function (e) {
-    if(e.which == 13 && !e.shiftKey) {
+    if(e.which == 10 && (e.ctrlKey || e.metaKey)) {
       submitText(v, n, type);
       e.preventDefault();
     }
   });
   $('#Modal').on('shown.bs.modal', function () {
     let el = document.querySelector('#textArea');
-    console.log(el);
     el.focus();
     //el.setSelectionRange(0, el.value.length)
     el.setSelectionRange(el.value.length, el.value.length)
