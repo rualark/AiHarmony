@@ -1,9 +1,9 @@
 import {async_redraw} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
-import { getArchiveStorage, storage2archiveStorage, plain2data } from "../../state/state.js";
+import { getArchiveStorage, storage2archiveStorage, plain2data, session_id } from "../../state/state.js";
 
-function version_html(ver, id) {
+function version_html(ver, id, uniq_id) {
   /*
   let color = '#aaccee';
   if (value === 8) {
@@ -16,7 +16,11 @@ function version_html(ver, id) {
   let st = '';
   st += `<a id=ver${id} class='btn btn-outline-white p-1' href=# role='button' style='min-width: 30px;'>`;
   st += '';
-  st += `<div>${new Date(ver.time * 1000).ymd_his()} <b>${ver.nd.name}</b>  </div>`;
+  st += `<div>${new Date(ver.time * 1000).ymd_his()} <b>${ver.nd.name}</b>`;
+  if (ver.why === 1) st += ` <span title='This file was auto-saved before creating new file'>(before New)</span>`;
+  if (ver.why === 2) st += ` <span title='This file was auto-saved before opening another file'>(before Open)</span>`;
+  if (ver.why === 3) st += ` <span title='This file was auto-saved before conflict with another session'>(before Conflict)</span>`;
+  st += `</div>`;
   st += '</a><br>';
   return st;
 }
@@ -25,12 +29,29 @@ export function showRestoreModal() {
   let archive = getArchiveStorage();
   let st = '';
   st += "<div style='width: 100%;'>";
+  let uniq_sessions = {};
   for (let i=archive.length - 1; i>=0; --i) {
-    st += version_html(archive[i], i);
+    if (!(archive[i].id in uniq_sessions)) {
+      uniq_sessions[archive[i].id] = Object.keys(uniq_sessions).length + 1;
+    }
+    archive[i].uniq_id = uniq_sessions[archive[i].id];
+  }
+  for (const id in uniq_sessions) {
+    const uniq_id = uniq_sessions[id];
+    st += `<b title='Session hash: ${id}'>Session ${uniq_id}</b>`;
+    if (session_id == id) {
+      st += ` (current)`;
+    }
+    st += `:<br>`;
+    for (let i=archive.length - 1; i>=0; --i) {
+      if (archive[i].uniq_id === uniq_id) {
+        st += version_html(archive[i], i);
+      }
+    }
   }
   st += "</table></div>";
-  $('#modalDialog').removeClass("modal-lg");
-  document.getElementById("ModalTitle").innerHTML = 'Restore previous files';
+  $('#modalDialog').addClass("modal-lg");
+  document.getElementById("ModalTitle").innerHTML = 'Restore previous files edited in this browser';
   document.getElementById("ModalBody").innerHTML = st;
   document.getElementById("ModalFooter").innerHTML = '';
   for (const i in archive) {
@@ -50,5 +71,4 @@ export function showRestoreModal() {
       );
     };
   }
-  $('#Modal').modal();
 }

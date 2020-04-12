@@ -34,7 +34,7 @@ export function readMusicXml(xml, filename) {
     }
     if (!nd.name) nd.set_name(nd.fileName);
     selected.note = {voice: 0, note: 0};
-    saveState();
+    saveState(true, false);
   } catch (e) {
     storage2state();
     //console.log(e);
@@ -46,7 +46,7 @@ export function readMusicXml(xml, filename) {
 }
 
 export function musicXmlToData(txt) {
-  storage2archiveStorage();
+  storage2archiveStorage(2);
   xmlLoadWarnings.clear();
   let mxp = new MusicXmlParser(txt);
   if (mxp.urlState != null && mxp.urlState.length > 0 && mxp.urlState.startsWith('AIHS:')) {

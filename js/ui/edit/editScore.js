@@ -49,9 +49,9 @@ export function voiceChange(dv) {
 
 export function new_file() {
   if (state.state !== 'ready') return;
-  storage2archiveStorage();
+  storage2archiveStorage(1);
   nd.reset();
-  saveState();
+  saveState(true, false);
   async_redraw();
 }
 

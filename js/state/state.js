@@ -8,7 +8,7 @@ const ENCODING_VERSION = 13;
 export const STATE_VOLATILE_SUFFIX = 7;
 const MAX_ARCHIVE_COUNT = 100;
 const MAX_ARCHIVE_BYTES = 200000;
-let session_id = generateRandomId(20);
+export const session_id = generateRandomId(16);
 
 function alter2contig(alt) {
   if (alt === 10) return 0;
@@ -153,21 +153,21 @@ export function plain2data(st, pos, target, full) {
   //console.log(nd);
 }
 
-export function state2storage() {
+export function state2storage(checkConflicts=true) {
   start_counter('save_state');
   let plain = '';
   plain += data2plain();
   //console.log('state2storage plain', plain);
   let utf16 = LZString.compressToUTF16(plain);
-  utf16_storage('aih', utf16);
+  utf16_storage('aih', utf16, checkConflicts);
   return {plain: plain, utf16: utf16};
 }
 
-export function utf16_storage(name, utf16) {
+export function utf16_storage(name, utf16, checkConflicts=true) {
   let previous_id = localStorage.getItem('aihSessionId');
   // If we are overwriting a different session, first archive it
-  if (previous_id != session_id) {
-    storage2archiveStorage();
+  if (checkConflicts && previous_id != session_id) {
+    storage2archiveStorage(3);
     alertify.message('Detected and saved your changes made in another session', 10);
   }
   localStorage.setItem(name, utf16);
@@ -216,14 +216,29 @@ export function url2state(url) {
   plain2data(plain, [0], nd, true);
 }
 
-export function storage2archiveStorage() {
+export function storage2archiveStorage(why) {
   let utf16 = localStorage.getItem('aih');
+  let previous_id = localStorage.getItem('aihSessionId');
   let archiveSt = localStorage.getItem('aihArchive');
   let archive = JSON.parse(archiveSt);
   if (archive == null) {
     archive = [];
   }
   console.log('Archive state', archive.length, archiveSt.length)
+  // Remove previous archived state of session being archived if they are both before conflicts,
+  // because this means that archived session did not have new/open events and we are losing only events history
+  // This allows to use archive capacity more efficiently
+  if (why === 3) {
+    for (let i=archive.length - 1; i>=0; --i) {
+      if (archive[i].id === previous_id) {
+        if (archive[i].why === 3) {
+          archive.splice(i, 1);
+        }
+        break;
+      }
+    }
+  }
+  // Remove archived states if archive is too big
   while (archiveSt.length > MAX_ARCHIVE_BYTES) {
     archive.splice(0, 1);
     archiveSt = JSON.stringify(archive);
@@ -234,6 +249,8 @@ export function storage2archiveStorage() {
   archive.push({
     utf16: utf16,
     time: Math.floor(Date.now() / 1000),
+    id: previous_id,
+    why: why,
   });
   localStorage.setItem('aihArchive', JSON.stringify(archive));
 }

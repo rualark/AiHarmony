@@ -1,6 +1,7 @@
 import {fifths2keysig, keysig_imprint} from "./noteHelper.js";
 import {saveState} from "../state/history.js";
 import {selected} from "../abc/abchelper.js";
+import { generateRandomId } from "../core/string.js";
 
 export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
 
@@ -225,7 +226,7 @@ export class NotesData {
   }
 
   reset() {
-    this.set_name("New exercise");
+    this.set_name(`New exercise [${generateRandomId(10)}]`);
     this.set_fileName("New-exercise");
     this.algoMode = 0;
     this.phrases = [ 0 ];

@@ -94,7 +94,7 @@ export function loadState() {
   }
 }
 
-export function saveState(doAnalysis=true) {
+export function saveState(doAnalysis=true, checkConflicts=true) {
   pushState(state2storage());
   if (doAnalysis) analyse();
 }
@@ -139,4 +139,3 @@ function updateUndoRedoButtons() {
   button_enabled('undo', history_pos > 0);
   button_enabled('redo', history_pos < history.length - 1);
 }
-
