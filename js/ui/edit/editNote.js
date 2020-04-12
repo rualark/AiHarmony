@@ -43,6 +43,9 @@ export function set_note(dc) {
   else if (el.note && notes[el.note - 1].d) {
     pd = notes[el.note - 1].d;
   }
+  else if (el.note < notes.length - 1 && notes[el.note + 1].d) {
+    pd = notes[el.note + 1].d;
+  }
   let d = dc;
   if (!note.d || future.advancing) {
     note.alter = future.alteration;

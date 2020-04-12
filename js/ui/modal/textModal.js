@@ -24,6 +24,7 @@ export function showTextModal(v, n, type) {
     var text = nd.voices[v].notes[n].text;
     document.getElementById("ModalTitle").innerHTML = 'Add text above note';
   }
+  text = text ? text : "";
   enableKeys(false);
   st += `<div class="input-group mb-3">`;
   st += ` <textarea id=textArea type="text" rows=5 class="form-control">${text}</textarea>`;
