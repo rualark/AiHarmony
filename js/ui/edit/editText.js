@@ -2,6 +2,7 @@ import {async_redraw, selected, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import { stop_advancing } from "./editScore.js";
 import { enableKeys } from "../commands.js";
+import { showTextModal } from "../modal/textModal.js";
 
 export function add_text() {
   if (state.state !== 'ready') return;
@@ -10,17 +11,7 @@ export function add_text() {
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   stop_advancing();
-  enableKeys(false);
-  alertify.prompt('Text', 'Add text above note', note.text ? note.text : "",
-    function(evt, value) {
-      enableKeys(true);
-      nd.set_text(el.voice, el.note, value);
-      async_redraw();
-    },
-    function() {
-      enableKeys(true);
-    }
-  );
+  showTextModal(el.voice, el.note, 'text');
 }
 
 export function add_lyric() {
@@ -30,15 +21,5 @@ export function add_lyric() {
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   stop_advancing();
-  enableKeys(false);
-  alertify.prompt('Lyric', 'Add lyric below note', note.lyric ? note.lyric : "",
-    function(evt, value) {
-      enableKeys(true);
-      nd.set_lyric(el.voice, el.note, value);
-      async_redraw();
-    },
-    function() {
-      enableKeys(true);
-    }
-  );
+  showTextModal(el.voice, el.note, 'lyric');
 }

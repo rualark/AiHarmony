@@ -49,10 +49,16 @@ export function dataToAbc() {
         abc += `"_${harm_st}"`;
       }
       if (nt.text) {
-        abc += `"^${nt.text}"`;
+        let ta = nt.text.split('\n');
+        for (const text of ta) {
+          abc += `"^${text}"`;
+        }
       }
       if (nt.lyric) {
-        abc += `"_${nt.lyric}"`;
+        let la = nt.lyric.split('\n');
+        for (const lyric of la) {
+          abc += `"_${lyric}"`;
+        }
       }
       let d = nt.d;
       if (d) {
