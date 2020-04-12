@@ -99,6 +99,7 @@ export function showSettingsModal() {
     async_redraw();
   });
   $('#restore').click(() => {
+    $('#Modal').modal('hide');
     showRestoreModal();
   });
   $('#Modal').modal();

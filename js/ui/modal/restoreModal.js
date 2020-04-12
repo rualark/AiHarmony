@@ -14,7 +14,7 @@ function version_html(ver, id, uniq_id) {
   }
   */
   let st = '';
-  st += `<a id=ver${id} class='btn btn-outline-white p-1' href=# role='button' style='min-width: 30px;'>`;
+  st += `<a id=ver${id} class='btn btn-outline-white p-1' href=# role='button' style='min-width: 30px'>`;
   st += '';
   st += `<div>${new Date(ver.time * 1000).ymd_his()} <b>${ver.nd.name}</b>`;
   if (ver.why === 1) st += ` <span title='This file was auto-saved before creating new file'>(before New)</span>`;
@@ -52,14 +52,14 @@ export function showRestoreModal() {
       }
     }
   }
-  st += "</table></div>";
-  $('#modalDialog').addClass("modal-lg");
-  document.getElementById("ModalTitle").innerHTML = 'Restore previous files edited in this browser';
-  document.getElementById("ModalBody").innerHTML = st;
-  document.getElementById("ModalFooter").innerHTML = '';
+  st += "</div>";
+  $('#modalDialog2').addClass("modal-lg");
+  document.getElementById("ModalTitle2").innerHTML = 'Restore previous files edited in this browser';
+  document.getElementById("ModalBody2").innerHTML = st;
+  document.getElementById("ModalFooter2").innerHTML = '';
   for (const i in archive) {
     document.getElementById('ver' + i).onclick=function() {
-      $('#Modal').modal('hide');
+      $('#Modal2').modal('hide');
       // Do not archive current state when restoring to protect old archived versions
       //storage2archiveStorage();
       alertify.confirm('Restore', 'Warning! You are restoring a previous file. Currently opened file will be deleted and you will not be able to restore it if you did not download it.',
@@ -74,4 +74,5 @@ export function showRestoreModal() {
       );
     };
   }
+  $('#Modal2').modal();
 }

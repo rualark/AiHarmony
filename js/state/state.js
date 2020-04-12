@@ -253,7 +253,7 @@ export function storage2archiveStorage(why) {
     why: why,
   });
   localStorage.setItem('aihArchive', JSON.stringify(archive));
-  // Set my session_id to prevent archiving again
+  // Set my session_id to prevent conflict detection and archiving again
   localStorage.setItem('aihSessionId', session_id);
 }
 
