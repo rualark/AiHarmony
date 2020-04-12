@@ -30,6 +30,7 @@ export function showTextModal(v, n, type) {
   st += `</div>`;
   let footer = '';
   footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
+  footer += `<button type="button" class="btn btn-danger" id=modalDelete>Delete</button>`;
   footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>`;
   $('#modalDialog').removeClass("modal-lg");
   document.getElementById("ModalBody").innerHTML = st;
@@ -48,6 +49,10 @@ export function showTextModal(v, n, type) {
     el.setSelectionRange(el.value.length, el.value.length)
   });
   $('#modalOk').click(() => {
+    submitText(v, n, type);
+  });
+  $('#modalDelete').click(() => {
+    $("#textArea").val("");
     submitText(v, n, type);
   });
   $('#Modal').on('hidden.bs.modal', () => {
