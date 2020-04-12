@@ -26,3 +26,9 @@ body {padding-top:10px; background-color:white}
 path:focus, text:focus, g:focus {
     outline: none;
 }
+.modal.right .modal-dialog {
+    position:fixed;
+    bottom:0;
+    right:0;
+    margin:0;
+}

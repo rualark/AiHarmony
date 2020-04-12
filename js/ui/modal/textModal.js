@@ -4,11 +4,11 @@ import {saveState} from "../../state/history.js";
 import { enableKeys } from "../commands.js";
 
 function submitText(v, n, type) {
-  enableKeys(true);
+  let text = $('#textArea').val().trim().substr(0, 100);
   if (type === 'lyric') {
-    nd.set_lyric(v, n, $('#textArea').val().substr(0, 100));
+    nd.set_lyric(v, n, text);
   } else {
-    nd.set_text(v, n, $('#textArea').val().substr(0, 100));
+    nd.set_text(v, n, text);
   }
   $('#Modal').modal('hide');
   saveState();
@@ -27,8 +27,9 @@ export function showTextModal(v, n, type) {
   text = text ? text : "";
   enableKeys(false);
   st += `<div class="input-group mb-3">`;
-  st += ` <textarea id=textArea type="text" rows=5 class="form-control">${text}</textarea>`;
+  st += ` <textarea id=textArea type="text" rows=3 class="form-control">${text}</textarea>`;
   st += `</div>`;
+  st += `<span style='color:#aaaaaa'><img src=img/keyboard3.png height=20 style='vertical-align:middle; opacity:0.3'> Press Ctrl+Enter to submit</span>`
   let footer = '';
   footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
   footer += `<button type="button" class="btn btn-danger" id=modalDelete>Delete</button>`;
@@ -42,6 +43,7 @@ export function showTextModal(v, n, type) {
       e.preventDefault();
     }
   });
+  $('#Modal').addClass("right");
   $('#Modal').on('shown.bs.modal', function () {
     let el = document.querySelector('#textArea');
     el.focus();
@@ -56,6 +58,7 @@ export function showTextModal(v, n, type) {
     submitText(v, n, type);
   });
   $('#Modal').on('hidden.bs.modal', () => {
+    $('#Modal').removeClass("right");
     enableKeys(true);
   });
   $('#Modal').modal();

@@ -151,7 +151,7 @@ export function init_abcjs(clickListener) {
     selectionColor: "#33AAFF",
     dragColor: "#3399FF",
     staffwidth: window.innerWidth - 60,
-    wrap: {minSpacing: 1.1, maxSpacing: 2.4, preferredMeasuresPerLine: 16},
+    wrap: {minSpacing: 1.1, maxSpacing: 1.4, preferredMeasuresPerLine: 16},
     //responsive: true,
     format: {
       titlefont: "Verdana 9 italic bold",
