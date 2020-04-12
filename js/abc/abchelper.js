@@ -8,7 +8,9 @@ import {SEVERITY_RED, SEVERITY_RED_COLOR, SEVERITY_YELLOW_COLOR} from "../analys
 export let MAX_ABC_NOTE = 60;
 export let MIN_ABC_NOTE = 1;
 
-export let engraverParams = {};
+export let engraverParams = {
+  scale: 1
+};
 let parserParams = {};
 
 export let abcjs = {};
@@ -174,6 +176,4 @@ export function init_abcjs(clickListener) {
       annotationfont: "Verdana 9 italic bold",
     }
   };
-
-  engraverParams = {scale: 1};
 }

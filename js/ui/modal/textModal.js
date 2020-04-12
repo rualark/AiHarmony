@@ -38,7 +38,7 @@ export function showTextModal(v, n, type) {
   document.getElementById("ModalBody").innerHTML = st;
   document.getElementById("ModalFooter").innerHTML = footer;
   $("#textArea").keypress(function (e) {
-    if(e.which == 10 && (e.ctrlKey || e.metaKey)) {
+    if((e.which == 10 || e.which == 13) && (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey)) {
       submitText(v, n, type);
       e.preventDefault();
     }
