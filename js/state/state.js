@@ -6,7 +6,7 @@ import { generateRandomId } from "../core/string.js";
 
 const ENCODING_VERSION = 13;
 export const STATE_VOLATILE_SUFFIX = 7;
-const MAX_ARCHIVE_COUNT = 100;
+const MAX_ARCHIVE_COUNT = 80;
 const MAX_ARCHIVE_BYTES = 200000;
 export const session_id = generateRandomId(16);
 
@@ -183,13 +183,13 @@ export function storage_utf16(utf16) {
 
 export function storage2state() {
   try {
+    // Prevent archiving state if we load it, even if state is corrupted or old - because this means that archive will also be corrupted/old
+    localStorage.setItem('aihSessionId', session_id);
     let utf16 = localStorage.getItem('aih');
     if (utf16 == null) {
       throw "No previous state stored in this browser";
     }
     let plain = storage_utf16(utf16);
-    // If we successfully loaded state, prevent archiving it on next change
-    localStorage.setItem('aihSessionId', session_id);
     return {plain: plain, utf16: utf16};
   }
   catch (e) {
@@ -220,11 +220,11 @@ export function storage2archiveStorage(why) {
   let utf16 = localStorage.getItem('aih');
   let previous_id = localStorage.getItem('aihSessionId');
   let archiveSt = localStorage.getItem('aihArchive');
-  let archive = JSON.parse(archiveSt);
-  if (archive == null) {
-    archive = [];
+  if (archiveSt == null) {
+    archiveSt = "[]";
   }
-  console.log('Archive state', archive.length, archiveSt.length)
+  let archive = JSON.parse(archiveSt);
+  console.log('Archive state', archive.length, archiveSt.length);
   // Remove previous archived state of session being archived if they are both before conflicts,
   // because this means that archived session did not have new/open events and we are losing only events history
   // This allows to use archive capacity more efficiently
@@ -253,11 +253,14 @@ export function storage2archiveStorage(why) {
     why: why,
   });
   localStorage.setItem('aihArchive', JSON.stringify(archive));
+  // Set my session_id to prevent archiving again
+  localStorage.setItem('aihSessionId', session_id);
 }
 
 export function getArchiveStorage() {
   start_counter('getArchiveStorage');
   let archive = JSON.parse(localStorage.getItem('aihArchive'));
+  if (archive == null) return [];
   for (let ver of archive) {
     ver.nd = new NotesData();
     let plain = LZString.decompressFromUTF16(ver.utf16);

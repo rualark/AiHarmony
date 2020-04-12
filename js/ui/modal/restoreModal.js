@@ -36,6 +36,9 @@ export function showRestoreModal() {
     }
     archive[i].uniq_id = uniq_sessions[archive[i].id];
   }
+  if (archive.length === 0) {
+    st += `No previous files`;
+  }
   for (const id in uniq_sessions) {
     const uniq_id = uniq_sessions[id];
     st += `<b title='Session hash: ${id}'>Session ${uniq_id}</b>`;

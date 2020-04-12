@@ -226,8 +226,9 @@ export class NotesData {
   }
 
   reset() {
-    this.set_name(`New exercise [${generateRandomId(10)}]`);
-    this.set_fileName("New-exercise");
+    const hash = generateRandomId(10);
+    this.set_name(`New exercise [${hash}]`);
+    this.set_fileName(`New-exercise-${hash}`);
     this.algoMode = 0;
     this.phrases = [ 0 ];
     this.build_keysig(0, 13);
