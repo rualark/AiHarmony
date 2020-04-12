@@ -1,6 +1,7 @@
 import {state2url} from "../../state/state.js";
 import {urlNoParams} from "../../core/remote.js";
 import { dataToAbc } from "../../abc/dataToAbc.js";
+import { showModal } from "./modal.js";
 
 export function showShareModal() {
   let st = '';
@@ -28,14 +29,6 @@ export function showShareModal() {
   st += `  </button>`;
   st += ` </div>`;
   st += `</div>`;
-  //st += `<input id=shareurl value="${url}">`;
-  //st += `<button class=btn data-clipboard-target=#shareurl>`;
-  //st += `<img height=20 src=img/clipboard.svg alt='Copy to clipboard'>`;
-  //st += `</button>`;
   new ClipboardJS('.btn');
-  $('#modalDialog').removeClass("modal-lg");
-  document.getElementById("ModalTitle").innerHTML = 'Share music';
-  document.getElementById("ModalBody").innerHTML = st;
-  document.getElementById("ModalFooter").innerHTML = '';
-  $('#Modal').modal();
+  showModal(1, 'Share music', st, '', [], [], false, ()=>{}, ()=>{});
 }

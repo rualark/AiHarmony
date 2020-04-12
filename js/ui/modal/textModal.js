@@ -1,7 +1,7 @@
 import {async_redraw} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
-import { enableKeys } from "../commands.js";
+import { showModal } from "./modal.js";
 
 function submitText(v, n, type) {
   let text = $('#textArea').val().trim().substr(0, 100);
@@ -10,22 +10,21 @@ function submitText(v, n, type) {
   } else {
     nd.set_text(v, n, text);
   }
-  $('#Modal').modal('hide');
+  $('#Modal1').modal('hide');
   saveState();
   async_redraw();
 }
 
 export function showTextModal(v, n, type) {
-  let st = '';
   if (type === 'lyric') {
     var text = nd.voices[v].notes[n].lyric;
-    document.getElementById("ModalTitle").innerHTML = 'Add lyric below note';
+    var title = 'Add lyric below note';
   } else {
     var text = nd.voices[v].notes[n].text;
-    document.getElementById("ModalTitle").innerHTML = 'Add text above note';
+    var title = 'Add text above note';
   }
   text = text ? text : "";
-  enableKeys(false);
+  let st = '';
   st += `<div class="input-group mb-3">`;
   st += ` <textarea id=textArea type="text" rows=3 class="form-control">${text}</textarea>`;
   st += `</div>`;
@@ -34,21 +33,21 @@ export function showTextModal(v, n, type) {
   footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
   footer += `<button type="button" class="btn btn-danger" id=modalDelete>Delete</button>`;
   footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>`;
-  $('#modalDialog').removeClass("modal-lg");
-  document.getElementById("ModalBody").innerHTML = st;
-  document.getElementById("ModalFooter").innerHTML = footer;
+  showModal(1, title, st, footer, ["right"], [], true, () =>
+    {
+      let el = document.querySelector('#textArea');
+      el.focus();
+      //el.setSelectionRange(0, el.value.length)
+      el.setSelectionRange(el.value.length, el.value.length)
+    },
+    () => {
+    }
+  );
   $("#textArea").keypress(function (e) {
     if((e.which == 10 || e.which == 13) && (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey)) {
       submitText(v, n, type);
       e.preventDefault();
     }
-  });
-  $('#Modal').addClass("right");
-  $('#Modal').on('shown.bs.modal', function () {
-    let el = document.querySelector('#textArea');
-    el.focus();
-    //el.setSelectionRange(0, el.value.length)
-    el.setSelectionRange(el.value.length, el.value.length)
   });
   $('#modalOk').click(() => {
     submitText(v, n, type);
@@ -57,9 +56,4 @@ export function showTextModal(v, n, type) {
     $("#textArea").val("");
     submitText(v, n, type);
   });
-  $('#Modal').on('hidden.bs.modal', () => {
-    $('#Modal').removeClass("right");
-    enableKeys(true);
-  });
-  $('#Modal').modal();
 }

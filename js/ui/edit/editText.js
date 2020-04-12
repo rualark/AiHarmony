@@ -1,7 +1,6 @@
 import {async_redraw, selected, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import { stop_advancing } from "./editScore.js";
-import { enableKeys } from "../commands.js";
 import { showTextModal } from "../modal/textModal.js";
 
 export function add_text() {

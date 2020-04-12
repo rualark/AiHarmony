@@ -8,6 +8,7 @@ import {ares} from "../../analysis/AnalysisResults.js";
 import {initCommands} from "../commands.js";
 import { update_selection } from "../selection.js";
 import { showRestoreModal } from "./restoreModal.js";
+import { showModal } from "./modal.js";
 
 function showCheckToolbarHints() {
   let st = '';
@@ -72,10 +73,7 @@ export function showSettingsModal() {
   st += showSelectAlgo();
   st += showSelectRuleVerbose();
   st += showRestore();
-  $('#modalDialog').removeClass("modal-lg");
-  document.getElementById("ModalTitle").innerHTML = 'Settings';
-  document.getElementById("ModalBody").innerHTML = st;
-  document.getElementById("ModalFooter").innerHTML = '';
+  showModal(1, 'Settings', st, '', [], [], false, ()=>{}, ()=>{});
   $('#check_toolbarHints').change(() => {
     settings.toolbarHints = Number($('#check_toolbarHints').is(":checked"));
     settings.settings2storage();
@@ -99,8 +97,7 @@ export function showSettingsModal() {
     async_redraw();
   });
   $('#restore').click(() => {
-    $('#Modal').modal('hide');
+    $('#Modal1').modal('hide');
     showRestoreModal();
   });
-  $('#Modal').modal();
 }

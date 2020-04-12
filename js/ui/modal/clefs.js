@@ -1,5 +1,6 @@
 import {async_redraw} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
+import { showModal } from "./modal.js";
 
 export let clefs = {
   'treble': {name: 'Treble', transpose: 0, middleD: 41},
@@ -24,20 +25,16 @@ export function showClefsModal(voice) {
     ++i;
   }
   st += "</table></div>";
-  $('#modalDialog').removeClass("modal-lg");
-  document.getElementById("ModalTitle").innerHTML = 'Choose clef';
-  document.getElementById("ModalBody").innerHTML = st;
-  document.getElementById("ModalFooter").innerHTML = '';
+  showModal(1, 'Choose clef', st, '', [], [], false, ()=>{}, ()=>{});
   i = 0;
   for (const clef in clefs) {
     ABCJS.renderAbc(`clef${i}`, `V: V0 clef=${clef}\n[V: V0]x`, {staffwidth: 110});
     document.getElementById('aclef' + i).onclick=function() {
-      $('#Modal').modal('hide');
+      $('#Modal1').modal('hide');
       voice.clef = clef;
       saveState();
       async_redraw();
     };
     ++i;
   }
-  $('#Modal').modal();
 }

@@ -1,10 +1,8 @@
 import {nd} from "../../notes/NotesData.js";
-import {enableKeys} from "../commands.js";
 import {async_redraw} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
 import {ares} from "../../analysis/AnalysisResults.js";
-import { update_selection } from "../selection.js";
-import { settings } from "../../state/settings.js";
+import { showModal } from "./modal.js";
 
 function showCheckLocked(v) {
   let st = '';
@@ -49,35 +47,26 @@ function showSelectSpecies(v) {
 }
 
 export function showPartModal(v) {
-  enableKeys(false);
   let st = '';
   st += showInputPartName(v);
   if (nd.algo === 'CA3') {
     st += showSelectSpecies(v);
   }
   st += showCheckLocked(v);
-  document.getElementById("ModalTitle").innerHTML = 'Part';
-  document.getElementById("ModalBody").innerHTML = st;
-  document.getElementById("ModalFooter").innerHTML = `
-    <button type="button" class="btn btn-primary" id=modalOk>OK</button>
-    <button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>
-  `;
+  let footer = '';
+  footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
+  footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>`;
+  showModal(1, 'Part', st, footer, [], [], true, ()=>{}, ()=>{});
   $('#check_voiceLocked').change(() => {
-    nd.set_voiceLocked(v, $('#check_voiceLocked').is(":checked"));
-    saveState();
   });
   $('#modalOk').click(() => {
+    nd.set_voiceLocked(v, $('#check_voiceLocked').is(":checked"));
     nd.set_voiceName(v, $('#input_partName').val().substr(0, 50));
     if (nd.algo === 'CA3') {
       nd.set_species(v, Number($("#sel_partSpecies option:selected").val()));
     }
-    $('#Modal').modal('hide');
-    document.getElementById("ModalFooter").innerHTML = "";
+    $('#Modal1').modal('hide');
     saveState();
     async_redraw();
   });
-  $('#Modal').on('hidden.bs.modal', () => {
-    enableKeys(true);
-  });
-  $('#Modal').modal();
 }

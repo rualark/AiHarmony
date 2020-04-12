@@ -1,8 +1,9 @@
 import {readMusicXml} from "./musicXmlToData.js";
 import {trackEvent} from "../integration/tracking.js";
+import { showModal } from "../ui/modal/modal.js";
 
 function readLocalMusicXmlFile(e) {
-  $('#Modal').modal('hide');
+  $('#Modal1').modal('hide');
   let file = e.target.files[0];
   if (!file) return;
   let reader = new FileReader();
@@ -14,7 +15,6 @@ function readLocalMusicXmlFile(e) {
 }
 
 export function showOpenMusicXmlModal() {
-  document.getElementById("ModalTitle").innerHTML = 'Open MusicXML file';
   let st = '';
   //st += 'Please select MusicXML file from your computer<br><br>';
   //st += '<input type=file id="mxml-file-input" />';
@@ -54,9 +54,7 @@ export function showOpenMusicXmlModal() {
   st += '<a href=editor.html?load=sposobin-exercise-335-1>sposobin-exercise-335-1</a><br>';
   st += '<a href=editor.html?load=sposobin-exercise-335-2>sposobin-exercise-335-2</a><br>';
 
-  document.getElementById("ModalBody").innerHTML = st;
-  document.getElementById("ModalFooter").innerHTML = '';
+  showModal(1, 'Open MusicXML file', st, '', [], [], false, ()=>{}, ()=>{});
   document.getElementById('mxml-file-input').addEventListener('change', readLocalMusicXmlFile, false);
-  $('#Modal').modal();
   $('#mxml-file-input').click();
 }

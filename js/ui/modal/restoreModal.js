@@ -2,6 +2,7 @@ import {async_redraw} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import { getArchiveStorage, storage2archiveStorage, plain2data, session_id } from "../../state/state.js";
+import { showModal } from "./modal.js";
 
 function version_html(ver, id, uniq_id) {
   let st = '';
@@ -44,10 +45,7 @@ export function showRestoreModal() {
     }
   }
   st += "</div>";
-  $('#modalDialog2').addClass("modal-lg");
-  document.getElementById("ModalTitle2").innerHTML = 'Restore previous files edited in this browser';
-  document.getElementById("ModalBody2").innerHTML = st;
-  document.getElementById("ModalFooter2").innerHTML = '';
+  showModal(2, 'Restore previous files edited in this browser', st, '', [], ["modal-lg"], false, ()=>{}, ()=>{});
   for (const i in archive) {
     document.getElementById('ver' + i).onclick=function() {
       $('#Modal2').modal('hide');
@@ -65,5 +63,4 @@ export function showRestoreModal() {
       );
     };
   }
-  $('#Modal2').modal();
 }

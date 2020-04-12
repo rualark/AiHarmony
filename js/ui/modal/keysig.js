@@ -2,6 +2,7 @@ import {async_redraw} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import {initTooltips} from "../lib/tooltips.js";
+import { showModal } from "./modal.js";
 
 export let keysigs = {
   'C#': {name: 'C#', fifths: 7, mode: 0, base_note: 1},
@@ -126,7 +127,6 @@ export function showKeysigModal() {
     ksig[Math.floor(i / 15)].push({name: keysig, i: i, value: keysigs[keysig]});
     ++i;
   }
-  //console.log(ksig);
   let st = '';
   st += '<table style="border-collapse: collapse" border=1>';
   st += '<tr>';
@@ -153,15 +153,11 @@ export function showKeysigModal() {
     }
   }
   st += '</table>';
-  //$('#modalDialog').removeClass("modal-lg");
-  $('#modalDialog').addClass("modal-lg");
-  document.getElementById("ModalTitle").innerHTML = 'Choose key signature';
-  document.getElementById("ModalBody").innerHTML = st;
-  document.getElementById("ModalFooter").innerHTML = '';
+  showModal(1, 'Choose key signature', st, '', [], ["modal-lg"], false, ()=>{}, ()=>{});
   i = 0;
   for (const keysig in keysigs) {
     document.getElementById('akeysig' + i).onclick=function() {
-      $('#Modal').modal('hide');
+      $('#Modal1').modal('hide');
       nd.set_keysig(keysigs[keysig]);
       saveState();
       async_redraw();
@@ -169,5 +165,4 @@ export function showKeysigModal() {
     ++i;
   }
   initTooltips(200, 100);
-  $('#Modal').modal();
 }

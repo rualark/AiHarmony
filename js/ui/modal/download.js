@@ -5,6 +5,7 @@ import {dataToAbc} from "../../abc/dataToAbc.js";
 import "../../../plugin/FileSaver.js-2.0.2/FileSaver.js";
 import {ais} from "../../integration/aiStudio.js";
 import {trackEvent} from "../../integration/tracking.js";
+import { showModal } from "./modal.js";
 
 let exportFormats = [
   {name: 'Download as MusicXML', func: downloadAsMusicXml },
@@ -77,20 +78,16 @@ export function showDownloadModal() {
     st += '</a></p>';
   }
   st += `<div style='display: none' id="midi-download"></div>`;
-  $('#modalDialog').removeClass("modal-lg");
-  document.getElementById("ModalTitle").innerHTML = 'Download music';
-  document.getElementById("ModalBody").innerHTML = st;
-  document.getElementById("ModalFooter").innerHTML = '';
+  showModal(1, 'Download music', st, '', [], [], false, ()=>{}, ()=>{});
   for (const i in exportFormats) {
     if (exportFormats[i].func == null && exportFormats[i].link == null) continue;
     if (exportFormats[i].link != null && exportFormats[i].link().href == null) continue;
     document.getElementById('adownload' + i).onclick = function () {
-      $('#Modal').modal('hide');
+      $('#Modal1').modal('hide');
       if (exportFormats[i].func != null) {
         exportFormats[i].func();
       }
       trackEvent('AiHarmony', 'download', exportFormats[i].name);
     };
   }
-  $('#Modal').modal();
 }

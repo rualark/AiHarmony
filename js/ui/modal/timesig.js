@@ -1,6 +1,7 @@
 import {async_redraw} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
+import { showModal } from "./modal.js";
 
 export let timesigs = [
   {beats_per_measure: 2, beat_type: 4, measure_len: 8},
@@ -42,17 +43,13 @@ export function showTimesigModal() {
     st += timesig_html(timesigs[i].beats_per_measure, timesigs[i].beat_type, i);
   }
   st += "</table></div>";
-  $('#modalDialog').removeClass("modal-lg");
-  document.getElementById("ModalTitle").innerHTML = 'Choose time signature';
-  document.getElementById("ModalBody").innerHTML = st;
-  document.getElementById("ModalFooter").innerHTML = '';
+  showModal(1, 'Choose time signature', st, '', [], [], false, ()=>{}, ()=>{});
   for (const i in timesigs) {
     document.getElementById('atimesig' + i).onclick=function() {
-      $('#Modal').modal('hide');
+      $('#Modal1').modal('hide');
       nd.set_timesig(timesigs[i]);
       saveState();
       async_redraw();
     };
   }
-  $('#Modal').modal();
 }
