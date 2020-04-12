@@ -5,7 +5,7 @@ let d_abc = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
 export let d_ABC = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
 // Middle C: 60 in MIDI (c), 35 in diatonic (d), starts octave 4 in MusicXml, "C" in ABC notation, https://en.wikipedia.org/wiki/C_(musical_note)
-// 60 in js (c), 48 in CA3 (c)
+// on -1 line in treble clef, on +1 line in bass clef, 60 in js (c), 48 in CA3 (c)
 
 // https://i.imgur.com/86u2JM2.png
 export function keysig_imprint(fifths) {

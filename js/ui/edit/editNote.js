@@ -4,6 +4,7 @@ import {saveState} from "../../state/history.js";
 import {stop_advancing} from "./editScore.js";
 import {move_to_next_note, move_to_previous_note} from "./select.js";
 import {set_len} from "./editLen.js";
+import {clefs} from "../modal/clefs.js";
 
 export let future = {
   advancing: false,
@@ -34,9 +35,10 @@ export function set_note(dc) {
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
   if (check_voice_locked(el)) return;
-  let notes = nd.voices[el.voice].notes;
+  let voice = nd.voices[el.voice];
+  let notes = voice.notes;
   let note = notes[el.note];
-  let pd = 35;
+  let pd = clefs[voice.clef].middleD;
   if (note.d && !future.advancing) {
     pd = note.d;
   }
