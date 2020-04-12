@@ -94,7 +94,7 @@ export function loadState() {
   }
 }
 
-export function saveState(doAnalysis=true, checkConflicts=true) {
+export function saveState(doAnalysis=true) {
   pushState(state2storage());
   if (doAnalysis) analyse();
 }

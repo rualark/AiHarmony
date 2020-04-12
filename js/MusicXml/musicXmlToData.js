@@ -34,7 +34,7 @@ export function readMusicXml(xml, filename) {
     }
     if (!nd.name) nd.set_name(nd.fileName);
     selected.note = {voice: 0, note: 0};
-    saveState(true, false);
+    saveState(true);
   } catch (e) {
     storage2state();
     //console.log(e);

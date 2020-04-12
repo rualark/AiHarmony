@@ -51,7 +51,7 @@ export function new_file() {
   if (state.state !== 'ready') return;
   storage2archiveStorage(1);
   nd.reset();
-  saveState(true, false);
+  saveState(true);
   async_redraw();
 }
 

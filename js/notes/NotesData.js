@@ -9,7 +9,7 @@ export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
 
 export class NotesData {
   saveState() {
-    saveState();
+    saveState(true);
   }
 
   set_note(v, n, d, saveState=true) {
