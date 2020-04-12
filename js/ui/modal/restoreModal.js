@@ -2,7 +2,7 @@ import {async_redraw} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import { getArchiveStorage, storage2archiveStorage, plain2data, session_id } from "../../state/state.js";
-import { showModal } from "./modal.js";
+import { showModal } from "./lib/modal.js";
 
 function version_html(ver, id, uniq_id) {
   let st = '';
@@ -45,7 +45,7 @@ export function showRestoreModal() {
     }
   }
   st += "</div>";
-  showModal(2, 'Restore previous files edited in this browser', st, '', [], ["modal-lg"], false, ()=>{}, ()=>{});
+  showModal(2, 'Recover previous files edited in this browser', st, '', [], ["modal-lg"], false, ()=>{}, ()=>{});
   for (const i in archive) {
     document.getElementById('ver' + i).onclick=function() {
       $('#Modal2').modal('hide');

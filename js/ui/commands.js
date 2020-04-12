@@ -13,7 +13,6 @@ import {play} from "../audio/audio.js";
 import {nd} from "../notes/NotesData.js";
 import {showTimesigModal} from "./modal/timesig.js";
 import {showKeysigModal} from "./modal/keysig.js";
-import {showOpenMusicXmlModal} from "../MusicXml/readLocalMusicXml.js";
 import {showDownloadModal} from "./modal/download.js";
 import {showShareModal} from "./modal/shareModal.js";
 import {redoState, saveState, undoState} from "../state/history.js";
@@ -31,6 +30,7 @@ import {openNewUrl} from "./lib/uilib.js";
 import {trackEvent} from "../integration/tracking.js";
 import {settings} from "../state/settings.js";
 import { add_lyric, add_text } from "./edit/editText.js";
+import { showOpenModal } from "./modal/openModal.js";
 
 let mobileOpt = {
   true: {
@@ -241,7 +241,7 @@ export let commands = [
     toolbar: {type: 'image', toolbar_id: 2, hintText: 'Open'},
     onclick: true,
     keys: ['Ctrl+O', 'Alt+O'],
-    command: () => { showOpenMusicXmlModal() },
+    command: () => { showOpenModal() },
     name: 'Open MusicXml file',
   },
   {

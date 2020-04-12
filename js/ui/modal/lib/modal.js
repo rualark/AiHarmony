@@ -1,4 +1,4 @@
-import { enableKeys } from "../commands.js";
+import { enableKeys } from "../../commands.js";
 
 export function showModal(id, title, body, footer, classes, classesDialog, pauseKeys, shown, hidden) {
   if (pauseKeys) {

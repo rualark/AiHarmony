@@ -1,7 +1,7 @@
 import {async_redraw} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
-import { showModal } from "./modal.js";
+import { showModal } from "./lib/modal.js";
 
 export let timesigs = [
   {beats_per_measure: 2, beat_type: 4, measure_len: 8},

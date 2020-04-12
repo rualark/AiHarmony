@@ -5,7 +5,7 @@ import {dataToAbc} from "../../abc/dataToAbc.js";
 import "../../../plugin/FileSaver.js-2.0.2/FileSaver.js";
 import {ais} from "../../integration/aiStudio.js";
 import {trackEvent} from "../../integration/tracking.js";
-import { showModal } from "./modal.js";
+import { showModal } from "./lib/modal.js";
 
 let exportFormats = [
   {name: 'Download as MusicXML', func: downloadAsMusicXml },

@@ -2,7 +2,7 @@ import {nd} from "../../notes/NotesData.js";
 import {async_redraw} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
 import {ares} from "../../analysis/AnalysisResults.js";
-import { showModal } from "./modal.js";
+import { showModal } from "./lib/modal.js";
 
 function showCheckLocked(v) {
   let st = '';

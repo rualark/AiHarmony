@@ -7,8 +7,7 @@ import {async_redraw} from "../../abc/abchelper.js";
 import {ares} from "../../analysis/AnalysisResults.js";
 import {initCommands} from "../commands.js";
 import { update_selection } from "../selection.js";
-import { showRestoreModal } from "./restoreModal.js";
-import { showModal } from "./modal.js";
+import { showModal } from "./lib/modal.js";
 
 function showCheckToolbarHints() {
   let st = '';
@@ -60,19 +59,12 @@ function showSelectRuleVerbose() {
   return st;
 }
 
-function showRestore() {
-  let st = '';
-  st += `<a id=restore href=#>Restore previous files</a>`
-  return st;
-}
-
 export function showSettingsModal() {
   let st = '';
   st += showCheckToolbarHints();
   st += showSelectShortcutsLayout();
   st += showSelectAlgo();
   st += showSelectRuleVerbose();
-  st += showRestore();
   showModal(1, 'Settings', st, '', [], [], false, ()=>{}, ()=>{});
   $('#check_toolbarHints').change(() => {
     settings.toolbarHints = Number($('#check_toolbarHints').is(":checked"));
@@ -95,9 +87,5 @@ export function showSettingsModal() {
     settings.settings2storage();
     ares.printFlags();
     async_redraw();
-  });
-  $('#restore').click(() => {
-    $('#Modal1').modal('hide');
-    showRestoreModal();
   });
 }
