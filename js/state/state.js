@@ -41,6 +41,7 @@ export function data2plain() {
   st += ui_b256(nd.voices.length, 1);
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
+    console.log("Save locked", vc.locked);
     st += ui_b256(vc.species + (vc.locked ? 1 : 0) * 16, 1);
     st += safeString_b256(nd.voices[v].clef, 1);
     for (let n = 0; n < vc.notes.length; ++n) {
@@ -111,6 +112,7 @@ export function plain2data(st, pos, target, full) {
     let clef = b256_safeString(st, pos, 1);
     //let ncount = b256_ui(st, pos, 4);
     //console.log('Voice', clef, species);
+    console.log("Load locked", packed, !!(Math.floor(packed / 16)));
     target.voices.push({
       clef: clef,
       species: packed % 16,

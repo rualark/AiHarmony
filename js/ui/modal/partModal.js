@@ -52,7 +52,7 @@ export function showPartModal(v) {
   enableKeys(false);
   let st = '';
   st += showInputPartName(v);
-  if (settings.algo === 'CA3') {
+  if (nd.algo === 'CA3') {
     st += showSelectSpecies(v);
   }
   st += showCheckLocked(v);
@@ -68,7 +68,9 @@ export function showPartModal(v) {
   });
   $('#modalOk').click(() => {
     nd.set_voiceName(v, $('#input_partName').val().substr(0, 50));
-    nd.set_species(v, Number($("#sel_partSpecies option:selected").val()));
+    if (nd.algo === 'CA3') {
+      nd.set_species(v, Number($("#sel_partSpecies option:selected").val()));
+    }
     $('#Modal').modal('hide');
     document.getElementById("ModalFooter").innerHTML = "";
     saveState();
