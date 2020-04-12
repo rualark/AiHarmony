@@ -49,11 +49,13 @@ export function set_note(dc) {
     pd = notes[el.note + 1].d;
   }
   let d = dc;
-  if (!note.d || future.advancing) {
-    note.alter = future.alteration;
-  }
   while (pd - d > 3) d += 7;
   while (d - pd > 3) d -= 7;
+  if (!note.d || future.advancing) {
+    note.alter = future.alteration;
+  } else if (note.d != d) {
+    note.alter = 10;
+  }
   nd.set_note(el.voice, el.note, d, false);
   if (future.advancing && future.len) {
     future.advancing = false;
@@ -163,10 +165,8 @@ export function increment_note(dnote) {
   let notes = nd.voices[el.voice].notes;
   let note = notes[n];
   let d = note.d;
+  note.alter = 10;
   nd.set_note(el.voice, n, d + dnote);
-  if (dnote === 1 || dnote === -1) {
-    nd.set_alter(el.voice, n, 10);
-  }
   async_redraw();
 }
 
