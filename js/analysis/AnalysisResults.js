@@ -161,6 +161,7 @@ class AnalysisResults {
   }
 
   printFlags() {
+    console.log(this.flag);
     this.stepFlags = {};
     this.pFlag = [];
     this.pFlagCur = -1;
@@ -197,6 +198,7 @@ class AnalysisResults {
         for (let f in this.flag[v][s]) {
           let fla = this.flag[v][s][f];
           let col;
+          if (fla.accept !== 0) continue;
           if (fla.severity < settings.show_min_severity) continue;
           if (fla.severity > SEVERITY_RED) col = SEVERITY_RED_COLOR;
           else col = SEVERITY_YELLOW_COLOR;
@@ -260,6 +262,7 @@ class AnalysisResults {
     let yellow = 0;
     let red = 0;
     for (const fla of this.flag[va][pos]) {
+      if (fla.accept !== 0) continue;
       if (fla.severity > SEVERITY_RED) red++;
       else if (fla.severity >= settings.show_min_severity) yellow++;
     }

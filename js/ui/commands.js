@@ -140,7 +140,7 @@ export function toolbarButtonHtml(command, showHints) {
       st += `<select class="form-control custom-select" style='box-shadow: none; font-size: 0.85em; height: 32px; width: 175px;' id=${command.id}>`;
       st += `<option value='' ${nd.algo === '' ? "selected" : ""}>No music analysis</option>`;
       st += `<option value=CA3 ${nd.algo === 'CA3' ? "selected" : ""}>Counterpoint analysis</option>`;
-      //st += `<option value=HA1 ${nd.algo === 'HA1' ? "selected" : ""}>Basic analysis</option>`;
+      st += `<option value=HA1 ${nd.algo === 'HA1' ? "selected" : ""}>Basic analysis</option>`;
       st += `</select></div>`;
     }
   }
