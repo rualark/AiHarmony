@@ -101,6 +101,7 @@ export function highlightRange(severity) {
 function notation_redraw() {
   try {
     parserParams.staffwidth = window.innerWidth - 60;
+    document.getElementById('algo').value = nd.algo;
     $('#filename').html('&nbsp;&nbsp;' + nd.name);
     start_counter('renderAbc');
     abcjs = ABCJS.renderAbc('abc', dataToAbc(), parserParams, engraverParams);

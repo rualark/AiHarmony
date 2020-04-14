@@ -63,7 +63,7 @@ export function showOpenModal() {
 
   st += `<p style='text-align: center'>`;
   st += `<a id=recover href=# class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;
-  st += `<b>Recover previous files</b>`;
+  st += `<b>Recover unsaved files</b>`;
   st += '</a></p>';
 
   showModal(1, 'Open MusicXML file', st, '', [], [], false, ()=>{}, ()=>{});

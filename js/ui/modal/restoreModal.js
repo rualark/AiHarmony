@@ -29,7 +29,7 @@ export function showRestoreModal() {
     archive[i].uniq_id = uniq_sessions[archive[i].id];
   }
   if (archive.length === 0) {
-    st += `No previous files`;
+    st += `No unsaved files`;
   }
   for (const id in uniq_sessions) {
     const uniq_id = uniq_sessions[id];
@@ -45,13 +45,13 @@ export function showRestoreModal() {
     }
   }
   st += "</div>";
-  showModal(2, 'Recover previous files edited in this browser', st, '', [], ["modal-lg"], false, ()=>{}, ()=>{});
+  showModal(2, 'Recover unsaved files edited in this browser', st, '', [], ["modal-lg"], false, ()=>{}, ()=>{});
   for (const i in archive) {
     document.getElementById('ver' + i).onclick=function() {
       $('#Modal2').modal('hide');
       // Do not archive current state when restoring to protect old archived versions
       //storage2archiveStorage();
-      alertify.confirm('Restore', 'Warning! You are restoring a previous file. Currently opened file will be deleted and you will not be able to restore it if you did not download it.',
+      alertify.confirm('Recover', 'Warning! You are recovering a previous file. Currently opened file will be deleted and you will not be able to recovere it if you did not download it.',
         function(){
           let plain = LZString.decompressFromUTF16(archive[i].utf16);
           plain2data(plain, [0], nd, false);

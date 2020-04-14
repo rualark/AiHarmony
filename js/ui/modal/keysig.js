@@ -139,7 +139,6 @@ export function showKeysigModal() {
   st += '<th style="vertical-align:middle; text-align: center" data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="Lydian">Lydian';
   st += '<th style="vertical-align:middle; text-align: center" data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="Locrian">Locrian';
   let xlen = Object.keys(keysigs).length / 15;
-  //console.log(xlen);
   for (let y=0; y<15; ++y) {
     st += '<tr>';
     if (y < 7) st += `<td style="vertical-align:middle; text-align: center">${7 - y} #`;
@@ -148,8 +147,12 @@ export function showKeysigModal() {
     for (let x=0; x<xlen; ++x) {
       st += '<td style="vertical-align:middle; text-align: center">';
       st += `<a id=akeysig${ksig[x][y].i} class='btn btn-outline-white p-1' href=# role='button'>`;
+
+      if (nd.keysig.fifths == ksig[x][y].value.fifths) {
+        st += `<b>`;
+      }
       st += ksig[x][y].name;
-      st += '</a>';
+      st += '</b></a>';
     }
   }
   st += '</table>';

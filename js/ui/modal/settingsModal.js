@@ -63,7 +63,7 @@ export function showSettingsModal() {
   let st = '';
   st += showCheckToolbarHints();
   st += showSelectShortcutsLayout();
-  st += showSelectAlgo();
+  //st += showSelectAlgo();
   st += showSelectRuleVerbose();
   showModal(1, 'Settings', st, '', [], [], false, ()=>{}, ()=>{});
   $('#check_toolbarHints').change(() => {
@@ -71,11 +71,6 @@ export function showSettingsModal() {
     settings.settings2storage();
     initCommands();
     update_selection();
-  });
-  $('#sel_algo').change(() => {
-    nd.algo = $("#sel_algo option:selected" ).val();
-    saveState();
-    if (nd.algo === '') async_redraw();
   });
   $('#sel_shortcutsLayout').change(() => {
     settings.setShortcutsLayout($("#sel_shortcutsLayout option:selected" ).val());
