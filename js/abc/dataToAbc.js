@@ -12,15 +12,17 @@ export function dataToAbc() {
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
     let name = vc.name;
-    let vocra = ares.getVocra(v);
-    let spec = ares.getSpecies(v);
-    if (vocra != null) name += ` [${vocra}]`;
-    if (spec != null && ares.av_cnt > 1) {
-      if (spec === 0) {
-        name += ` (c.f.)`;
-      }
-      else {
-        name += ` (sp. ${spec})`;
+    if (nd.algo === 'CA3') {
+      let vocra = ares.getVocra(v);
+      let spec = ares.getSpecies(v);
+      if (vocra != null) name += ` [${vocra}]`;
+      if (spec != null && ares.av_cnt > 1) {
+        if (spec === 0) {
+          name += ` (c.f.)`;
+        }
+        else {
+          name += ` (sp. ${spec})`;
+        }
       }
     }
     abc += `V: V${v} clef=${vc.clef} name="${name}"\n`;

@@ -42,7 +42,7 @@ function showSelectSpecies(v) {
   }
   st += `</select>`;
   st += `</div>`;
-  console.log(cur_sp, st);
+  //console.log(cur_sp, st);
   return st;
 }
 

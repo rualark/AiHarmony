@@ -59,12 +59,12 @@ class AnalysisResults {
       });
     }
     this.av_cnt = b256_ui(st, pos, 1);
-    this.s_start = b256_ui(st, pos, 2) * 2;
+    this.s_start = b256_ui(st, pos, 2);
     this.c_len = b256_ui(st, pos, 2);
     this.mode = b256_ui(st, pos, 1);
     const hli_size = b256_ui(st, pos, 2);
     for (let hs=0; hs<hli_size; ++hs) {
-      this.harm[b256_ui(st, pos, 2) * 2] = b256_safeString(st, pos, 1);
+      this.harm[b256_ui(st, pos, 2) + this.s_start] = b256_safeString(st, pos, 1);
     }
     for (let v=0; v<this.av_cnt; ++v) {
       let va = b256_ui(st, pos, 1);
@@ -73,17 +73,19 @@ class AnalysisResults {
       this.vsp[v] = b256_ui(st, pos, 1);
       this.vocra[v] = b256_ui(st, pos, 1);
       this.flag[v] = {};
-      for (let s = 0; s < this.c_len; ++s) {
+      let dstep = 1;
+      if (nd.algo === 'CA3') dstep = 2;
+      for (let s = 0; s < this.c_len; s += dstep) {
         let fcnt = b256_ui(st, pos, 1);
         if (!fcnt) continue;
-        this.flag[v][s * 2 + this.s_start] = [];
+        this.flag[v][s + this.s_start] = [];
         for (let f = 0; f < fcnt; ++f) {
-          this.flag[v][s * 2 + this.s_start].push({
-            s: s * 2 + this.s_start,
+          const flag = {
+            s: s + this.s_start,
             v: v,
             fl: b256_ui(st, pos, 2),
             fvl: b256_ui(st, pos, 1),
-            fsl: b256_ui(st, pos, 2) * 2 + this.s_start,
+            fsl: b256_ui(st, pos, 2) + this.s_start,
             accept: b256_ui(st, pos, 1) - 10,
             severity: b256_ui(st, pos, 1),
             class: b256_safeString(st, pos, 1),
@@ -91,7 +93,8 @@ class AnalysisResults {
             subName: b256_safeString(st, pos, 2),
             comment: b256_safeString(st, pos, 2),
             subComment: b256_safeString(st, pos, 2),
-          });
+          };
+          this.flag[v][s + this.s_start].push(flag);
         }
       }
     }
@@ -161,12 +164,11 @@ class AnalysisResults {
   }
 
   printFlags() {
-    console.log(this.flag);
     this.stepFlags = {};
     this.pFlag = [];
     this.pFlagCur = -1;
     let st = '';
-    if (this.mode == null || this.mode === 13) {
+    if (this.mode == null || this.mode === 13 || nd.algo !== 'CA3') {
       $('#mode').html('');
     }
     else if (nd.keysig.mode === this.mode) {

@@ -103,6 +103,7 @@ function notation_redraw() {
     parserParams.staffwidth = window.innerWidth - 60;
     document.getElementById('algo').value = nd.algo;
     $('#filename').html('&nbsp;&nbsp;' + nd.name);
+    $('#filename').prop('title', 'File name: ' + nd.fileName);
     start_counter('renderAbc');
     abcjs = ABCJS.renderAbc('abc', dataToAbc(), parserParams, engraverParams);
     //stop_counter();

@@ -88,6 +88,7 @@ export function loadState() {
     if (e === 'version') {
       alertify.error('Your previous session was reset because new version of application does not support previous format. Please save your files before exiting to minimize this risk.', 20);
       nd.reset();
+      localStorage.setItem('aihArchive', "");
       saveState();
     }
     else console.trace(e);

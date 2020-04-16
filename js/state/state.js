@@ -220,7 +220,7 @@ export function storage2archiveStorage(why) {
   let utf16 = localStorage.getItem('aih');
   let previous_id = localStorage.getItem('aihSessionId');
   let archiveSt = localStorage.getItem('aihArchive');
-  if (archiveSt == null) {
+  if (!archiveSt) {
     archiveSt = "[]";
   }
   let archive = JSON.parse(archiveSt);
@@ -259,8 +259,9 @@ export function storage2archiveStorage(why) {
 
 export function getArchiveStorage() {
   start_counter('getArchiveStorage');
-  let archive = JSON.parse(localStorage.getItem('aihArchive'));
-  if (archive == null) return [];
+  const archiveSt = localStorage.getItem('aihArchive');
+  if (!archiveSt) return [];
+  let archive = JSON.parse(archiveSt);
   for (let ver of archive) {
     ver.nd = new NotesData();
     let plain = LZString.decompressFromUTF16(ver.utf16);

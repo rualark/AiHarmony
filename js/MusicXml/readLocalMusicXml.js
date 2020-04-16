@@ -2,7 +2,7 @@ import {readMusicXml} from "./musicXmlToData.js";
 import {trackEvent} from "../integration/tracking.js";
 
 export function readLocalMusicXmlFile(e) {
-  $('#Modal1').modal('hide');
+  $('#Modal2').modal('hide');
   let file = e.target.files[0];
   if (!file) return;
   let reader = new FileReader();
@@ -12,5 +12,3 @@ export function readLocalMusicXmlFile(e) {
   };
   reader.readAsText(file);
 }
-
-
