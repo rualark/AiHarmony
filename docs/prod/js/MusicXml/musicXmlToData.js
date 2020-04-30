@@ -3,7 +3,7 @@ import {nd, supportedNoteLen} from "../notes/NotesData.js";
 import {timesigs} from "../ui/modal/timesig.js";
 import {getBestClef} from "../notes/bestClef.js";
 import {d2c} from "../notes/noteHelper.js";
-import {storage2state, url2state} from "../state/state.js";
+import {storage2state, url2state, storage2archiveStorage} from "../state/state.js";
 import {async_redraw, selected} from "../abc/abchelper.js";
 import {saveState} from "../state/history.js";
 import {start_counter} from "../core/time.js";
@@ -34,7 +34,7 @@ export function readMusicXml(xml, filename) {
     }
     if (!nd.name) nd.set_name(nd.fileName);
     selected.note = {voice: 0, note: 0};
-    saveState();
+    saveState(true);
   } catch (e) {
     storage2state();
     //console.log(e);
@@ -46,6 +46,7 @@ export function readMusicXml(xml, filename) {
 }
 
 export function musicXmlToData(txt) {
+  storage2archiveStorage(2);
   xmlLoadWarnings.clear();
   let mxp = new MusicXmlParser(txt);
   if (mxp.urlState != null && mxp.urlState.length > 0 && mxp.urlState.startsWith('AIHS:')) {
@@ -68,6 +69,7 @@ export function musicXmlToData(txt) {
   nd.timesig.measure_len = mxp.mea[1].measure_len * 16;
   nd.voices = [];
   let ki;
+  //console.log(mxp);
   for (const vi in mxp.notes) {
     nd.voices.push({
       name: mxp.voices[vi].name,
@@ -78,6 +80,7 @@ export function musicXmlToData(txt) {
     nd.keysig.mode = 13;
     nd.voices[vi].notes = [];
     let ncount = 0;
+    let s = 0;
     for (let m=1; m<mxp.notes[vi].length; ++m) {
       if (
         nd.timesig.beats_per_measure !== mxp.mea[m].beats_per_measure ||
@@ -112,25 +115,33 @@ export function musicXmlToData(txt) {
             xmlLoadWarnings.add("Clef changes in MusicXml: ignoring");
           }
         }
+        let nt;
+        let len = Math.floor(note.dur * 4 / note.dur_div);
         if (note.rest) {
-          nd.voices[vi].notes.push({
+          nt = {
             d: 0,
-            len: Math.floor(note.dur * 4 / note.dur_div),
+            len: len,
+            step: s,
             startsTie: false
-          });
+          };
         } else {
           ++ncount;
           if (!ki) {
             return mxp.getErrPrefix(vi, m, ni) + ` Key signature should be specified before note`;
           }
           //accidental2alter(note.accidental)
-          nd.voices[vi].notes.push({
+          nt = {
             d: note.d,
             alter: note.alter === ki[note.d % 7] && !note.accidental ? 10 : note.alter,
-            len: Math.floor(note.dur * 4 / note.dur_div),
+            len: len,
+            step: s,
             startsTie: note.tie_start
-          });
+          };
         }
+        s += len;
+        nt.text = note.words;
+        nt.lyric = note.lyric;
+        nd.voices[vi].notes.push(nt);
       }
     }
     if (nd.voices[vi].clef == null) {

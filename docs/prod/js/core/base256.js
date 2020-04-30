@@ -41,6 +41,7 @@ export function b256_ui(st, pos, chars=1) {
 }
 
 export function safeString_b256(st, sizeCharacters=1) {
+  st = st ? st : "";
   return ui_b256(st.length, sizeCharacters) + st;
 }
 

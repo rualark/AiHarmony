@@ -1,8 +1,17 @@
 import {nd} from "../../notes/NotesData.js";
-import {enableKeys} from "../commands.js";
 import {async_redraw} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
 import {ares} from "../../analysis/AnalysisResults.js";
+import { showModal } from "./lib/modal.js";
+
+function showCheckLocked(v) {
+  let st = '';
+  st += `<div class="form-check">`;
+  st += `<input type="checkbox" class="form-check-input" name="check_voiceLocked" id="check_voiceLocked" ${nd.voices[v].locked ? "checked" : ""}>`;
+  st += `<label class="form-check-label" for="check_voiceLocked">Prohibit note editing in this part</label>`;
+  st += `</div><br>`;
+  return st;
+}
 
 function showInputPartName(v) {
   let st = '';
@@ -33,29 +42,31 @@ function showSelectSpecies(v) {
   }
   st += `</select>`;
   st += `</div>`;
-  console.log(cur_sp, st);
+  //console.log(cur_sp, st);
   return st;
 }
 
 export function showPartModal(v) {
-  enableKeys(false);
   let st = '';
   st += showInputPartName(v);
-  st += showSelectSpecies(v);
-  document.getElementById("ModalTitle").innerHTML = 'Part';
-  document.getElementById("ModalBody").innerHTML = st;
-  document.getElementById("ModalFooter").innerHTML = `
-    <button type="button" class="btn btn-primary" id=modalOk>OK</button>
-    <button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>
-  `;
+  if (nd.algo === 'CA3') {
+    st += showSelectSpecies(v);
+  }
+  st += showCheckLocked(v);
+  let footer = '';
+  footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
+  footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>`;
+  showModal(1, 'Part', st, footer, [], [], true, ()=>{}, ()=>{});
+  $('#check_voiceLocked').change(() => {
+  });
   $('#modalOk').click(() => {
-    enableKeys(true);
+    nd.set_voiceLocked(v, $('#check_voiceLocked').is(":checked"));
     nd.set_voiceName(v, $('#input_partName').val().substr(0, 50));
-    nd.set_species(v, Number($("#sel_partSpecies option:selected").val()));
-    $('#Modal').modal('hide');
-    document.getElementById("ModalFooter").innerHTML = "";
+    if (nd.algo === 'CA3') {
+      nd.set_species(v, Number($("#sel_partSpecies option:selected").val()));
+    }
+    $('#Modal1').modal('hide');
     saveState();
     async_redraw();
   });
-  $('#Modal').modal();
 }

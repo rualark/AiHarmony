@@ -1,7 +1,7 @@
 import {next_note, prev_note} from "../ui/edit/select.js";
 import {start_counter, stop_counter} from "../core/time.js";
 import {readRemoteMusicXmlFile} from "../MusicXml/readRemoteMusicXml.js";
-import {async_redraw, state} from "../abc/abchelper.js";
+import {async_redraw, selected, state} from "../abc/abchelper.js";
 import {nd} from "../notes/NotesData.js";
 import {set_len, toggle_dot} from "../ui/edit/editLen.js";
 import {
@@ -72,7 +72,7 @@ function assert2strings(stage, fname, st1, st2, max_diff=0) {
     if (diff <= max_diff) return;
     console.log(patch, st1, st2);
     throw {
-      message: stage + ` does not match ${diff} chars`,
+      message: `${stage} (${fname}) does not match ${diff} chars`,
       fname: fname,
       data: st2
     };
@@ -131,6 +131,12 @@ async function test_actions() {
   voiceChange(1);
   await waitForState('set_len', state, ['ready'], 50, 5000);
   set_len(1);
+  await waitForState('set_text', state, ['ready'], 50, 5000);
+  let el = nd.abc_charStarts[selected.element.startChar];
+  nd.set_text(el.voice, el.note, "Some text");
+  await waitForState('set_lyric', state, ['ready'], 50, 5000);
+  el = nd.abc_charStarts[selected.element.startChar];
+  nd.set_lyric(el.voice, el.note, "Some lyric");
   await waitForState('set_note', state, ['ready'], 50, 5000);
   set_note(2);
   await waitForState('prev_note', state, ['ready'], 50, 5000);

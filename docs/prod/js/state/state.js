@@ -1,10 +1,14 @@
-import {nd} from "../notes/NotesData.js";
+import {nd, NotesData} from "../notes/NotesData.js";
 import {async_redraw, selected} from "../abc/abchelper.js";
-import {currentTimestamp, start_counter} from "../core/time.js";
+import {currentTimestamp, start_counter, stop_counter} from "../core/time.js";
 import {b256_safeString, safeString_b256, ui_b256, b256_ui, b256_debug} from "../core/base256.js";
+import { generateRandomId } from "../core/string.js";
 
-const ENCODING_VERSION = 11;
+const ENCODING_VERSION = 13;
 export const STATE_VOLATILE_SUFFIX = 7;
+const MAX_ARCHIVE_COUNT = 80;
+const MAX_ARCHIVE_BYTES = 200000;
+export const session_id = generateRandomId(16);
 
 function alter2contig(alt) {
   if (alt === 10) return 0;
@@ -37,13 +41,15 @@ export function data2plain() {
   st += ui_b256(nd.voices.length, 1);
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
-    st += ui_b256(vc.species, 1);
+    st += ui_b256(vc.species + (vc.locked ? 1 : 0) * 16, 1);
     st += safeString_b256(nd.voices[v].clef, 1);
     for (let n = 0; n < vc.notes.length; ++n) {
       let nt = vc.notes[n];
       st += ui_b256(alter2contig(nt.alter || 0) * 4 + (nt.startsTie ? 2 : 0), 1);
       st += ui_b256(nt.d, 1);
       st += ui_b256(nt.len, 1);
+      st += safeString_b256(nt.text, 1);
+      st += safeString_b256(nt.lyric, 1);
     }
     // Write end of voice
     st+= ui_b256(1, 1);
@@ -66,30 +72,30 @@ export function data2plain() {
   return st;
 }
 
-export function plain2data(st, pos) {
+export function plain2data(st, pos, target, full) {
   let saved_encoding_version = b256_ui(st, pos, 1);
   if (saved_encoding_version !== ENCODING_VERSION) {
     throw('version');
   }
-  nd.algo = b256_safeString(st, pos, 1);
-  nd.algoMode = b256_ui(st, pos, 1);
+  target.algo = b256_safeString(st, pos, 1);
+  target.algoMode = b256_ui(st, pos, 1);
   let pcount = b256_ui(st, pos, 1);
-  nd.phrases = [];
+  target.phrases = [];
   for (let i = 0; i<pcount; ++i) {
-    nd.phrases.push(b256_ui(st, pos, 2));
+    target.phrases.push(b256_ui(st, pos, 2));
   }
   let packed = b256_ui(st, pos, 1);
   let fifths = packed % 16 - 10;
   let mode = Math.floor(packed / 16);
-  nd.build_keysig(fifths, mode);
+  target.build_keysig(fifths, mode);
   let mcount = b256_ui(st, pos, 1);
-  nd.modes = [];
+  target.modes = [];
   for (let i = 0; i<mcount; ++i) {
     let step = b256_ui(st, pos, 2);
     let packed = b256_ui(st, pos, 1);
     let fifths = packed % 16 - 10;
     let mode = Math.floor(packed / 16);
-    nd.modes.push({
+    target.modes.push({
       fifths: fifths,
       mode: mode,
       step: step
@@ -97,17 +103,18 @@ export function plain2data(st, pos) {
   }
   let beats_per_measure = b256_ui(st, pos, 1);
   let beat_type = b256_ui(st, pos, 1);
-  nd.build_timesig(beats_per_measure, beat_type);
+  target.build_timesig(beats_per_measure, beat_type);
   let vcount = b256_ui(st, pos, 1);
-  nd.voices = [];
+  target.voices = [];
   for (let v=0; v<vcount; ++v) {
-    let species = b256_ui(st, pos, 1);
+    let packed = b256_ui(st, pos, 1);
     let clef = b256_safeString(st, pos, 1);
     //let ncount = b256_ui(st, pos, 4);
     //console.log('Voice', clef, species);
-    nd.voices.push({
+    target.voices.push({
       clef: clef,
-      species: species,
+      species: packed % 16,
+      locked: !!(Math.floor(packed / 16)),
       notes: []
     });
     for (let n = 0; n < 1000000; ++n) {
@@ -117,25 +124,29 @@ export function plain2data(st, pos) {
       let d = b256_ui(st, pos, 1);
       let len = b256_ui(st, pos, 1);
       //console.log('Note', d, len, contig2alter(Math.floor(packed / 4)), !!(packed % 4));
-      nd.voices[v].notes.push({
+      target.voices[v].notes.push({
         d: d,
         len: len,
         alter: contig2alter(Math.floor(packed / 4)),
-        startsTie: !!(packed % 4)
+        startsTie: !!(packed % 4),
+        text: b256_safeString(st, pos, 1),
+        lyric: b256_safeString(st, pos, 1),
       });
     }
   }
   for (let v=0; v<vcount; ++v) {
     let name = b256_safeString(st, pos, 1);
-    nd.set_voiceName(v, name);
+    target.set_voiceName(v, name);
   }
-  nd.set_name(b256_safeString(st, pos, 1));
-  nd.set_fileName(b256_safeString(st, pos, 1));
+  target.set_name(b256_safeString(st, pos, 1));
+  target.set_fileName(b256_safeString(st, pos, 1));
   let v = b256_ui(st, pos, 1);
   let n = b256_ui(st, pos, 2);
-  selected.note = {voice: v, note: n};
-  if (selected.note.voice === 255) {
-    selected.note = null;
+  if (full) {
+    selected.note = {voice: v, note: n};
+    if (selected.note.voice === 255) {
+      selected.note = null;
+    }
   }
   //let time = b256_ui(st, pos, 4);
   //console.log('Decoded time:', time, timestamp2date(time));
@@ -153,18 +164,27 @@ export function state2storage() {
 }
 
 export function utf16_storage(name, utf16) {
+  let previous_id = localStorage.getItem('aihSessionId');
+  // If we are overwriting a different session, first archive it
+  if (previous_id != session_id) {
+    storage2archiveStorage(3);
+    alertify.message('Detected and saved your changes made in another session', 10);
+  }
   localStorage.setItem(name, utf16);
+  localStorage.setItem('aihSessionId', session_id);
 }
 
 export function storage_utf16(utf16) {
   let plain = LZString.decompressFromUTF16(utf16);
-  plain2data(plain, [0]);
+  plain2data(plain, [0], nd, true);
   async_redraw();
   return plain;
 }
 
 export function storage2state() {
   try {
+    // Prevent archiving state if we load it, even if state is corrupted or old - because this means that archive will also be corrupted/old
+    localStorage.setItem('aihSessionId', session_id);
     let utf16 = localStorage.getItem('aih');
     if (utf16 == null) {
       throw "No previous state stored in this browser";
@@ -193,5 +213,59 @@ export function url2state(url) {
   //console.log(b64);
   let plain = LZString.decompressFromBase64(b64);
   //console.log('url2state plain', plain);
-  plain2data(plain, [0]);
+  plain2data(plain, [0], nd, true);
+}
+
+export function storage2archiveStorage(why) {
+  let utf16 = localStorage.getItem('aih');
+  let previous_id = localStorage.getItem('aihSessionId');
+  let archiveSt = localStorage.getItem('aihArchive');
+  if (!archiveSt) {
+    archiveSt = "[]";
+  }
+  let archive = JSON.parse(archiveSt);
+  console.log('Archive state', archive.length, archiveSt.length);
+  // Remove previous archived state of session being archived if they are both before conflicts,
+  // because this means that archived session did not have new/open events and we are losing only events history
+  // This allows to use archive capacity more efficiently
+  if (why === 3) {
+    for (let i=archive.length - 1; i>=0; --i) {
+      if (archive[i].id === previous_id) {
+        if (archive[i].why === 3) {
+          archive.splice(i, 1);
+        }
+        break;
+      }
+    }
+  }
+  // Remove archived states if archive is too big
+  while (archiveSt.length > MAX_ARCHIVE_BYTES) {
+    archive.splice(0, 1);
+    archiveSt = JSON.stringify(archive);
+  }
+  if (archive.length >= MAX_ARCHIVE_COUNT) {
+    archive.splice(0, archive.length - MAX_ARCHIVE_COUNT + 1);
+  }
+  archive.push({
+    utf16: utf16,
+    time: Math.floor(Date.now() / 1000),
+    id: previous_id,
+    why: why,
+  });
+  localStorage.setItem('aihArchive', JSON.stringify(archive));
+  // Set my session_id to prevent conflict detection and archiving again
+  localStorage.setItem('aihSessionId', session_id);
+}
+
+export function getArchiveStorage() {
+  start_counter('getArchiveStorage');
+  const archiveSt = localStorage.getItem('aihArchive');
+  if (!archiveSt) return [];
+  let archive = JSON.parse(archiveSt);
+  for (let ver of archive) {
+    ver.nd = new NotesData();
+    let plain = LZString.decompressFromUTF16(ver.utf16);
+    plain2data(plain, [0], ver.nd, false);
+  }
+  return archive;
 }

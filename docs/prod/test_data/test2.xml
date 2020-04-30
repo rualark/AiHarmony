@@ -2,7 +2,7 @@
 <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
 <score-partwise version="3.0">
  <work>
-  <work-title></work-title>
+  <work-title>good-cp5-extract</work-title>
  </work>
  <identification>
   <creator type="composer"></creator>
@@ -729,6 +729,13 @@
   </measure>
   <measure number="4">
    <attributes />
+   <direction>
+    <direction-type>
+     <words>Some text</words>
+    </direction-type>
+     <voice>1</voice>
+     <staff>1</staff>
+   </direction>
    <note color="#000000">
     <pitch>
      <step>E</step>
@@ -743,6 +750,9 @@
     <notations>
      <tied type="stop" />
     </notations>
+    <lyric>
+     <text>Some lyric</text>
+    </lyric>
    </note>
    <note color="#000000">
     <rest />

@@ -1,14 +1,15 @@
 import {fifths2keysig, keysig_imprint} from "./noteHelper.js";
 import {saveState} from "../state/history.js";
 import {selected} from "../abc/abchelper.js";
+import { generateRandomId } from "../core/string.js";
 
 export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
 
 // alter = 0 is natural. alter = 10 is no accidental (inherits key)
 
-class NotesData {
+export class NotesData {
   saveState() {
-    saveState();
+    saveState(true);
   }
 
   set_note(v, n, d, saveState=true) {
@@ -24,6 +25,18 @@ class NotesData {
 
   set_alter(v, n, alt) {
     this.voices[v].notes[n].alter = alt;
+    this.saveState();
+  }
+
+  set_text(v, n, st) {
+    if (st.length > 127) st = st.slice(0, 127);
+    this.voices[v].notes[n].text = st;
+    this.saveState();
+  }
+
+  set_lyric(v, n, st) {
+    if (st.length > 127) st = st.slice(0, 127);
+    this.voices[v].notes[n].lyric = st;
     this.saveState();
   }
 
@@ -154,7 +167,9 @@ class NotesData {
   }
 
   set_timesig(timesig) {
-    this.timesig = timesig;
+    this.timesig.beats_per_measure = timesig.beats_per_measure;
+    this.timesig.beat_type = timesig.beat_type;
+    this.timesig.measure_len = timesig.measure_len;
     let mlen = this.timesig.measure_len;
     for (let v=0; v<this.voices.length; ++v) {
       let vc = this.voices[v];
@@ -197,7 +212,11 @@ class NotesData {
             let new_note = {d: nt.d, alter: nt.alter, len: len};
             //console.log("Insert", v, n, nt.len, nt.step, len, debt, new_note);
             vc.notes.splice(n + 1, 0, new_note);
-            vc.notes[n].startsTie = true;
+            if (vc.notes[n].d) {
+              vc.notes[n].startsTie = true;
+            } else {
+              vc.notes[n].startsTie = false;
+            }
             ++n;
           }
         }
@@ -207,9 +226,9 @@ class NotesData {
   }
 
   reset() {
-    this.set_name("New exercise");
-    this.set_fileName("New-exercise");
-    this.algo = 'CA3';
+    const hash = generateRandomId(10);
+    this.set_name(`New exercise [${hash}]`);
+    this.set_fileName(`New-exercise-${hash}`);
     this.algoMode = 0;
     this.phrases = [ 0 ];
     this.build_keysig(0, 13);
@@ -228,44 +247,48 @@ class NotesData {
         clef: 'treble',
         name: 'Sop.',
         species: 10,
+        locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
       {
         clef: 'treble',
         name: 'Alt.',
         species: 10,
+        locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
       {
         clef: 'treble-8',
         name: 'Ten.',
         species: 10,
+        locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
       {
         clef: 'bass',
         name: 'Bas.',
         species: 10,
+        locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
-          {d: 0, alter: 0, len: 16, startsTie: false},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
     ];
@@ -312,6 +335,8 @@ class NotesData {
   }
 
   constructor() {
+    // Set values that should not be reset on new score, but should be inherited from previous score
+    this.algo = 'CA3';
     this.reset();
   }
 
@@ -330,6 +355,10 @@ class NotesData {
   set_voiceName(v, st) {
     if (st == null) this.voices[v].name = '';
     else this.voices[v].name = st.substr(0, 255);
+  }
+
+  set_voiceLocked(v, locked) {
+    this.voices[v].locked = locked;
   }
 
   set_species(v, sp) {

@@ -12,15 +12,17 @@ export function dataToAbc() {
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
     let name = vc.name;
-    let vocra = ares.getVocra(v);
-    let spec = ares.getSpecies(v);
-    if (vocra != null) name += ` [${vocra}]`;
-    if (spec != null && ares.av_cnt > 1) {
-      if (spec === 0) {
-        name += ` (c.f.)`;
-      }
-      else {
-        name += ` (sp. ${spec})`;
+    if (nd.algo === 'CA3') {
+      let vocra = ares.getVocra(v);
+      let spec = ares.getSpecies(v);
+      if (vocra != null) name += ` [${vocra}]`;
+      if (spec != null && ares.av_cnt > 1) {
+        if (spec === 0) {
+          name += ` (c.f.)`;
+        }
+        else {
+          name += ` (sp. ${spec})`;
+        }
       }
     }
     abc += `V: V${v} clef=${vc.clef} name="${name}"\n`;
@@ -48,6 +50,18 @@ export function dataToAbc() {
         }
         abc += `"_${harm_st}"`;
       }
+      if (nt.text) {
+        let ta = nt.text.split('\n');
+        for (const text of ta) {
+          abc += `"^${text}"`;
+        }
+      }
+      if (nt.lyric) {
+        let la = nt.lyric.split('\n');
+        for (const lyric of la) {
+          abc += `"_${lyric}"`;
+        }
+      }
       let d = nt.d;
       if (d) {
         let abc_note = d2abc(d - clefs[vc.clef].transpose);
@@ -56,7 +70,9 @@ export function dataToAbc() {
         abc += 'z' + nt.len;
       }
       s += nt.len;
-      if (nt.startsTie) abc += '-';
+      if (nt.startsTie && n < vc.notes.length - 1 && vc.notes[n + 1].d) {
+        abc += '-';
+      }
       nt.abc_charEnds = abc.length;
       if (s % nd.timesig.measure_len === 0) {
         abc += '|';

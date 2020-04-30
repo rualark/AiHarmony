@@ -9,7 +9,5 @@ robocopy /e /mir "..\test_data" "%pth%\test_data" *
 robocopy /e /mir "..\css" "%pth%\css" *
 robocopy /e /mir "..\musicxml" "%pth%\musicxml" *
 robocopy /e /mir "..\plugin" "%pth%\plugin" * /XD UNUSED
-xcopy /y ..\index.html "%pth%\"
-xcopy /y ..\editor.html "%pth%\"
+xcopy /y ..\*.html "%pth%\"
 xcopy /y ..\manifest.json "%pth%\"
-

@@ -59,12 +59,12 @@ class AnalysisResults {
       });
     }
     this.av_cnt = b256_ui(st, pos, 1);
-    this.s_start = b256_ui(st, pos, 2) * 2;
+    this.s_start = b256_ui(st, pos, 2);
     this.c_len = b256_ui(st, pos, 2);
     this.mode = b256_ui(st, pos, 1);
     const hli_size = b256_ui(st, pos, 2);
     for (let hs=0; hs<hli_size; ++hs) {
-      this.harm[b256_ui(st, pos, 2) * 2] = b256_safeString(st, pos, 1);
+      this.harm[b256_ui(st, pos, 2) + this.s_start] = b256_safeString(st, pos, 1);
     }
     for (let v=0; v<this.av_cnt; ++v) {
       let va = b256_ui(st, pos, 1);
@@ -73,17 +73,19 @@ class AnalysisResults {
       this.vsp[v] = b256_ui(st, pos, 1);
       this.vocra[v] = b256_ui(st, pos, 1);
       this.flag[v] = {};
-      for (let s = 0; s < this.c_len; ++s) {
+      let dstep = 1;
+      if (nd.algo === 'CA3') dstep = 2;
+      for (let s = 0; s < this.c_len; s += dstep) {
         let fcnt = b256_ui(st, pos, 1);
         if (!fcnt) continue;
-        this.flag[v][s * 2 + this.s_start] = [];
+        this.flag[v][s + this.s_start] = [];
         for (let f = 0; f < fcnt; ++f) {
-          this.flag[v][s * 2 + this.s_start].push({
-            s: s * 2 + this.s_start,
+          const flag = {
+            s: s + this.s_start,
             v: v,
             fl: b256_ui(st, pos, 2),
             fvl: b256_ui(st, pos, 1),
-            fsl: b256_ui(st, pos, 2) * 2 + this.s_start,
+            fsl: b256_ui(st, pos, 2) + this.s_start,
             accept: b256_ui(st, pos, 1) - 10,
             severity: b256_ui(st, pos, 1),
             class: b256_safeString(st, pos, 1),
@@ -91,7 +93,8 @@ class AnalysisResults {
             subName: b256_safeString(st, pos, 2),
             comment: b256_safeString(st, pos, 2),
             subComment: b256_safeString(st, pos, 2),
-          });
+          };
+          this.flag[v][s + this.s_start].push(flag);
         }
       }
     }
@@ -165,7 +168,7 @@ class AnalysisResults {
     this.pFlag = [];
     this.pFlagCur = -1;
     let st = '';
-    if (this.mode == null || this.mode === 13) {
+    if (this.mode == null || this.mode === 13 || nd.algo !== 'CA3') {
       $('#mode').html('');
     }
     else if (nd.keysig.mode === this.mode) {
@@ -197,24 +200,25 @@ class AnalysisResults {
         for (let f in this.flag[v][s]) {
           let fla = this.flag[v][s][f];
           let col;
+          if (fla.accept !== 0) continue;
           if (fla.severity < settings.show_min_severity) continue;
           if (fla.severity > SEVERITY_RED) col = SEVERITY_RED_COLOR;
           else col = SEVERITY_YELLOW_COLOR;
           if (old_n !== n) {
             old_n = n;
-            st += `<a href=# class='ares ares_${vi}_${n}' style='color: black'>`;
+            st += `<a href=# class='ares ares_${vi}_${n}' style='color: black'>\n`;
             if (this.flag.length > 1) {
               st += `${nd.voices[vi].name} `;
             }
-            st += `[bar ${m + 1}, beat ${beat + 1}] ${noteName}</a><br>`;
+            st += `[bar ${m + 1}, beat ${beat + 1}] ${noteName}</a><br>\n`;
             noteClick.push({vi: vi, n: n});
           }
           let alertText = this.getRuleString(fla, settings.rule_verbose, false, false);
           let tooltipText = AnalysisResults.getRuleTooltip(fla);
           let htmlText = this.getRuleString(fla, settings.rule_verbose, true, false);
-          st += `<a data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${encodeHtmlSpecialChars(tooltipText)}" href=# class='ares ares_${vi}_${s}_${f}' style='color: ${col}'>`;
+          st += `<a data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${encodeHtmlSpecialChars(tooltipText)}" href=# class='ares ares_${vi}_${s}_${f}' style='color: ${col}'>\n`;
           st += '- ' + encodeHtmlSpecialChars(htmlText);
-          st += `</a><br>`;
+          st += `</a><br>\n`;
           let pf = {
             vi1: vi,
             vi2: this.vid[fla.fvl],
@@ -260,6 +264,7 @@ class AnalysisResults {
     let yellow = 0;
     let red = 0;
     for (const fla of this.flag[va][pos]) {
+      if (fla.accept !== 0) continue;
       if (fla.severity > SEVERITY_RED) red++;
       else if (fla.severity >= settings.show_min_severity) yellow++;
     }

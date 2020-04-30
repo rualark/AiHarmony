@@ -1,29 +1,36 @@
 import {async_redraw, selected, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
-import {future} from "./editNote.js";
+import {future, check_voice_locked} from "./editNote.js";
 import {update_selection} from "../selection.js";
 
 export function can_len(len) {
   if (!selected.element || !selected.element.duration) return false;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (nd.voices[el.voice].locked) return false;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   return note.step % nd.timesig.measure_len + len <= nd.timesig.measure_len;
 }
 
 export function can_dot() {
-  if (!selected.element || !selected.element.duration) return;
+  if (!selected.element || !selected.element.duration) return false;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (nd.voices[el.voice].locked) return false;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
-  if (note.len % 3 === 0) return true;
-  return can_len(Math.round(note.len * 1.5));
+  let len = note.len;
+  if (future.advancing) {
+    len = future.len;
+  }
+  if (len % 3 === 0) return true;
+  return can_len(Math.round(len * 1.5));
 }
 
 export function set_len(len, saveState = true) {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (check_voice_locked(el)) return;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   //console.log(note.step, nd.time.measure_len, len);
@@ -42,6 +49,7 @@ export function toggle_dot() {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (check_voice_locked(el)) return;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
   let len = note.len;

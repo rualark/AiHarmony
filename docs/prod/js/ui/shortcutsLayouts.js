@@ -32,6 +32,8 @@ export let shortcutsLayouts = {
     'timesig': ['T'],
     'keysig': ['K'],
     'repeat': ['P'],
+    'add_text': ['Alt+T'],
+    'add_lyric': ['Alt+L'],
   },
   'Finale': {
     'whole': ['7', 'Numpad7'],
@@ -53,6 +55,8 @@ export let shortcutsLayouts = {
     'timesig': ['Alt+T'],
     'keysig': ['Alt+K'],
     'repeat': ['P'],
+    'add_text': ['Alt+T'],
+    'add_lyric': ['Alt+L'],
   },
   'Sibelius': {
     'whole': ['6', 'Numpad6'],
@@ -74,5 +78,7 @@ export let shortcutsLayouts = {
     'timesig': ['T'],
     'keysig': ['K'],
     'repeat': ['R'],
+    'add_text': ['Alt+T'],
+    'add_lyric': ['Alt+L'],
   },
 };

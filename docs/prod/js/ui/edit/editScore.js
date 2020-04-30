@@ -4,6 +4,7 @@ import {saveState} from "../../state/history.js";
 import {update_selection} from "../selection.js";
 import {future} from "./editNote.js";
 import {showPartModal} from "../modal/partModal.js";
+import { storage2archiveStorage } from "../../state/state.js";
 
 export function stop_advancing() {
   future.advancing = false;
@@ -48,8 +49,9 @@ export function voiceChange(dv) {
 
 export function new_file() {
   if (state.state !== 'ready') return;
+  storage2archiveStorage(1);
   nd.reset();
-  saveState();
+  saveState(true);
   async_redraw();
 }
 
@@ -75,4 +77,3 @@ export function rename_part() {
   if (state.state !== 'ready') return;
   showPartModal(selected.voice);
 }
-

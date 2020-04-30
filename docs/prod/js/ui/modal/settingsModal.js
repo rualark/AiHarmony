@@ -6,6 +6,8 @@ import {saveState} from "../../state/history.js";
 import {async_redraw} from "../../abc/abchelper.js";
 import {ares} from "../../analysis/AnalysisResults.js";
 import {initCommands} from "../commands.js";
+import { update_selection } from "../selection.js";
+import { showModal } from "./lib/modal.js";
 
 function showCheckToolbarHints() {
   let st = '';
@@ -61,20 +63,14 @@ export function showSettingsModal() {
   let st = '';
   st += showCheckToolbarHints();
   st += showSelectShortcutsLayout();
-  st += showSelectAlgo();
+  //st += showSelectAlgo();
   st += showSelectRuleVerbose();
-  $('#modalDialog').removeClass("modal-lg");
-  document.getElementById("ModalTitle").innerHTML = 'Settings';
-  document.getElementById("ModalBody").innerHTML = st;
+  showModal(1, 'Settings', st, '', [], [], false, ()=>{}, ()=>{});
   $('#check_toolbarHints').change(() => {
     settings.toolbarHints = Number($('#check_toolbarHints').is(":checked"));
     settings.settings2storage();
     initCommands();
-  });
-  $('#sel_algo').change(() => {
-    nd.algo = $("#sel_algo option:selected" ).val();
-    saveState();
-    if (nd.algo === '') async_redraw();
+    update_selection();
   });
   $('#sel_shortcutsLayout').change(() => {
     settings.setShortcutsLayout($("#sel_shortcutsLayout option:selected" ).val());
@@ -87,5 +83,4 @@ export function showSettingsModal() {
     ares.printFlags();
     async_redraw();
   });
-  $('#Modal').modal();
 }

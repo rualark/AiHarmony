@@ -8,7 +8,9 @@ import {SEVERITY_RED, SEVERITY_RED_COLOR, SEVERITY_YELLOW_COLOR} from "../analys
 export let MAX_ABC_NOTE = 60;
 export let MIN_ABC_NOTE = 1;
 
-export let engraverParams = {};
+export let engraverParams = {
+  scale: 1
+};
 let parserParams = {};
 
 export let abcjs = {};
@@ -99,7 +101,9 @@ export function highlightRange(severity) {
 function notation_redraw() {
   try {
     parserParams.staffwidth = window.innerWidth - 60;
+    document.getElementById('algo').value = nd.algo;
     $('#filename').html('&nbsp;&nbsp;' + nd.name);
+    $('#filename').prop('title', 'File name: ' + nd.fileName);
     start_counter('renderAbc');
     abcjs = ABCJS.renderAbc('abc', dataToAbc(), parserParams, engraverParams);
     //stop_counter();
@@ -151,7 +155,8 @@ export function init_abcjs(clickListener) {
     selectionColor: "#33AAFF",
     dragColor: "#3399FF",
     staffwidth: window.innerWidth - 60,
-    wrap: {minSpacing: 1.4, maxSpacing: 2.4, preferredMeasuresPerLine: 16},
+    wrap: {minSpacing: 1.1, maxSpacing: 1.4, preferredMeasuresPerLine: 16},
+    //responsive: true,
     format: {
       titlefont: "Verdana 9 italic bold",
       gchordfont: "Verdana 9 italic bold",
@@ -173,7 +178,4 @@ export function init_abcjs(clickListener) {
       annotationfont: "Verdana 9 italic bold",
     }
   };
-
-  engraverParams = {scale: 1};
 }
-

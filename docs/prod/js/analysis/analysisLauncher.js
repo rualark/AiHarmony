@@ -43,7 +43,7 @@ async function workerMessageReceiver(event) {
     //console.log(ares);
     async_redraw();
   }
-  console.log('Event from worker:', event.data.type, event.data.modName);
+  //console.log('Event from worker:', event.data.type, event.data.modName);
 }
 
 export function launchAnalysis(modName, funcName, data) {
@@ -52,7 +52,7 @@ export function launchAnalysis(modName, funcName, data) {
     workers[modName].worker = createWorker();
     workers[modName].worker.addEventListener('message', workerMessageReceiver);
   }
-  console.log('AnalyseL');
+  //console.log('AnalyseL');
   let worker = workers[modName].worker;
   if (worker.startedTime == null) {
     worker.startedTime = new Date();

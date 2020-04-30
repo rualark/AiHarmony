@@ -2,6 +2,7 @@ import {async_redraw} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import {initTooltips} from "../lib/tooltips.js";
+import { showModal } from "./lib/modal.js";
 
 export let keysigs = {
   'C#': {name: 'C#', fifths: 7, mode: 0, base_note: 1},
@@ -126,7 +127,6 @@ export function showKeysigModal() {
     ksig[Math.floor(i / 15)].push({name: keysig, i: i, value: keysigs[keysig]});
     ++i;
   }
-  //console.log(ksig);
   let st = '';
   st += '<table style="border-collapse: collapse" border=1>';
   st += '<tr>';
@@ -139,7 +139,6 @@ export function showKeysigModal() {
   st += '<th style="vertical-align:middle; text-align: center" data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="Lydian">Lydian';
   st += '<th style="vertical-align:middle; text-align: center" data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="Locrian">Locrian';
   let xlen = Object.keys(keysigs).length / 15;
-  //console.log(xlen);
   for (let y=0; y<15; ++y) {
     st += '<tr>';
     if (y < 7) st += `<td style="vertical-align:middle; text-align: center">${7 - y} #`;
@@ -148,19 +147,20 @@ export function showKeysigModal() {
     for (let x=0; x<xlen; ++x) {
       st += '<td style="vertical-align:middle; text-align: center">';
       st += `<a id=akeysig${ksig[x][y].i} class='btn btn-outline-white p-1' href=# role='button'>`;
+
+      if (nd.keysig.fifths == ksig[x][y].value.fifths) {
+        st += `<b>`;
+      }
       st += ksig[x][y].name;
-      st += '</a>';
+      st += '</b></a>';
     }
   }
   st += '</table>';
-  //$('#modalDialog').removeClass("modal-lg");
-  $('#modalDialog').addClass("modal-lg");
-  document.getElementById("ModalTitle").innerHTML = 'Choose key signature';
-  document.getElementById("ModalBody").innerHTML = st;
+  showModal(1, 'Choose key signature', st, '', [], ["modal-lg"], false, ()=>{}, ()=>{});
   i = 0;
   for (const keysig in keysigs) {
     document.getElementById('akeysig' + i).onclick=function() {
-      $('#Modal').modal('hide');
+      $('#Modal1').modal('hide');
       nd.set_keysig(keysigs[keysig]);
       saveState();
       async_redraw();
@@ -168,5 +168,4 @@ export function showKeysigModal() {
     ++i;
   }
   initTooltips(200, 100);
-  $('#Modal').modal();
 }
