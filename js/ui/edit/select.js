@@ -24,12 +24,12 @@ export function move_to_next_note(saveState = true) {
 
 export function next_note() {
   if (state.state !== 'ready') return;
+  stop_advancing();
   if (move_to_next_note(false)) {
     async_redraw();
   } else {
     highlightNote();
   }
-  stop_advancing();
   saveState(false);
   update_selection();
 }
@@ -46,8 +46,8 @@ export function move_to_previous_note() {
 export function prev_note() {
   if (state.state !== 'ready') return;
   move_to_previous_note();
-  highlightNote();
   stop_advancing();
+  highlightNote();
   saveState(false);
   update_selection();
 }
@@ -57,8 +57,8 @@ export function select_note(v, n) {
   if (nd.voices.length <= v) return;
   if (nd.voices[v].notes.length <= n) return;
   selected.note = {voice: v, note: n};
-  highlightNote();
   stop_advancing();
+  highlightNote();
   saveState(false);
   update_selection();
 }
@@ -77,8 +77,8 @@ export function select_range(v1, v2, s1, s2, severity) {
     n21: nd.getClosestNote(v2, s1),
     n22: nd.getClosestNote(v2, s2)
   };
-  highlightRange(severity);
   stop_advancing();
+  highlightRange(severity);
   saveState(false);
   update_selection();
 }

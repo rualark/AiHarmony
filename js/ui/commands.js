@@ -687,6 +687,7 @@ export let commands = [
     keys: ['Esc'],
     command: () => {
       stop_advancing();
+      async_redraw();
       alertify.dismissAll();
     },
     name: 'Stop advancing edit',
