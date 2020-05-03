@@ -38,6 +38,7 @@ export function set_note(dc) {
   let voice = nd.voices[el.voice];
   let notes = voice.notes;
   let note = notes[el.note];
+  // Choose reference diatonic
   let pd = clefs[voice.clef].middleD;
   if (note.d && !future.advancing) {
     pd = note.d;
@@ -48,13 +49,17 @@ export function set_note(dc) {
   else if (el.note < notes.length - 1 && notes[el.note + 1].d) {
     pd = notes[el.note + 1].d;
   }
+  // Choose diatonic closest to reference
   let d = dc;
   while (pd - d > 3) d += 7;
   while (d - pd > 3) d -= 7;
+  // If we are advancing, get future alteration
+  // If pause is selected, get future alteration
   if (!note.d || future.advancing) {
     note.alter = future.alteration;
   } else if (note.d != d) {
-    note.alter = 10;
+    // Reset alteration only if seleted note is changed
+    //note.alter = 10;
   }
   nd.set_note(el.voice, el.note, d, false);
   if (future.advancing && future.len) {
