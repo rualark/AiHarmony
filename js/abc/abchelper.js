@@ -25,7 +25,7 @@ export let selected = {
 };
 
 const COLOR_SELECTION = "#33AAFF";
-const COLOR_ADVANCING = "#AAFFAA";
+const COLOR_ADVANCING = "#00CC00";
 
 function getElementByStartChar(abcjs, startChar) {
   let engraver = abcjs[0].engraver;
@@ -71,8 +71,8 @@ export function highlightNote() {
   let nt = nd.voices[selected.note.voice].notes[selected.note.note];
   if (future.advancing && selected.note.note) {
     let nt2 = nd.voices[selected.note.voice].notes[selected.note.note - 1];
-    //abcRangeNotesHighlight(nt2.abc_charStarts, nt2.abc_charEnds, COLOR_SELECTION);
-    abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_ADVANCING);
+    abcRangeNotesHighlight(nt2.abc_charStarts, nt2.abc_charEnds, COLOR_SELECTION);
+    abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_ADVANCING, false);
   } else {
     abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_SELECTION);
   }

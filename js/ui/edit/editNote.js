@@ -181,7 +181,7 @@ export function toggle_alter(alt) {
   let el = nd.abc_charStarts[selected.element.startChar];
   if (check_voice_locked(el)) return;
   let note = nd.voices[el.voice].notes[el.note];
-  if (!note.d) {
+  if (!note.d || future.advancing) {
     future.advancing = true;
     if (future.alteration === alt) future.alteration = 10;
     else future.alteration = alt;
