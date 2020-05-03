@@ -2,6 +2,7 @@ import {async_redraw} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import { showModal } from "./lib/modal.js";
+import { mobileOrTablet } from "../../core/mobileCheck.js";
 
 function submitText(v, n, type) {
   let text = $('#textArea').val().trim().substr(0, 100);
@@ -28,7 +29,9 @@ export function showTextModal(v, n, type) {
   st += `<div class="input-group mb-3">`;
   st += ` <textarea id=textArea type="text" rows=3 class="form-control">${text}</textarea>`;
   st += `</div>`;
-  st += `<span style='color:#aaaaaa'><img src=img/keyboard3.png height=20 style='vertical-align:middle; opacity:0.3'> Press Ctrl+Enter to submit</span>`
+  if (!mobileOrTablet) {
+    st += `<span style='color:#aaaaaa'><img src=img/keyboard3.png height=20 style='vertical-align:middle; opacity:0.3'> Press Shift+Enter to add new row</span>`
+  }
   let footer = '';
   footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
   footer += `<button type="button" class="btn btn-danger" id=modalDelete>Delete</button>`;
@@ -44,7 +47,7 @@ export function showTextModal(v, n, type) {
     }
   );
   $("#textArea").keypress(function (e) {
-    if((e.which == 10 || e.which == 13) && (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey)) {
+    if((e.which == 10 || e.which == 13) && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey && !mobileOrTablet) {
       submitText(v, n, type);
       e.preventDefault();
     }
