@@ -71,8 +71,9 @@ export function highlightNote() {
   let nt = nd.voices[selected.note.voice].notes[selected.note.note];
   if (future.advancing && selected.note.note) {
     let nt2 = nd.voices[selected.note.voice].notes[selected.note.note - 1];
-    abcRangeNotesHighlight(nt2.abc_charStarts, nt2.abc_charEnds, COLOR_SELECTION);
-    abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_ADVANCING, false);
+    //abcRangeNotesHighlight(nt2.abc_charStarts, nt2.abc_charEnds, COLOR_SELECTION);
+    //abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_ADVANCING, false);
+    abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_SELECTION);
   } else {
     abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_SELECTION);
   }

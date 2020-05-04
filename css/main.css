@@ -34,6 +34,6 @@ path:focus, text:focus, g:focus {
 }
 @media print {
     .no-print {
-       display: none !important;
+        display: none !important;
     }
-  }
+}

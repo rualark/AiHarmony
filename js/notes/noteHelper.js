@@ -44,6 +44,7 @@ export function d2abc(d) {
   return st;
 }
 
+const dia_to_chrom = [ 0, 2, 4, 5, 7, 9, 11 ];
 const chrom_to_dia = [ 0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6 ];
 
 export function d2c(d) {

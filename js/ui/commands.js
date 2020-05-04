@@ -181,6 +181,7 @@ export function initCommands() {
   //console.log(st);
   document.getElementById("toolbar").innerHTML = makeToolbar(1);
   document.getElementById("toolbar2").innerHTML = makeToolbar(2);
+  document.getElementById("toolbar3").innerHTML = makeToolbar(3);
   for (let command of commands) {
     if (!command.event) continue;
     if (command.toolbar != null && command.toolbar.dev != null) {
@@ -298,27 +299,7 @@ export let commands = [
     command: () => { ares.nextFlag() },
     name: 'Next mistake',
   },
-  {
-    id: 'aic',
-    toolbar: {type: 'image', toolbar_id: 2, hintText: 'Pdf'},
-    event: 'onclick',
-    keys: ['Ctrl+A'],
-    command: () => { sendToAic() },
-    name: 'Artinfuser Counterpoint analysis',
-  },
   { separator: true, toolbar: {toolbar_id: 2} },
-  {
-    id: 'algo',
-    toolbar: {type: 'select', toolbar_id: 2, hintText: 'Music analysis algorithm'},
-    event: 'onchange',
-    keys: [],
-    command: () => {
-      nd.algo = $("#algo option:selected" ).val();
-      saveState();
-      if (nd.algo === '') async_redraw();
-    },
-    name: 'Music analysis algorithm',
-  },
   {
     id: 'settings',
     toolbar: {type: 'image', toolbar_id: 2, hintText: 'Settings'},
@@ -620,6 +601,34 @@ export let commands = [
     name: 'Playback (high quality)',
   },
   { separator: true, toolbar: {toolbar_id: 1} },
+  {
+    id: 'cantus',
+    toolbar: {type: 'image', toolbar_id: 3, hintText: 'Cantus'},
+    event: 'onclick',
+    keys: [],
+    command: () => { sendToAis() },
+    name: 'Open cantus firumus',
+  },
+  {
+    id: 'algo',
+    toolbar: {type: 'select', toolbar_id: 3, hintText: 'Music analysis algorithm'},
+    event: 'onchange',
+    keys: [],
+    command: () => {
+      nd.algo = $("#algo option:selected" ).val();
+      saveState();
+      if (nd.algo === '') async_redraw();
+    },
+    name: 'Music analysis algorithm',
+  },
+  {
+    id: 'aic',
+    toolbar: {type: 'image', toolbar_id: 3, hintText: 'Report'},
+    event: 'onclick',
+    keys: ['Ctrl+A'],
+    command: () => { sendToAic() },
+    name: 'Artinfuser Counterpoint analysis',
+  },
   {
     id: 'up_part',
     keys: ['Ctrl+UpArrow'],
