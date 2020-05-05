@@ -5,6 +5,7 @@ import {stop_advancing} from "./editScore.js";
 import {move_to_next_note, move_to_previous_note} from "./select.js";
 import {set_len} from "./editLen.js";
 import {clefs} from "../modal/clefs.js";
+import { settings } from "../../state/settings.js";
 
 export let future = {
   advancing: false,
@@ -180,17 +181,22 @@ export function toggle_alter(alt) {
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
   if (check_voice_locked(el)) return;
-  let note = nd.voices[el.voice].notes[el.note];
-  if (!note.d || future.advancing) {
+  let n = el.note;
+  if (future.advancing && el.note && !settings.alter_before_note) {
+    n = n - 1;
+  }
+  let note = nd.voices[el.voice].notes[n];
+  if (settings.alter_before_note && (!note.d || future.advancing)) {
+    console.log('future');
     future.advancing = true;
     if (future.alteration === alt) future.alteration = 10;
     else future.alteration = alt;
   }
   else {
     if (note.alter === alt) {
-      nd.set_alter(el.voice, el.note, 10);
+      nd.set_alter(el.voice, n, 10);
     } else {
-      nd.set_alter(el.voice, el.note, alt);
+      nd.set_alter(el.voice, n, alt);
     }
   }
   async_redraw();
