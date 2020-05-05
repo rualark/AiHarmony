@@ -237,7 +237,7 @@ class AnalysisResults {
         }
       }
     }
-    if (!this.errors.length && !fcnt) st += '<img height=130 src=img/excellent.png>';
+    if (!this.errors.length && !fcnt) st += `<span style='color:green'><b>&#x2705; No mistakes</b></span>`;
     // if (this.previous_print_st !== st) {
     // this.previous_print_st = st;
     document.getElementById('analysisConsole').innerHTML = st;

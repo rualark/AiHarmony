@@ -1,6 +1,6 @@
 import {async_redraw, state} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
-import { showModal } from "./lib/modal.js";
+import { showModal } from "../lib/modal.js";
 
 export let clefs = {
   'treble': {name: 'Treble', transpose: 0, middleD: 41},

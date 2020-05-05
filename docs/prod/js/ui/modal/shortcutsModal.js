@@ -1,7 +1,7 @@
 import {keyicon} from "../lib/keys.js";
 import {commands, toolbarButtonHtml} from "../commands.js";
 import {initTooltips} from "../lib/tooltips.js";
-import { showModal } from "./lib/modal.js";
+import { showModal } from "../lib/modal.js";
 import { state } from "../../abc/abchelper.js";
 
 export function showShortcutsModal() {

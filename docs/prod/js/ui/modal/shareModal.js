@@ -1,7 +1,7 @@
 import {state2url} from "../../state/state.js";
 import {urlNoParams} from "../../core/remote.js";
 import { dataToAbc } from "../../abc/dataToAbc.js";
-import { showModal } from "./lib/modal.js";
+import { showModal } from "../lib/modal.js";
 import { state } from "../../abc/abchelper.js";
 
 export function showShareModal() {

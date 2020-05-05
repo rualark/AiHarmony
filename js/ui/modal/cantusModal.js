@@ -242,7 +242,6 @@ function shuffleArrangement(cid) {
   arrangement.cantus = arrangement.parts[Math.floor(Math.random() * arrangement.parts.length)];
   // Set
   for (const vocra in vocras) {
-    console.log(vocra, arrangement);
     if (vocra === arrangement.cantus) {
       $(`#select${vocra}`).val('cf');
     } else if (arrangement.parts.includes(vocra)) {
@@ -285,7 +284,6 @@ function showCantusModal2(cid) {
     setTimeout(() => {
       $(`#select${vocra}`).change(() => {
         // Replace multiple cf with cp
-        console.log($(`#select${vocra} option:selected`).val());
         if ($(`#select${vocra} option:selected`).val() === 'cf') {
           for (const vocra2 in vocras) {
             if (vocra2 === vocra) continue;
@@ -323,7 +321,7 @@ function showCantusModal2(cid) {
   let footer = '';
   footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
   footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>`;
-  showModal(2, 'Counterpoint exercise', st, footer, [], ["modal-lg"], false, ()=>{}, ()=>{
+  showModal(2, 'New counterpoint exercise', st, footer, [], ["modal-lg"], false, ()=>{}, ()=>{
     if (!okClicked) showCantusModal();
   });
   initTooltips(200, 100);
