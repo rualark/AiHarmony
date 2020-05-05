@@ -13,6 +13,7 @@ import {init_base64} from "./core/base64.js";
 import {settings} from "./state/settings.js";
 import {nd} from "./notes/NotesData.js";
 import {trackEvent} from "./integration/tracking.js";
+import { showCantusModal } from "./ui/modal/cantusModal.js";
 
 function checkBrowserSupported() {
   if (navigator.browserSpecs.name !== 'Chrome' && navigator.browserSpecs.name !== 'Safari') {
@@ -50,6 +51,9 @@ function init() {
   }
   if (getUrlParam('action') === 'shortcuts') {
     setTimeout(showShortcutsModal, 0);
+  }
+  if (getUrlParam('action') === 'cantus') {
+    setTimeout(showCantusModal, 0);
   }
   setTimeout(after_init, 1000);
 }

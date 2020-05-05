@@ -31,6 +31,7 @@ import {trackEvent} from "../integration/tracking.js";
 import {settings} from "../state/settings.js";
 import { add_lyric, add_text } from "./edit/editText.js";
 import { showOpenModal } from "./modal/openModal.js";
+import { showCantusModal } from "./modal/cantusModal.js";
 
 let mobileOpt = {
   true: {
@@ -189,7 +190,7 @@ export function initCommands() {
       if (!mobileOrTablet && !(command.toolbar.dev & 2)) continue;
     }
     if (!command.id) continue;
-    document.getElementById(command.id)[command.event] =function(){
+    document.getElementById(command.id)[command.event] = function(){
       command.command();
       trackEvent('AiHarmony', 'action_click', command.name);
       return false;
@@ -606,7 +607,7 @@ export let commands = [
     toolbar: {type: 'image', toolbar_id: 3, hintText: 'Cantus'},
     event: 'onclick',
     keys: [],
-    command: () => { sendToAis() },
+    command: () => { showCantusModal() },
     name: 'Open cantus firumus',
   },
   {
