@@ -45,12 +45,12 @@ export function showMultiButtonSelect(id, selectedId, options, userHandler) {
     st += `</a> `;
     setTimeout(() => {
       document.getElementById(oid).onclick=function() {
-        if (userHandler) userHandler();
         $(`#${id}${options[0].id}`).attr('data-value', options[i].id);
         for (let x=0; x<options.length; ++x) {
           const oid2 = `${id}${options[x].id}`;
           button_active(oid2, oid === oid2);
         }
+        if (userHandler) userHandler();
       };
     }, 0);
   }
@@ -60,5 +60,15 @@ export function showMultiButtonSelect(id, selectedId, options, userHandler) {
     button_active(`${id}${selectedId}`, true);
   }, 0);
   st += `</span>`;
+  return st;
+}
+
+export function showSelect(id, selected, options) {
+  let st = '';
+  st += `<select class="form-control custom-select" id=${id}>`;
+  for (const option of options) {
+    st += `<option value='${option.val}' ${selected === option.val ? "selected" : ""}>${option.text}</option>`;
+  }
+  st += `</select>`;
   return st;
 }
