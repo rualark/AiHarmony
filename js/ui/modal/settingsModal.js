@@ -3,7 +3,7 @@ import {settings} from "../../state/settings.js";
 import {initTooltips} from "../lib/tooltips.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
-import {async_redraw} from "../../abc/abchelper.js";
+import {async_redraw, state} from "../../abc/abchelper.js";
 import {ares} from "../../analysis/AnalysisResults.js";
 import {initCommands} from "../commands.js";
 import { update_selection } from "../selection.js";
@@ -69,6 +69,7 @@ function showSelectRuleVerbose() {
 }
 
 export function showSettingsModal() {
+  if (state.state !== 'ready') return;
   let st = '';
   st += showCheckToolbarHints();
   st += showCheckAlterBeforeNote();

@@ -1,4 +1,4 @@
-import {async_redraw} from "../../abc/abchelper.js";
+import {async_redraw, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import {initTooltips} from "../lib/tooltips.js";
@@ -119,6 +119,7 @@ export let keysigs = {
 };
 
 export function showKeysigModal() {
+  if (state.state !== 'ready') return;
   let ksig = [];
   let i;
   i = 0;

@@ -2,8 +2,10 @@ import {state2url} from "../../state/state.js";
 import {urlNoParams} from "../../core/remote.js";
 import { dataToAbc } from "../../abc/dataToAbc.js";
 import { showModal } from "./lib/modal.js";
+import { state } from "../../abc/abchelper.js";
 
 export function showShareModal() {
+  if (state.state !== 'ready') return;
   let st = '';
   let url = urlNoParams() + '?state=' + state2url();
   //console.log('Share url length:', url.length);

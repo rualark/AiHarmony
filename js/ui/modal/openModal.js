@@ -1,6 +1,7 @@
 import { showModal } from "./lib/modal.js";
 import { readLocalMusicXmlFile } from "../../MusicXml/readLocalMusicXml.js";
 import { showRestoreModal } from "./restoreModal.js";
+import { state } from "../../abc/abchelper.js";
 
 export function showOpenLocalMusicXmlModal() {
   let st = '';
@@ -50,6 +51,7 @@ export function showOpenExampleMusicXmlModal() {
 }
 
 export function showOpenModal() {
+  if (state.state !== 'ready') return;
   let st = '';
   st += `<p style='text-align: center'>`;
   st += `<a id=openLocal href=# class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;

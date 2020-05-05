@@ -1,4 +1,4 @@
-import {async_redraw} from "../../abc/abchelper.js";
+import {async_redraw, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import { showModal } from "./lib/modal.js";
@@ -17,6 +17,7 @@ function submitText(v, n, type) {
 }
 
 export function showTextModal(v, n, type) {
+  if (state.state !== 'ready') return;
   if (type === 'lyric') {
     var text = nd.voices[v].notes[n].lyric;
     var title = 'Add lyric below note';

@@ -1,4 +1,4 @@
-import {async_redraw} from "../../abc/abchelper.js";
+import {async_redraw, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import { getArchiveStorage, storage2archiveStorage, plain2data, session_id } from "../../state/state.js";
@@ -18,6 +18,7 @@ function version_html(ver, id, uniq_id) {
 }
 
 export function showRestoreModal() {
+  if (state.state !== 'ready') return;
   let archive = getArchiveStorage();
   let st = '';
   st += "<div style='width: 100%;'>";

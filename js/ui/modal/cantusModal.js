@@ -1,10 +1,14 @@
-import {async_redraw} from "../../abc/abchelper.js";
+import {async_redraw, state} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
 import { showModal, showMultiButtonSelect, showSelect } from "./lib/modal.js";
-import { c2d, d2abc, abc2d, alter2abc } from "../../notes/noteHelper.js";
+import { c2d, d2abc, abc2d, alter2abc, keysig_imprint } from "../../notes/noteHelper.js";
 import { button_visible_active } from "../../ui/lib/uilib.js";
 import { keysigs } from "./keysig.js";
 import { clefs } from "./clefs.js";
+import { nd } from "../../notes/NotesData.js";
+import { storage2archiveStorage } from "../../state/state.js";
+
+let okClicked = false;
 
 const canti = [
   ['C', 'D', 'E', 'G', 'A', 'F', 'E', 'D', 'C'],
@@ -32,10 +36,10 @@ const arrangements = [
 ];
 
 const vocras = {
-  'Soprano': {clef: 'treble', short: 'Sop.'},
-  'Alto': {clef: 'treble', short: 'Alt.'},
-  'Tenor': {clef: 'treble-8', short: 'Ten.'},
-  'Bass': {clef: 'bass', short: 'Bas.'},
+  'Soprano': {clef: 'treble', short: 'Sop.', minD: 35, maxD: 47},
+  'Alto': {clef: 'treble', short: 'Alt.', minD: 31, maxD: 43},
+  'Tenor': {clef: 'treble-8', short: 'Ten.', minD: 28, maxD: 40},
+  'Bass': {clef: 'bass', short: 'Bas.', minD: 24, maxD: 36},
 };
 
 function majorKeysigs() {
@@ -79,8 +83,8 @@ function cantusToAbc(cid) {
 
 function bestTranspose(minD, maxD, rangeMinD, rangeMaxD, step) {
   let transpose = 0;
-  const ldif = rangeMinD - minD;
-  const hdif = rangeMaxD - maxD;
+  let ldif = rangeMinD - minD;
+  let hdif = rangeMaxD - maxD;
   let transpose_step = 0;
   if (ldif > -hdif) {
     transpose_step = step;
@@ -88,10 +92,13 @@ function bestTranspose(minD, maxD, rangeMinD, rangeMaxD, step) {
     transpose_step = -step;
   }
   let range_penalty = Math.max(ldif, 0) - Math.min(hdif, 0);
+  let i = 0;
   while (1) {
+    i++;
+    if (i > 100) break;
     transpose += transpose_step;
-    ldif = icf[ii].nmin - ngv_min[v] - transpose;
-    hdif = icf[ii].nmax - ngv_max[v] - transpose;
+    ldif = rangeMinD - minD - transpose;
+    hdif = rangeMaxD - maxD - transpose;
     let range_penalty2 = Math.max(ldif, 0) - Math.min(hdif, 0);
     // Check if range penalty is not decreasing or out of allowed range
     if (range_penalty2 >= range_penalty ||
@@ -107,48 +114,99 @@ function bestTranspose(minD, maxD, rangeMinD, rangeMaxD, step) {
   return transpose;
 }
 
+function transposeCantus(cid, arrangement, keysig) {
+  let d = [];
+  let alter = [];
+  let cantus_clef = vocras[arrangement.cantus].clef;
+  let base_d = abc2d(keysig.name[0]) - 35;
+  const cantus = canti[cid];
+  const imprint = keysig_imprint(keysig.fifths);
+  for (let n=0; n<cantus.length; ++n) {
+    let abc_note = cantus[n];
+    // Calculate diatonic
+    if (cantus[n][0] === '=') {
+      abc_note = abc_note.slice(1);
+    }
+    const nd = abc2d(abc_note) - clefs[cantus_clef].transpose + base_d;
+    d.push(nd);
+    // Calculate alteration
+    if (cantus[n][0] === '=') {
+      if (keysig.mode === 9) {
+        alter.push(imprint[nd % 7] + 1);
+      } else {
+        alter.push(10);
+      }
+    } else {
+      alter.push(10);
+    }
+  }
+  // Calculate best octave transposition
+  const minD = Math.min.apply(null, d);
+  const maxD = Math.max.apply(null, d);
+  const transpose = bestTranspose(minD, maxD, vocras[arrangement.cantus].minD, vocras[arrangement.cantus].maxD, 7);
+  for (let n=0; n<cantus.length; ++n) {
+    d[n] += transpose;
+  }
+  return [d, alter];
+}
+
 function cantusPreviewToAbc(cid, arrangement, keysig) {
   let abc = '';
   abc += '%%barnumbers 0\n';
   abc += 'M:C\n';
   abc += `K:${keysig.name}\n`;
   abc += 'L:1/16\n';
-  let d = [];
-  let alter = [];
-  let cantus_clef = vocras[arrangement.cantus].clef;
-  let base_d = abc2d(keysig.name[0]) - 35;
-  const cantus = canti[cid];
-  for (let n=0; n<cantus.length; ++n) {
-    let abc_note = cantus[n];
-    if (abc_note[0] === '=') {
-      abc_note = abc_note.slice(1);
-      alter.push(0);
-    } else {
-      alter.push(10);
-    }
-    d.push(abc2d(abc_note) - clefs[cantus_clef].transpose + base_d);
-  }
+  let [d, alter] = transposeCantus(cid, arrangement, keysig);
+  // Output voices
   for (let v=0; v<arrangement.parts.length; ++v) {
     const vocra = arrangement.parts[v];
     abc += `V: V${v} clef=${vocras[vocra].clef} name=""\n`;
   }
+  // Output notes
   for (let v=0; v<arrangement.parts.length; ++v) {
     abc += `[V: V${v}]`;
     for (let n=0; n<d.length; ++n) {
       if (arrangement.parts[v] !== arrangement.cantus) {
         abc += 'z16|';
       } else {
-        if (alter[n] === 0) abc += '=';
+        abc += alter2abc(alter[n]);
         abc += d2abc(d[n]) + '16|';
       }
     }
     abc += '\n';
   }
-  console.log(abc);
   return abc;
 }
 
+function cantusToData(cid, arrangement, keysig) {
+  let [d, alter] = transposeCantus(cid, arrangement, keysig);
+  nd.set_keysig(keysig);
+  nd.voices = [];
+  for (let v=0; v<arrangement.parts.length; ++v) {
+    const vocra = arrangement.parts[v];
+    const is_cantus = arrangement.parts[v] === arrangement.cantus;
+    let notes = [];
+    for (let n=0; n<d.length; ++n) {
+      notes.push({
+        d: is_cantus ? d[n] : 0,
+        alter: is_cantus ? alter[n] : 10,
+        len: 16,
+        startsTie: false
+      });
+    }
+    nd.voices.push({
+      clef: vocras[vocra].clef,
+      name: vocras[vocra].short,
+      species: 10,
+      locked: is_cantus,
+      notes: notes
+    });
+  }
+  nd.algo = 'CA3';
+}
+
 export function showCantusModal() {
+  if (state.state !== 'ready') return;
   let st = '';
   st += "<div style='width: 100%'>";
   for (let cid=0; cid<canti.length; ++cid) {
@@ -176,9 +234,8 @@ function makeArrangements() {
 }
 
 function updateCantusPreview(cid) {
-  const keysig = keysigs[$("#selectKey option:selected" ).val() + ($('#selectModeMajor').attr('data-value') === 'Minor' ? "m" : "")];
-  const arrangement = arrangements[$("#selectArrangement option:selected" ).val()]
-  console.log($("#selectKey option:selected" ).val(), $('#selectModeMajor').attr('data-value'), keysig, $("#selectArrangement option:selected" ).val(), arrangement);
+  const keysig = keysigs[$("#selectKey option:selected" ).val()];
+  const arrangement = arrangements[$("#selectArrangement option:selected" ).val()];
   const parserParams = {
     dragging: false,
     selectAll: false,
@@ -199,11 +256,6 @@ function showCantusModal2(cid) {
   st += `<tr><td>`;
   st += `<b>Key:</b><td>`;
   st += showSelect('selectKey', 'C', makeCantusKeysigs());
-  st += `<td>`;
-  st += showMultiButtonSelect('selectMode', 'Major', [
-    {id: 'Major', text: 'Major'},
-    {id: 'Minor', text: 'Minor'},
-  ], () => { updateCantusPreview(cid); });
   st += `</table>`;
   st += "<div style='width: 100%'>";
   st += `<div id=cantusAbc></div> `;
@@ -211,7 +263,9 @@ function showCantusModal2(cid) {
   let footer = '';
   footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
   footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>`;
-  showModal(1, 'Cantus firmus arrangement', st, footer, [], ["modal-lg"], false, ()=>{}, ()=>{});
+  showModal(2, 'Cantus firmus arrangement', st, footer, [], ["modal-lg"], false, ()=>{}, ()=>{
+    if (!okClicked) showCantusModal();
+  });
   setTimeout(() => { updateCantusPreview(cid) }, 0);
   $('#selectArrangement').change(() => {
     updateCantusPreview(cid);
@@ -220,6 +274,15 @@ function showCantusModal2(cid) {
     updateCantusPreview(cid);
   });
   $('#modalOk').click(() => {
-    $('#Modal1').modal('hide');
+    okClicked = true;
+    $('#Modal2').modal('hide');
+    storage2archiveStorage(1);
+    nd.reset();
+    cantusToData(
+      cid,
+      arrangements[$("#selectArrangement option:selected" ).val()],
+      keysigs[$("#selectKey option:selected" ).val()]);
+    saveState(true);
+    async_redraw();
   });
 }
