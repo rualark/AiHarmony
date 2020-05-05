@@ -7,6 +7,7 @@ import { keysigs } from "./keysig.js";
 import { clefs } from "./clefs.js";
 import { nd } from "../../notes/NotesData.js";
 import { storage2archiveStorage } from "../../state/state.js";
+import { timesigs } from "./timesig.js";
 
 let okClicked = false;
 
@@ -42,16 +43,6 @@ const vocras = {
   'Bass': {clef: 'bass', short: 'Bas.', minD: 24, maxD: 36},
 };
 
-function majorKeysigs() {
-  let res = {};
-  for (const keysig in keysigs) {
-    if (keysigs[keysig].mode === 0) {
-      res[keysig] = keysigs[keysig];
-    }
-  }
-  return res;
-}
-
 function makeCantusKeysigs() {
   let res = [];
   for (const keysig in keysigs) {
@@ -61,6 +52,19 @@ function makeCantusKeysigs() {
     if (keysigs[keysig].mode === 9) {
       res.push({val: keysig, text: keysig.slice(0, -1) + ' minor'});
     }
+  }
+  return res;
+}
+
+function makeCantusTimesig() {
+  let res = [];
+  for (const timesig of timesigs) {
+    if (timesig.beat_type > 4) continue;
+    res.push({
+      val: timesig.beats_per_measure + '/' + timesig.beat_type,
+      text: timesig.beats_per_measure + '/' + timesig.beat_type,
+      timesig: timesig
+    });
   }
   return res;
 }
@@ -150,10 +154,10 @@ function transposeCantus(cid, arrangement, keysig) {
   return [d, alter];
 }
 
-function cantusPreviewToAbc(cid, arrangement, keysig) {
+function cantusPreviewToAbc(cid, arrangement, keysig, timesig) {
   let abc = '';
   abc += '%%barnumbers 0\n';
-  abc += 'M:C\n';
+  abc += `M:${timesig.beats_per_measure}/${timesig.beat_type}\n`;
   abc += `K:${keysig.name}\n`;
   abc += 'L:1/16\n';
   let [d, alter] = transposeCantus(cid, arrangement, keysig);
@@ -167,10 +171,10 @@ function cantusPreviewToAbc(cid, arrangement, keysig) {
     abc += `[V: V${v}]`;
     for (let n=0; n<d.length; ++n) {
       if (arrangement.parts[v] !== arrangement.cantus) {
-        abc += 'z16|';
+        abc += 'z' + timesig.measure_len + '|';
       } else {
         abc += alter2abc(alter[n]);
-        abc += d2abc(d[n]) + '16|';
+        abc += d2abc(d[n]) + timesig.measure_len + '|';
       }
     }
     abc += '\n';
@@ -178,9 +182,10 @@ function cantusPreviewToAbc(cid, arrangement, keysig) {
   return abc;
 }
 
-function cantusToData(cid, arrangement, keysig) {
+function cantusToData(cid, arrangement, keysig, timesig) {
   let [d, alter] = transposeCantus(cid, arrangement, keysig);
   nd.set_keysig(keysig);
+  nd.set_timesig(timesig);
   nd.voices = [];
   for (let v=0; v<arrangement.parts.length; ++v) {
     const vocra = arrangement.parts[v];
@@ -190,7 +195,7 @@ function cantusToData(cid, arrangement, keysig) {
       notes.push({
         d: is_cantus ? d[n] : 0,
         alter: is_cantus ? alter[n] : 10,
-        len: 16,
+        len: timesig.measure_len,
         startsTie: false
       });
     }
@@ -234,6 +239,7 @@ function makeArrangements() {
 }
 
 function updateCantusPreview(cid) {
+  const timesig = timesigs.find(timesig => timesig.beats_per_measure + '/' + timesig.beat_type === $("#selectTimeSig option:selected" ).val() );
   const keysig = keysigs[$("#selectKey option:selected" ).val()];
   const arrangement = arrangements[$("#selectArrangement option:selected" ).val()];
   const parserParams = {
@@ -244,7 +250,7 @@ function updateCantusPreview(cid) {
       voicefont: "Times New Roman 11 bold",
     }
   };
-  ABCJS.renderAbc(`cantusAbc`, cantusPreviewToAbc(cid, arrangement, keysig), parserParams);
+  ABCJS.renderAbc(`cantusAbc`, cantusPreviewToAbc(cid, arrangement, keysig, timesig), parserParams);
 }
 
 function showCantusModal2(cid) {
@@ -256,6 +262,9 @@ function showCantusModal2(cid) {
   st += `<tr><td>`;
   st += `<b>Key:</b><td>`;
   st += showSelect('selectKey', 'C', makeCantusKeysigs());
+  st += `<tr><td>`;
+  st += `<b>Time signature:</b><td>`;
+  st += showSelect('selectTimeSig', '4/4', makeCantusTimesig());
   st += `</table>`;
   st += "<div style='width: 100%'>";
   st += `<div id=cantusAbc></div> `;
@@ -273,6 +282,9 @@ function showCantusModal2(cid) {
   $('#selectKey').change(() => {
     updateCantusPreview(cid);
   });
+  $('#selectTimeSig').change(() => {
+    updateCantusPreview(cid);
+  });
   $('#modalOk').click(() => {
     okClicked = true;
     $('#Modal2').modal('hide');
@@ -281,7 +293,8 @@ function showCantusModal2(cid) {
     cantusToData(
       cid,
       arrangements[$("#selectArrangement option:selected" ).val()],
-      keysigs[$("#selectKey option:selected" ).val()]);
+      keysigs[$("#selectKey option:selected" ).val()],
+      timesigs.find(timesig => timesig.beats_per_measure + '/' + timesig.beat_type === $("#selectTimeSig option:selected" ).val() ));
     saveState(true);
     async_redraw();
   });
