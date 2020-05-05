@@ -14,6 +14,12 @@ import {settings} from "./state/settings.js";
 import {nd} from "./notes/NotesData.js";
 import {trackEvent} from "./integration/tracking.js";
 
+function checkBrowserSupported() {
+  if (navigator.browserSpecs.name !== 'Chrome' && navigator.browserSpecs.name !== 'Safari') {
+    alertify.warning('Please use latest Chrome or Safari browser for best results on this site', 15);
+  }
+}
+
 function init() {
   init_base64();
   settings.storage2settings();
@@ -50,6 +56,7 @@ function init() {
 
 async function after_init() {
   if (debugError) throw "debug_test_exception";
+  checkBrowserSupported();
 }
 
 window.addEventListener('DOMContentLoaded', async function() {

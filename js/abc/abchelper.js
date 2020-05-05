@@ -69,6 +69,27 @@ function abcRangeNotesHighlight(start, end, color, clear=true) {
 export function highlightNote() {
   if (!selected.note) return;
   let nt = nd.voices[selected.note.voice].notes[selected.note.note];
+  /*
+  if (selected.element.abselem) {
+    if (!document.querySelector("#abc svg .abcjs-cursor")) {
+      let svg = document.querySelector("#abc svg");
+      let cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      cursor.setAttribute("class", "abcjs-cursor");
+      cursor.setAttributeNS(null, 'x1', 0);
+      cursor.setAttributeNS(null, 'y1', 0);
+      cursor.setAttributeNS(null, 'x2', 0);
+      cursor.setAttributeNS(null, 'y2', 0);
+      cursor.style.stroke = "red";
+      svg.appendChild(cursor);
+    }
+    let cursor = document.querySelector("#abc svg .abcjs-cursor");
+    let el = selected.element.abselem;
+    cursor.setAttribute("x1", el.x - 2);
+    cursor.setAttribute("x2", el.x - 2);
+    cursor.setAttribute("y1", el.top);
+    cursor.setAttribute("y2", el.top + 20);
+  }
+  */
   if (future.advancing && selected.note.note) {
     let nt2 = nd.voices[selected.note.voice].notes[selected.note.note - 1];
     //abcRangeNotesHighlight(nt2.abc_charStarts, nt2.abc_charEnds, COLOR_SELECTION);
