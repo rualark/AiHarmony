@@ -1,13 +1,14 @@
 import {async_redraw, state} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
-import { showModal, showMultiButtonSelect, showSelect } from "./lib/modal.js";
+import { showModal, showMultiButtonSelect, showSelect } from "../lib/modal.js";
 import { c2d, d2abc, abc2d, alter2abc, keysig_imprint } from "../../notes/noteHelper.js";
-import { button_visible_active } from "../../ui/lib/uilib.js";
+import { button_visible_active, randomSelect } from "../../ui/lib/uilib.js";
 import { keysigs } from "./keysig.js";
 import { clefs } from "./clefs.js";
 import { nd } from "../../notes/NotesData.js";
 import { storage2archiveStorage } from "../../state/state.js";
 import { timesigs } from "./timesig.js";
+import { initTooltips } from "../lib/tooltips.js";
 
 let okClicked = false;
 
@@ -22,18 +23,6 @@ const canti = [
   ['c', 'B', 'A', 'G', 'F', 'A', 'G', '=B', 'c'],
   ['c', 'd', 'B', 'c', 'F', 'G', 'A', 'G', 'c'],
   ['C', 'D', 'G,', 'A,', 'C', 'D', 'E', 'D', '=B,', 'C'],
-];
-
-const arrangements = [
-  {parts: ['Soprano', 'Bass'], cantus: 'Soprano'},
-  {parts: ['Soprano', 'Bass'], cantus: 'Bass'},
-  {parts: ['Soprano', 'Alto', 'Bass'], cantus: 'Soprano'},
-  {parts: ['Soprano', 'Alto', 'Bass'], cantus: 'Alto'},
-  {parts: ['Soprano', 'Alto', 'Bass'], cantus: 'Bass'},
-  {parts: ['Soprano', 'Alto', 'Tenor', 'Bass'], cantus: 'Soprano'},
-  {parts: ['Soprano', 'Alto', 'Tenor', 'Bass'], cantus: 'Alto'},
-  {parts: ['Soprano', 'Alto', 'Tenor', 'Bass'], cantus: 'Tenor'},
-  {parts: ['Soprano', 'Alto', 'Tenor', 'Bass'], cantus: 'Bass'},
 ];
 
 const vocras = {
@@ -164,7 +153,7 @@ function cantusPreviewToAbc(cid, arrangement, keysig, timesig) {
   // Output voices
   for (let v=0; v<arrangement.parts.length; ++v) {
     const vocra = arrangement.parts[v];
-    abc += `V: V${v} clef=${vocras[vocra].clef} name=""\n`;
+    abc += `V: V${v} clef=${vocras[vocra].clef} name="${vocra}"\n`;
   }
   // Output notes
   for (let v=0; v<arrangement.parts.length; ++v) {
@@ -229,19 +218,45 @@ export function showCantusModal() {
   }
 }
 
-function makeArrangements() {
-  for (let i in arrangements) {
-    let arrangement = arrangements[i];
-    arrangement.val = i;
-    arrangement.text = `${arrangement.parts.length} parts, cantus in ${arrangement.cantus}`;
+function getArrangement() {
+  let arrangement = {parts: [], cantus: ''};
+  for (const vocra in vocras) {
+    const val = $(`#select${vocra} option:selected`).val();
+    if (val === 'cf') {
+      arrangement.cantus = vocra;
+      arrangement.parts.push(vocra);
+    }
+    if (val === 'cp') {
+      arrangement.parts.push(vocra);
+    }
   }
-  return arrangements;
+  return arrangement;
+}
+
+function shuffleArrangement(cid) {
+  let arrangement = {parts: ['Soprano', 'Alto', 'Tenor', 'Bass'], cantus: ''};
+  const removed = Math.floor(Math.random() * 3);
+  for(var i = 0; i < removed; ++i){
+    arrangement.parts.splice(Math.floor(Math.random() * arrangement.parts.length), 1);
+  }
+  arrangement.cantus = arrangement.parts[Math.floor(Math.random() * arrangement.parts.length)];
+  // Set
+  for (const vocra in vocras) {
+    console.log(vocra, arrangement);
+    if (vocra === arrangement.cantus) {
+      $(`#select${vocra}`).val('cf');
+    } else if (arrangement.parts.includes(vocra)) {
+      $(`#select${vocra}`).val('cp');
+    } else $(`#select${vocra}`).val('-');
+  }
+  randomSelect('selectKey');
+  randomSelect('selectTimeSig');
+  updateCantusPreview(cid);
 }
 
 function updateCantusPreview(cid) {
   const timesig = timesigs.find(timesig => timesig.beats_per_measure + '/' + timesig.beat_type === $("#selectTimeSig option:selected" ).val() );
   const keysig = keysigs[$("#selectKey option:selected" ).val()];
-  const arrangement = arrangements[$("#selectArrangement option:selected" ).val()];
   const parserParams = {
     dragging: false,
     selectAll: false,
@@ -250,21 +265,57 @@ function updateCantusPreview(cid) {
       voicefont: "Times New Roman 11 bold",
     }
   };
-  ABCJS.renderAbc(`cantusAbc`, cantusPreviewToAbc(cid, arrangement, keysig, timesig), parserParams);
+  ABCJS.renderAbc(`cantusAbc`, cantusPreviewToAbc(cid, getArrangement(), keysig, timesig), parserParams);
 }
 
 function showCantusModal2(cid) {
   let st = '';
   st += `<table cellpadding=5>`;
-  st += `<tr><td>`;
-  st += `<b>Exercise:</b><td>`;
-  st += showSelect('selectArrangement', 0, makeArrangements());
+  for (const vocra in vocras) {
+    st += `<tr><td>`;
+    st += `<b>${vocra}:</b><td>`;
+    let selected = '-';
+    if (vocra === 'Soprano') selected = 'cp';
+    if (vocra === 'Alto') selected = 'cf';
+    st += showSelect(`select${vocra}`, selected, [
+      {val: '-', text: '-'},
+      {val: 'cf', text: 'Cantus firmus'},
+      {val: 'cp', text: 'Counterpoint'},
+    ]);
+    setTimeout(() => {
+      $(`#select${vocra}`).change(() => {
+        // Replace multiple cf with cp
+        console.log($(`#select${vocra} option:selected`).val());
+        if ($(`#select${vocra} option:selected`).val() === 'cf') {
+          for (const vocra2 in vocras) {
+            if (vocra2 === vocra) continue;
+            if ($(`#select${vocra2} option:selected`).val() === 'cf') {
+              $(`#select${vocra2}`).val('cp');
+            }
+          }
+        }
+        updateCantusPreview(cid);
+      });
+    }, 0);
+    if (vocra === 'Soprano') {
+      st += `<td>`;
+      st += `<a href=# id=shuffleArrangement data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="Random arrangement">`;
+      st += `<img src=img/shuffle.png height=25></a>`;
+      setTimeout(() => {
+        $(`#shuffleArrangement`).click(() => {
+          shuffleArrangement(cid);
+        });
+      }, 0);
+    }
+  }
+  st += `<tr><td colspan=2><hr>`;
   st += `<tr><td>`;
   st += `<b>Key:</b><td>`;
   st += showSelect('selectKey', 'C', makeCantusKeysigs());
   st += `<tr><td>`;
   st += `<b>Time signature:</b><td>`;
   st += showSelect('selectTimeSig', '4/4', makeCantusTimesig());
+  st += `<tr><td colspan=2><hr>`;
   st += `</table>`;
   st += "<div style='width: 100%'>";
   st += `<div id=cantusAbc></div> `;
@@ -272,13 +323,11 @@ function showCantusModal2(cid) {
   let footer = '';
   footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
   footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>`;
-  showModal(2, 'Cantus firmus arrangement', st, footer, [], ["modal-lg"], false, ()=>{}, ()=>{
+  showModal(2, 'Counterpoint exercise', st, footer, [], ["modal-lg"], false, ()=>{}, ()=>{
     if (!okClicked) showCantusModal();
   });
+  initTooltips(200, 100);
   setTimeout(() => { updateCantusPreview(cid) }, 0);
-  $('#selectArrangement').change(() => {
-    updateCantusPreview(cid);
-  });
   $('#selectKey').change(() => {
     updateCantusPreview(cid);
   });
@@ -292,7 +341,7 @@ function showCantusModal2(cid) {
     nd.reset();
     cantusToData(
       cid,
-      arrangements[$("#selectArrangement option:selected" ).val()],
+      getArrangement(),
       keysigs[$("#selectKey option:selected" ).val()],
       timesigs.find(timesig => timesig.beats_per_measure + '/' + timesig.beat_type === $("#selectTimeSig option:selected" ).val() ));
     saveState(true);

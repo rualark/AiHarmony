@@ -1,5 +1,5 @@
-import { enableKeys } from "../../commands.js";
-import { button_active } from "../../lib/uilib.js";
+import { enableKeys } from "../commands.js";
+import { button_active } from "./uilib.js";
 
 export function showModal(id, title, body, footer, classes, classesDialog, pauseKeys, shown, hidden) {
   if (pauseKeys) {

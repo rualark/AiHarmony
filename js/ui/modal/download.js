@@ -5,7 +5,7 @@ import {dataToAbc} from "../../abc/dataToAbc.js";
 import "../../../plugin/FileSaver.js-2.0.2/FileSaver.js";
 import {ais} from "../../integration/aiStudio.js";
 import {trackEvent} from "../../integration/tracking.js";
-import { showModal } from "./lib/modal.js";
+import { showModal } from "../lib/modal.js";
 import { state } from "../../abc/abchelper.js";
 
 let exportFormats = [

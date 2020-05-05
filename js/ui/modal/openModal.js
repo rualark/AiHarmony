@@ -1,4 +1,4 @@
-import { showModal } from "./lib/modal.js";
+import { showModal } from "../lib/modal.js";
 import { readLocalMusicXmlFile } from "../../MusicXml/readLocalMusicXml.js";
 import { showRestoreModal } from "./restoreModal.js";
 import { state } from "../../abc/abchelper.js";

@@ -2,7 +2,7 @@ import {async_redraw, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import {initTooltips} from "../lib/tooltips.js";
-import { showModal } from "./lib/modal.js";
+import { showModal } from "../lib/modal.js";
 
 export let keysigs = {
   'C#': {name: 'C#', fifths: 7, mode: 0, base_note: 1},

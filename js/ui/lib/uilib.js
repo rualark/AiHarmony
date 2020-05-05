@@ -38,3 +38,9 @@ export function openNewUrl(url) {
     alertify.error(`Popup blocked by your browser. Please allow popups or <a style='color: white' href="${url}" target=_blank><b><u>click here</u></b></a> to open it manually`, 45);
   }
 }
+
+export function randomSelect(id) {
+  var options = $(`#${id} > option`);
+  var random = Math.floor(options.length * (Math.random() % 1));
+  $(`#${id} > option`).attr('selected', false).eq(random).attr('selected', true);
+}

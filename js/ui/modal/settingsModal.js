@@ -7,7 +7,7 @@ import {async_redraw, state} from "../../abc/abchelper.js";
 import {ares} from "../../analysis/AnalysisResults.js";
 import {initCommands} from "../commands.js";
 import { update_selection } from "../selection.js";
-import { showModal } from "./lib/modal.js";
+import { showModal } from "../lib/modal.js";
 
 function showCheckToolbarHints() {
   let st = '';

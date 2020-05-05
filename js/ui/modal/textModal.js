@@ -1,7 +1,7 @@
 import {async_redraw, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
-import { showModal } from "./lib/modal.js";
+import { showModal } from "../lib/modal.js";
 import { mobileOrTablet } from "../../core/mobileCheck.js";
 
 function submitText(v, n, type) {

@@ -2,7 +2,7 @@ import {async_redraw, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import { getArchiveStorage, storage2archiveStorage, plain2data, session_id } from "../../state/state.js";
-import { showModal } from "./lib/modal.js";
+import { showModal } from "../lib/modal.js";
 
 function version_html(ver, id, uniq_id) {
   let st = '';
