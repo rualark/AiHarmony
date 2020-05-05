@@ -288,7 +288,7 @@ function showCantusModal2(cid) {
   $('#modalOk').click(() => {
     okClicked = true;
     $('#Modal2').modal('hide');
-    storage2archiveStorage(1);
+    storage2archiveStorage(4);
     nd.reset();
     cantusToData(
       cid,
