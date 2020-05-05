@@ -31,6 +31,7 @@ import {trackEvent} from "../integration/tracking.js";
 import {settings} from "../state/settings.js";
 import { add_lyric, add_text } from "./edit/editText.js";
 import { showOpenModal } from "./modal/openModal.js";
+import { showCantusModal } from "./modal/cantusModal.js";
 
 let mobileOpt = {
   true: {
@@ -181,6 +182,7 @@ export function initCommands() {
   //console.log(st);
   document.getElementById("toolbar").innerHTML = makeToolbar(1);
   document.getElementById("toolbar2").innerHTML = makeToolbar(2);
+  document.getElementById("toolbar3").innerHTML = makeToolbar(3);
   for (let command of commands) {
     if (!command.event) continue;
     if (command.toolbar != null && command.toolbar.dev != null) {
@@ -188,7 +190,7 @@ export function initCommands() {
       if (!mobileOrTablet && !(command.toolbar.dev & 2)) continue;
     }
     if (!command.id) continue;
-    document.getElementById(command.id)[command.event] =function(){
+    document.getElementById(command.id)[command.event] = function(){
       command.command();
       trackEvent('AiHarmony', 'action_click', command.name);
       return false;
@@ -298,27 +300,7 @@ export let commands = [
     command: () => { ares.nextFlag() },
     name: 'Next mistake',
   },
-  {
-    id: 'aic',
-    toolbar: {type: 'image', toolbar_id: 2, hintText: 'Pdf'},
-    event: 'onclick',
-    keys: ['Ctrl+A'],
-    command: () => { sendToAic() },
-    name: 'Artinfuser Counterpoint analysis',
-  },
   { separator: true, toolbar: {toolbar_id: 2} },
-  {
-    id: 'algo',
-    toolbar: {type: 'select', toolbar_id: 2, hintText: 'Music analysis algorithm'},
-    event: 'onchange',
-    keys: [],
-    command: () => {
-      nd.algo = $("#algo option:selected" ).val();
-      saveState();
-      if (nd.algo === '') async_redraw();
-    },
-    name: 'Music analysis algorithm',
-  },
   {
     id: 'settings',
     toolbar: {type: 'image', toolbar_id: 2, hintText: 'Settings'},
@@ -621,6 +603,34 @@ export let commands = [
   },
   { separator: true, toolbar: {toolbar_id: 1} },
   {
+    id: 'cantus',
+    toolbar: {type: 'image', toolbar_id: 3, hintText: 'Cantus'},
+    event: 'onclick',
+    keys: [],
+    command: () => { showCantusModal() },
+    name: 'Open cantus firumus',
+  },
+  {
+    id: 'algo',
+    toolbar: {type: 'select', toolbar_id: 3, hintText: 'Music analysis algorithm'},
+    event: 'onchange',
+    keys: [],
+    command: () => {
+      nd.algo = $("#algo option:selected" ).val();
+      saveState();
+      if (nd.algo === '') async_redraw();
+    },
+    name: 'Music analysis algorithm',
+  },
+  {
+    id: 'aic',
+    toolbar: {type: 'image', toolbar_id: 3, hintText: 'Report'},
+    event: 'onclick',
+    keys: ['Ctrl+A'],
+    command: () => { sendToAic() },
+    name: 'Artinfuser Counterpoint analysis',
+  },
+  {
     id: 'up_part',
     keys: ['Ctrl+UpArrow'],
     command: () => { voiceChange(-1) },
@@ -687,6 +697,7 @@ export let commands = [
     keys: ['Esc'],
     command: () => {
       stop_advancing();
+      async_redraw();
       alertify.dismissAll();
     },
     name: 'Stop advancing edit',

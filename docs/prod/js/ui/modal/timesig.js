@@ -1,4 +1,4 @@
-import {async_redraw} from "../../abc/abchelper.js";
+import {async_redraw, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import { showModal } from "./lib/modal.js";
@@ -37,6 +37,7 @@ function timesig_html(beats, value, id) {
 }
 
 export function showTimesigModal() {
+  if (state.state !== 'ready') return;
   let st = '';
   st += "<div style='width: 100%; text-align: center;'>";
   for (const i in timesigs) {

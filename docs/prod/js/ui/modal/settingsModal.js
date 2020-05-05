@@ -3,7 +3,7 @@ import {settings} from "../../state/settings.js";
 import {initTooltips} from "../lib/tooltips.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
-import {async_redraw} from "../../abc/abchelper.js";
+import {async_redraw, state} from "../../abc/abchelper.js";
 import {ares} from "../../analysis/AnalysisResults.js";
 import {initCommands} from "../commands.js";
 import { update_selection } from "../selection.js";
@@ -12,8 +12,17 @@ import { showModal } from "./lib/modal.js";
 function showCheckToolbarHints() {
   let st = '';
   st += `<div class="form-check">`;
-  st += `<input type="checkbox" class="form-check-input" name="check_toolbarHints" id="check_toolbarHints" ${settings.toolbarHints ? "checked" : ""}>`;
+  st += `<input type="checkbox" class="form-check-input" id="check_toolbarHints" ${settings.toolbarHints ? "checked" : ""}>`;
   st += `<label class="form-check-label" for="check_toolbarHints">Show toolbar text hints</label>`;
+  st += `</div><br>`;
+  return st;
+}
+
+function showCheckAlterBeforeNote() {
+  let st = '';
+  st += `<div class="form-check">`;
+  st += `<input type="checkbox" class="form-check-input" id="check_alterBeforeNote" ${settings.alter_before_note ? "checked" : ""}>`;
+  st += `<label class="form-check-label" for="check_alterBeforeNote">Input alteration before note (like in Sibelius)</label>`;
   st += `</div><br>`;
   return st;
 }
@@ -60,8 +69,10 @@ function showSelectRuleVerbose() {
 }
 
 export function showSettingsModal() {
+  if (state.state !== 'ready') return;
   let st = '';
   st += showCheckToolbarHints();
+  st += showCheckAlterBeforeNote();
   st += showSelectShortcutsLayout();
   //st += showSelectAlgo();
   st += showSelectRuleVerbose();
@@ -71,6 +82,10 @@ export function showSettingsModal() {
     settings.settings2storage();
     initCommands();
     update_selection();
+  });
+  $('#check_alterBeforeNote').change(() => {
+    settings.alter_before_note = Number($('#check_alterBeforeNote').is(":checked"));
+    settings.settings2storage();
   });
   $('#sel_shortcutsLayout').change(() => {
     settings.setShortcutsLayout($("#sel_shortcutsLayout option:selected" ).val());

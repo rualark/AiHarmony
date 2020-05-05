@@ -41,8 +41,8 @@ export function voiceChange(dv) {
     voice: selected.note.voice + dv,
     note: nd.getClosestNote(selected.note.voice + dv, note.step)
   };
-  highlightNote();
   stop_advancing();
+  highlightNote();
   saveState();
   update_selection();
 }

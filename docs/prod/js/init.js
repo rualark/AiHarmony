@@ -13,6 +13,13 @@ import {init_base64} from "./core/base64.js";
 import {settings} from "./state/settings.js";
 import {nd} from "./notes/NotesData.js";
 import {trackEvent} from "./integration/tracking.js";
+import { showCantusModal } from "./ui/modal/cantusModal.js";
+
+function checkBrowserSupported() {
+  if (navigator.browserSpecs.name !== 'Chrome' && navigator.browserSpecs.name !== 'Safari') {
+    alertify.warning('Please use latest Chrome or Safari browser for best results on this site', 15);
+  }
+}
 
 function init() {
   init_base64();
@@ -45,11 +52,15 @@ function init() {
   if (getUrlParam('action') === 'shortcuts') {
     setTimeout(showShortcutsModal, 0);
   }
+  if (getUrlParam('action') === 'cantus') {
+    setTimeout(showCantusModal, 0);
+  }
   setTimeout(after_init, 1000);
 }
 
 async function after_init() {
   if (debugError) throw "debug_test_exception";
+  checkBrowserSupported();
 }
 
 window.addEventListener('DOMContentLoaded', async function() {

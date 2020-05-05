@@ -2,13 +2,14 @@ import {b256_safeString, b256_ui, safeString_b256, ui_b256} from "../core/base25
 import {engraverParams, notation_zoom} from "../abc/abchelper.js";
 import {applyShortcutsLayout} from "../ui/shortcutsLayouts.js";
 
-const SETTINGS_ENCODING_VERSION = 3;
+const SETTINGS_ENCODING_VERSION = 4;
 
 class Settings {
   constructor() {
     this.show_min_severity = 49;
     this.show_allowed_flags = 0;
     this.show_ignored_flags = 0;
+    this.alter_before_note = 0;
     this.harm_notation = 3;
     this.toolbarHints = 1;
     // 0 - Show only rule name up to colon. Show only subrules starting with colon, 1 - Add subrules without colon, 2 - Add rule comments
@@ -29,6 +30,7 @@ class Settings {
     st += ui_b256(SETTINGS_ENCODING_VERSION, 1);
     st += ui_b256(this.toolbarHints, 1);
     st += ui_b256(this.rule_verbose, 1);
+    st += ui_b256(this.alter_before_note, 1);
     st += ui_b256(engraverParams.scale * 1000, 2);
     st += safeString_b256(this.shortcutsLayout, 1);
     return st;
@@ -41,6 +43,7 @@ class Settings {
     }
     this.toolbarHints = b256_ui(st, pos, 1);
     this.rule_verbose = b256_ui(st, pos, 1);
+    this.alter_before_note = b256_ui(st, pos, 1);
     engraverParams.scale = b256_ui(st, pos, 2) / 1000;
     this.setShortcutsLayout(b256_safeString(st, pos, 1));
   }

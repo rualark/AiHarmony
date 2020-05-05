@@ -1,5 +1,5 @@
 import {nd} from "../../notes/NotesData.js";
-import {async_redraw} from "../../abc/abchelper.js";
+import {async_redraw, state} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
 import {ares} from "../../analysis/AnalysisResults.js";
 import { showModal } from "./lib/modal.js";
@@ -47,6 +47,7 @@ function showSelectSpecies(v) {
 }
 
 export function showPartModal(v) {
+  if (state.state !== 'ready') return;
   let st = '';
   st += showInputPartName(v);
   if (nd.algo === 'CA3') {

@@ -5,6 +5,7 @@ import {stop_advancing} from "./editScore.js";
 import {move_to_next_note, move_to_previous_note} from "./select.js";
 import {set_len} from "./editLen.js";
 import {clefs} from "../modal/clefs.js";
+import { settings } from "../../state/settings.js";
 
 export let future = {
   advancing: false,
@@ -38,6 +39,7 @@ export function set_note(dc) {
   let voice = nd.voices[el.voice];
   let notes = voice.notes;
   let note = notes[el.note];
+  // Choose reference diatonic
   let pd = clefs[voice.clef].middleD;
   if (note.d && !future.advancing) {
     pd = note.d;
@@ -48,13 +50,17 @@ export function set_note(dc) {
   else if (el.note < notes.length - 1 && notes[el.note + 1].d) {
     pd = notes[el.note + 1].d;
   }
+  // Choose diatonic closest to reference
   let d = dc;
   while (pd - d > 3) d += 7;
   while (d - pd > 3) d -= 7;
+  // If we are advancing, get future alteration
+  // If pause is selected, get future alteration
   if (!note.d || future.advancing) {
     note.alter = future.alteration;
   } else if (note.d != d) {
-    note.alter = 10;
+    // Reset alteration only if seleted note is changed
+    //note.alter = 10;
   }
   nd.set_note(el.voice, el.note, d, false);
   if (future.advancing && future.len) {
@@ -175,17 +181,22 @@ export function toggle_alter(alt) {
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
   if (check_voice_locked(el)) return;
-  let note = nd.voices[el.voice].notes[el.note];
-  if (!note.d) {
+  let n = el.note;
+  if (future.advancing && el.note && !settings.alter_before_note) {
+    n = n - 1;
+  }
+  let note = nd.voices[el.voice].notes[n];
+  if (settings.alter_before_note && (!note.d || future.advancing)) {
+    console.log('future');
     future.advancing = true;
     if (future.alteration === alt) future.alteration = 10;
     else future.alteration = alt;
   }
   else {
     if (note.alter === alt) {
-      nd.set_alter(el.voice, el.note, 10);
+      nd.set_alter(el.voice, n, 10);
     } else {
-      nd.set_alter(el.voice, el.note, alt);
+      nd.set_alter(el.voice, n, alt);
     }
   }
   async_redraw();

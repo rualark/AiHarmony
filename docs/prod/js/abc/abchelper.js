@@ -4,6 +4,7 @@ import {start_counter} from "../core/time.js";
 import {update_selection} from "../ui/selection.js";
 import {settings} from "../state/settings.js";
 import {SEVERITY_RED, SEVERITY_RED_COLOR, SEVERITY_YELLOW_COLOR} from "../analysis/AnalysisResults.js";
+import { future } from "../ui/edit/editNote.js";
 
 export let MAX_ABC_NOTE = 60;
 export let MIN_ABC_NOTE = 1;
@@ -22,6 +23,9 @@ export let selected = {
   note: {voice: 0, note: 0},
   voice: 0
 };
+
+const COLOR_SELECTION = "#33AAFF";
+const COLOR_ADVANCING = "#00CC00";
 
 function getElementByStartChar(abcjs, startChar) {
   let engraver = abcjs[0].engraver;
@@ -65,8 +69,36 @@ function abcRangeNotesHighlight(start, end, color, clear=true) {
 export function highlightNote() {
   if (!selected.note) return;
   let nt = nd.voices[selected.note.voice].notes[selected.note.note];
+  /*
+  if (selected.element.abselem) {
+    if (!document.querySelector("#abc svg .abcjs-cursor")) {
+      let svg = document.querySelector("#abc svg");
+      let cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      cursor.setAttribute("class", "abcjs-cursor");
+      cursor.setAttributeNS(null, 'x1', 0);
+      cursor.setAttributeNS(null, 'y1', 0);
+      cursor.setAttributeNS(null, 'x2', 0);
+      cursor.setAttributeNS(null, 'y2', 0);
+      cursor.style.stroke = "red";
+      svg.appendChild(cursor);
+    }
+    let cursor = document.querySelector("#abc svg .abcjs-cursor");
+    let el = selected.element.abselem;
+    cursor.setAttribute("x1", el.x - 2);
+    cursor.setAttribute("x2", el.x - 2);
+    cursor.setAttribute("y1", el.top);
+    cursor.setAttribute("y2", el.top + 20);
+  }
+  */
+  if (future.advancing && selected.note.note) {
+    let nt2 = nd.voices[selected.note.voice].notes[selected.note.note - 1];
+    //abcRangeNotesHighlight(nt2.abc_charStarts, nt2.abc_charEnds, COLOR_SELECTION);
+    //abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_ADVANCING, false);
+    abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_SELECTION);
+  } else {
+    abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_SELECTION);
+  }
   let el = getElementByStartChar(abcjs, nt.abc_charStarts);
-  abcjs[0].engraver.rangeHighlight(nt.abc_charStarts, nt.abc_charEnds);
   selected.element = el.abcelem;
   selected.classes = "";
 }
@@ -152,7 +184,7 @@ export function init_abcjs(clickListener) {
     add_classes: true,
     dragging: true,
     selectAll: true,
-    selectionColor: "#33AAFF",
+    selectionColor: COLOR_SELECTION,
     dragColor: "#3399FF",
     staffwidth: window.innerWidth - 60,
     wrap: {minSpacing: 1.1, maxSpacing: 1.4, preferredMeasuresPerLine: 16},

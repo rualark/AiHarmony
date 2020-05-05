@@ -6,6 +6,7 @@ import "../../../plugin/FileSaver.js-2.0.2/FileSaver.js";
 import {ais} from "../../integration/aiStudio.js";
 import {trackEvent} from "../../integration/tracking.js";
 import { showModal } from "./lib/modal.js";
+import { state } from "../../abc/abchelper.js";
 
 let exportFormats = [
   {name: 'Download as MusicXML', func: downloadAsMusicXml },
@@ -62,6 +63,7 @@ function linkAsMidi() {
 }
 
 export function showDownloadModal() {
+  if (state.state !== 'ready') return;
   let st = '';
   for (const i in exportFormats) {
     if (exportFormats[i].func == null && exportFormats[i].link == null) continue;

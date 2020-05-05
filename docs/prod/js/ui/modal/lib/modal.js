@@ -1,4 +1,5 @@
 import { enableKeys } from "../../commands.js";
+import { button_active } from "../../lib/uilib.js";
 
 export function showModal(id, title, body, footer, classes, classesDialog, pauseKeys, shown, hidden) {
   if (pauseKeys) {
@@ -31,4 +32,43 @@ export function showModal(id, title, body, footer, classes, classesDialog, pause
     hidden();
   });
   $(`#Modal${id}`).modal();
+}
+
+export function showMultiButtonSelect(id, selectedId, options, userHandler) {
+  let st = '';
+  st += `<span>`;
+  for (let i=0; i<options.length; ++i) {
+    const oid = `${id}${options[i].id}`;
+    if (options[i].newline) st += `<br>`;
+    st += `<a id='${oid}' class='btn btn-outline-white p-2' href=# role='button' style='font-size: 1em'>`;
+    st += `${options[i].text}`;
+    st += `</a> `;
+    setTimeout(() => {
+      document.getElementById(oid).onclick=function() {
+        $(`#${id}${options[0].id}`).attr('data-value', options[i].id);
+        for (let x=0; x<options.length; ++x) {
+          const oid2 = `${id}${options[x].id}`;
+          button_active(oid2, oid === oid2);
+        }
+        if (userHandler) userHandler();
+      };
+    }, 0);
+  }
+  setTimeout(() => {
+    console.log(`${id}${options[0].id}`);
+    $(`#${id}${options[0].id}`).attr('data-value', selectedId);
+    button_active(`${id}${selectedId}`, true);
+  }, 0);
+  st += `</span>`;
+  return st;
+}
+
+export function showSelect(id, selected, options) {
+  let st = '';
+  st += `<select class="form-control custom-select" id=${id}>`;
+  for (const option of options) {
+    st += `<option value='${option.val}' ${selected === option.val ? "selected" : ""}>${option.text}</option>`;
+  }
+  st += `</select>`;
+  return st;
 }
