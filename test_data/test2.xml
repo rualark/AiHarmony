@@ -155,23 +155,23 @@
    <note color="#000000">
     <pitch>
      <step>G</step>
+     <alter>-1</alter>
      <octave>5</octave>
     </pitch>
     <duration>128</duration>
     <voice>1</voice>
     <type>eighth</type>
-    <accidental>natural</accidental>
     <staff>1</staff>
    </note>
    <note color="#000000">
     <pitch>
      <step>C</step>
-     <alter>-1</alter>
      <octave>5</octave>
     </pitch>
     <duration>256</duration>
     <voice>1</voice>
     <type>quarter</type>
+    <accidental>natural</accidental>
     <staff>1</staff>
    </note>
   </measure>

@@ -1,0 +1,8 @@
+- COUNTERPOINT ANALYSIS
+  - Getting started |cp_start| Getting started with counterpoint analysis
+  - Analysing counterpoint |cp_analyse
+  - Counterpoint examples |cp_examples
+  - Composing counterpoint |cp_compose
+  - REFERENCE
+    - Counterpoint rules |cp_rules
+    - Harmonic notations |cp_harm_notations
