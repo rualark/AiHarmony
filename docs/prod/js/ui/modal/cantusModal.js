@@ -209,7 +209,7 @@ export function showCantusModal() {
     st += `<a id=acantus${cid} href=#><div id=cantus${cid}></div></a> `;
   }
   st += "</div>";
-  showModal(1, 'Choose cantus firmus', st, '', [], [], false, ()=>{}, ()=>{});
+  showModal(1, 'Choose cantus firmus', st, '', [], [], true, ()=>{}, ()=>{});
   for (let cid=0; cid<canti.length; ++cid) {
     const cantus = canti[cid];
     ABCJS.renderAbc(`cantus${cid}`, cantusToAbc(cid), {staffwidth: 110});
@@ -324,7 +324,7 @@ function showCantusModal2(cid) {
   let footer = '';
   footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
   footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>`;
-  showModal(2, 'New counterpoint exercise', st, footer, [], ["modal-lg"], false, ()=>{}, ()=>{
+  showModal(2, 'New counterpoint exercise', st, footer, [], ["modal-lg"], true, ()=>{}, ()=>{
     if (!okClicked) showCantusModal();
   });
   initTooltips(200, 100);

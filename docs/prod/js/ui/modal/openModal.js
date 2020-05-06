@@ -22,12 +22,14 @@ export function showOpenExampleMusicXmlModal() {
   st += '<a href=editor.html?load=2018-04-ideal-cp5>2018-04-ideal-cp5</a><br>';
   st += '<a href=editor.html?load=2018-04-norm-cp5>2018-04-norm-cp5</a><br>';
   st += '<a href=editor.html?load=ca3/canuts1>ca3/canuts1</a><br>';
+  st += '<a href=editor.html?load=ca3/canuts2>ca3/canuts2</a><br>';
   st += '<a href=editor.html?load=ca3/devoir.cours-6.3-en-re>ca3/devoir.cours-6.3-en-re</a><br>';
   st += '<a href=editor.html?load=ca3/gallon-v2sp3-1>ca3/gallon-v2sp3-1</a><br>';
   st += '<a href=editor.html?load=ca3/gallon-v2sp3-2>ca3/gallon-v2sp3-2</a><br>';
   st += '<a href=editor.html?load=ca3/gallon-v2sp3-3>ca3/gallon-v2sp3-3</a><br>';
   st += '<a href=editor.html?load=ca3/gallon-v2sp3-4>ca3/gallon-v2sp3-4</a><br>';
   st += '<a href=editor.html?load=ca3/good-cp5-extract>ca3/good-cp5-extract</a><br>';
+  st += '<a href=editor.html?load=ca3/short>ca3/short</a><br>';
   st += '<a href=editor.html?load=gallon-v5sp1>gallon-v5sp1</a><br>';
   st += '<a href=editor.html?load=gallon-v5sp5>gallon-v5sp5</a><br>';
   st += '<a href=editor.html?load=gallon-v6sp1>gallon-v6sp1</a><br>';
@@ -41,13 +43,16 @@ export function showOpenExampleMusicXmlModal() {
   st += '<a href=editor.html?load=good-cp3>good-cp3</a><br>';
   st += '<a href=editor.html?load=good-cp4>good-cp4</a><br>';
   st += '<a href=editor.html?load=MTE+1110+-+TS2+-+Exemples-mod>MTE+1110+-+TS2+-+Exemples-mod</a><br>';
+  st += '<a href=editor.html?load=presentation/Sposobin-492-3-shegolev>presentation/Sposobin-492-3-shegolev</a><br>';
   st += '<a href=editor.html?load=shegolev/Shegolev-2020-02-07-harmony>shegolev/Shegolev-2020-02-07-harmony</a><br>';
   st += '<a href=editor.html?load=shegolev/Shegolev-2020-02-07-harmony2>shegolev/Shegolev-2020-02-07-harmony2</a><br>';
   st += '<a href=editor.html?load=shegolev/Shegolev-2020-02-07-harmony3>shegolev/Shegolev-2020-02-07-harmony3</a><br>';
+  st += '<a href=editor.html?load=shegolev/Species-1-exercise-2>shegolev/Species-1-exercise-2</a><br>';
+  st += '<a href=editor.html?load=shegolev/Species-1-exercise>shegolev/Species-1-exercise</a><br>';
   st += '<a href=editor.html?load=sposobin-exercise-312-1>sposobin-exercise-312-1</a><br>';
   st += '<a href=editor.html?load=sposobin-exercise-335-1>sposobin-exercise-335-1</a><br>';
   st += '<a href=editor.html?load=sposobin-exercise-335-2>sposobin-exercise-335-2</a><br>';
-  showModal(2, 'Open example MusicXML file', st, '', [], [], false, () => { }, () => { });
+    showModal(2, 'Open example MusicXML file', st, '', [], [], false, () => { }, () => { });
 }
 
 export function showOpenModal() {

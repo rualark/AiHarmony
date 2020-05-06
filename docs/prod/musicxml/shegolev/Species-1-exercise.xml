@@ -9,10 +9,10 @@
   <creator type="arranger"></creator>
   <rights></rights>
   <encoding>
-   <encoding-date>2020-05-04</encoding-date>
+   <encoding-date>2020-05-07</encoding-date>
    <encoder></encoder>
    <software>Artinfuser Harmony</software>
-   <software>AIHS:LAYAwgggzAAAgDGAthyAgaBAcBgAXAJwFMAjAGyJgCoAERGASjsQHJmYAad2-ganbb0m9HvBhoSAQwDO0mABx2AXHYA8dgAJ2AQnYB8NcvaLEcNAGUA9gAcAdGghk8lgEjnrRAMYBLItI0AjBpEAB5EBD7SRG4ePn4AtAHxoeGRRAD.iAB6AA0AkgB8QA___</software>
+   <software>AIHS:LAYAwgggzAAAgDGAthyAgaBAcBgAXAJwFMAjAGyJgCoAERGASjsQHJmYAad2-ganbb0m9HvBhoSAQwDO0mABx2AXHYA8dgAJ2AQnYB8NcvaLEcNAGUA9gAcAdGgBCM2wCRz1ogGMAlkWkaARg0iAA8iAh9pIjcPHz8AWgD40PDIogB.xAA9AGaAMQBgoA___</software>
    <encoding-description>Artinfuser Harmony / MusicXML 3.0</encoding-description>
    <supports element="print" type="yes" value="yes" attribute="new-system" />
    <supports element="print" type="yes" value="yes" attribute="new-page" />
@@ -83,13 +83,13 @@
    </part-abbreviation-display>
   </score-part>
   <score-part id="P1">
-   <part-name>Alto</part-name>
+   <part-name>Bas.</part-name>
    <part-name-display>
-    <display-text>Alto</display-text>
+    <display-text>Bas.</display-text>
    </part-name-display>
-   <part-abbreviation>Alto</part-abbreviation>
+   <part-abbreviation>Bas.</part-abbreviation>
    <part-abbreviation-display>
-    <display-text>Alto</display-text>
+    <display-text>Bas.</display-text>
    </part-abbreviation-display>
   </score-part>
  </part-list>

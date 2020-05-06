@@ -1,0 +1,8 @@
+- 2 voices
+  - [2 voices, species 1](editor.html?load=shegolev/Species-1-exercise)
+  - [2 voices, species 3](editor.html?load=ca3/gallon-v2sp3-1) - from Noel-Gallon "Traite de Contrepoint"
+  - [2 voices, species 3](editor.html?load=ca3/gallon-v2sp3-2) - from Noel-Gallon "Traite de Contrepoint"
+  - [2 voices, species 3](editor.html?load=ca3/gallon-v2sp3-3) - from Noel-Gallon "Traite de Contrepoint"
+  - [2 voices, species 3](editor.html?load=ca3/gallon-v2sp3-4) - from Noel-Gallon "Traite de Contrepoint"
+  - [2 voices, species 5](editor.html?load=2018-04-ideal-cp5)
+  - [2 voices, species 5](editor.html?load=ca3/good-cp5-extract)

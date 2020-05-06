@@ -1,26 +1,27 @@
-<h3 align=center>Site Terms and Conditions of Use</h3>
+<br><h3 align=center>Site Terms and Conditions of Use</h3>
 
 <pre>
-
+<?php
+echo "
 1. User's Acknowledgment and Acceptance of Terms
 
-Artinfuser ("Us" or "We") provides the Artinfuser site and various related services (collectively, the "site") to you, the user, subject to your compliance with all the terms, conditions, and notices contained or referenced herein (the "Terms of Use"), as well as any other written agreement between us and you. In addition, when using particular services or materials on this site, users shall be subject to any posted rules applicable to such services or materials that may contain terms and conditions in addition to those in these Terms of Use. All such guidelines or rules are hereby incorporated by reference into these Terms of Use.
+$company_name (\"Us\" or \"We\") provides the $site_name site and various related services (collectively, the \"site\") to you, the user, subject to your compliance with all the terms, conditions, and notices contained or referenced herein (the \"Terms of Use\"), as well as any other written agreement between us and you. In addition, when using particular services or materials on this site, users shall be subject to any posted rules applicable to such services or materials that may contain terms and conditions in addition to those in these Terms of Use. All such guidelines or rules are hereby incorporated by reference into these Terms of Use.
 
 BY USING THIS SITE, YOU AGREE TO BE BOUND BY THESE TERMS OF USE. IF YOU DO NOT WISH TO BE BOUND BY THE THESE TERMS OF USE, PLEASE EXIT THE SITE NOW. YOUR REMEDY FOR DISSATISFACTION WITH THIS SITE, OR ANY PRODUCTS, SERVICES, CONTENT, OR OTHER INFORMATION AVAILABLE ON OR THROUGH THIS SITE, IS TO STOP USING THE SITE AND/OR THOSE PARTICULAR PRODUCTS OR SERVICES. YOUR AGREEMENT WITH US REGARDING COMPLIANCE WITH THESE TERMS OF USE BECOMES EFFECTIVE IMMEDIATELY UPON COMMENCEMENT OF YOUR USE OF THIS SITE.
 
 These Terms of Use are effective as of 2017. We expressly reserve the right to change these Terms of Use from time to time without notice to you. You acknowledge and agree that it is your responsibility to review this site and these Terms of Use from time to time and to familiarize yourself with any modifications. Your continued use of this site after such modifications will constitute acknowledgement of the modified Terms of Use and agreement to abide and be bound by the modified Terms of Use.
 
-As used in these Terms of Use, references to our "Affiliates" include our owners, subsidiaries, affiliated companies, officers, directors, suppliers, partners, sponsors, and advertisers, and includes (without limitation) all parties involved in creating, producing, and/or delivering this site and/or its contents.
+As used in these Terms of Use, references to our \"Affiliates\" include our owners, subsidiaries, affiliated companies, officers, directors, suppliers, partners, sponsors, and advertisers, and includes (without limitation) all parties involved in creating, producing, and/or delivering this site and/or its contents.
 
 2. Description of Services
 
-We make various services available on this site including, but not limited to, Artinfuser Online Music Analyser and Performer, and other like services. You are responsible for providing, at your own expense, all equipment necessary to use the services, including a computer, modem, and Internet access (including payment of all fees associated with such access).
+We make various services available on this site including, but not limited to, $site_name Online Music Analyser and Performer, and other like services. You are responsible for providing, at your own expense, all equipment necessary to use the services, including a computer, modem, and Internet access (including payment of all fees associated with such access).
 
 We reserve the sole right to either modify or discontinue the site, including any of the site's features, at any time with or without notice to you. We will not be liable to you or any third party should we exercise such right. Any new features that augment or enhance the then-current services on this site shall also be subject to these Terms of Use.
 
 3. Registration Data and Privacy
 
-In order to access some of the services on this site, you will be required to use an account and password that can be obtained by completing our online registration form, which requests certain information and data ("Registration Data"), and maintaining and updating your Registration Data as required. By registering, you agree that all information provided in the Registration Data is true and accurate and that you will maintain and update this information as required in order to keep it current, complete, and accurate.
+In order to access some of the services on this site, you will be required to use an account and password that can be obtained by completing our online registration form, which requests certain information and data (\"Registration Data\"), and maintaining and updating your Registration Data as required. By registering, you agree that all information provided in the Registration Data is true and accurate and that you will maintain and update this information as required in order to keep it current, complete, and accurate.
 
 You also grant us the right to disclose to third parties certain Registration Data about you. The information we obtain through your use of this site, including your Registration Data, is subject to our Privacy Policy, which is specifically incorporated by reference into these Terms of Use.
 
@@ -34,13 +35,13 @@ b. victimizes, harasses, degrades, or intimidates an individual or group of indi
 
 c. infringes on any patent, trademark, trade secret, copyright, right of publicity, or other proprietary right of any party;
 
-d. constitutes unauthorized or unsolicited advertising, junk or bulk email (also known as "spamming"), chain letters, any other form of unauthorized solicitation, or any form of lottery or gambling;
+d. constitutes unauthorized or unsolicited advertising, junk or bulk email (also known as \"spamming\"), chain letters, any other form of unauthorized solicitation, or any form of lottery or gambling;
 
 e. contains software viruses or any other computer code, files, or programs that are designed or intended to disrupt, damage, or limit the functioning of any software, hardware, or telecommunications equipment or to damage or obtain unauthorized access to any data or other information of any third party; or
 
 f. impersonates any person or entity, including any of our employees or representatives.
 
-We neither endorse nor assume any liability for the contents of any material uploaded or submitted by third party users of the site. We generally do not pre-screen, monitor, or edit the content posted by users of communications services, chat rooms, message boards, newsgroups, software libraries, or other interactive services that may be available on or through this site. However, we and our agents have the right at their sole discretion to remove any content that, in our judgment, does not comply with these Terms of Use and any other rules of user conduct for our site, or is otherwise harmful, objectionable, or inaccurate. We are not responsible for any failure or delay in removing such content. You hereby consent to such removal and waive any claim against us arising out of such removal of content. See "Use of Your Materials" below for a description of the procedures to be followed in the event that any party believes that content posted on this site infringes on any patent, trademark, trade secret, copyright, right of publicity, or other proprietary right of any party.
+We neither endorse nor assume any liability for the contents of any material uploaded or submitted by third party users of the site. We generally do not pre-screen, monitor, or edit the content posted by users of communications services, chat rooms, message boards, newsgroups, software libraries, or other interactive services that may be available on or through this site. However, we and our agents have the right at their sole discretion to remove any content that, in our judgment, does not comply with these Terms of Use and any other rules of user conduct for our site, or is otherwise harmful, objectionable, or inaccurate. We are not responsible for any failure or delay in removing such content. You hereby consent to such removal and waive any claim against us arising out of such removal of content. See \"Use of Your Materials\" below for a description of the procedures to be followed in the event that any party believes that content posted on this site infringes on any patent, trademark, trade secret, copyright, right of publicity, or other proprietary right of any party.
 
 In addition, you may not use your account to breach security of another account or attempt to gain unauthorized access to another network or server. Not all areas of the site may be available to you or other authorized users of the site. You shall not interfere with anyone else's use and enjoyment of the site or other similar services. Users who violate systems or network security may incur criminal or civil liability.
 
@@ -52,15 +53,15 @@ This site may link you to other sites on the Internet or otherwise include refer
 
 6. Intellectual Property Information
 
-Copyright (c) 2017 Artinfuser All Rights Reserved.
+Copyright (c) 2017 $company_name All Rights Reserved.
 
-For purposes of these Terms of Use, "content" is defined as any information, data, communications, software, photos, video, graphics, music, sounds, and other material and services that can be viewed by users on our site. This includes message boards, chat, and other original content.
+For purposes of these Terms of Use, \"content\" is defined as any information, data, communications, software, photos, video, graphics, music, sounds, and other material and services that can be viewed by users on our site. This includes message boards, chat, and other original content.
 
-By accepting these Terms of Use, you acknowledge and agree that all content presented to you on this site is protected by copyrights, trademarks, service marks, patents or other proprietary rights and laws, and is the sole property of Artinfuser and/or its Affiliates. You are only permitted to use the content as expressly authorized by us or the specific content provider. Except for a single copy made for personal use only, you may not copy, reproduce, modify, republish, upload, post, transmit, or distribute any documents or information from this site in any form or by any means without prior written permission from us or the specific content provider, and you are solely responsible for obtaining permission before reusing any copyrighted material that is available on this site. Any unauthorized use of the materials appearing on this site may violate copyright, trademark and other applicable laws and could result in criminal or civil penalties.
+By accepting these Terms of Use, you acknowledge and agree that all content presented to you on this site is protected by copyrights, trademarks, service marks, patents or other proprietary rights and laws, and is the sole property of $company_name and/or its Affiliates. You are only permitted to use the content as expressly authorized by us or the specific content provider. Except for a single copy made for personal use only, you may not copy, reproduce, modify, republish, upload, post, transmit, or distribute any documents or information from this site in any form or by any means without prior written permission from us or the specific content provider, and you are solely responsible for obtaining permission before reusing any copyrighted material that is available on this site. Any unauthorized use of the materials appearing on this site may violate copyright, trademark and other applicable laws and could result in criminal or civil penalties.
 
-Neither we or our Affiliates warrant or represent that your use of materials displayed on, or obtained through, this site will not infringe the rights of third parties. See "User's Materials" below for a description of the procedures to be followed in the event that any party believes that content posted on this site infringes on any patent, trademark, trade secret, copyright, right of publicity, or other proprietary right of any party.
+Neither we or our Affiliates warrant or represent that your use of materials displayed on, or obtained through, this site will not infringe the rights of third parties. See \"User's Materials\" below for a description of the procedures to be followed in the event that any party believes that content posted on this site infringes on any patent, trademark, trade secret, copyright, right of publicity, or other proprietary right of any party.
 
-The following are registered trademarks, trademarks or service marks of Artinfuser or its Affiliates: Artinfuser. All custom graphics, icons, logos and service names are registered trademarks, trademarks or service marks of Artinfuser or its Affiliates. All other trademarks or service marks are property of their respective owners. Nothing in these Terms of Use grants you any right to use any trademark, service mark, logo, and/or the name of Artinfuser or its Affiliates.
+The following are registered trademarks, trademarks or service marks of $company_name or its Affiliates: $company_name. All custom graphics, icons, logos and service names are registered trademarks, trademarks or service marks of $company_name or its Affiliates. All other trademarks or service marks are property of their respective owners. Nothing in these Terms of Use grants you any right to use any trademark, service mark, logo, and/or the name of $company_name or its Affiliates.
 
 7. Unauthorized Use of Materials
 
@@ -78,9 +79,9 @@ We respect the intellectual property of others, and we ask you to do the same. I
 
 4. Provide information, if possible, sufficient to permit us to notify the owner/administrator of the allegedly infringing webpage or other content (email address is preferred).
 
-5. Include the following statement: "I have a good faith belief that use of the copyrighted materials described above as allegedly infringing is not authorized by the copyright owner, its agent, or the law."
+5. Include the following statement: \"I have a good faith belief that use of the copyrighted materials described above as allegedly infringing is not authorized by the copyright owner, its agent, or the law.\"
 
-6. Include the following statement: "I swear, under penalty of perjury, that the information in the notification is accurate and that I am the copyright owner or am authorized to act on behalf of the owner of an exclusive right that is allegedly infringed."
+6. Include the following statement: \"I swear, under penalty of perjury, that the information in the notification is accurate and that I am the copyright owner or am authorized to act on behalf of the owner of an exclusive right that is allegedly infringed.\"
 
 7. Sign the paper.
 
@@ -89,13 +90,13 @@ We respect the intellectual property of others, and we ask you to do the same. I
 Designated Agent for Claimed Infringement:
 
 Contact: Alexey Arkhipenko
-Address: info@artinfuser.com
+Address: $company_email
 
 You acknowledge and agree that upon receipt of a notice of a claim of copyright infringement, we may immediately remove the identified materials from our site without liability to you or any other party and that the claims of the complaining party and the party that originally posted the materials will be referred to the Copyright Office for adjudication.
 
 8. Disclaimer of Warranties
 
-ALL MATERIALS AND SERVICES ON THIS SITE ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, OR THE WARRANTY OF NON-INFRINGEMENT. WITHOUT LIMITING THE FOREGOING, WE MAKE NO WARRANTY THAT (A) THE SERVICES AND MATERIALS WILL MEET YOUR REQUIREMENTS, (B) THE SERVICES AND MATERIALS WILL BE UNINTERRUPTED, TIMELY, SECURE, OR ERROR-FREE, (C) THE RESULTS THAT MAY BE OBTAINED FROM THE USE OF THE SERVICES OR MATERIALS WILL BE EFFECTIVE, ACCURATE OR RELIABLE, OR (D) THE QUALITY OF ANY PRODUCTS, SERVICES, OR INFORMATION PURCHASED OR OBTAINED BY YOU FROM THE SITE FROM US OR OUR AFFILIATES WILL MEET YOUR EXPECTATIONS OR BE FREE FROM MISTAKES, ERRORS OR DEFECTS.
+ALL MATERIALS AND SERVICES ON THIS SITE ARE PROVIDED ON AN \"AS IS\" AND \"AS AVAILABLE\" BASIS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, OR THE WARRANTY OF NON-INFRINGEMENT. WITHOUT LIMITING THE FOREGOING, WE MAKE NO WARRANTY THAT (A) THE SERVICES AND MATERIALS WILL MEET YOUR REQUIREMENTS, (B) THE SERVICES AND MATERIALS WILL BE UNINTERRUPTED, TIMELY, SECURE, OR ERROR-FREE, (C) THE RESULTS THAT MAY BE OBTAINED FROM THE USE OF THE SERVICES OR MATERIALS WILL BE EFFECTIVE, ACCURATE OR RELIABLE, OR (D) THE QUALITY OF ANY PRODUCTS, SERVICES, OR INFORMATION PURCHASED OR OBTAINED BY YOU FROM THE SITE FROM US OR OUR AFFILIATES WILL MEET YOUR EXPECTATIONS OR BE FREE FROM MISTAKES, ERRORS OR DEFECTS.
 
 THIS SITE COULD INCLUDE TECHNICAL OR OTHER MISTAKES, INACCURACIES OR TYPOGRAPHICAL ERRORS. WE MAY MAKE CHANGES TO THE MATERIALS AND SERVICES AT THIS SITE, INCLUDING THE PRICES AND DESCRIPTIONS OF ANY PRODUCTS LISTED HEREIN, AT ANY TIME WITHOUT NOTICE. THE MATERIALS OR SERVICES AT THIS SITE MAY BE OUT OF DATE, AND WE MAKE NO COMMITMENT TO UPDATE SUCH MATERIALS OR SERVICES.
 
@@ -103,11 +104,11 @@ THE USE OF THE SERVICES OR THE DOWNLOADING OR OTHER ACQUISITION OF ANY MATERIALS
 
 Through your use of the site, you may have the opportunities to engage in commercial transactions with other users and vendors. You acknowledge that all transactions relating to any merchandise or services offered by any party, including, but not limited to the purchase terms, payment terms, warranties, guarantees, maintenance and delivery terms relating to such transactions, are agreed to solely between the seller or purchaser of such merchandize and services and you. WE MAKE NO WARRANTY REGARDING ANY TRANSACTIONS EXECUTED THROUGH, OR IN CONNECTION WITH THIS SITE, AND YOU UNDERSTAND AND AGREE THAT SUCH TRANSACTIONS ARE CONDUCTED ENTIRELY AT YOUR OWN RISK. ANY WARRANTY THAT IS PROVIDED IN CONNECTION WITH ANY PRODUCTS, SERVICES, MATERIALS, OR INFORMATION AVAILABLE ON OR THROUGH THIS SITE FROM A THIRD PARTY IS PROVIDED SOLELY BY SUCH THIRD PARTY, AND NOT BY US OR ANY OTHER OF OUR AFFILIATES.
 
-Content available through this site often represents the opinions and judgments of an information provider, site user, or other person or entity not connected with us. We do not endorse, nor are we responsible for the accuracy or reliability of, any opinion, advice, or statement made by anyone other than an authorized Artinfuser spokesperson speaking in his/her official capacity. Please refer to the specific editorial policies posted on various sections of this site for further information, which policies are incorporated by reference into these Terms of Use.
+Content available through this site often represents the opinions and judgments of an information provider, site user, or other person or entity not connected with us. We do not endorse, nor are we responsible for the accuracy or reliability of, any opinion, advice, or statement made by anyone other than an authorized $company_name spokesperson speaking in his/her official capacity. Please refer to the specific editorial policies posted on various sections of this site for further information, which policies are incorporated by reference into these Terms of Use.
 
 You understand and agree that temporary interruptions of the services available through this site may occur as normal events. You further understand and agree that we have no control over third party networks you may access in the course of the use of this site, and therefore, delays and disruption of other network transmissions are completely beyond our control.
 
-You understand and agree that the services available on this site are provided "AS IS" and that we assume no responsibility for the timeliness, deletion, mis-delivery or failure to store any user communications or personalization settings.
+You understand and agree that the services available on this site are provided \"AS IS\" and that we assume no responsibility for the timeliness, deletion, mis-delivery or failure to store any user communications or personalization settings.
 
 SOME COUNTRIES OR JURISDICTIONS DO NOT ALLOW THE EXCLUSION OF CERTAIN WARRANTIES, SO SOME OF THE ABOVE LIMITATIONS MAY NOT APPLY TO YOU.
 
@@ -133,17 +134,17 @@ From time to time, this site may include advertisements offered by third parties
 
 13. E-mail, Messaging, Blogging, and Chat Services
 
-We may make email, messaging, blogging, or chat services (collectively, "Communications") available to users of our site, either directly or through a third-party provider. We make available separate supplemental agreements characterizing the relationship between you and us that, except where expressly noted or contradictory, includes these Terms.
+We may make email, messaging, blogging, or chat services (collectively, \"Communications\") available to users of our site, either directly or through a third-party provider. We make available separate supplemental agreements characterizing the relationship between you and us that, except where expressly noted or contradictory, includes these Terms.
 
 We will not inspect or disclose the contents of private Communications except with the consent of the sender or the recipient, or in the narrowly-defined situations provided under the Electronic Communications Privacy Act, or as other required by law or by court or governmental order. Further information is available in our Privacy Policy.
 
-We may employ automated monitoring devices or techniques to protect our users from mass unsolicited communications (also known as "spam") and/or other types of electronic communications that we deem inconsistent with our business purposes. However, such devices or techniques are not perfect, and we will not be responsible for any legitimate communication that is blocked, or for any unsolicited communication that is not blocked.
+We may employ automated monitoring devices or techniques to protect our users from mass unsolicited communications (also known as \"spam\") and/or other types of electronic communications that we deem inconsistent with our business purposes. However, such devices or techniques are not perfect, and we will not be responsible for any legitimate communication that is blocked, or for any unsolicited communication that is not blocked.
 
 Mailboxes may have a limited storage capacity. If you exceed the maximum permitted storage space, we may employ automated devices that delete or block email messages that exceed the limit. We will not be responsible for such deleted or blocked messages.
 
 14. International Use
 
-Although this site may be accessible worldwide, we make no representation that materials on this site are appropriate or available for use in locations outside Russian Federation, and accessing them from territories where their contents are illegal is prohibited. Those who choose to access this site from other locations do so on their own initiative and are responsible for compliance with local laws. Any offer for any product, service, and/or information made in connection with this site is void where prohibited.
+Although this site may be accessible worldwide, we make no representation that materials on this site are appropriate or available for use in locations outside $country_name, and accessing them from territories where their contents are illegal is prohibited. Those who choose to access this site from other locations do so on their own initiative and are responsible for compliance with local laws. Any offer for any product, service, and/or information made in connection with this site is void where prohibited.
 
 15. Termination of Use
 
@@ -153,11 +154,11 @@ Upon termination or suspension, regardless of the reasons therefore, your right 
 
 16. Governing Law
 
-This site (excluding any linked sites) is controlled by us from our offices within Russian Federation. It can be accessed from Russian Federation, as well as from other countries around the world. As each of these places has laws that may differ from those of Russian Federation, by accessing this site both of us agree that the statutes and laws of Russian Federation, without regard to the conflicts of laws principles thereof, will apply to all matters relating to the use of this site and the purchase of products and services available through this site. Each of us agrees and hereby submits to the exclusive personal jurisdiction and venue any court of competent jurisdiction within Russian Federation with respect to such matters.
+This site (excluding any linked sites) is controlled by us from our offices within $country_name. It can be accessed from $country_name, as well as from other countries around the world. As each of these places has laws that may differ from those of $country_name, by accessing this site both of us agree that the statutes and laws of $country_name, without regard to the conflicts of laws principles thereof, will apply to all matters relating to the use of this site and the purchase of products and services available through this site. Each of us agrees and hereby submits to the exclusive personal jurisdiction and venue any court of competent jurisdiction within Russian Federation with respect to such matters.
 
 17. Notices
 
-All notices to a party shall be in writing and shall be made via email. Notices to us must be sent to the attention of Customer Service at info@artinfuser.com. Notices to you may be sent to the address supplied by you as part of your Registration Data. In addition, we may broadcast notices or messages through the site to inform you of changes to the site or other matters of importance, and such broadcasts shall constitute notice to you at the time of sending.
+All notices to a party shall be in writing and shall be made via email. Notices to us must be sent to the attention of Customer Service at $company_email. Notices to you may be sent to the address supplied by you as part of your Registration Data. In addition, we may broadcast notices or messages through the site to inform you of changes to the site or other matters of importance, and such broadcasts shall constitute notice to you at the time of sending.
 
 18. Entire Agreement
 
@@ -179,12 +180,12 @@ Any failure by us to enforce or exercise any provision of these Terms of Use or 
 
 20. Contact Information
 
-Except as explicitly noted on this site, the services available through this site are offered by Artinfuser located in Russian Federation. If you notice that any user is violating these Terms of Use, please contact us at info@artinfuser.com.
+Except as explicitly noted on this site, the services available through this site are offered by $company_name located in $country_name. If you notice that any user is violating these Terms of Use, please contact us at $company_email.
 
 Terms and Conditions of Sale
 1. Sale and Purchase of Goods
 
-Artinfuser ("Seller") hereby agrees to sell, and You ("Buyer") hereby agree to purchase, goods of the description and quantity described on the checkout window ("Checkout") and incorporated herein by this reference ("Goods") on the terms and conditions set forth in this Agreement.
+$company_name (\"Seller\") hereby agrees to sell, and You (\"Buyer\") hereby agree to purchase, goods of the description and quantity described on the checkout window (\"Checkout\") and incorporated herein by this reference (\"Goods\") on the terms and conditions set forth in this Agreement.
 
 2. Purchase Price
 
@@ -212,7 +213,7 @@ The warranties provided for herein shall be governed by Seller's warranty polici
 
 Seller undertakes no responsibility for the quality of the Goods or that the Goods will be fit for any particular purpose for which Buyer may be buying the Goods, except as otherwise provided in this Agreement, and Seller disclaims all other warranties and conditions, express or implied.
 
-SELLER (INCLUDING ITS SUBSIDIARIES, AFFILIATES, OFFICERS, DIRECTORS, EMPLOYEES, AGENTS OR SUBCONTRACTORS, ALL OF WHICH ARE REFERRED TO HEREIN COLLECTIVELY AS THE "SELLER AFFILIATES") SHALL NOT BE LIABLE UNDER ANY CIRCUMSTANCE TO BUYER OR ANY OTHER PARTY FOR ANY SPECIAL, CONSEQUENTIAL, INCIDENTAL OR EXEMPLARY DAMAGES ARISING OUT OF OR IN ANY WAY CONNECTED WITH THE GOODS OR OTHERWISE, INCLUDING BUT NOT LIMITED TO DAMAGES FOR LOST PROFITS, LOSS OF THE GOODS OR ANY ASSOCIATED EQUIPMENT, COST OF CAPITAL, COST OF SUBSTITUTE OR REPLACEMENT EQUIPMENT, FACILITIES OR SERVICES, DOWN TIME, BUYER'S TIME, LOST DATA, INJURY TO PROPERTY OR ANY DAMAGES OR SUMS PAID BY BUYER TO THIRD PARTIES, EVEN IF SELLER OR ANY OF THE SELLER AFFILIATES HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. THE FOREGOING LIMITATION OF LIABILITY SHALL APPLY WHETHER ANY CLAIM IS BASED UPON PRINCIPLES OF CONTRACT, WARRANTY, NEGLIGENCE, OR OTHER TORT, BREACH OF ANY STATUTORY DUTY, PRINCIPLES OF INDEMNITY OR CONTRIBUTION, THE FAILURE OF ANY LIMITED OR EXCLUSIVE REMEDY TO ACHIEVE ITS ESSENTIAL PURPOSE, OR OTHERWISE.
+SELLER (INCLUDING ITS SUBSIDIARIES, AFFILIATES, OFFICERS, DIRECTORS, EMPLOYEES, AGENTS OR SUBCONTRACTORS, ALL OF WHICH ARE REFERRED TO HEREIN COLLECTIVELY AS THE \"SELLER AFFILIATES\") SHALL NOT BE LIABLE UNDER ANY CIRCUMSTANCE TO BUYER OR ANY OTHER PARTY FOR ANY SPECIAL, CONSEQUENTIAL, INCIDENTAL OR EXEMPLARY DAMAGES ARISING OUT OF OR IN ANY WAY CONNECTED WITH THE GOODS OR OTHERWISE, INCLUDING BUT NOT LIMITED TO DAMAGES FOR LOST PROFITS, LOSS OF THE GOODS OR ANY ASSOCIATED EQUIPMENT, COST OF CAPITAL, COST OF SUBSTITUTE OR REPLACEMENT EQUIPMENT, FACILITIES OR SERVICES, DOWN TIME, BUYER'S TIME, LOST DATA, INJURY TO PROPERTY OR ANY DAMAGES OR SUMS PAID BY BUYER TO THIRD PARTIES, EVEN IF SELLER OR ANY OF THE SELLER AFFILIATES HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. THE FOREGOING LIMITATION OF LIABILITY SHALL APPLY WHETHER ANY CLAIM IS BASED UPON PRINCIPLES OF CONTRACT, WARRANTY, NEGLIGENCE, OR OTHER TORT, BREACH OF ANY STATUTORY DUTY, PRINCIPLES OF INDEMNITY OR CONTRIBUTION, THE FAILURE OF ANY LIMITED OR EXCLUSIVE REMEDY TO ACHIEVE ITS ESSENTIAL PURPOSE, OR OTHERWISE.
 
 IN NO EVENT SHALL SELLER OR ANY SELLER AFFILIATE BE LIABLE TO BUYER OR ANY OTHER PARTY FOR LOSS, DAMAGE, OR INJURY OF ANY KIND OR NATURE ARISING OUT OF OR IN CONNECTION WITH THESE TERMS AND CONDITIONS IN EXCESS OF THE NET PURCHASE PRICE OF THE GOODS ACTUALLY DELIVERED TO AND PAID FOR BY BUYER HEREUNDER.
 
@@ -225,4 +226,6 @@ Seller shall not be held responsible for any failure of performance to make time
 8. General
 
 Buyer may not assign this Agreement without Seller's written consent. Seller is the sole intended beneficiary of this Agreement. If there is any inconsistency between this Agreement and any other agreement included with or relating to the Goods, this Agreement shall govern. This Agreement may not be modified, altered or amended without the written agreement of Seller. Any additional or altered terms attached to any order submitted by Buyer shall be null and void, unless expressly agreed to in writing by Seller. If any term of this Agreement is illegal or unenforceable, the legality and enforceability of the remaining provisions shall not be affected or impaired. This Agreement shall be interpreted under the laws, without giving effect to conflicts-of-law rules; and in the event of a dispute under this Agreement; Buyer submits to the exclusive jurisdiction and venue of the courts and hereby waives any objection to such jurisdiction and venue.
-</pre><hr>
+";
+?>
+</pre>

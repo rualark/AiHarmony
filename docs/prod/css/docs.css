@@ -1,0 +1,5 @@
+.panel-heading{padding:10px;border-top-left-radius:5px;border-top-right-radius:5px;background-color:#DDE8EA}
+.panel-body{padding:10px;background-color:#EEF3F6;border-bottom-left-radius:5px;border-bottom-right-radius:5px;box-shadow:0 1px 1px rgba(0,0,0,0.05);margin-bottom:20px}
+h1, h2, h3, h4, h5, h6 {
+  padding: 25px 0 25px 0;
+}

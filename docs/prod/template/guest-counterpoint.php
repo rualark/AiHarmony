@@ -1,52 +1,3 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta property='og:type' content='website' /><meta property='og:url' content='https://artinfuser.com/exercise' /><meta property='og:image' content='https://artinfuser.com/exercise/img/og-counterpoint-600.jpg' /><meta property='og:title' content='Artinfuser Exercise' /><meta property='og:description' content='Analyse counterpoint exercises' />  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Edit and check music exercises">
-  <meta name="author" content="">
-  <link rel="shortcut icon" type="image/x-icon" href="ico/favicon-green.ico">
-
-  <title>Artinfuser Exercise: Edit and check music exercises</title>
-
-  <link rel="stylesheet" href="plugin/bootstrap-4.3.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/main.css">
-</head>
-
-<body>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-56489282-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments)}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-56489282-1');
-
-  function httpGetAsync(theUrl, callback) {
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", theUrl, true); // true for asynchronous
-    xmlHttp.send(null);
-  }
-</script>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-  <div class="container">
-    <table><tr><td>
-      <a href='https://artinfuser.com'><img width=38 style='max-width: 8vw' src=img/logo-green.png alt='Artinfuser'></a> <a href='https://artinfuser.com'><img style='max-width: 22vw' src=https://artinfuser.com/artinfuser/img/logo-artinfuser-green.png alt='Artinfuser'></a><a href='https://artinfuser.com/exercise'><img style='max-width: 30vw' src=img/logo-exercise.png alt='Artinfuser Exercise'></a><style>.container{max-width:1350px}</style>    </table>
-    &nbsp;&nbsp;&nbsp;
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-      <ul class="navbar-nav mr-auto">
-        <li class=nav-item><a class=nav-link href='editor.html'><b>Start</b></a></li>
-        <li class=nav-item><a target=_blank class=nav-link href='https://artinfuser.com/counterpoint/docs.php?d=cp_analyse'>Docs</a></li>
-        <li class=nav-item><a class=nav-link href=contact.html>Contact</a></li></ul>
-    </div>
-  </div>
-</nav>
-<script type='text/javascript' src='plugin/jquery-3.4.1/jquery-3.4.1.min.js'></script>
 <main role="main">
   <div class="jumbotron jumbotron-fluid jumbotron1">
     <div class="container">
@@ -163,24 +114,3 @@
   <br>
 
 </main>
-<hr>
-
-<footer class="container">
-  <div class=row>
-    <div class=col-md>
-      <a href='https://www.patreon.com/bePatron?u=2738791' target=_blank><img src='img/become_a_patron_button.png'></a>
-      <br>
-      <br>
-    </div>
-    <div class=col-md>
-      <p style='text-align: right'><span title='<p>The script ran 0.018 seconds . '>&copy; 2017-2020</span>
-        - <a href="contact.html">Contact</a> - <a target=_blank href="privacy.html">Privacy Policy</a> -
-        <a target=_blank href="tos.html">Terms and Conditions</a>
-      </p>
-    </div>
-  </div>
-</footer>
-
-<script  defer src="plugin/bootstrap-4.3.1/js/bootstrap.bundle.min.js"></script>
-
-<a href='ssh://192.168.9.7'>9.7</a>

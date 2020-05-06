@@ -323,7 +323,7 @@ export let commands = [
     toolbar: {type: 'image', toolbar_id: 2, hintText: 'Docs'},
     event: 'onclick',
     keys: [],
-    command: () => { openNewUrl('https://artinfuser.com/counterpoint/docs.php?d=cp_analyse') },
+    command: () => { openNewUrl('docs.php') },
     name: 'Counterpoint documentation',
   },
   { separator: true, toolbar: {toolbar_id: 1} },
