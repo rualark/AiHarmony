@@ -36,6 +36,7 @@ const vocras = {
 function makeCantusKeysigs() {
   let res = [];
   for (const keysig in keysigs) {
+    if (keysigs[keysig].fifths > 5) continue;
     if (keysigs[keysig].mode === 0) {
       res.push({val: keysig, text: keysig + ' major'});
     }
