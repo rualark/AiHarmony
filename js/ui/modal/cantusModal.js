@@ -1,14 +1,15 @@
 import {async_redraw, state} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
-import { showModal, showMultiButtonSelect, showSelect } from "../lib/modal.js";
-import { c2d, d2abc, abc2d, alter2abc, keysig_imprint } from "../../notes/noteHelper.js";
-import { button_visible_active, randomSelect } from "../../ui/lib/uilib.js";
+import { showModal, showSelect } from "../lib/modal.js";
+import { d2abc, abc2d, alter2abc, keysig_imprint } from "../../notes/noteHelper.js";
+import { randomSelect } from "../../ui/lib/uilib.js";
 import { keysigs } from "./keysig.js";
 import { clefs } from "./clefs.js";
 import { nd } from "../../notes/NotesData.js";
 import { storage2archiveStorage } from "../../state/state.js";
 import { timesigs } from "./timesig.js";
 import { initTooltips } from "../lib/tooltips.js";
+import { trackEvent } from "../../integration/tracking.js";
 
 let okClicked = false;
 
@@ -268,6 +269,7 @@ function updateCantusPreview(cid) {
 }
 
 function showCantusModal2(cid) {
+  trackEvent('AiHarmony', 'open', 'Choose cantus');
   let st = '';
   st += `<table cellpadding=5>`;
   for (const vocra in vocras) {
@@ -335,6 +337,7 @@ function showCantusModal2(cid) {
   $('#modalOk').click(() => {
     okClicked = true;
     $('#Modal2').modal('hide');
+    trackEvent('AiHarmony', 'open', 'Create new cantus exercise');
     storage2archiveStorage(4);
     nd.reset();
     cantusToData(
