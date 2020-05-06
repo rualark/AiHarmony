@@ -57,6 +57,7 @@ function inject_docs(&$st) {
   $st = str_replace("<img src", "<img style='max-width: 100%' src", $st);
 
   $st = str_replace("\$site_name\$", "$site_name", $st);
+  $st = str_replace("\$domain_main\$", "$domain_main", $st);
 }
 
 function show_docs($fname) {

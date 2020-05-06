@@ -9,10 +9,10 @@
   <creator type="arranger"></creator>
   <rights></rights>
   <encoding>
-   <encoding-date>2020-02-15</encoding-date>
+   <encoding-date>2020-05-07</encoding-date>
    <encoder></encoder>
    <software>Artinfuser Harmony</software>
-   <software>AIHS:NAYAwgggzAAAgDGAthyAgaBAAoAYAFwCcBTAIwBtjEAIGAeloFo0YAaLAalq5gCpuACHGxpSAQwDOEmAFwBMAPjyAePLlw0EcvgB0aAEKSdAGAByxAO4ACYgA9ihAMYBLCcTOXGdhy7eIA4AB6AOIA8wBmQA</software>
+   <software>AIHS:LAYAwgggzAAAgDGAthyAgaBABQAYAFwCcBTAIwBtiAYGACERgHp7EBaNBgGg5kwGoWMAQwBUgvgAREcAFBpSAQwDOSmAFwpiAPiaYAPF0bpaAMoB7AA4A6NACFlVqgDliAdwAExAB7FCAYwBLJWJsJQALM0J8AH.EAD0AZoAxAHegA__</software>
    <encoding-description>Artinfuser Harmony / MusicXML 3.0</encoding-description>
    <supports element="print" type="yes" value="yes" attribute="new-system" />
    <supports element="print" type="yes" value="yes" attribute="new-page" />
@@ -73,13 +73,13 @@
 
  <part-list>
   <score-part id="P0">
-   <part-name>Alt.</part-name>
+   <part-name>Sop.</part-name>
    <part-name-display>
-    <display-text>Alt.</display-text>
+    <display-text>Sop.</display-text>
    </part-name-display>
-   <part-abbreviation>Alt.</part-abbreviation>
+   <part-abbreviation>Sop.</part-abbreviation>
    <part-abbreviation-display>
-    <display-text>Alt.</display-text>
+    <display-text>Sop.</display-text>
    </part-abbreviation-display>
   </score-part>
   <score-part id="P1">

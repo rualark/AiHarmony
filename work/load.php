@@ -8,7 +8,8 @@ function scan_dir($dir) {
         $url = substr("$dir/$entry", 0, strpos("$dir/$entry", ".xml"));
         $url = str_replace("musicxml/", "", $url);
         $url = str_replace(" ", "+", $url);
-        echo "st += '<a href=index.html?load=$url>$url</a><br>';\n";
+        $url = str_replace("../", "", $url);
+        echo "st += '<a href=editor.html?load=$url>$url</a><br>';\n";
       }
       else if (is_dir("$dir/$entry")) {
         scan_dir("$dir/$entry");
@@ -18,4 +19,4 @@ function scan_dir($dir) {
   }
 }
 
-scan_dir('musicxml');
+scan_dir('../musicxml');

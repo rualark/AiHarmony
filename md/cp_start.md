@@ -1,25 +1,22 @@
-## Step 1 - <a href='reg.php'>Sign up</a>
+## Step 1 - <a href='editor.html'>Write counterpoint exercise</a>
 
-Sign up to upload files.
+There are several ways to write a counterpoint exercise:
 
-## Step 2 - <a href='upload.php'>Upload your counterpoint exercise</a>
+1. Choose cantus firmus and arrangement in <a href=editor.html?action=cantus>Counterpoint exercise builder</a>, then input notes or download exercise
+2. Start from scratch: click "New", input cantus firmus and then counterpoint parts manually.
+3. Upload your counterpoint exercise created in a different notations software in MusicXML format.
 
-Upload each exercise in a separate MusicXML file. 
-MusicXML file can be exported from your notation editor. 
-When uploading music in MusicXML format, you will also get a performance with virtual instruments. 
-If you need more control over virtual instruments selection and tuning, [upload a MIDI file to Artinfuser Studio](/studio).
 Read [which types of counterpoint can be analysed](docs.php?d=cp_analyse).
 
-## Step 3 - Set options
+## Step 2 - Counterpoint species
 
-Please check that counterpoint species was detected correctly for each part. 
-Other settings are optional. 
-You can choose between performance on piano and with different instrument groups. 
+Please check that counterpoint species was detected correctly for each part (shown in part name) or choose species manually by clicking part name.
 
-## Step 4 - Process
+## Step 3 - Correct
 
-Click "Process" button. You will get MP3 and PDF with analysis.
+If you see mistakes, try to correct them by dragging notes or clicking on them and inputting new notes.
 
-## Step 5 - Adjust the parameters for better results and process again
+### Step 4 - Playback
 
-You can change settings and process again if you need.
+You can also get an MP3 performance with virtual instruments by clicking "Play HQ".
+If you need more control over virtual instruments selection and tuning, [upload a MIDI file to Artinfuser Studio]($domain_main$/studio).
