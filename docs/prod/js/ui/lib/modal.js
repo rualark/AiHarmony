@@ -55,7 +55,6 @@ export function showMultiButtonSelect(id, selectedId, options, userHandler) {
     }, 0);
   }
   setTimeout(() => {
-    console.log(`${id}${options[0].id}`);
     $(`#${id}${options[0].id}`).attr('data-value', selectedId);
     button_active(`${id}${selectedId}`, true);
   }, 0);

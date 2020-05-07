@@ -6,7 +6,7 @@ import { showModal } from "../lib/modal.js";
 
 function version_html(ver, id, uniq_id) {
   let st = '';
-  st += `<a id=ver${id} class='btn btn-outline-white p-1' href=# role='button' style='min-width: 30px'>`;
+  st += `<a id=ver${id} class='btn btn-outline-white p-1' href=# role='button' style='min-width: 30px; text-align: left'>`;
   st += '';
   st += `<div>${new Date(ver.time * 1000).ymd_his()} <b>${ver.nd.name}</b>`;
   if (ver.why === 1) st += ` <span title='This file was auto-saved before creating new file'>(before New)</span>`;
@@ -47,10 +47,10 @@ export function showRestoreModal() {
     }
   }
   st += "</div>";
-  showModal(2, 'Recover unsaved files edited in this browser', st, '', [], ["modal-lg"], false, ()=>{}, ()=>{});
+  showModal(1, 'Recover unsaved files edited in this browser', st, '', [], ["modal-lg"], false, ()=>{}, ()=>{});
   for (const i in archive) {
     document.getElementById('ver' + i).onclick=function() {
-      $('#Modal2').modal('hide');
+      $('#Modal1').modal('hide');
       // Do not archive current state when restoring to protect old archived versions
       //storage2archiveStorage();
       alertify.confirm('Recover', 'Warning! You are recovering a previous file. Currently opened file will be deleted and you will not be able to recovere it if you did not download it.',

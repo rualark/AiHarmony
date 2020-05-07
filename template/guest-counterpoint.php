@@ -50,7 +50,7 @@
             <br><br>
             Correct mistakes and see results of analysis immediately.
             <br><br>
-            <a class='btn btn-success' href="https://artinfuser.com/counterpoint/docs.php?d=cp_analyse">See details</a>
+            <a class='btn btn-success' href="docs.php?d=cp_analyse">See details</a>
           </p>
           </p>
         </div>

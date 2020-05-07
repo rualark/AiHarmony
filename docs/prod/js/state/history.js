@@ -136,7 +136,7 @@ export function redoState(doAnalysis=true) {
   //console.log('History', history_pos, historySize());
 }
 
-function updateUndoRedoButtons() {
+export function updateUndoRedoButtons() {
   button_enabled('undo', history_pos > 0);
   button_enabled('redo', history_pos < history.length - 1);
 }

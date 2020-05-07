@@ -1,7 +1,6 @@
 import {nd} from "../../notes/NotesData.js";
 import {async_redraw, state} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
-import {ares} from "../../analysis/AnalysisResults.js";
 import { showModal } from "../lib/modal.js";
 
 function showCheckLocked(v) {
@@ -29,11 +28,12 @@ function showSelectSpecies(v) {
   st += `<label for="sel_partSpecies"><b>Counterpoint species</b></label>`;
   st += `<select class="form-control custom-select" id=sel_partSpecies name=sel_partSpecies>`;
   let cur_sp = nd.voices[v].species;
-  if (cur_sp == null || cur_sp === 10) {
-    cur_sp = ares.getSpecies(v);
-  }
   let sel = "";
+  if (cur_sp === 10) sel = "selected";
+  else sel = "";
+  st += `<option value=10 ${sel}>Auto detect</option>`;
   if (cur_sp === 0) sel = "selected";
+  else sel = "";
   st += `<option value=0 ${sel}>Cantus firmus</option>`;
   for (let sp=1; sp<6; ++sp) {
     sel = "";
@@ -42,7 +42,6 @@ function showSelectSpecies(v) {
   }
   st += `</select>`;
   st += `</div>`;
-  //console.log(cur_sp, st);
   return st;
 }
 

@@ -19,13 +19,25 @@ import {aic, sendToAic} from "../integration/aiCounterpoint.js";
 import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
 import {httpRequestNoCache} from "../core/remote.js";
 import {data2plain} from "../state/state.js";
-import {keysigs} from "../ui/modal/keysig.js";
+import {keysigs, showKeysigModal} from "../ui/modal/keysig.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
-import {waitForVar} from "../core/promise.js";
+import {waitForVar, sleep} from "../core/promise.js";
 import {makePatch} from "../core/string.js";
 import {sendToAis} from "../integration/aiStudio.js";
 import {unicode_b64} from "../core/base64.js";
 import {ares} from "../analysis/AnalysisResults.js";
+import { showSettingsModal } from "../ui/modal/settingsModal.js";
+import { showCantusModal, showCantusModal2, shuffleArrangement } from "../ui/modal/cantusModal.js";
+import { showClefsModal } from "../ui/modal/clefs.js";
+import { showDownloadModal } from "../ui/modal/download.js";
+import { showOpenModal } from "../ui/modal/openModal.js";
+import { showPartModal } from "../ui/modal/partModal.js";
+import { showRestoreModal } from "../ui/modal/restoreModal.js";
+import { showShareModal } from "../ui/modal/shareModal.js";
+import { showShortcutsModal } from "../ui/modal/shortcutsModal.js";
+import { showTextModal } from "../ui/modal/textModal.js";
+import { showTimesigModal } from "../ui/modal/timesig.js";
+import { settings } from "../state/settings.js";
 
 export let testState = {
   testing: false
@@ -186,6 +198,51 @@ function removeStateFromXml(xml) {
   return xml.replace(/<software>AIHS:.*<\/software>/, '');
 }
 
+async function test_modal() {
+  await waitForState('showSettingsModal', state, ['ready'], 50, 5000);
+  showClefsModal(0);
+  await sleep(500);
+  $('#Modal1').modal('hide');
+  showDownloadModal();
+  await sleep(500);
+  $('#Modal1').modal('hide');
+  showKeysigModal();
+  await sleep(500);
+  $('#Modal1').modal('hide');
+  showOpenModal();
+  await sleep(500);
+  $('#Modal1').modal('hide');
+  showPartModal(0);
+  await sleep(500);
+  $('#Modal1').modal('hide');
+  showRestoreModal();
+  await sleep(500);
+  $('#Modal1').modal('hide');
+  showSettingsModal();
+  await sleep(500);
+  $('#Modal1').modal('hide');
+  showShareModal();
+  await sleep(500);
+  $('#Modal1').modal('hide');
+  showShortcutsModal();
+  await sleep(500);
+  $('#Modal1').modal('hide');
+  showTextModal(0, 0, 'lyric');
+  await sleep(500);
+  $('#Modal1').modal('hide');
+  showTimesigModal();
+  await sleep(500);
+  $('#Modal1').modal('hide');
+  showCantusModal2(0);
+  await sleep(500);
+  shuffleArrangement(0);
+  await sleep(500);
+  // This should show showCantusModal()
+  $('#Modal1').modal('hide');
+  await sleep(500);
+  $('#Modal1').modal('hide');
+}
+
 async function test_do(test_level) {
   const STATE_IGNORE_SUFFIX = 16;
   console.log('START TEST');
@@ -194,7 +251,7 @@ async function test_do(test_level) {
   new_file();
   await waitForState('readRemoteMusicXmlFile', state, ['ready'], 50, 5000);
   await waitForState('analysis', ares, ['ready'], 50, 5000);
-  readRemoteMusicXmlFile('musicxml/ca3/good-cp5-extract.xml');
+  readRemoteMusicXmlFile('musicxml/ca3-examples/good-cp5-extract.xml');
   await waitForState('data2plain', state, ['ready'], 50, 5000);
   await waitForState('analysis', ares, ['ready'], 50, 5000);
   let loaded_plain = data2plain().slice(0, -STATE_IGNORE_SUFFIX);
@@ -241,6 +298,7 @@ async function test_do(test_level) {
       await waitForState('MP3', aic, ['queued', 'running', 'ready'], 50, 5000);
     }
   }
+  await test_modal();
   stop_counter();
 }
 
@@ -249,7 +307,10 @@ export async function test(test_level) {
   console2html();
   start_counter('test');
   try {
+    settings.settings2storage();
+    settings.rule_verbose = 0;
     await test_do(test_level);
+    settings.storage2settings();
   }
   catch (e) {
     if (e != null) {

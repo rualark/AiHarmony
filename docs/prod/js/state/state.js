@@ -4,7 +4,7 @@ import {currentTimestamp, start_counter, stop_counter} from "../core/time.js";
 import {b256_safeString, safeString_b256, ui_b256, b256_ui, b256_debug} from "../core/base256.js";
 import { generateRandomId } from "../core/string.js";
 
-const ENCODING_VERSION = 13;
+const ENCODING_VERSION = 14;
 export const STATE_VOLATILE_SUFFIX = 7;
 const MAX_ARCHIVE_COUNT = 80;
 const MAX_ARCHIVE_BYTES = 200000;
@@ -30,11 +30,11 @@ export function data2plain() {
     st += ui_b256(nd.phrases[i], 2);
   }
   //console.log('keysig', nd.keysig.fifths, nd.keysig.mode, nd.keysig.fifths + 10 + nd.keysig.mode * 16);
-  st += ui_b256(nd.keysig.fifths + 10 + nd.keysig.mode * 16, 1);
+  st += ui_b256(nd.keysig.fifths + 8 + nd.keysig.mode * 16, 1);
   st += ui_b256(nd.modes.length, 1);
   for (let i=0; i<nd.modes.length; ++i) {
     st += ui_b256(nd.modes[i].step, 2);
-    st += ui_b256(nd.modes[i].fifths + 10 + nd.modes[i].mode * 16, 1);
+    st += ui_b256(nd.modes[i].fifths + 8 + nd.modes[i].mode * 16, 1);
   }
   st += ui_b256(nd.timesig.beats_per_measure, 1);
   st += ui_b256(nd.timesig.beat_type, 1);
@@ -85,7 +85,7 @@ export function plain2data(st, pos, target, full) {
     target.phrases.push(b256_ui(st, pos, 2));
   }
   let packed = b256_ui(st, pos, 1);
-  let fifths = packed % 16 - 10;
+  let fifths = packed % 16 - 8;
   let mode = Math.floor(packed / 16);
   target.build_keysig(fifths, mode);
   let mcount = b256_ui(st, pos, 1);
@@ -93,7 +93,7 @@ export function plain2data(st, pos, target, full) {
   for (let i = 0; i<mcount; ++i) {
     let step = b256_ui(st, pos, 2);
     let packed = b256_ui(st, pos, 1);
-    let fifths = packed % 16 - 10;
+    let fifths = packed % 16 - 8;
     let mode = Math.floor(packed / 16);
     target.modes.push({
       fifths: fifths,
@@ -218,6 +218,7 @@ export function url2state(url) {
 
 export function storage2archiveStorage(why) {
   let utf16 = localStorage.getItem('aih');
+  if (!utf16) return;
   let previous_id = localStorage.getItem('aihSessionId');
   let archiveSt = localStorage.getItem('aihArchive');
   if (!archiveSt) {

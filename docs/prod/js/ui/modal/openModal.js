@@ -11,7 +11,7 @@ export function showOpenLocalMusicXmlModal() {
   st += "<input type=file accept='.xml' class='custom-file-input' id='mxml-file-input' name='mxml-file-input' />";
   st += "<label class='custom-file-label' for='mxml-file-input'>Choose local file</label>";
   st += "</div>";
-  showModal(2, 'Open MusicXML file from this computer', st, '', [], [], false, () => { }, () => { });
+  showModal(1, 'Open MusicXML file from this computer', st, '', [], [], false, () => { }, () => { });
   document.getElementById('mxml-file-input').addEventListener('change', readLocalMusicXmlFile, false);
   $('#mxml-file-input').click();
 }
@@ -52,7 +52,7 @@ export function showOpenExampleMusicXmlModal() {
   st += '<a href=editor.html?load=sposobin-exercise-312-1>sposobin-exercise-312-1</a><br>';
   st += '<a href=editor.html?load=sposobin-exercise-335-1>sposobin-exercise-335-1</a><br>';
   st += '<a href=editor.html?load=sposobin-exercise-335-2>sposobin-exercise-335-2</a><br>';
-    showModal(2, 'Open example MusicXML file', st, '', [], [], false, () => { }, () => { });
+    showModal(1, 'Open example MusicXML file', st, '', [], [], false, () => { }, () => { });
 }
 
 export function showOpenModal() {
