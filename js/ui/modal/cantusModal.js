@@ -266,7 +266,16 @@ function updateCantusPreview(cid) {
       voicefont: "Times New Roman 11 bold",
     }
   };
-  ABCJS.renderAbc(`cantusAbc`, cantusPreviewToAbc(cid, getArrangement(), keysig, timesig), parserParams);
+  const arrangement = getArrangement();
+  if (arrangement.parts.length < 2) {
+    document.getElementById('cantusAbc').innerHTML = `<span style='color:red'>Set at least one part to Counterpoint</span>`;
+  }
+  else if (arrangement.cantus === "") {
+    document.getElementById('cantusAbc').innerHTML = `<span style='color:red'>Please set one part to Cantus firmus</span>`;
+  }
+  else {
+    ABCJS.renderAbc(`cantusAbc`, cantusPreviewToAbc(cid, arrangement, keysig, timesig), parserParams);
+  }
 }
 
 function showCantusModal2(cid) {
