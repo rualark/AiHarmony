@@ -36,7 +36,7 @@ const vocras = {
 function makeCantusKeysigs() {
   let res = [];
   for (const keysig in keysigs) {
-    if (keysigs[keysig].fifths > 5) continue;
+    //if (keysigs[keysig].fifths > 5) continue;
     if (keysigs[keysig].mode === 0) {
       res.push({val: keysig, text: keysig + ' major'});
     }
@@ -121,7 +121,10 @@ function transposeCantus(cid, arrangement, keysig) {
     if (cantus[n][0] === '=') {
       abc_note = abc_note.slice(1);
     }
-    const nd = abc2d(abc_note) + base_d;
+    let nd = abc2d(abc_note) + base_d;
+    // Move cantus towards prolonged range
+    if (keysig.fifths > 0) nd -= 7*3;
+    if (keysig.fifths < 0) nd += 7*3;
     d.push(nd);
     // Calculate alteration
     if (cantus[n][0] === '=') {
