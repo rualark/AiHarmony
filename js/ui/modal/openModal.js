@@ -63,9 +63,16 @@ export function showOpenModal() {
   st += `<b>Open MuxicXML file from this computer</b>`;
   st += '</a></p>';
 
+  /*
   st += `<p style='text-align: center'>`;
   st += `<a id=openServer href=# class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;
   st += `<b>Open example MuxicXML file</b>`;
+  st += '</a></p>';
+  */
+
+  st += `<p style='text-align: center'>`;
+  st += `<a href=docs.php?d=cp_examples class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;
+  st += `<b>Open counterpoint examples</b>`;
   st += '</a></p>';
 
   st += `<p style='text-align: center'>`;
@@ -78,10 +85,12 @@ export function showOpenModal() {
     $('#Modal1').modal('hide');
     showOpenLocalMusicXmlModal();
   };
+  /*
   document.getElementById('openServer').onclick = function () {
     $('#Modal1').modal('hide');
     showOpenExampleMusicXmlModal();
   };
+  */
   document.getElementById('recover').onclick = function () {
     $('#Modal1').modal('hide');
     showRestoreModal();
