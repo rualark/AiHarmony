@@ -187,7 +187,6 @@ export function toggle_alter(alt) {
   }
   let note = nd.voices[el.voice].notes[n];
   if (settings.alter_before_note && (!note.d || future.advancing)) {
-    console.log('future');
     future.advancing = true;
     if (future.alteration === alt) future.alteration = 10;
     else future.alteration = alt;

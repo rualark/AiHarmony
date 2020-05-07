@@ -238,7 +238,7 @@ function getArrangement() {
   return arrangement;
 }
 
-function shuffleArrangement(cid) {
+export function shuffleArrangement(cid) {
   let arrangement = {parts: ['Soprano', 'Alto', 'Tenor', 'Bass'], cantus: ''};
   const removed = Math.floor(Math.random() * 3);
   for(var i = 0; i < removed; ++i){
@@ -281,7 +281,7 @@ function updateCantusPreview(cid) {
   }
 }
 
-function showCantusModal2(cid) {
+export function showCantusModal2(cid) {
   trackEvent('AiHarmony', 'open', 'Choose cantus');
   let st = '';
   st += `<table cellpadding=5>`;
@@ -336,7 +336,7 @@ function showCantusModal2(cid) {
   let footer = '';
   footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
   footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>`;
-  showModal(2, 'New counterpoint exercise', st, footer, [], ["modal-lg"], true, ()=>{}, ()=>{
+  showModal(1, 'New counterpoint exercise', st, footer, [], ["modal-lg"], true, ()=>{}, ()=>{
     if (!okClicked) showCantusModal();
   });
   initTooltips(200, 100);
@@ -349,7 +349,7 @@ function showCantusModal2(cid) {
   });
   $('#modalOk').click(() => {
     okClicked = true;
-    $('#Modal2').modal('hide');
+    $('#Modal1').modal('hide');
     trackEvent('AiHarmony', 'open', 'Create new cantus exercise');
     storage2archiveStorage(4);
     nd.reset();

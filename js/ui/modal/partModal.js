@@ -46,7 +46,6 @@ function showSelectSpecies(v) {
 }
 
 export function showPartModal(v) {
-  console.log(nd);
   if (state.state !== 'ready') return;
   let st = '';
   st += showInputPartName(v);

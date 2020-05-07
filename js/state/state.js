@@ -218,6 +218,7 @@ export function url2state(url) {
 
 export function storage2archiveStorage(why) {
   let utf16 = localStorage.getItem('aih');
+  if (!utf16) return;
   let previous_id = localStorage.getItem('aihSessionId');
   let archiveSt = localStorage.getItem('aihArchive');
   if (!archiveSt) {
