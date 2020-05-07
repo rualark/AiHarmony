@@ -12,7 +12,7 @@
    <encoding-date>2020-05-07</encoding-date>
    <encoder></encoder>
    <software>Artinfuser Harmony</software>
-   <software>AIHS:LAYAwgggzAAAgDGAthyAgaBAAoAYAFwCcBTAIwBtiAYGABERrURgGInEASdmAUm4DJufZl2ZtmAIm4BCblOYACbgHIBQ7qMTjE8xLMndtMTbzXNVzABTcAlN2vnDG9c0GOrt7gCp6MGr7hsNFIAQwBnMP8xXxhpGIUYgDwYgHwYuMUkmIBcGIAcXyj4NAgAGQAVAHk0ACEIAGV6gDgAcxDycgB7ADsAWgA3ACYwgAcoXoBGVvauvqHR8YmEOAA9AGaAcVKgA</software>
+   <software>AIHS:LAYAwgggzAAAgDGAthyAgaBAAoAYAFwCcBTAIwBtiAYGNRGAYjsQBJmYBSdgMna.rb0m9AETsAhOzH0ABOwDkPPu0GJhiaYkmj26mKs5L6i-gAp2ASnbnjulcvq9bZy-wBUABERxsaUgEMAZ0DGLy0wmBkIgDwIgHwI8Qio-lj6AFwIgBwwuDQIABkAFQB5NAAhCABlKoA4AHN.cnIAewA7AFoANwAmQIAHKA6ARgam1s7egaHh1gA9ABaACQAToA___</software>
    <encoding-description>Artinfuser Harmony / MusicXML 3.0</encoding-description>
    <supports element="print" type="yes" value="yes" attribute="new-system" />
    <supports element="print" type="yes" value="yes" attribute="new-page" />
@@ -115,16 +115,6 @@
    </attributes>
    <note color="#000000">
     <rest />
-    <duration>1024</duration>
-    <voice>1</voice>
-    <type>whole</type>
-    <staff>1</staff>
-   </note>
-  </measure>
-  <measure number="2">
-   <attributes />
-   <note color="#000000">
-    <rest />
     <duration>256</duration>
     <voice>1</voice>
     <type>quarter</type>
@@ -161,7 +151,7 @@
     <staff>1</staff>
    </note>
   </measure>
-  <measure number="3">
+  <measure number="2">
    <attributes />
    <note color="#000000">
     <pitch>
@@ -204,7 +194,7 @@
     <staff>1</staff>
    </note>
   </measure>
-  <measure number="4">
+  <measure number="3">
    <attributes />
    <note color="#000000">
     <pitch>
@@ -247,7 +237,7 @@
     <staff>1</staff>
    </note>
   </measure>
-  <measure number="5">
+  <measure number="4">
    <attributes />
    <note color="#000000">
     <pitch>
@@ -283,6 +273,49 @@
     <pitch>
      <step>D</step>
      <octave>4</octave>
+    </pitch>
+    <duration>256</duration>
+    <voice>1</voice>
+    <type>quarter</type>
+    <staff>1</staff>
+   </note>
+  </measure>
+  <measure number="5">
+   <attributes />
+   <note color="#000000">
+    <pitch>
+     <step>C</step>
+     <octave>4</octave>
+    </pitch>
+    <duration>256</duration>
+    <voice>1</voice>
+    <type>quarter</type>
+    <staff>1</staff>
+   </note>
+   <note color="#000000">
+    <pitch>
+     <step>B</step>
+     <octave>3</octave>
+    </pitch>
+    <duration>256</duration>
+    <voice>1</voice>
+    <type>quarter</type>
+    <staff>1</staff>
+   </note>
+   <note color="#000000">
+    <pitch>
+     <step>A</step>
+     <octave>3</octave>
+    </pitch>
+    <duration>256</duration>
+    <voice>1</voice>
+    <type>quarter</type>
+    <staff>1</staff>
+   </note>
+   <note color="#000000">
+    <pitch>
+     <step>B</step>
+     <octave>3</octave>
     </pitch>
     <duration>256</duration>
     <voice>1</voice>
@@ -304,49 +337,6 @@
    </note>
    <note color="#000000">
     <pitch>
-     <step>B</step>
-     <octave>3</octave>
-    </pitch>
-    <duration>256</duration>
-    <voice>1</voice>
-    <type>quarter</type>
-    <staff>1</staff>
-   </note>
-   <note color="#000000">
-    <pitch>
-     <step>A</step>
-     <octave>3</octave>
-    </pitch>
-    <duration>256</duration>
-    <voice>1</voice>
-    <type>quarter</type>
-    <staff>1</staff>
-   </note>
-   <note color="#000000">
-    <pitch>
-     <step>B</step>
-     <octave>3</octave>
-    </pitch>
-    <duration>256</duration>
-    <voice>1</voice>
-    <type>quarter</type>
-    <staff>1</staff>
-   </note>
-  </measure>
-  <measure number="7">
-   <attributes />
-   <note color="#000000">
-    <pitch>
-     <step>C</step>
-     <octave>4</octave>
-    </pitch>
-    <duration>256</duration>
-    <voice>1</voice>
-    <type>quarter</type>
-    <staff>1</staff>
-   </note>
-   <note color="#000000">
-    <pitch>
      <step>D</step>
      <octave>4</octave>
     </pitch>
@@ -368,6 +358,49 @@
    <note color="#000000">
     <pitch>
      <step>F</step>
+     <octave>4</octave>
+    </pitch>
+    <duration>256</duration>
+    <voice>1</voice>
+    <type>quarter</type>
+    <staff>1</staff>
+   </note>
+  </measure>
+  <measure number="7">
+   <attributes />
+   <note color="#000000">
+    <pitch>
+     <step>G</step>
+     <octave>4</octave>
+    </pitch>
+    <duration>256</duration>
+    <voice>1</voice>
+    <type>quarter</type>
+    <staff>1</staff>
+   </note>
+   <note color="#000000">
+    <pitch>
+     <step>A</step>
+     <octave>4</octave>
+    </pitch>
+    <duration>256</duration>
+    <voice>1</voice>
+    <type>quarter</type>
+    <staff>1</staff>
+   </note>
+   <note color="#000000">
+    <pitch>
+     <step>B</step>
+     <octave>4</octave>
+    </pitch>
+    <duration>256</duration>
+    <voice>1</voice>
+    <type>quarter</type>
+    <staff>1</staff>
+   </note>
+   <note color="#000000">
+    <pitch>
+     <step>A</step>
      <octave>4</octave>
     </pitch>
     <duration>256</duration>
@@ -390,49 +423,6 @@
    </note>
    <note color="#000000">
     <pitch>
-     <step>A</step>
-     <octave>4</octave>
-    </pitch>
-    <duration>256</duration>
-    <voice>1</voice>
-    <type>quarter</type>
-    <staff>1</staff>
-   </note>
-   <note color="#000000">
-    <pitch>
-     <step>B</step>
-     <octave>4</octave>
-    </pitch>
-    <duration>256</duration>
-    <voice>1</voice>
-    <type>quarter</type>
-    <staff>1</staff>
-   </note>
-   <note color="#000000">
-    <pitch>
-     <step>A</step>
-     <octave>4</octave>
-    </pitch>
-    <duration>256</duration>
-    <voice>1</voice>
-    <type>quarter</type>
-    <staff>1</staff>
-   </note>
-  </measure>
-  <measure number="9">
-   <attributes />
-   <note color="#000000">
-    <pitch>
-     <step>G</step>
-     <octave>4</octave>
-    </pitch>
-    <duration>256</duration>
-    <voice>1</voice>
-    <type>quarter</type>
-    <staff>1</staff>
-   </note>
-   <note color="#000000">
-    <pitch>
      <step>C</step>
      <octave>4</octave>
     </pitch>
@@ -462,7 +452,7 @@
     <staff>1</staff>
    </note>
   </measure>
-  <measure number="10">
+  <measure number="9">
    <attributes />
    <note color="#000000">
     <pitch>
@@ -505,23 +495,13 @@
     <staff>1</staff>
    </note>
   </measure>
-  <measure number="11">
+  <measure number="10">
    <attributes />
    <note color="#000000">
     <pitch>
      <step>C</step>
      <octave>5</octave>
     </pitch>
-    <duration>1024</duration>
-    <voice>1</voice>
-    <type>whole</type>
-    <staff>1</staff>
-   </note>
-  </measure>
-  <measure number="12">
-   <attributes />
-   <note color="#000000">
-    <rest />
     <duration>1024</duration>
     <voice>1</voice>
     <type>whole</type>
@@ -550,7 +530,10 @@
     <staff-details number="1" print-object="yes" />
    </attributes>
    <note color="#000000">
-    <rest />
+    <pitch>
+     <step>C</step>
+     <octave>4</octave>
+    </pitch>
     <duration>1024</duration>
     <voice>1</voice>
     <type>whole</type>
@@ -561,8 +544,8 @@
    <attributes />
    <note color="#000000">
     <pitch>
-     <step>C</step>
-     <octave>4</octave>
+     <step>A</step>
+     <octave>3</octave>
     </pitch>
     <duration>1024</duration>
     <voice>1</voice>
@@ -574,7 +557,7 @@
    <attributes />
    <note color="#000000">
     <pitch>
-     <step>A</step>
+     <step>G</step>
      <octave>3</octave>
     </pitch>
     <duration>1024</duration>
@@ -587,7 +570,7 @@
    <attributes />
    <note color="#000000">
     <pitch>
-     <step>G</step>
+     <step>E</step>
      <octave>3</octave>
     </pitch>
     <duration>1024</duration>
@@ -600,7 +583,7 @@
    <attributes />
    <note color="#000000">
     <pitch>
-     <step>E</step>
+     <step>F</step>
      <octave>3</octave>
     </pitch>
     <duration>1024</duration>
@@ -613,7 +596,7 @@
    <attributes />
    <note color="#000000">
     <pitch>
-     <step>F</step>
+     <step>A</step>
      <octave>3</octave>
     </pitch>
     <duration>1024</duration>
@@ -626,7 +609,7 @@
    <attributes />
    <note color="#000000">
     <pitch>
-     <step>A</step>
+     <step>G</step>
      <octave>3</octave>
     </pitch>
     <duration>1024</duration>
@@ -639,7 +622,7 @@
    <attributes />
    <note color="#000000">
     <pitch>
-     <step>G</step>
+     <step>E</step>
      <octave>3</octave>
     </pitch>
     <duration>1024</duration>
@@ -652,7 +635,7 @@
    <attributes />
    <note color="#000000">
     <pitch>
-     <step>E</step>
+     <step>D</step>
      <octave>3</octave>
     </pitch>
     <duration>1024</duration>
@@ -665,32 +648,9 @@
    <attributes />
    <note color="#000000">
     <pitch>
-     <step>D</step>
-     <octave>3</octave>
-    </pitch>
-    <duration>1024</duration>
-    <voice>1</voice>
-    <type>whole</type>
-    <staff>1</staff>
-   </note>
-  </measure>
-  <measure number="11">
-   <attributes />
-   <note color="#000000">
-    <pitch>
      <step>C</step>
      <octave>3</octave>
     </pitch>
-    <duration>1024</duration>
-    <voice>1</voice>
-    <type>whole</type>
-    <staff>1</staff>
-   </note>
-  </measure>
-  <measure number="12">
-   <attributes />
-   <note color="#000000">
-    <rest />
     <duration>1024</duration>
     <voice>1</voice>
     <type>whole</type>

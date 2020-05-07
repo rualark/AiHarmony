@@ -15,7 +15,7 @@ export function dataToAbc() {
     if (nd.algo === 'CA3') {
       let vocra = ares.getVocra(v);
       let spec = ares.getSpecies(v);
-      if (vocra != null && vc.name !== vocra) name += ` [${vocra}]`;
+      if (vocra != null && vc.name.slice(0, 3).toLowerCase() !== vocra.slice(0, 3).toLowerCase()) name += ` [${vocra}]`;
       if (spec != null && ares.av_cnt > 1) {
         if (spec === 0) {
           name += ` (c.f.)`;
