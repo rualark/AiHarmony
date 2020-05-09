@@ -364,6 +364,16 @@ export class NotesData {
   set_species(v, sp) {
     this.voices[v].species = sp;
   }
+
+  transpose_voice(v, dd) {
+    let vc = this.voices[v];
+    for (let n = 0; n < vc.notes.length; ++n) {
+      if (!vc.notes[n].d) continue;
+      const new_d = vc.notes[n].d + dd
+      if (new_d < 1 || new_d > 74) continue;
+      vc.notes[n].d = new_d;
+    }
+  }
 }
 
 export let nd = new NotesData();

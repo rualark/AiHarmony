@@ -32,6 +32,10 @@ function selectionHasMistake() {
 
 export function update_selection() {
   let locked = is_locked();
+  button_enabled('transpose',
+    selected.element != null && typeof selected.element.abselem !== 'undefined');
+  button_enabled('del_bar',
+    selected.element != null && typeof selected.element.abselem !== 'undefined');
   button_enabled('add_part',
     selected.element != null && typeof selected.element.abselem !== 'undefined' && nd.voices.length < 63);
   button_enabled('del_part',

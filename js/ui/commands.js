@@ -536,7 +536,7 @@ export let commands = [
   },
   {
     id: 'transpose',
-    toolbar: {type: 'image', toolbar_id: 'pc2-mobile1', hintText: 'Transpose part'},
+    toolbar: {type: 'image', toolbar_id: 'pc2-mobile1', hintText: 'Transpose'},
     event: 'onclick',
     keys: [],
     command: () => { showTransposeModal(selected.voice) },

@@ -7,7 +7,7 @@ import {
   toggle_alter
 } from "./edit/editNote.js";
 import {showShortcutsModal} from "./modal/shortcutsModal.js";
-import {async_redraw, notation_zoom} from "../abc/abchelper.js";
+import {async_redraw, notation_zoom, selected} from "../abc/abchelper.js";
 import {keyCodes} from './lib/keys.js';
 import {play} from "../audio/audio.js";
 import {nd} from "../notes/NotesData.js";
@@ -32,6 +32,7 @@ import {settings} from "../state/settings.js";
 import { add_lyric, add_text } from "./edit/editText.js";
 import { showOpenModal } from "./modal/openModal.js";
 import { showCantusModal } from "./modal/cantusModal.js";
+import { showTransposeModal } from "./modal/transposeModal.js";
 
 let mobileOpt = {
   true: {
@@ -532,6 +533,14 @@ export let commands = [
     keys: ['K'],
     command: () => { showKeysigModal() },
     name: 'Key signature',
+  },
+  {
+    id: 'transpose',
+    toolbar: {type: 'image', toolbar_id: 'pc2-mobile1', hintText: 'Transpose'},
+    event: 'onclick',
+    keys: [],
+    command: () => { showTransposeModal(selected.voice) },
+    name: 'Transpose part',
   },
   { separator: true, toolbar: {toolbar_id: 1} },
   {
