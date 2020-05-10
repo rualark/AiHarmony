@@ -1,7 +1,8 @@
 import {fifths2keysig, keysig_imprint} from "./noteHelper.js";
 import {saveState} from "../state/history.js";
 import {selected} from "../abc/abchelper.js";
-import { generateRandomId } from "../core/string.js";
+import { generateRandomId, name2filename } from "../core/string.js";
+import { generateRandomHashWords } from "../core/hashwords.js";
 
 export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
 
@@ -226,9 +227,11 @@ export class NotesData {
   }
 
   reset() {
-    const hash = generateRandomId(10);
-    this.set_name(`New exercise [${hash}]`);
-    this.set_fileName(`New-exercise-${hash}`);
+    //const hash = generateRandomId(10);
+    //this.set_name(`New exercise [${hash}]`);
+    //this.set_fileName(`New-exercise-${hash}`);
+    this.set_name(generateRandomHashWords('A n n-###'));
+    this.set_fileName(name2filename(this.name));
     this.algoMode = 0;
     this.phrases = [ 0 ];
     this.build_keysig(0, 13);
