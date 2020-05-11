@@ -9,10 +9,10 @@
   <creator type="arranger"></creator>
   <rights></rights>
   <encoding>
-   <encoding-date>2020-05-07</encoding-date>
+   <encoding-date>2020-05-11</encoding-date>
    <encoder></encoder>
    <software>Artinfuser Harmony</software>
-   <software>AIHS:LAYAwgggzAAAgDGAthyAgaBAcBgAXAJwFMAjAGyJgCoAERGASjsQHJmYAad2-ganbb0m9HvBhoSAQwDO0mABx2AXHYA8dgAJ2AQnYB8NcvaLEcNAGUA9gAcAdGgBCM2wCRz1ogGMAlkWkaARg0iAA8iAh9pIjcPHz8AWgD40PDIogB.xAA9AGaAMQBgoA___</software>
+   <software>AIHS:HAYAwgggzAAAgDGANhyAgaBAAoAYAFwCcBTAIwBtiYAqABERgEp7EByFmAGg7oYGoO7Bswa942NKQCGAZxkwAOLVwBtAMYA6AGYaAuogC4HAHgcABBwCEHAPgmORhksRw0AZQD2ABw1oAQrIaAEhuXsRqAJbEMmYAjGbEAB7EhJEyxCFhkdEAtLE5SSlpxKgAegCdALEAJ0A</software>
    <encoding-description>Artinfuser Harmony / MusicXML 3.0</encoding-description>
    <supports element="print" type="yes" value="yes" attribute="new-system" />
    <supports element="print" type="yes" value="yes" attribute="new-page" />
@@ -249,6 +249,13 @@
     </clef>
     <staff-details number="1" print-object="yes" />
    </attributes>
+   <direction>
+    <direction-type>
+     <words>[c.f.]</words>
+    </direction-type>
+     <voice>1</voice>
+     <staff>1</staff>
+   </direction>
    <note color="#000000">
     <pitch>
      <step>C</step>

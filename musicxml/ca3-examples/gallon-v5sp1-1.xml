@@ -9,10 +9,10 @@
   <creator type="arranger"></creator>
   <rights></rights>
   <encoding>
-   <encoding-date>2020-05-07</encoding-date>
+   <encoding-date>2020-05-11</encoding-date>
    <encoder></encoder>
    <software>Artinfuser Harmony</software>
-   <software>AIHS:LAYAwgggzAAAgDGBNhMBbAQDBQAUAMABcAnAUwCMAbUmAKgAREYBqRxAGjZgFouA6LqyacmvJgEouACjZwCJCtRgyJXAORcGTIYklMtiAGTrps-WSo0AxF2NMApFxtMNTO4kdNnH22YAQCpbcABwwAIRcAPhcAARcEUwAuFGx8VwARE5mGOQAhgDO-TDRSVwAOFwAWFwA2FzJTBVM1UwAmFwAGLIA4ABqAPYAlgDGpDEAjH1DozEATFMjY1ALMwAsK2MArABwAOa5lJT9AHbcAG6b-QAO49zjewdHpxfXt-MYiAB6AC0ASkhAA__</software>
+   <software>AIHS:HAYAwgggzAAAgDGB1hMAbAQDBQAUAMABcAnAUwCMAbUmAKgAREYBqRxAGjZgFouA6LqyacmvJgEouACjZwCJCtRgyJXAORcGTIYklMtiAGTrps-WSo0AxF2NMApFxtMNTO4kdNnH22YAQCpbcABwwAIRcAPhcAARcEUwAuFGx8VwARE5mGOQAhgDO-TDR-ADaAMZ8AGZ8ALqIyUwAOFwAWFwA2FyNiC1M7UwAmFwAGLIA4ABqAPYAluWkMQCMU3MLMQBMq.OLUNvrACz7iwCswADmuZSU0wB23ABuJ.kADkvcSxdXN.dPr-9LDCIAB6AE6ABkATiAA__</software>
    <encoding-description>Artinfuser Harmony / MusicXML 3.0</encoding-description>
    <supports element="print" type="yes" value="yes" attribute="new-system" />
    <supports element="print" type="yes" value="yes" attribute="new-page" />
@@ -743,6 +743,13 @@
     </clef>
     <staff-details number="1" print-object="yes" />
    </attributes>
+   <direction>
+    <direction-type>
+     <words>[c.f.]</words>
+    </direction-type>
+     <voice>1</voice>
+     <staff>1</staff>
+   </direction>
    <note color="#000000">
     <pitch>
      <step>F</step>

@@ -11,10 +11,46 @@ import {name2filename} from "../core/string.js";
 
 export let xmlLoadWarnings = new Set();
 
+function decodeSpeciesHints() {
+  for (const vc of nd.voices) {
+    for (const nt of vc.notes) {
+      if (!nt.text) continue;
+      let species;
+      if (nt.text.toLowerCase() === '[c.f.]') species = 0;
+      else if (nt.text.toLowerCase() === '[sp1]') species = 1;
+      else if (nt.text.toLowerCase() === '[sp2]') species = 2;
+      else if (nt.text.toLowerCase() === '[sp3]') species = 3;
+      else if (nt.text.toLowerCase() === '[sp4]') species = 4;
+      else if (nt.text.toLowerCase() === '[sp5]') species = 5;
+      if (species != null) {
+        nt.text = '';
+        vc.species = species;
+      }
+    }
+  }
+  for (const vc of nd.voices) {
+    for (const nt of vc.notes) {
+      if (!nt.lyric) continue;
+      let species;
+      if (nt.lyric.toLowerCase() === '[c.f.]') species = 0;
+      else if (nt.lyric.toLowerCase() === '[sp1]') species = 1;
+      else if (nt.lyric.toLowerCase() === '[sp2]') species = 2;
+      else if (nt.lyric.toLowerCase() === '[sp3]') species = 3;
+      else if (nt.lyric.toLowerCase() === '[sp4]') species = 4;
+      else if (nt.lyric.toLowerCase() === '[sp5]') species = 5;
+      if (species != null) {
+        nt.lyric = '';
+        vc.species = species;
+      }
+    }
+  }
+}
+
 export function readMusicXml(xml, filename) {
   try {
     start_counter('musicXmlToData');
     let error = musicXmlToData(xml);
+    decodeSpeciesHints();
     //stop_counter();
     if (error) {
       storage2state();

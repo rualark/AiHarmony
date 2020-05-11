@@ -9,10 +9,10 @@
   <creator type="arranger"></creator>
   <rights></rights>
   <encoding>
-   <encoding-date>2020-05-07</encoding-date>
+   <encoding-date>2020-05-11</encoding-date>
    <encoder></encoder>
    <software>Artinfuser Harmony</software>
-   <software>AIHS:LAYAwgggzAAAgDGAthyAgaBAAoAYAFwCcBTAIwBtiAYGNRGAQjsQCJmYBidgEnYFJmABABkQgOTsAFOwCU7AFTsA1AtlT2E-qPoD6vetMSDNMEeLX1F9OQeZUTMbYl2J9iLnv5CnxqYMRw2GikAIYAzmEwAFj-iADYsTAAOIkAeIkA-GmJKfQx9Al5sXBoEAAyACoA8mgAQhAAyg0AcADmIeTkAPYAdgC0AG4ATGEADlB9UG0d3f3DYxOwMNwAegDNAOIAtUA___</software>
+   <software>AIHS:HAYAwgggzAAAgDGANhyAgaBAAoAYAFwCcBTAIwBtiAYGNRGAQjsQCJmYBidgEnYFJmABABkQgOTsAFOwCU7AFTsA1AtlT2E-qPoD6vetMSDNMEeLX1F9OQeZUTMbYl2J9iLnv5CnxqYMRw2GikAIYAzmEwAFiCuADaAMYAdABmSQC6iADY.ogAOLkwAHiFAPiFJfQF9DH0OTW5cGgQADIAKgDyaABCEADKfcAA5iHk5AD2AHYAtABuAExhAA5Q01DDoxMzC8urUKgAegCdANEcQA</software>
    <encoding-description>Artinfuser Harmony / MusicXML 3.0</encoding-description>
    <supports element="print" type="yes" value="yes" attribute="new-system" />
    <supports element="print" type="yes" value="yes" attribute="new-page" />
@@ -544,6 +544,13 @@
     </clef>
     <staff-details number="1" print-object="yes" />
    </attributes>
+   <direction>
+    <direction-type>
+     <words>[c.f.]</words>
+    </direction-type>
+     <voice>1</voice>
+     <staff>1</staff>
+   </direction>
    <note color="#000000">
     <pitch>
      <step>A</step>

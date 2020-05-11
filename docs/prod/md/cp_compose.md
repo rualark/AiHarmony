@@ -32,58 +32,10 @@ Learn how to compose a first species counterpoint:
 
 Some known books about Counterpoint:
 
-- Noel-Gallon / Bitsch Marcel - Traité de Contrepoint (french) (<a href=md/pdf/Counterpoint_rules.pdf target=_blank>english, edited</a>) (<a href=md/pdf/Gallon-ru.pdf target=_blank>russian</a>
+- Noel-Gallon / Bitsch Marcel - Traité de Contrepoint (<a href=md/pdf/Gallon-Bitsch-Contrepointe.pdf target=_blank>french</a>) (<a href=md/pdf/Counterpoint_rules.pdf target=_blank>english, edited</a>) (<a href=md/pdf/Gallon-ru.pdf target=_blank>russian</a>)
 - Charles Koechlin - Precis des Regles du Contrepoint (french)
 - Танеев - Подвижной контрапункт строгого письма (russian)
 
-## Examples of first-species counterpoint
+## Examples of counterpoint
 
-Example:
-
-![](md/img/ex_sp1_1.png)
-
-Example:
-
-![](md/img/ex_sp1_2.png)
-
-## Examples of second-species counterpoint
-
-Example:
-
-![](md/img/ex_sp3_1.png)
-
-Example:
-
-![](md/img/ex_sp3_2.png)
-
-## Examples of third-species counterpoint
-
-Example:
-
-![](md/img/ex_sp3_1.png)
-
-Example:
-
-![](md/img/ex_sp3_2.png)
-
-## Examples of fourth-species counterpoint
-
-Example:
-
-![](md/img/ex_sp4_1.png)
-
-Example:
-
-![](md/img/ex_sp4_2.png)
-
-## Examples of fifth-species counterpoint
-
-Example:
-
-![](md/img/ex_sp5_1.png)
-
-Example:
-
-![](md/img/ex_sp5_2.png)
-
-See more examples in Examples section.
+Please find examples in Examples section and in book above: Noel-Gallon / Bitsch Marcel - Traité de Contrepoint
