@@ -8,6 +8,7 @@ import {ares} from "../../analysis/AnalysisResults.js";
 import {initCommands} from "../commands.js";
 import { update_selection } from "../selection.js";
 import { showModal } from "../lib/modal.js";
+import { showCheckBox } from "../lib/uilib.js";
 
 function showCheckToolbarHints() {
   let st = '';
@@ -73,6 +74,7 @@ export function showSettingsModal() {
   let st = '';
   st += showCheckToolbarHints();
   st += showCheckAlterBeforeNote();
+  st += showCheckBox('check_showNht', settings.show_nht, `Label non-harmonic tones with 'nht' text`);
   st += showSelectShortcutsLayout();
   //st += showSelectAlgo();
   st += showSelectRuleVerbose();
@@ -87,6 +89,11 @@ export function showSettingsModal() {
   $('#check_alterBeforeNote').change(() => {
     settings.alter_before_note = Number($('#check_alterBeforeNote').is(":checked"));
     settings.settings2storage();
+  });
+  $('#check_showNht').change(() => {
+    settings.show_nht = Number($('#check_showNht').is(":checked"));
+    settings.settings2storage();
+    async_redraw();
   });
   $('#sel_shortcutsLayout').change(() => {
     settings.setShortcutsLayout($("#sel_shortcutsLayout option:selected" ).val());

@@ -2,6 +2,7 @@ import {clefs} from "../ui/modal/clefs.js";
 import {nd} from "../notes/NotesData.js";
 import {alter2abc, d2abc} from "../notes/noteHelper.js";
 import {ares} from "../analysis/AnalysisResults.js";
+import { settings } from "../state/settings.js";
 
 export function dataToAbc() {
   let abc = '';
@@ -36,6 +37,10 @@ export function dataToAbc() {
       nt.step = s;
       nd.abc_charStarts[abc.length] = {voice: v, note: n};
       nt.abc_charStarts = abc.length;
+      if (nt.d && settings.show_nht) {
+        const msh = ares.getMsh(v, s);
+        if (msh < 0) abc += `"^nht"`;
+      }
       let flags = ares.getFlagsInInterval(v, s, s + nt.len);
       if (flags.red > 0) abc += '"^!"';
       else if (flags.yellow > 0) abc += '"^?"';

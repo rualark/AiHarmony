@@ -9,7 +9,7 @@ import {initTooltips} from "../ui/lib/tooltips.js";
 import {selected} from "../abc/abchelper.js";
 import {getEnvironment} from "../core/remote.js";
 
-let ARES_ENCODING_VERSION = 2;
+let ARES_ENCODING_VERSION = 3;
 export let SEVERITY_RED = 80;
 export let SEVERITY_RED_COLOR = "red";
 export let SEVERITY_YELLOW_COLOR = "#F19900";
@@ -29,6 +29,7 @@ class AnalysisResults {
   reset() {
     this.errors = [];
     this.harm = [];
+    this.msh = [];
     this.flag = [];
     this.vid = [];
     this.vid2 = [];
@@ -72,10 +73,12 @@ class AnalysisResults {
       this.vid[v] = va;
       this.vsp[v] = b256_ui(st, pos, 1);
       this.vocra[v] = b256_ui(st, pos, 1);
+      this.msh[v] = {};
       this.flag[v] = {};
       let dstep = 1;
       if (nd.algo === 'CA3') dstep = 2;
       for (let s = 0; s < this.c_len; s += dstep) {
+        this.msh[v][s + this.s_start] = b256_ui(st, pos, 1) - 128;
         let fcnt = b256_ui(st, pos, 1);
         if (!fcnt) continue;
         this.flag[v][s + this.s_start] = [];
@@ -282,6 +285,14 @@ class AnalysisResults {
       if (flags.yellow) total.yellow += flags.yellow;
     }
     return total;
+  }
+
+  getMsh(v, pos) {
+    if (this.vid2 == null || !(v in this.vid2)) return 0;
+    let va = this.vid2[v];
+    if (!this.msh || va >= this.msh.length) return 0;
+    if (!(pos in this.msh[va])) return 0;
+    return this.msh[va][pos];
   }
 
   getVocra(v) {
