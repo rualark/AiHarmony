@@ -27,7 +27,7 @@ import {sendToAis} from "../integration/aiStudio.js";
 import {unicode_b64} from "../core/base64.js";
 import {ares} from "../analysis/AnalysisResults.js";
 import { showSettingsModal } from "../ui/modal/settingsModal.js";
-import { showCantusModal, showCantusModal2, shuffleArrangement } from "../ui/modal/cantusModal.js";
+import { showCantusModal2, shuffleArrangement } from "../ui/modal/cantusModal.js";
 import { showClefsModal } from "../ui/modal/clefs.js";
 import { showDownloadModal } from "../ui/modal/download.js";
 import { showOpenModal } from "../ui/modal/openModal.js";

@@ -21,12 +21,12 @@ export function showTransposeModal(v) {
   if (state.state !== 'ready') return;
   let st = '';
   st += "<div style='width: 100%; text-align: center;'>";
-  for (const i in transpositions) {
+  for (let i=0; i<transpositions.length; ++i) {
     st += transposition_html(i);
   }
   st += "</table></div>";
   showModal(1, 'Transpose part', st, '', [], [], false, ()=>{}, ()=>{});
-  for (const i in transpositions) {
+  for (let i=0; i<transpositions.length; ++i) {
     document.getElementById('atranspose' + i).onclick=function() {
       $('#Modal1').modal('hide');
       nd.transpose_voice(v, transpositions[i].dd);

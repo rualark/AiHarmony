@@ -1,10 +1,10 @@
 import {async_redraw, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
-import { getArchiveStorage, storage2archiveStorage, plain2data, session_id } from "../../state/state.js";
+import { getArchiveStorage, plain2data, session_id } from "../../state/state.js";
 import { showModal } from "../lib/modal.js";
 
-function version_html(ver, id, uniq_id) {
+function version_html(ver, id) {
   let st = '';
   st += `<a id=ver${id} class='btn btn-outline-white p-1' href=# role='button' style='min-width: 30px; text-align: left'>`;
   st += '';

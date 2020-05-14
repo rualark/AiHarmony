@@ -2,7 +2,7 @@ import {shortcutsLayouts} from "../shortcutsLayouts.js";
 import {settings} from "../../state/settings.js";
 import {initTooltips} from "../lib/tooltips.js";
 import {nd} from "../../notes/NotesData.js";
-import {saveState, updateUndoRedoButtons} from "../../state/history.js";
+import {updateUndoRedoButtons} from "../../state/history.js";
 import {async_redraw, state} from "../../abc/abchelper.js";
 import {ares} from "../../analysis/AnalysisResults.js";
 import {initCommands} from "../commands.js";

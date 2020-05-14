@@ -1,4 +1,4 @@
-import {async_redraw, selected, state} from "../../abc/abchelper.js";
+import {selected, state} from "../../abc/abchelper.js";
 import {nd} from "../../notes/NotesData.js";
 import { stop_advancing } from "./editScore.js";
 import { showTextModal } from "../modal/textModal.js";
@@ -8,7 +8,6 @@ export function add_text() {
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
   let notes = nd.voices[el.voice].notes;
-  let note = notes[el.note];
   stop_advancing();
   showTextModal(el.voice, el.note, 'text');
 }
@@ -18,7 +17,6 @@ export function add_lyric() {
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
   let notes = nd.voices[el.voice].notes;
-  let note = notes[el.note];
   stop_advancing();
   showTextModal(el.voice, el.note, 'lyric');
 }

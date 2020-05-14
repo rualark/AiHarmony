@@ -40,12 +40,12 @@ export function showTimesigModal() {
   if (state.state !== 'ready') return;
   let st = '';
   st += "<div style='width: 100%; text-align: center;'>";
-  for (const i in timesigs) {
+  for (let i=0; i<timesigs.length; ++i) {
     st += timesig_html(timesigs[i].beats_per_measure, timesigs[i].beat_type, i);
   }
   st += "</table></div>";
   showModal(1, 'Choose time signature', st, '', [], [], false, ()=>{}, ()=>{});
-  for (const i in timesigs) {
+  for (let i=0; i<timesigs.length; ++i) {
     document.getElementById('atimesig' + i).onclick=function() {
       $('#Modal1').modal('hide');
       nd.set_timesig(timesigs[i]);

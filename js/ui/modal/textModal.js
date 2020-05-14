@@ -18,12 +18,13 @@ function submitText(v, n, type) {
 
 export function showTextModal(v, n, type) {
   if (state.state !== 'ready') return;
+  let text, title;
   if (type === 'lyric') {
-    var text = nd.voices[v].notes[n].lyric;
-    var title = 'Add lyric below note';
+    text = nd.voices[v].notes[n].lyric;
+    title = 'Add lyric below note';
   } else {
-    var text = nd.voices[v].notes[n].text;
-    var title = 'Add text above note';
+    text = nd.voices[v].notes[n].text;
+    title = 'Add text above note';
   }
   text = text ? text : "";
   let st = '';
