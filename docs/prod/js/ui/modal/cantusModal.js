@@ -274,12 +274,15 @@ function updateCantusPreview(cid) {
   };
   const arrangement = getArrangement();
   if (arrangement.parts.length < 2) {
+    $('#modalOk').prop('disabled', true);
     document.getElementById('cantusAbc').innerHTML = `<span style='color:red'>Set at least one part to Counterpoint</span>`;
   }
   else if (arrangement.cantus === "") {
+    $('#modalOk').prop('disabled', true);
     document.getElementById('cantusAbc').innerHTML = `<span style='color:red'>Please set one part to Cantus firmus</span>`;
   }
   else {
+    $('#modalOk').prop('disabled', false);
     ABCJS.renderAbc(`cantusAbc`, cantusPreviewToAbc(cid, arrangement, keysig, timesig), parserParams);
   }
 }
