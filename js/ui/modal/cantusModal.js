@@ -282,6 +282,7 @@ function updateCantusPreview(cid) {
     document.getElementById('cantusAbc').innerHTML = `<span style='color:red'>Please set one part to Cantus firmus</span>`;
   }
   else {
+    $('#modalOk').prop('disabled', false);
     ABCJS.renderAbc(`cantusAbc`, cantusPreviewToAbc(cid, arrangement, keysig, timesig), parserParams);
   }
 }
