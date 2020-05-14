@@ -217,7 +217,6 @@ export function showCantusModal() {
   st += "</div>";
   showModal(1, 'Choose cantus firmus', st, '', [], [], true, ()=>{}, ()=>{});
   for (let cid=0; cid<canti.length; ++cid) {
-    const cantus = canti[cid];
     ABCJS.renderAbc(`cantus${cid}`, cantusToAbc(cid), {staffwidth: 110});
     document.getElementById('acantus' + cid).onclick=function() {
       $('#Modal1').modal('hide');

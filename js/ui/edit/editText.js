@@ -7,7 +7,6 @@ export function add_text() {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
-  let notes = nd.voices[el.voice].notes;
   stop_advancing();
   showTextModal(el.voice, el.note, 'text');
 }
@@ -16,7 +15,6 @@ export function add_lyric() {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
-  let notes = nd.voices[el.voice].notes;
   stop_advancing();
   showTextModal(el.voice, el.note, 'lyric');
 }

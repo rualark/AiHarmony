@@ -1,7 +1,7 @@
 import {fifths2keysig, keysig_imprint} from "./noteHelper.js";
 import {saveState} from "../state/history.js";
 import {selected} from "../abc/abchelper.js";
-import { generateRandomId, name2filename } from "../core/string.js";
+import { name2filename } from "../core/string.js";
 import { generateRandomHashWords } from "../core/hashwords.js";
 
 export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
