@@ -134,7 +134,11 @@ export function toolbarButtonHtml(command, showHints) {
     }
   }
   if (command.toolbar.type === 'text') {
-    st += `${command.toolbar.text}`;
+    if (showHints && command.toolbar.fullText) {
+      st += `${command.toolbar.fullText}`;
+    } else {
+      st += `${command.toolbar.text}`;
+    }
   }
   if (command.toolbar.type === 'select') {
     if (command.id === 'algo') {
@@ -502,7 +506,7 @@ export let commands = [
   { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'up8',
-    toolbar: {type: 'text', text: '+8ve', fontSize: 1.2, toolbar_id: 1},
+    toolbar: {type: 'text', text: '+8', fullText: '+8ve', fontSize: 1.2, toolbar_id: 1},
     event: 'onclick',
     keys: ['Shift+UpArrow'],
     command: () => { increment_octave(1) },
@@ -510,7 +514,7 @@ export let commands = [
   },
   {
     id: 'down8',
-    toolbar: {type: 'text', text: '-8ve', fontSize: 1.2, toolbar_id: 1},
+    toolbar: {type: 'text', text: '-8', fullText: '-8ve', fontSize: 1.2, toolbar_id: 1},
     event: 'onclick',
     keys: ['Shift+DownArrow'],
     command: () => { increment_octave(-1) },
@@ -562,7 +566,7 @@ export let commands = [
   { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'add_part',
-    toolbar: {type: 'text', text: '+Part', fontSize: 1.3, toolbar_id: 1},
+    toolbar: {type: 'text', text: '+P', fullText: '+Part', fontSize: 1.3, toolbar_id: 1},
     event: 'onclick',
     keys: [],
     command: () => { add_part() },
@@ -570,7 +574,7 @@ export let commands = [
   },
   {
     id: 'del_part',
-    toolbar: {type: 'text', text: '-Part', fontSize: 1.3, toolbar_id: 1},
+    toolbar: {type: 'text', text: '-P', fullText: '-Part', fontSize: 1.3, toolbar_id: 1},
     event: 'onclick',
     keys: [],
     command: () => { del_part() },
@@ -579,7 +583,7 @@ export let commands = [
   { separator: true, toolbar: {toolbar_id: 1} },
   {
     id: 'add_text',
-    toolbar: {type: 'text', text: 'Text', fontSize: 1.3, toolbar_id: 1},
+    toolbar: {type: 'text', text: 'T', fullText: 'Text', fontSize: 1.3, toolbar_id: 1},
     event: 'onclick',
     keys: ['Alt+T'],
     command: () => { add_text() },
@@ -587,7 +591,7 @@ export let commands = [
   },
   {
     id: 'add_lyric',
-    toolbar: {type: 'text', text: 'Lyric', fontSize: 1.3, toolbar_id: 1},
+    toolbar: {type: 'text', text: 'L', fullText: 'Lyric', fontSize: 1.3, toolbar_id: 1},
     event: 'onclick',
     keys: ['Alt+L'],
     command: () => { add_lyric() },
