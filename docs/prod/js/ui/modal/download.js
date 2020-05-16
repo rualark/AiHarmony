@@ -65,7 +65,7 @@ function linkAsMidi() {
 export function showDownloadModal() {
   if (state.state !== 'ready') return;
   let st = '';
-  for (const i in exportFormats) {
+  for (let i=0; i<exportFormats.length; ++i) {
     if (exportFormats[i].func == null && exportFormats[i].link == null) continue;
     if (exportFormats[i].link != null && exportFormats[i].link().href == null) continue;
     st += `<p style='text-align: center'>`;
@@ -81,7 +81,7 @@ export function showDownloadModal() {
   }
   st += `<div style='display: none' id="midi-download"></div>`;
   showModal(1, 'Download music', st, '', [], [], false, ()=>{}, ()=>{});
-  for (const i in exportFormats) {
+  for (let i=0; i<exportFormats.length; ++i) {
     if (exportFormats[i].func == null && exportFormats[i].link == null) continue;
     if (exportFormats[i].link != null && exportFormats[i].link().href == null) continue;
     document.getElementById('adownload' + i).onclick = function () {

@@ -2,7 +2,6 @@ import {debugLog} from "../core/debug.js";
 import {async_redraw} from "../abc/abchelper.js";
 import {ares} from "./AnalysisResults.js";
 import {trackEvent} from "../integration/tracking.js";
-import { nd } from "../notes/NotesData.js";
 
 let workers = {};
 
