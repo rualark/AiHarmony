@@ -11,10 +11,27 @@ export function urlNoParams() {
   return window.location.href.split('?')[0].replace('#', '');
 }
 
+function get_mgen_login() {
+  let login = getCookie('mgen_login');
+  if (login) {
+    try {
+      if (login) login = decodeURIComponent(login);
+    }
+    catch (e) {}
+    // Save login to local storage, because it is stored longer
+    localStorage.setItem('mgen_login', login);
+  } else {
+    login = localStorage.getItem('mgen_login');
+  }
+  return login ? login : '';
+}
+
+export const mgen_login = get_mgen_login();
+
 export function getEnvironment() {
   if (getUrlParam('test')) return "test";
   if (urlNoParams().includes("/harmony-dev")) return "dev";
-  if (getCookie('mgen_login') && getCookie('mgen_login').startsWith('rualark')) return "prod-in";
+  if (mgen_login.startsWith('rualark')) return "prod-in";
   return "prod";
 }
 

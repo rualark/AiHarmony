@@ -1,5 +1,5 @@
 import {enableKeys} from "../ui/commands.js";
-import {getCookie, getEnvironment, pageLoadTime, urlNoParams} from "../core/remote.js";
+import {getEnvironment, pageLoadTime, urlNoParams, mgen_login} from "../core/remote.js";
 import {debugError} from "../core/debug.js";
 import {state2url} from "../state/state.js";
 
@@ -38,7 +38,6 @@ if (getEnvironment() === 'prod') {
     }
   });
 
-  let mgen_login = decodeURIComponent(getCookie('mgen_login'));
   if (mgen_login) {
     Sentry.configureScope((scope) => {
       scope.setUser({
