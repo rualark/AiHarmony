@@ -85,6 +85,7 @@ export function showSettingsModal() {
     initCommands();
     updateUndoRedoButtons();
     update_selection();
+    initTooltips(800, 100);
   });
   $('#check_alterBeforeNote').change(() => {
     settings.alter_before_note = Number($('#check_alterBeforeNote').is(":checked"));
