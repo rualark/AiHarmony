@@ -1,12 +1,17 @@
 - 2 voices
   - [Species 1](editor.html?load=ca3-examples/Species-1-exercise)
+  - [Species 2](editor.html?load=ca3-examples/gallon-v2sp2-1) - from Noel-Gallon "Traité de Contrepoint"
   - [Species 3](editor.html?load=ca3-examples/gallon-v2sp3-1) - from Noel-Gallon "Traité de Contrepoint"
   - [Species 3](editor.html?load=ca3-examples/gallon-v2sp3-2) - from Noel-Gallon "Traité de Contrepoint"
   - [Species 3](editor.html?load=ca3-examples/gallon-v2sp3-3) - from Noel-Gallon "Traité de Contrepoint"
   - [Species 3](editor.html?load=ca3-examples/gallon-v2sp3-4) - from Noel-Gallon "Traité de Contrepoint"
+  - [Species 4](editor.html?load=ca3-examples/gallon-v2sp4-1) - from Noel-Gallon "Traité de Contrepoint"
   - [Species 5](editor.html?load=ca3-examples/2018-04-ideal-cp5)
   - [Species 5](editor.html?load=ca3-examples/short)
   - [Species 5](editor.html?load=ca3-examples/good-cp5-extract)
+- 3 voices
+  - [Grand melange 5/4](editor.html?load=ca3-examples/gallon-v3gm54-1) - from Noel-Gallon "Traité de Contrepoint"
+  - [Grand melange 5/4](editor.html?load=ca3-examples/gallon-v3gm54-2) - from Noel-Gallon "Traité de Contrepoint"
 - 4 voices
   - [Species 1](editor.html?load=ca3-examples/gallon-v4s1-1) - from Noel-Gallon "Traité de Contrepoint"
   - [Species 2](editor.html?load=ca3-examples/gallon-v4s2-2) - from Noel-Gallon "Traité de Contrepoint"
