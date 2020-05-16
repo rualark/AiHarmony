@@ -37,7 +37,7 @@ export function dataToAbc() {
       nt.step = s;
       nd.abc_charStarts[abc.length] = {voice: v, note: n};
       nt.abc_charStarts = abc.length;
-      if (nt.d && settings.show_nht) {
+      if (nt.d && settings.show_nht && nd.algo === 'CA3') {
         const msh = ares.getMsh(v, s);
         if (msh < 0) abc += `"^nht"`;
       }
