@@ -66,6 +66,11 @@ export function set_note(dc) {
   if (future.advancing && future.len) {
     future.advancing = false;
     set_len(future.len);
+  } else {
+    // Fix 5/4 note
+    if (note.len == 20) {
+      set_len(12);
+    }
   }
   saveState();
   // Advance
