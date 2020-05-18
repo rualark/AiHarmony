@@ -28,12 +28,14 @@ function get_mgen_login() {
 
 export const mgen_login = get_mgen_login();
 
-export function getEnvironment() {
+function getEnvironment() {
   if (getUrlParam('test')) return "test";
   if (urlNoParams().includes("/harmony-dev")) return "dev";
   if (mgen_login.startsWith('rualark')) return "prod-in";
   return "prod";
 }
+
+export const environment = getEnvironment();
 
 export function getCookie(name) {
   let value = "; " + document.cookie;

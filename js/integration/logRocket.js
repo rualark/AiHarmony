@@ -1,6 +1,6 @@
-import {getEnvironment} from "../core/remote.js";
+import {environment} from "../core/remote.js";
 
-if (getEnvironment() === 'prod') {
+if (environment === 'prod') {
   window.LogRocket && window.LogRocket.init('rgvzmt/aiharmony');
 
   LogRocket.getSessionURL(sessionURL => {

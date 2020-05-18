@@ -1,6 +1,6 @@
-import {getEnvironment} from "../core/remote.js";
+import {environment} from "../core/remote.js";
 
-if (getEnvironment() === 'prod') {
+if (environment === 'prod') {
   var _rollbarConfig = {
     accessToken: "58c6eca8883a4195a99044f0ec243cdf",
     captureUncaught: true,

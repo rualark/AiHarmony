@@ -1,5 +1,5 @@
 import {enableKeys} from "../ui/commands.js";
-import {getEnvironment, pageLoadTime, urlNoParams, mgen_login} from "../core/remote.js";
+import {environment, pageLoadTime, urlNoParams, mgen_login} from "../core/remote.js";
 import {debugError} from "../core/debug.js";
 import {state2url} from "../state/state.js";
 
@@ -13,10 +13,10 @@ window.showReportDialog = function (eventId) {
   Sentry.showReportDialog({eventId: eventId});
 };
 
-if (getEnvironment() === 'prod') {
+if (environment === 'prod') {
   Sentry.init({
     dsn: 'https://ad05883cb9534743b6ca504ece76bba6@sentry.io/1894684',
-    environment: getEnvironment(),
+    environment: environment,
     beforeSend(event, hint) {
       // Check if it is an exception, and if so, show the report dialog
       let now = new Date();

@@ -33,6 +33,7 @@ import { add_lyric, add_text } from "./edit/editText.js";
 import { showOpenModal } from "./modal/openModal.js";
 import { showCantusModal } from "./modal/cantusModal.js";
 import { showTransposeModal } from "./modal/transposeModal.js";
+import { environment } from "../core/remote.js";
 
 let mobileOpt = {
   true: {
@@ -171,6 +172,7 @@ function makeToolbar(toolbar_id) {
       }
       else continue;
     }
+    if (environment === 'prod' && command.toolbar.environment === 'dev') continue;
     let nbsp = '&nbsp;';
     //if (!mobileOrTablet) nbsp = '';
     if (command.separator) {
@@ -195,6 +197,7 @@ export function initCommands() {
       if (!mobileOrTablet && !(command.toolbar.dev & 2)) continue;
     }
     if (!command.id) continue;
+    if (environment === 'prod' && command.toolbar.environment === 'dev') continue;
     document.getElementById(command.id)[command.event] = function(){
       command.command();
       trackEvent('AiHarmony', 'action_click', command.name);
@@ -529,10 +532,10 @@ export let commands = [
     command: () => { set_rest(true) },
     name: 'Input rest',
   },
-  { separator: true, toolbar: {toolbar_id: 'pc2-mobile1'} },
+  { separator: true, toolbar: {toolbar_id: 2} },
   {
     id: 'keysig',
-    toolbar: {type: 'image', toolbar_id: 'pc2-mobile1', hintText: 'Key'},
+    toolbar: {type: 'image', toolbar_id: 2, hintText: 'Key'},
     event: 'onclick',
     keys: ['K'],
     command: () => { showKeysigModal() },
@@ -540,7 +543,7 @@ export let commands = [
   },
   {
     id: 'transpose',
-    toolbar: {type: 'image', toolbar_id: 'pc2-mobile1', hintText: 'Transpose'},
+    toolbar: {type: 'image', toolbar_id: 2, hintText: 'Transpose'},
     event: 'onclick',
     keys: [],
     command: () => { showTransposeModal(selected.voice) },
@@ -634,6 +637,14 @@ export let commands = [
       if (nd.algo === '') async_redraw();
     },
     name: 'Music analysis algorithm',
+  },
+  {
+    id: 'correct',
+    toolbar: {type: 'image', toolbar_id: 3, hintText: 'Improve', environment: 'dev'},
+    event: 'onclick',
+    keys: [],
+    command: () => { showCantusModal() },
+    name: 'Automatically correct mistakes',
   },
   {
     id: 'aic',

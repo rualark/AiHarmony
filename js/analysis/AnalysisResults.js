@@ -7,7 +7,7 @@ import {debugLevel} from "../core/debug.js";
 import {encodeHtmlSpecialChars} from "../core/string.js";
 import {initTooltips} from "../ui/lib/tooltips.js";
 import {selected} from "../abc/abchelper.js";
-import {getEnvironment} from "../core/remote.js";
+import {environment} from "../core/remote.js";
 
 let ARES_ENCODING_VERSION = 3;
 export let SEVERITY_RED = 80;
@@ -156,7 +156,7 @@ class AnalysisResults {
 
   static getRuleTooltip(fla) {
     let st = '';
-    if (debugLevel > 5 && getEnvironment() !== 'prod') {
+    if (debugLevel > 5 && environment !== 'prod') {
       st += `[${fla.fl}] `;
     }
     if (fla.comment)
