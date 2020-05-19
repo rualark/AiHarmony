@@ -5,6 +5,7 @@ import {update_selection} from "../ui/selection.js";
 import {settings} from "../state/settings.js";
 import {SEVERITY_RED, SEVERITY_RED_COLOR, SEVERITY_YELLOW_COLOR} from "../analysis/AnalysisResults.js";
 import { future } from "../ui/edit/editNote.js";
+import { json_stringify_circular } from "../core/string.js";
 
 export let MAX_ABC_NOTE = 60;
 export let MIN_ABC_NOTE = 1;
@@ -43,9 +44,17 @@ function getElementByStartChar(abcjs, startChar) {
   }
 }
 
+function clearSelection() {
+  let engraver = abcjs[0].engraver;
+  for (var i=0;i<engraver.selected.length;i++) {
+    engraver.selected[i].unhighlight();
+  }
+  engraver.selected = [];
+}
+
 function abcRangeNotesHighlight(start, end, color, clear=true) {
   let engraver = abcjs[0].engraver;
-  if (clear) engraver.clearSelection();
+  if (clear) clearSelection();
   for (let line = 0; line < engraver.staffgroups.length; line++) {
     let voices = engraver.staffgroups[line].voices;
     for (let voice = 0; voice < voices.length; voice++) {

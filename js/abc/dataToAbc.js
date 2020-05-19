@@ -4,7 +4,7 @@ import {alter2abc, d2abc} from "../notes/noteHelper.js";
 import {ares} from "../analysis/AnalysisResults.js";
 import { settings } from "../state/settings.js";
 
-export function dataToAbc() {
+export function dataToAbc(instrument) {
   let abc = '';
   abc += '%%barnumbers 1\n';
   abc += 'M:' + nd.timesig.beats_per_measure + '/' + nd.timesig.beat_type + '\n';
@@ -26,6 +26,7 @@ export function dataToAbc() {
         }
       }
     }
+    if (instrument) name = instrument + '# ' + name;
     abc += `V: V${v} clef=${vc.clef} name="${name}"\n`;
   }
   for (let v=0; v<nd.voices.length; ++v) {

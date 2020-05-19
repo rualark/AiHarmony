@@ -4,7 +4,7 @@ let abc_d = {c: 0, d: 1, e: 2, f: 3, g: 4, a: 5, b: 6};
 let d_abc = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
 export let d_ABC = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
-// Middle C: 60 in MIDI (c), 35 in diatonic (d), starts octave 4 in MusicXml, "C" in ABC notation, https://en.wikipedia.org/wiki/C_(musical_note)
+// Middle C or C4: 60 in MIDI (c), 35 in diatonic (d), starts octave 4 in MusicXml, "C" in ABC notation, https://en.wikipedia.org/wiki/C_(musical_note)
 // on -1 line in treble clef, on +1 line in bass clef, 60 in js (c), 48 in CA3 (c)
 
 // https://i.imgur.com/86u2JM2.png

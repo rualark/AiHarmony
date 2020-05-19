@@ -1,6 +1,7 @@
 import {nd} from "../notes/NotesData.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
 import {showMp3Player} from "../audio/mp3Player.js";
+import { settings } from "../state/settings.js";
 
 export let ais = {
   state: 'ready',
@@ -38,7 +39,7 @@ export function sendToAis(openMp3=true) {
     return;
   }
   setAisState('sent');
-  let midi = ABCJS.synth.getMidiFile(dataToAbc(), {midiOutputType: 'encoded'})[0];
+  let midi = ABCJS.synth.getMidiFile(dataToAbc(settings.instruments), {midiOutputType: 'encoded'})[0];
   $.ajax({
     type: 'POST',
     url: 'https://artinfuser.com/studio/upload.php',
@@ -46,6 +47,7 @@ export function sendToAis(openMp3=true) {
       robot: 'robot_aih',
       token: 'xaJD5Bm9LwuQwRQ9',
       acode: 'MP1',
+      inject: `reverb_mix=${settings.reverb_mix}|AutoLegato=${settings.autoLegato}|MidiFileType=MuseScore`,
       fnm: nd.fileName + '.mid',
       submit: 'submit',
       start_class: 9,
