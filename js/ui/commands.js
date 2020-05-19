@@ -154,7 +154,7 @@ export function toolbarButtonHtml(command, showHints) {
       st += `</select></div>`;
     }
     if (command.id === 'instruments') {
-      const isections = ['Vocals', 'Solo strings', 'Ensemble strings', 'Woodwinds', 'Brass'];
+      const isections = ['Piano', 'Organ', 'Vocals', 'Solo strings', 'Ensemble strings', 'Woodwinds', 'Brass', 'Saxophones', 'Orchestra', 'Harp', 'Percussion'];
       st += `<div style='display: flex; justify-content: center; flex-shrink: 0; align-items: center;'>`;
       st += `<select class="form-control custom-select" style='box-shadow: none; font-size: 0.85em; height: 32px; width: 175px;' id=${command.id}>`;
       for (const isection of isections) {

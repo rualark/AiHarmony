@@ -317,8 +317,7 @@ export function showCantusModal2(cid) {
     }, 0);
     if (vocra === 'Soprano') {
       st += `<td>`;
-      st += `<a href=# id=shuffleArrangement data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="Random arrangement">`;
-      st += `<img src=img/shuffle.png height=25></a>`;
+      st += `<button type="button" class="btn btn-warning" id=shuffleArrangement>Randomize</button>`;
       setTimeout(() => {
         $(`#shuffleArrangement`).click(() => {
           shuffleArrangement(cid);

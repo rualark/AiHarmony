@@ -1,4 +1,5 @@
 import {ais} from "../integration/aiStudio.js";
+import { initTooltips } from "../ui/lib/tooltips.js";
 
 let my_jPlayer;
 let jpData;
@@ -20,6 +21,7 @@ function show_jplayer() {
       <a class="btn btn-primary jp-stop" href="#"><img src="img/stop2.png" height="15"></a>
     </span>
     <span class="jp-current-time"></span> of <span class="jp-duration"></span>
+    <a id=aisFileLink data-toggle=tooltip data-placement=top title='Fine tune sound' target=_blank href='#'><img height=40 src=img/multitrack.png></a>
   </div>
   `;
   document.getElementById("jplayer").innerHTML = st;
@@ -88,10 +90,11 @@ function show_jplayer() {
     return false;
   });
   $("#jp_container .jp-pause").hide();
+  initTooltips(800, 100);
 }
 
 export function showMp3Player() {
   if (my_jPlayer == null) show_jplayer();
+  $('#aisFileLink').attr('href', `https://artinfuser.com/studio/file.php?f_id=${ais.f_id}`);
   my_jPlayer.jPlayer('setMedia', {mp3: ais.j_url});
 }
-

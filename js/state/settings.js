@@ -2,7 +2,7 @@ import {b256_safeString, b256_ui, safeString_b256, ui_b256} from "../core/base25
 import {engraverParams} from "../abc/abchelper.js";
 import {applyShortcutsLayout} from "../ui/shortcutsLayouts.js";
 
-const SETTINGS_ENCODING_VERSION = 7;
+const SETTINGS_ENCODING_VERSION = 8;
 
 class Settings {
   constructor() {
@@ -16,7 +16,7 @@ class Settings {
     // 0 - Show only rule name up to colon. Show only subrules starting with colon, 1 - Add subrules without colon, 2 - Add rule comments
     this.rule_verbose = 0;
     this.reverb_mix = 20;
-    this.instruments = 'Vocals section';
+    this.instruments = 'Vocals';
     this.autoLegato = 65;
   }
 
@@ -36,11 +36,11 @@ class Settings {
     st += ui_b256(this.rule_verbose, 1);
     st += ui_b256(this.alter_before_note, 1);
     st += ui_b256(engraverParams.scale * 1000, 2);
-    st += safeString_b256(this.shortcutsLayout, 1);
     st += ui_b256(this.show_nht, 1);
     st += ui_b256(this.reverb_mix, 1);
     st += safeString_b256(this.instruments, 1);
     st += ui_b256(this.autoLegato, 1);
+    st += safeString_b256(this.shortcutsLayout, 1);
     return st;
   }
 
@@ -53,11 +53,11 @@ class Settings {
     this.rule_verbose = b256_ui(st, pos, 1);
     this.alter_before_note = b256_ui(st, pos, 1);
     engraverParams.scale = b256_ui(st, pos, 2) / 1000;
-    this.setShortcutsLayout(b256_safeString(st, pos, 1));
     this.show_nht = b256_ui(st, pos, 1);
     this.reverb_mix = b256_ui(st, pos, 1);
     this.instruments = b256_safeString(st, pos, 1);
     this.autoLegato = b256_ui(st, pos, 1);
+    this.setShortcutsLayout(b256_safeString(st, pos, 1));
   }
 
   storage2settings() {
