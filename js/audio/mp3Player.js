@@ -21,7 +21,7 @@ function show_jplayer() {
       <a class="btn btn-primary jp-stop" href="#"><img src="img/stop2.png" height="15"></a>
     </span>
     <span class="jp-current-time"></span> of <span class="jp-duration"></span>
-    <a id=aisFileLink data-toggle=tooltip data-placement=top title='Fine tune sound' target=_blank href='#'><img height=40 src=img/multitrack.png></a>
+    <a id=aisFileLink data-toggle=tooltip data-placement=top title='Fine tune sound' target=_blank href='#'><img class=imgmo height=40 src=img/multitrack.png></a>
   </div>
   `;
   document.getElementById("jplayer").innerHTML = st;
