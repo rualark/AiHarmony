@@ -17,7 +17,7 @@ class Settings {
     this.rule_verbose = 0;
     this.reverb_mix = 20;
     this.instruments = 'Vocals';
-    this.autoLegato = 65;
+    this.autoLegato = 60;
   }
 
   reset() {

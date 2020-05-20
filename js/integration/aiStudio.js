@@ -84,7 +84,7 @@ function getAisData(data) {
     alertify.warning('<a href=https://artinfuser.com/studio target=_blank>Login to Artinfuser</a> for more playback options and history', 15);
   }
   else {
-    alertify.message(`<a href=https://artinfuser.com/studio/file.php?f_id=${ais.f_id} target=_blank>Rendering...</a>`, 5);
+    alertify.message(`<a href=https://artinfuser.com/studio/file.php?f_id=${ais.f_id} target=_blank>Rendering...</a>`, 10);
   }
 }
 
