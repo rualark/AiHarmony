@@ -26,6 +26,7 @@ function setAisState(state) {
     console.log(passed);
     if (state === 'sent') setAisIcon('img/progress/progress11c.gif');
     if (state === 'queued') setAisIcon('img/progress/progress9c.gif');
+    if (state === 'running') setAisIcon('img/progress/progress.gif');
     return;
   }
   setAisIcon('img/progress/progress.gif');
