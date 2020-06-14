@@ -143,7 +143,7 @@ export function toolbarButtonHtml(command, showHints) {
   }
   if (command.toolbar.type === 'select') {
     if (showHints && command.toolbar.hintText) {
-      st += `<span style='display: flex; justify-content: center; flex-shrink: 0; align-items: center; font-size: 0.8em'>${command.toolbar.hintText}</span>&nbsp;`;
+      st += `&nbsp;<span style='display: flex; justify-content: center; flex-shrink: 0; align-items: center; font-size: 0.8em'>${command.toolbar.hintText}</span>&nbsp;`;
     }
     if (command.id === 'algo') {
       st += `<div style='display: flex; justify-content: center; flex-shrink: 0; align-items: center;'>`;
