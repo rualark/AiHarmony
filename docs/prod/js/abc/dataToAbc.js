@@ -4,7 +4,7 @@ import {alter2abc, d2abc} from "../notes/noteHelper.js";
 import {ares} from "../analysis/AnalysisResults.js";
 import { settings } from "../state/settings.js";
 
-export function dataToAbc() {
+export function dataToAbc(instrument) {
   let abc = '';
   abc += '%%barnumbers 1\n';
   abc += 'M:' + nd.timesig.beats_per_measure + '/' + nd.timesig.beat_type + '\n';
@@ -26,6 +26,7 @@ export function dataToAbc() {
         }
       }
     }
+    if (instrument) name = instrument + '# ' + name;
     abc += `V: V${v} clef=${vc.clef} name="${name}"\n`;
   }
   for (let v=0; v<nd.voices.length; ++v) {
@@ -69,7 +70,9 @@ export function dataToAbc() {
       }
       let d = nt.d;
       if (d) {
-        let abc_note = d2abc(d - clefs[vc.clef].transpose);
+        // TODO: After fixing abcjs tenor-8 MIDI export, remove this condition: notes should always be transposed
+        // https://github.com/paulrosen/abcjs/issues/401
+        let abc_note = d2abc(d - (instrument ? 0 : clefs[vc.clef].transpose));
         abc += alter2abc(nt.alter) + abc_note + nt.len;
       } else {
         abc += 'z' + nt.len;

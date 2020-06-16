@@ -154,8 +154,8 @@ export function element_click(abcElem, tuneNumber, classes, pos, move) {
     selected.note = nd.abc_charStarts[selected.element.startChar];
   }
   stop_advancing();
-  if (move) {
-    increment_note(-move);
+  if (move.step) {
+    increment_note(-move.step);
     async_redraw();
     trackEvent('AiHarmony', 'note_drag');
     return;

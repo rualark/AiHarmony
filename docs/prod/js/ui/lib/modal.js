@@ -62,12 +62,29 @@ export function showMultiButtonSelect(id, selectedId, options, userHandler) {
   return st;
 }
 
-export function showSelect(id, selected, options) {
+export function showSelectWithLabel(label, id, selected, options, onchange) {
+  let st = '';
+  st += `<div class="form-group">`;
+  st += `<label for="${id}"><b>${label}</b></label>`;
+  st += showSelect(id, selected, options, onchange);
+  st += `</div>`;
+  return st;
+}
+
+export function showSelect(id, selected, options, onchange) {
   let st = '';
   st += `<select class="form-control custom-select" id=${id}>`;
   for (const option of options) {
     st += `<option value='${option.val}' ${selected === option.val ? "selected" : ""}>${option.text}</option>`;
   }
   st += `</select>`;
+  if (onchange) {
+    setTimeout(() => {
+      $(`#${id}`).change(() => {
+        const val = $(`#${id}`).val();
+        onchange(val);
+      });
+    }, 0);
+  }
   return st;
 }

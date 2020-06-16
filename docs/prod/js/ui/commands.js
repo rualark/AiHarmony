@@ -142,12 +142,24 @@ export function toolbarButtonHtml(command, showHints) {
     }
   }
   if (command.toolbar.type === 'select') {
+    if (showHints && command.toolbar.hintText) {
+      st += `&nbsp;<span style='display: flex; justify-content: center; flex-shrink: 0; align-items: center; font-size: 0.8em'>${command.toolbar.hintText}</span>&nbsp;`;
+    }
     if (command.id === 'algo') {
       st += `<div style='display: flex; justify-content: center; flex-shrink: 0; align-items: center;'>`;
       st += `<select class="form-control custom-select" style='box-shadow: none; font-size: 0.85em; height: 32px; width: 175px;' id=${command.id}>`;
-      st += `<option value='' ${nd.algo === '' ? "selected" : ""}>No music analysis</option>`;
-      st += `<option value=CA3 ${nd.algo === 'CA3' ? "selected" : ""}>Counterpoint analysis</option>`;
-      st += `<option value=HA1 ${nd.algo === 'HA1' ? "selected" : ""}>Basic analysis</option>`;
+      st += `<option value='' ${nd.algo === '' ? "selected" : ""}>No analysis</option>`;
+      st += `<option value=CA3 ${nd.algo === 'CA3' ? "selected" : ""}>Counterpoint</option>`;
+      st += `<option value=HA1 ${nd.algo === 'HA1' ? "selected" : ""}>Basic</option>`;
+      st += `</select></div>`;
+    }
+    if (command.id === 'instruments') {
+      const isections = ['Piano', 'Organ', 'Vocals', 'Solo strings', 'Ensemble strings', 'Woodwinds', 'Brass', 'Saxophones', 'Orchestra', 'Harp', 'Percussion'];
+      st += `<div style='display: flex; justify-content: center; flex-shrink: 0; align-items: center;'>`;
+      st += `<select class="form-control custom-select" style='box-shadow: none; font-size: 0.85em; height: 32px; width: 175px;' id=${command.id}>`;
+      for (const isection of isections) {
+        st += `<option value='${isection}' ${settings.instruments === isection ? "selected" : ""}>${isection}</option>`;
+      }
       st += `</select></div>`;
     }
   }
@@ -186,7 +198,6 @@ function makeToolbar(toolbar_id) {
 }
 
 export function initCommands() {
-  //console.log(st);
   document.getElementById("toolbar").innerHTML = makeToolbar(1);
   document.getElementById("toolbar2").innerHTML = makeToolbar(2);
   document.getElementById("toolbar3").innerHTML = makeToolbar(3);
@@ -602,33 +613,8 @@ export let commands = [
   },
   { separator: true, toolbar: {toolbar_id: 1} },
   {
-    id: 'play',
-    toolbar: {type: 'image', toolbar_id: 1},
-    event: 'onclick',
-    keys: ['Space'],
-    command: () => { play() },
-    name: 'Playback',
-  },
-  {
-    id: 'ais',
-    toolbar: {type: 'image', toolbar_id: 1},
-    event: 'onclick',
-    keys: ['Ctrl+Space'],
-    command: () => { sendToAis() },
-    name: 'Playback (high quality)',
-  },
-  { separator: true, toolbar: {toolbar_id: 1} },
-  {
-    id: 'cantus',
-    toolbar: {type: 'image', toolbar_id: 3, hintText: 'Cantus'},
-    event: 'onclick',
-    keys: [],
-    command: () => { showCantusModal() },
-    name: 'Open cantus firumus',
-  },
-  {
     id: 'algo',
-    toolbar: {type: 'select', toolbar_id: 3, hintText: 'Music analysis algorithm'},
+    toolbar: {type: 'select', toolbar_id: 3, hintText: 'Analysis:'},
     event: 'onchange',
     keys: [],
     command: () => {
@@ -637,6 +623,14 @@ export let commands = [
       if (nd.algo === '') async_redraw();
     },
     name: 'Music analysis algorithm',
+  },
+  {
+    id: 'cantus',
+    toolbar: {type: 'image', toolbar_id: 3, hintText: 'Cantus'},
+    event: 'onclick',
+    keys: [],
+    command: () => { showCantusModal() },
+    name: 'Open cantus firumus',
   },
   {
     id: 'correct',
@@ -653,6 +647,34 @@ export let commands = [
     keys: ['Ctrl+A'],
     command: () => { sendToAic() },
     name: 'Artinfuser Counterpoint analysis',
+  },
+  { separator: true, toolbar: {toolbar_id: 3 } },
+  {
+    id: 'instruments',
+    toolbar: {type: 'select', toolbar_id: 3, hintText: 'Play:'},
+    event: 'onchange',
+    keys: [],
+    command: () => {
+      settings.instruments = $("#instruments option:selected" ).val();
+      settings.settings2storage();
+    },
+    name: 'Playback instruments',
+  },
+  {
+    id: 'ais',
+    toolbar: {type: 'image', toolbar_id: 3},
+    event: 'onclick',
+    keys: ['Ctrl+Space'],
+    command: () => { sendToAis() },
+    name: 'Playback (high quality)',
+  },
+  {
+    id: 'play',
+    toolbar: {type: 'image', toolbar_id: 3},
+    event: 'onclick',
+    keys: ['Space'],
+    command: () => { play() },
+    name: 'Playback',
   },
   {
     id: 'up_part',

@@ -7,7 +7,7 @@ import {async_redraw, state} from "../../abc/abchelper.js";
 import {ares} from "../../analysis/AnalysisResults.js";
 import {initCommands} from "../commands.js";
 import { update_selection } from "../selection.js";
-import { showModal } from "../lib/modal.js";
+import { showModal, showSelectWithLabel } from "../lib/modal.js";
 import { showCheckBox } from "../lib/uilib.js";
 
 function showCheckToolbarHints() {
@@ -69,6 +69,14 @@ function showSelectRuleVerbose() {
   return st;
 }
 
+function makeAutoLegatoOptions() {
+  let res = [];
+  for (let i=0; i<100; i += 10) {
+    res.push({val: i, text: `Add legato to ${i}% of adjacent notes`});
+  }
+  return res;
+}
+
 export function showSettingsModal() {
   if (state.state !== 'ready') return;
   let st = '';
@@ -76,8 +84,23 @@ export function showSettingsModal() {
   st += showCheckAlterBeforeNote();
   st += showCheckBox('check_showNht', settings.show_nht, `Label non-harmonic tones with 'nht' text`);
   st += showSelectShortcutsLayout();
-  //st += showSelectAlgo();
   st += showSelectRuleVerbose();
+  st += showSelectWithLabel('Add legato when playing:', 'selectAddSlurs', settings.autoLegato, makeAutoLegatoOptions(), (val) => {
+    settings.autoLegato = Number(val);
+    settings.settings2storage();
+  });
+  st += showSelectWithLabel('Playback reverb:', 'selectReverb', settings.reverb_mix, [
+    {val: 0, text: 'Dry sound (0%)'},
+    {val: 10, text: 'Close chamber (10%)'},
+    {val: 20, text: 'Far chamber (20%)'},
+    {val: 30, text: 'Orchestra (30%)'},
+    {val: 40, text: 'Big orchestra (40%)'},
+    {val: 50, text: 'Very big orchestra (50%)'},
+    {val: 100, text: 'Infinite reverb (100%)'},
+  ], (val) => {
+    settings.autoLegato = Number(val);
+    settings.settings2storage();
+  });
   showModal(1, 'Settings', st, '', [], [], false, ()=>{}, ()=>{});
   $('#check_toolbarHints').change(() => {
     settings.toolbarHints = Number($('#check_toolbarHints').is(":checked"));

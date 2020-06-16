@@ -1,6 +1,7 @@
 import {nd} from "../notes/NotesData.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
 import {showMp3Player} from "../audio/mp3Player.js";
+import { settings } from "../state/settings.js";
 
 export let ais = {
   state: 'ready',
@@ -25,6 +26,7 @@ function setAisState(state) {
     console.log(passed);
     if (state === 'sent') setAisIcon('img/progress/progress11c.gif');
     if (state === 'queued') setAisIcon('img/progress/progress9c.gif');
+    if (state === 'running') setAisIcon('img/progress/progress.gif');
     return;
   }
   setAisIcon('img/progress/progress.gif');
@@ -38,7 +40,7 @@ export function sendToAis(openMp3=true) {
     return;
   }
   setAisState('sent');
-  let midi = ABCJS.synth.getMidiFile(dataToAbc(), {midiOutputType: 'encoded'})[0];
+  let midi = ABCJS.synth.getMidiFile(dataToAbc(settings.instruments), {midiOutputType: 'encoded'})[0];
   $.ajax({
     type: 'POST',
     url: 'https://artinfuser.com/studio/upload.php',
@@ -46,6 +48,7 @@ export function sendToAis(openMp3=true) {
       robot: 'robot_aih',
       token: 'xaJD5Bm9LwuQwRQ9',
       acode: 'MP1',
+      inject: `reverb_mix=${settings.reverb_mix}|AutoLegato=${settings.autoLegato}|MidiFileType=MuseScore`,
       fnm: nd.fileName + '.mid',
       submit: 'submit',
       start_class: 9,
@@ -81,7 +84,7 @@ function getAisData(data) {
     alertify.warning('<a href=https://artinfuser.com/studio target=_blank>Login to Artinfuser</a> for more playback options and history', 15);
   }
   else {
-    alertify.message(`<a href=https://artinfuser.com/studio/file.php?f_id=${ais.f_id} target=_blank>Rendering...</a>`, 5);
+    alertify.message(`<a href=https://artinfuser.com/studio/file.php?f_id=${ais.f_id} target=_blank>Rendering...</a>`, 10);
   }
 }
 
