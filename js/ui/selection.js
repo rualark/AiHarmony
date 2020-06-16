@@ -134,7 +134,7 @@ export function element_click(abcElem, tuneNumber, classes, pos, move) {
   selected.voice = pos.voice;
   //clicked.voice = get_voice(classes);
   selected.note = null;
-  if (abcElem['el_type'] === 'voice-name') {
+  if (abcElem['el_type'] === 'voiceName') {
     rename_part();
     trackEvent('AiHarmony', 'click_partname');
   }
