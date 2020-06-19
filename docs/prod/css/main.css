@@ -37,3 +37,9 @@ path:focus, text:focus, g:focus {
         display: none !important;
     }
 }
+#abc {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
