@@ -70,9 +70,7 @@ export function dataToAbc(instrument) {
       }
       let d = nt.d;
       if (d) {
-        // TODO: After fixing abcjs tenor-8 MIDI export, remove this condition: notes should always be transposed
-        // https://github.com/paulrosen/abcjs/issues/401
-        let abc_note = d2abc(d - (instrument ? 0 : clefs[vc.clef].transpose));
+        let abc_note = d2abc(d - clefs[vc.clef].transpose);
         abc += alter2abc(nt.alter) + abc_note + nt.len;
       } else {
         abc += 'z' + nt.len;
