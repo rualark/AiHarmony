@@ -58,9 +58,14 @@ function init() {
   setTimeout(after_init, 1000);
 }
 
+function maintenanceMessage() {
+  //alertify.warning(`If analysis is not working, try to <a href='https://www.digitaltrends.com/computing/how-to-clear-your-browser-cache/' target=_blank>clear Cached Images and Files</a>`, 60);
+}
+
 async function after_init() {
   if (debugError) throw "debug_test_exception";
   checkBrowserSupported();
+  maintenanceMessage();
 }
 
 window.addEventListener('DOMContentLoaded', async function() {

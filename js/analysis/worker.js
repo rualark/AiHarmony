@@ -27,7 +27,8 @@ function waitForVar(obj, field, vals, pause, timeout) {
 async function initWasmModule(modName) {
   workerState.state = 'loading js';
   importScripts('wasmArray.js');
-  importScripts('modules/' + modName + '.js');
+  const moduleUrl = 'modules/' + modName + '.js?nc=' + Date.now();
+  importScripts(moduleUrl);
   if (Module == null) {
     throw 'Error loading worker js module';
   }
