@@ -6,6 +6,9 @@ var Module = {
   locateFile: function(s) {
     return 'modules/' + s;
   },
+  onAbort: function(e) {
+    workerState.state = 'abort';
+  },
 };
 
 function waitForVar(obj, field, vals, pause, timeout) {
@@ -37,7 +40,7 @@ async function initWasmModule(modName) {
     // Will be called before main()
     workerState.state = 'ready';
   };
-  await waitForVar(workerState, 'state', ['ready'], 50, 60000);
+  await waitForVar(workerState, 'state', ['ready', 'abort'], 50, 60000);
   // Here main() will usually be finished
 }
 
@@ -102,6 +105,10 @@ self.addEventListener('message', async function(event) {
       if (workerState.state === 'before_init') {
         console.log('Loading wasm', modName);
         await initWasmModule(modName);
+        // Assert ready state
+        if (workerState.state !== 'ready') {
+          throw "Error worker state: " + workerState.state;
+        }
       }
       // If wasm is busy, queue
       if (workerState.state !== 'ready') {
@@ -119,7 +126,7 @@ self.addEventListener('message', async function(event) {
       }
       // Assert ready state
       if (workerState.state !== 'ready') {
-        throw "Error state: " + workerState.state;
+        throw "Error worker state: " + workerState.state;
       }
       const res = ccallArrays(funcName, "string", ["string"], [data], {
         heapIn: "HEAPU8",

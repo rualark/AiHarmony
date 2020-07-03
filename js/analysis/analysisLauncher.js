@@ -24,6 +24,7 @@ async function workerMessageReceiver(event) {
       worker.firstResultReceived = true;
     }
     debugLog(5, modName, funcName, data);
+    alertify.warning(`If analysis is not working, try to <a href='https://www.digitaltrends.com/computing/how-to-clear-your-browser-cache/' target=_blank>clear Cached Images and Files</a>, reopen browser and reload page`, 60);
     throw data;
   }
   if (type === 'RESULT') {
