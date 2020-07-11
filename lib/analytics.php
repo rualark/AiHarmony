@@ -33,6 +33,6 @@
   }
   <?
   $qstring = substr($qstring, 0, 250);
-  echo "httpGetAsync(\"$url_main/hit.php?u_id=$uid&hitserver=$_SERVER[HTTP_HOST]&hitscript=$_SERVER[SCRIPT_NAME]&hitquery=$qstring\");";
+  //echo "httpGetAsync(\"$url_main/hit.php?u_id=$uid&hitserver=$_SERVER[HTTP_HOST]&hitscript=$_SERVER[SCRIPT_NAME]&hitquery=$qstring\");";
   ?>
 </script>

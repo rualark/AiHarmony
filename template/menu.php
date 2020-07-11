@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="css/main.css">
 
   <!-- Custom styles for this template -->
-  <link href="css/mgen.css" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
 </head>
 <style>
 body{padding-top:3.5rem; background-color:white}
