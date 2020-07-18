@@ -57,7 +57,11 @@ export function set_note(dc) {
   // If we are advancing, get future alteration
   // If pause is selected, get future alteration
   if (!note.d || future.advancing) {
-    note.alter = future.alteration;
+    if (future.alteration == 10) {
+      note.alter = nd.inherited_alter(el.voice, el.note, d);
+    } else {
+      note.alter = future.alteration;
+    }
   } else if (note.d != d) {
     // Reset alteration only if seleted note is changed
     //note.alter = 10;
@@ -176,7 +180,7 @@ export function increment_note(dnote) {
   let notes = nd.voices[el.voice].notes;
   let note = notes[n];
   let d = note.d;
-  note.alter = 10;
+  note.alter = nd.inherited_alter(el.voice, n, d + dnote);
   nd.set_note(el.voice, n, d + dnote);
   async_redraw();
 }
