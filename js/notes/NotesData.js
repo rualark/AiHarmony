@@ -276,10 +276,10 @@ export class NotesData {
         species: 10,
         locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
       {
@@ -288,10 +288,10 @@ export class NotesData {
         species: 10,
         locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
       {
@@ -300,10 +300,10 @@ export class NotesData {
         species: 10,
         locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
       {
@@ -312,10 +312,10 @@ export class NotesData {
         species: 10,
         locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
     ];
