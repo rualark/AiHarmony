@@ -13,6 +13,30 @@ export class NotesData {
     saveState(true);
   }
 
+  // Determines if measure already contains to the left of n
+  // altered notes of diatonic d
+  inherited_alter(v, n, d) {
+    let notes = this.voices[v].notes;
+    let note = notes[n];
+    let mlen = this.timesig.measure_len;
+    // If note is first (step=0) or was just added (step=undefined)
+    // then no inheritance is possible
+    if (!note.step) return 10;
+    let m = Math.floor(note.step / mlen);
+    // Get first note in measure
+    let nstart = this.getClosestNote(v, m * mlen);
+    // If error finding first note in measure, cancel inheritance
+    if (notes[nstart].step != m * mlen) return 10;
+    // Loop inside measure
+    for (let n2 = n - 1; n2 >= nstart; --n2) {
+      if (notes[n2].d == d) {
+        return notes[n2].alter;
+      }
+    }
+    // Note d not found in measure
+    return 10;
+  }
+
   set_note(v, n, d, saveState=true) {
     this.voices[v].notes[n].d = d;
     let notes = this.voices[v].notes;
@@ -252,10 +276,10 @@ export class NotesData {
         species: 10,
         locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
       {
@@ -264,10 +288,10 @@ export class NotesData {
         species: 10,
         locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
       {
@@ -276,10 +300,10 @@ export class NotesData {
         species: 10,
         locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
       {
@@ -288,10 +312,10 @@ export class NotesData {
         species: 10,
         locked: false,
         notes: [
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
-          {d: 0, alter: 0, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
+          {d: 0, alter: 10, len: 16, startsTie: false, text: '', lyric: ''},
         ]
       },
     ];

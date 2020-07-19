@@ -1184,11 +1184,11 @@ function updateGlobalBufferAndViews(buf) {
 }
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 5391776,
+    STACK_BASE = 5391392,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 148896,
-    DYNAMIC_BASE = 5391776,
-    DYNAMICTOP_PTR = 148736;
+    STACK_MAX = 148512,
+    DYNAMIC_BASE = 5391392,
+    DYNAMICTOP_PTR = 148352;
 
 
 
@@ -1597,13 +1597,13 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  
+
 };
 
 
 
 
-// STATICTOP = STATIC_BASE + 147872;
+// STATICTOP = STATIC_BASE + 147488;
 /* global initializers */  __ATINIT__.push({ func: function() { ___wasm_call_ctors() } });
 
 
@@ -1654,7 +1654,7 @@ var ASM_CONSTS = {
       return _malloc(size);
     }
 
-  
+
   function _atexit(func, arg) {
       __ATEXIT__.unshift({ func: func, arg: arg });
     }function ___cxa_atexit(
@@ -1662,9 +1662,9 @@ var ASM_CONSTS = {
   return _atexit.apply(null, arguments)
   }
 
-  
+
   var ___exception_infos={};
-  
+
   var ___exception_last=0;function ___cxa_throw(ptr, type, destructor) {
       ___exception_infos[ptr] = {
         ptr: ptr,
@@ -1686,7 +1686,7 @@ var ASM_CONSTS = {
 
   function ___lock() {}
 
-  
+
   function ___setErrNo(value) {
       if (Module['___errno_location']) HEAP32[((Module['___errno_location']())>>2)]=value;
       return value;
@@ -1695,9 +1695,9 @@ var ASM_CONSTS = {
       return -1;
     }
 
-  
-  
-  
+
+
+
   var PATH={splitPath:function(filename) {
         var splitPathRe = /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
         return splitPathRe.exec(filename).slice(1);
@@ -1764,8 +1764,8 @@ var ASM_CONSTS = {
       },join2:function(l, r) {
         return PATH.normalize(l + '/' + r);
       }};
-  
-  
+
+
   var PATH_FS={resolve:function() {
         var resolvedPath = '',
           resolvedAbsolute = false;
@@ -1818,7 +1818,7 @@ var ASM_CONSTS = {
         outputParts = outputParts.concat(toParts.slice(samePartsLength));
         return outputParts.join('/');
       }};
-  
+
   var TTY={ttys:[],init:function () {
         // https://github.com/emscripten-core/emscripten/pull/1555
         // if (ENVIRONMENT_IS_NODE) {
@@ -1899,7 +1899,7 @@ var ASM_CONSTS = {
               var BUFSIZE = 256;
               var buf = Buffer.alloc ? Buffer.alloc(BUFSIZE) : new Buffer(BUFSIZE);
               var bytesRead = 0;
-  
+
               try {
                 bytesRead = nodeFS.readSync(process.stdin.fd, buf, 0, BUFSIZE, null);
               } catch(e) {
@@ -1908,7 +1908,7 @@ var ASM_CONSTS = {
                 if (e.toString().indexOf('EOF') != -1) bytesRead = 0;
                 else throw e;
               }
-  
+
               if (bytesRead > 0) {
                 result = buf.slice(0, bytesRead).toString('utf-8');
               } else {
@@ -1960,7 +1960,7 @@ var ASM_CONSTS = {
             tty.output = [];
           }
         }}};
-  
+
   var MEMFS={ops_table:null,mount:function(mount) {
         return MEMFS.createNode(null, '/', 16384 | 511 /* 0777 */, 0);
       },createNode:function(parent, name, mode, dev) {
@@ -2029,7 +2029,7 @@ var ASM_CONSTS = {
           // When the byte data of the file is populated, this will point to either a typed array, or a normal JS array. Typed arrays are preferred
           // for performance, and used by default. However, typed arrays are not resizable like normal JS arrays are, so there is a small disk size
           // penalty involved for appending file writes that continuously grow a file similar to std::vector capacity vs used -scheme.
-          node.contents = null; 
+          node.contents = null;
         } else if (FS.isLink(node.mode)) {
           node.node_ops = MEMFS.ops_table.link.node;
           node.stream_ops = MEMFS.ops_table.link.stream;
@@ -2185,11 +2185,11 @@ var ASM_CONSTS = {
           }
           return size;
         },write:function(stream, buffer, offset, length, position, canOwn) {
-  
+
           if (!length) return 0;
           var node = stream.node;
           node.timestamp = Date.now();
-  
+
           if (buffer.subarray && (!node.contents || node.contents.subarray)) { // This write is from a typed array to a typed array?
             if (canOwn) {
               node.contents = buffer.subarray(offset, offset + length);
@@ -2204,7 +2204,7 @@ var ASM_CONSTS = {
               return length;
             }
           }
-  
+
           // Appending to an existing file and we need to reallocate, or source data did not come as a typed array.
           MEMFS.expandFileStorage(node, position+length);
           if (node.contents.subarray && buffer.subarray) node.contents.set(buffer.subarray(offset, offset + length), position); // Use typed array write if available.
@@ -2273,7 +2273,7 @@ var ASM_CONSTS = {
             // MAP_PRIVATE calls need not to be synced back to underlying fs
             return 0;
           }
-  
+
           var bytesWritten = MEMFS.stream_ops.write(stream, buffer, 0, length, offset, false);
           // should we check if bytesWritten and length are the same?
           return 0;
@@ -2283,9 +2283,9 @@ var ASM_CONSTS = {
       },lookupPath:function(path, opts) {
         path = PATH_FS.resolve(FS.cwd(), path);
         opts = opts || {};
-  
+
         if (!path) return { path: '', node: null };
-  
+
         var defaults = {
           follow_mount: true,
           recurse_count: 0
@@ -2295,37 +2295,37 @@ var ASM_CONSTS = {
             opts[key] = defaults[key];
           }
         }
-  
+
         if (opts.recurse_count > 8) {  // max recursive lookup of 8
           throw new FS.ErrnoError(32);
         }
-  
+
         // split the path
         var parts = PATH.normalizeArray(path.split('/').filter(function(p) {
           return !!p;
         }), false);
-  
+
         // start at the root
         var current = FS.root;
         var current_path = '/';
-  
+
         for (var i = 0; i < parts.length; i++) {
           var islast = (i === parts.length-1);
           if (islast && opts.parent) {
             // stop resolving
             break;
           }
-  
+
           current = FS.lookupNode(current, parts[i]);
           current_path = PATH.join2(current_path, parts[i]);
-  
+
           // jump to the mount's root node if this is a mountpoint
           if (FS.isMountpoint(current)) {
             if (!islast || (islast && opts.follow_mount)) {
               current = current.mounted.root;
             }
           }
-  
+
           // by default, lookupPath will not follow a symlink if it is the final path component.
           // setting opts.follow = true will override this behavior.
           if (!islast || opts.follow) {
@@ -2333,17 +2333,17 @@ var ASM_CONSTS = {
             while (FS.isLink(current.mode)) {
               var link = FS.readlink(current_path);
               current_path = PATH_FS.resolve(PATH.dirname(current_path), link);
-  
+
               var lookup = FS.lookupPath(current_path, { recurse_count: opts.recurse_count });
               current = lookup.node;
-  
+
               if (count++ > 40) {  // limit max consecutive symlinks to 40 (SYMLOOP_MAX).
                 throw new FS.ErrnoError(32);
               }
             }
           }
         }
-  
+
         return { path: current_path, node: current };
       },getPath:function(node) {
         var path;
@@ -2358,8 +2358,8 @@ var ASM_CONSTS = {
         }
       },hashName:function(parentid, name) {
         var hash = 0;
-  
-  
+
+
         for (var i = 0; i < name.length; i++) {
           hash = ((hash << 5) - hash + name.charCodeAt(i)) | 0;
         }
@@ -2412,13 +2412,13 @@ var ASM_CONSTS = {
             this.stream_ops = {};
             this.rdev = rdev;
           };
-  
+
           FS.FSNode.prototype = {};
-  
+
           // compatibility
           var readMode = 292 | 73;
           var writeMode = 146;
-  
+
           // NOTE we must use Object.defineProperties instead of individual calls to
           // Object.defineProperty in order to make closure compiler happy
           Object.defineProperties(FS.FSNode.prototype, {
@@ -2438,11 +2438,11 @@ var ASM_CONSTS = {
             }
           });
         }
-  
+
         var node = new FS.FSNode(parent, name, mode, rdev);
-  
+
         FS.hashAddNode(node);
-  
+
         return node;
       },destroyNode:function(node) {
         FS.hashRemoveNode(node);
@@ -2605,36 +2605,36 @@ var ASM_CONSTS = {
       },getMounts:function(mount) {
         var mounts = [];
         var check = [mount];
-  
+
         while (check.length) {
           var m = check.pop();
-  
+
           mounts.push(m);
-  
+
           check.push.apply(check, m.mounts);
         }
-  
+
         return mounts;
       },syncfs:function(populate, callback) {
         if (typeof(populate) === 'function') {
           callback = populate;
           populate = false;
         }
-  
+
         FS.syncFSRequests++;
-  
+
         if (FS.syncFSRequests > 1) {
           err('warning: ' + FS.syncFSRequests + ' FS.syncfs operations in flight at once, probably just doing extra work');
         }
-  
+
         var mounts = FS.getMounts(FS.root.mount);
         var completed = 0;
-  
+
         function doCallback(err) {
           FS.syncFSRequests--;
           return callback(err);
         }
-  
+
         function done(err) {
           if (err) {
             if (!done.errored) {
@@ -2647,7 +2647,7 @@ var ASM_CONSTS = {
             doCallback(null);
           }
         };
-  
+
         // sync all mounts
         mounts.forEach(function (mount) {
           if (!mount.type.syncfs) {
@@ -2659,78 +2659,78 @@ var ASM_CONSTS = {
         var root = mountpoint === '/';
         var pseudo = !mountpoint;
         var node;
-  
+
         if (root && FS.root) {
           throw new FS.ErrnoError(10);
         } else if (!root && !pseudo) {
           var lookup = FS.lookupPath(mountpoint, { follow_mount: false });
-  
+
           mountpoint = lookup.path;  // use the absolute path
           node = lookup.node;
-  
+
           if (FS.isMountpoint(node)) {
             throw new FS.ErrnoError(10);
           }
-  
+
           if (!FS.isDir(node.mode)) {
             throw new FS.ErrnoError(54);
           }
         }
-  
+
         var mount = {
           type: type,
           opts: opts,
           mountpoint: mountpoint,
           mounts: []
         };
-  
+
         // create a root node for the fs
         var mountRoot = type.mount(mount);
         mountRoot.mount = mount;
         mount.root = mountRoot;
-  
+
         if (root) {
           FS.root = mountRoot;
         } else if (node) {
           // set as a mountpoint
           node.mounted = mount;
-  
+
           // add the new mount to the current mount's children
           if (node.mount) {
             node.mount.mounts.push(mount);
           }
         }
-  
+
         return mountRoot;
       },unmount:function (mountpoint) {
         var lookup = FS.lookupPath(mountpoint, { follow_mount: false });
-  
+
         if (!FS.isMountpoint(lookup.node)) {
           throw new FS.ErrnoError(28);
         }
-  
+
         // destroy the nodes for this mount, and all its child mounts
         var node = lookup.node;
         var mount = node.mounted;
         var mounts = FS.getMounts(mount);
-  
+
         Object.keys(FS.nameTable).forEach(function (hash) {
           var current = FS.nameTable[hash];
-  
+
           while (current) {
             var next = current.name_next;
-  
+
             if (mounts.indexOf(current.mount) !== -1) {
               FS.destroyNode(current);
             }
-  
+
             current = next;
           }
         });
-  
+
         // no longer a mountpoint
         node.mounted = null;
-  
+
         // remove this mount from the child mounts
         var idx = node.mount.mounts.indexOf(mount);
         node.mount.mounts.splice(idx, 1);
@@ -3136,7 +3136,7 @@ var ASM_CONSTS = {
         }
         // we've already handled these, don't pass down to the underlying vfs
         flags &= ~(128 | 512);
-  
+
         // register the stream with the filesystem
         var stream = FS.createStream({
           node: node,
@@ -3438,7 +3438,7 @@ var ASM_CONSTS = {
         // TODO deprecate the old functionality of a single
         // input / output callback and that utilizes FS.createDevice
         // and instead require a unique set of stream ops
-  
+
         // by default, we symlink the standard streams to the
         // default tty devices. however, if the standard streams
         // have been overwritten we create a unique device for
@@ -3458,7 +3458,7 @@ var ASM_CONSTS = {
         } else {
           FS.symlink('/dev/tty1', '/dev/stderr');
         }
-  
+
         // open default streams for the stdin, stdout and stderr devices
         var stdin = FS.open('/dev/stdin', 'r');
         var stdout = FS.open('/dev/stdout', 'w');
@@ -3472,7 +3472,7 @@ var ASM_CONSTS = {
           };
           this.setErrno(errno);
           this.message = 'FS error';
-  
+
         };
         FS.ErrnoError.prototype = new Error();
         FS.ErrnoError.prototype.constructor = FS.ErrnoError;
@@ -3483,28 +3483,28 @@ var ASM_CONSTS = {
         });
       },staticInit:function() {
         FS.ensureErrnoError();
-  
+
         FS.nameTable = new Array(4096);
-  
+
         FS.mount(MEMFS, {}, '/');
-  
+
         FS.createDefaultDirectories();
         FS.createDefaultDevices();
         FS.createSpecialDirectories();
-  
+
         FS.filesystems = {
           'MEMFS': MEMFS,
         };
       },init:function(input, output, error) {
         FS.init.initialized = true;
-  
+
         FS.ensureErrnoError();
-  
+
         // Allow Module.stdin etc. to provide defaults, if none explicitly passed to us here
         Module['stdin'] = input || Module['stdin'];
         Module['stdout'] = output || Module['stdout'];
         Module['stderr'] = error || Module['stderr'];
-  
+
         FS.createStandardStreams();
       },quit:function() {
         FS.init.initialized = false;
@@ -3711,27 +3711,27 @@ var ASM_CONSTS = {
           var header;
           var hasByteServing = (header = xhr.getResponseHeader("Accept-Ranges")) && header === "bytes";
           var usesGzip = (header = xhr.getResponseHeader("Content-Encoding")) && header === "gzip";
-  
+
           var chunkSize = 1024*1024; // Chunk size in bytes
-  
+
           if (!hasByteServing) chunkSize = datalength;
-  
+
           // Function to get a range from the remote URL.
           var doXHR = (function(from, to) {
             if (from > to) throw new Error("invalid range (" + from + ", " + to + ") or no bytes requested!");
             if (to > datalength-1) throw new Error("only " + datalength + " bytes available! programmer error!");
-  
+
             // TODO: Use mozResponseArrayBuffer, responseStream, etc. if available.
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url, false);
             if (datalength !== chunkSize) xhr.setRequestHeader("Range", "bytes=" + from + "-" + to);
-  
+
             // Some hints to the browser that we want binary data.
             if (typeof Uint8Array != 'undefined') xhr.responseType = 'arraybuffer';
             if (xhr.overrideMimeType) {
               xhr.overrideMimeType('text/plain; charset=x-user-defined');
             }
-  
+
             xhr.send(null);
             if (!(xhr.status >= 200 && xhr.status < 300 || xhr.status === 304)) throw new Error("Couldn't load " + url + ". Status: " + xhr.status);
             if (xhr.response !== undefined) {
@@ -3751,7 +3751,7 @@ var ASM_CONSTS = {
             if (typeof(lazyArray.chunks[chunkNum]) === "undefined") throw new Error("doXHR failed!");
             return lazyArray.chunks[chunkNum];
           });
-  
+
           if (usesGzip || !datalength) {
             // if the server uses gzip or doesn't supply the length, we have to download the whole file to get the (uncompressed) length
             chunkSize = datalength = 1; // this will force getter(0)/doXHR do download the whole file
@@ -3759,7 +3759,7 @@ var ASM_CONSTS = {
             chunkSize = datalength;
             out("LazyFiles on gzip forces download of the whole file when length is accessed");
           }
-  
+
           this._length = datalength;
           this._chunkSize = chunkSize;
           this.lengthKnown = true;
@@ -3785,12 +3785,12 @@ var ASM_CONSTS = {
               }
             }
           });
-  
+
           var properties = { isDevice: false, contents: lazyArray };
         } else {
           var properties = { isDevice: false, url: url };
         }
-  
+
         var node = FS.createFile(parent, name, properties, canRead, canWrite);
         // This is a total hack, but I want to get this lazy file code out of the
         // core of MEMFS. If we want to keep this lazy file concept I feel it should
@@ -4019,14 +4019,14 @@ var ASM_CONSTS = {
       },doReadlink:function(path, buf, bufsize) {
         if (bufsize <= 0) return -28;
         var ret = FS.readlink(path);
-  
+
         var len = Math.min(bufsize, lengthBytesUTF8(ret));
         var endChar = HEAP8[buf+len];
         stringToUTF8(ret, buf, bufsize+1);
         // readlink is one of the rare functions that write out a C string, but does never append a null to the output buffer(!)
         // stringToUTF8() always appends a null byte, so restore the character under the null byte after the write.
         HEAP8[buf+len] = endChar;
-  
+
         return len;
       },doAccess:function(path, amode) {
         if (amode & ~7) {
@@ -4124,19 +4124,19 @@ var ASM_CONSTS = {
       abort();
     }
 
-  
+
   function _emscripten_get_now() { abort() }
-  
+
   function _emscripten_get_now_is_monotonic() {
       // return whether emscripten_get_now is guaranteed monotonic; the Date.now
       // implementation is not :(
       return (0
         || ENVIRONMENT_IS_NODE
         || (typeof dateNow !== 'undefined')
-  
+
         // Modern environment where performance.now() is supported: (rely on minifier to return true unconditionally from this function)
         || 1
-  
+
         );
     }function _clock_gettime(clk_id, tp) {
       // int clock_gettime(clockid_t clk_id, struct timespec *tp);
@@ -4159,22 +4159,22 @@ var ASM_CONSTS = {
     }
 
   function _emscripten_get_sbrk_ptr() {
-      return 148736;
+      return 148352;
     }
 
   function _emscripten_memcpy_big(dest, src, num) {
       HEAPU8.set(HEAPU8.subarray(src, src+num), dest);
     }
 
-  
+
   function abortOnCannotGrowMemory(requestedSize) {
       abort('OOM');
     }function _emscripten_resize_heap(requestedSize) {
       abortOnCannotGrowMemory(requestedSize);
     }
 
-  
-  
+
+
   var ENV={};function _emscripten_get_environ() {
       if (!_emscripten_get_environ.strings) {
         // Default values.
@@ -4223,7 +4223,7 @@ var ASM_CONSTS = {
     }
 
   function _fd_close(fd) {try {
-  
+
       var stream = SYSCALLS.getStreamFromFD(fd);
       FS.close(stream);
       return 0;
@@ -4234,7 +4234,7 @@ var ASM_CONSTS = {
   }
 
   function _fd_read(fd, iov, iovcnt, pnum) {try {
-  
+
       var stream = SYSCALLS.getStreamFromFD(fd);
       var num = SYSCALLS.doReadv(stream, iov, iovcnt);
       HEAP32[((pnum)>>2)]=num
@@ -4246,18 +4246,18 @@ var ASM_CONSTS = {
   }
 
   function _fd_seek(fd, offset_low, offset_high, whence, newOffset) {try {
-  
+
       var stream = SYSCALLS.getStreamFromFD(fd);
       var HIGH_OFFSET = 0x100000000; // 2^32
       // use an unsigned operator on low and shift high by 32-bits
       var offset = offset_high * HIGH_OFFSET + (offset_low >>> 0);
-  
+
       var DOUBLE_LIMIT = 0x20000000000000; // 2^53
       // we also check for equality since DOUBLE_LIMIT + 1 == DOUBLE_LIMIT
       if (offset <= -DOUBLE_LIMIT || offset >= DOUBLE_LIMIT) {
         return -61;
       }
-  
+
       FS.llseek(stream, offset, whence);
       (tempI64 = [stream.position>>>0,(tempDouble=stream.position,(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((newOffset)>>2)]=tempI64[0],HEAP32[(((newOffset)+(4))>>2)]=tempI64[1]);
       if (stream.getdents && offset === 0 && whence === 0) stream.getdents = null; // reset readdir state
@@ -4269,7 +4269,7 @@ var ASM_CONSTS = {
   }
 
   function _fd_write(fd, iov, iovcnt, pnum) {try {
-  
+
       var stream = SYSCALLS.getStreamFromFD(fd);
       var num = SYSCALLS.doWritev(stream, iov, iovcnt);
       HEAP32[((pnum)>>2)]=num
@@ -4280,7 +4280,7 @@ var ASM_CONSTS = {
   }
   }
 
-  
+
   function _memcpy(dest, src, num) {
       dest = dest|0; src = src|0; num = num|0;
       var ret = 0;
@@ -4292,7 +4292,7 @@ var ASM_CONSTS = {
         _emscripten_memcpy_big(dest|0, src|0, num|0)|0;
         return dest|0;
       }
-  
+
       ret = dest|0;
       dest_end = (dest + num)|0;
       if ((dest&3) == (src&3)) {
@@ -4356,19 +4356,19 @@ var ASM_CONSTS = {
       ptr = ptr|0; value = value|0; num = num|0;
       var end = 0, aligned_end = 0, block_aligned_end = 0, value4 = 0;
       end = (ptr + num)|0;
-  
+
       value = value & 0xff;
       if ((num|0) >= 67 /* 64 bytes for an unrolled loop + 3 bytes for unaligned head*/) {
         while ((ptr&3) != 0) {
           HEAP8[((ptr)>>0)]=value;
           ptr = (ptr+1)|0;
         }
-  
+
         aligned_end = (end & -4)|0;
         value4 = value | (value << 8) | (value << 16) | (value << 24);
-  
+
         block_aligned_end = (aligned_end - 64)|0;
-  
+
         while((ptr|0) <= (block_aligned_end|0)) {
           HEAP32[((ptr)>>2)]=value4;
           HEAP32[(((ptr)+(4))>>2)]=value4;
@@ -4388,7 +4388,7 @@ var ASM_CONSTS = {
           HEAP32[(((ptr)+(60))>>2)]=value4;
           ptr = (ptr + 64)|0;
         }
-  
+
         while ((ptr|0) < (aligned_end|0) ) {
           HEAP32[((ptr)>>2)]=value4;
           ptr = (ptr+4)|0;
@@ -4406,28 +4406,28 @@ var ASM_CONSTS = {
       setTempRet0(($i) | 0);
     }
 
-  
-  
+
+
   function __isLeapYear(year) {
         return year%4 === 0 && (year%100 !== 0 || year%400 === 0);
     }
-  
+
   function __arraySum(array, index) {
       var sum = 0;
       for (var i = 0; i <= index; sum += array[i++]);
       return sum;
     }
-  
-  
+
+
   var __MONTH_DAYS_LEAP=[31,29,31,30,31,30,31,31,30,31,30,31];
-  
+
   var __MONTH_DAYS_REGULAR=[31,28,31,30,31,30,31,31,30,31,30,31];function __addDays(date, days) {
       var newDate = new Date(date.getTime());
       while(days > 0) {
         var leap = __isLeapYear(newDate.getFullYear());
         var currentMonth = newDate.getMonth();
         var daysInCurrentMonth = (leap ? __MONTH_DAYS_LEAP : __MONTH_DAYS_REGULAR)[currentMonth];
-  
+
         if (days > daysInCurrentMonth-newDate.getDate()) {
           // we spill over to next month
           days -= (daysInCurrentMonth-newDate.getDate()+1);
@@ -4444,14 +4444,14 @@ var ASM_CONSTS = {
           return newDate;
         }
       }
-  
+
       return newDate;
     }function _strftime(s, maxsize, format, tm) {
       // size_t strftime(char *restrict s, size_t maxsize, const char *restrict format, const struct tm *restrict timeptr);
       // http://pubs.opengroup.org/onlinepubs/009695399/functions/strftime.html
-  
+
       var tm_zone = HEAP32[(((tm)+(40))>>2)];
-  
+
       var date = {
         tm_sec: HEAP32[((tm)>>2)],
         tm_min: HEAP32[(((tm)+(4))>>2)],
@@ -4465,9 +4465,9 @@ var ASM_CONSTS = {
         tm_gmtoff: HEAP32[(((tm)+(36))>>2)],
         tm_zone: tm_zone ? UTF8ToString(tm_zone) : ''
       };
-  
+
       var pattern = UTF8ToString(format);
-  
+
       // expand format
       var EXPANSION_RULES_1 = {
         '%c': '%a %b %d %H:%M:%S %Y',     // Replaced by the locale's appropriate date and time representation - e.g., Mon Aug  3 14:02:01 2013
@@ -4503,10 +4503,10 @@ var ASM_CONSTS = {
       for (var rule in EXPANSION_RULES_1) {
         pattern = pattern.replace(new RegExp(rule, 'g'), EXPANSION_RULES_1[rule]);
       }
-  
+
       var WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  
+
       function leadingSomething(value, digits, character) {
         var str = typeof value === 'number' ? value.toString() : (value || '');
         while (str.length < digits) {
@@ -4514,16 +4514,16 @@ var ASM_CONSTS = {
         }
         return str;
       }
-  
+
       function leadingNulls(value, digits) {
         return leadingSomething(value, digits, '0');
       }
-  
+
       function compareByDay(date1, date2) {
         function sgn(value) {
           return value < 0 ? -1 : (value > 0 ? 1 : 0);
         }
-  
+
         var compare;
         if ((compare = sgn(date1.getFullYear()-date2.getFullYear())) === 0) {
           if ((compare = sgn(date1.getMonth()-date2.getMonth())) === 0) {
@@ -4532,7 +4532,7 @@ var ASM_CONSTS = {
         }
         return compare;
       }
-  
+
       function getFirstWeekStartDate(janFourth) {
           switch (janFourth.getDay()) {
             case 0: // Sunday
@@ -4551,16 +4551,16 @@ var ASM_CONSTS = {
               return new Date(janFourth.getFullYear()-1, 11, 30);
           }
       }
-  
+
       function getWeekBasedYear(date) {
           var thisDate = __addDays(new Date(date.tm_year+1900, 0, 1), date.tm_yday);
-  
+
           var janFourthThisYear = new Date(thisDate.getFullYear(), 0, 4);
           var janFourthNextYear = new Date(thisDate.getFullYear()+1, 0, 4);
-  
+
           var firstWeekStartThisYear = getFirstWeekStartDate(janFourthThisYear);
           var firstWeekStartNextYear = getFirstWeekStartDate(janFourthNextYear);
-  
+
           if (compareByDay(firstWeekStartThisYear, thisDate) <= 0) {
             // this date is after the start of the first week of this year
             if (compareByDay(firstWeekStartNextYear, thisDate) <= 0) {
@@ -4572,7 +4572,7 @@ var ASM_CONSTS = {
             return thisDate.getFullYear()-1;
           }
       }
-  
+
       var EXPANSION_RULES_2 = {
         '%a': function(date) {
           return WEEKDAYS[date.tm_wday].substring(0,3);
@@ -4606,7 +4606,7 @@ var ASM_CONSTS = {
           // %G is replaced by 1998 and %V is replaced by 53. If December 29th, 30th,
           // or 31st is a Monday, it and any following days are part of week 1 of the following year.
           // Thus, for Tuesday 30th December 1997, %G is replaced by 1998 and %V is replaced by 01.
-  
+
           return getWeekBasedYear(date).toString().substring(2);
         },
         '%G': function(date) {
@@ -4657,7 +4657,7 @@ var ASM_CONSTS = {
           var janFirst = new Date(date.tm_year+1900, 0, 1);
           var firstSunday = janFirst.getDay() === 0 ? janFirst : __addDays(janFirst, 7-janFirst.getDay());
           var endDate = new Date(date.tm_year+1900, date.tm_mon, date.tm_mday);
-  
+
           // is target date after the first Sunday?
           if (compareByDay(firstSunday, endDate) < 0) {
             // calculate difference in days between first Sunday and endDate
@@ -4666,7 +4666,7 @@ var ASM_CONSTS = {
             var days = firstSundayUntilEndJanuary+februaryFirstUntilEndMonth+endDate.getDate();
             return leadingNulls(Math.ceil(days/7), 2);
           }
-  
+
           return compareByDay(firstSunday, janFirst) === 0 ? '01': '00';
         },
         '%V': function(date) {
@@ -4677,22 +4677,22 @@ var ASM_CONSTS = {
           // Both January 4th and the first Thursday of January are always in week 1. [ tm_year, tm_wday, tm_yday]
           var janFourthThisYear = new Date(date.tm_year+1900, 0, 4);
           var janFourthNextYear = new Date(date.tm_year+1901, 0, 4);
-  
+
           var firstWeekStartThisYear = getFirstWeekStartDate(janFourthThisYear);
           var firstWeekStartNextYear = getFirstWeekStartDate(janFourthNextYear);
-  
+
           var endDate = __addDays(new Date(date.tm_year+1900, 0, 1), date.tm_yday);
-  
+
           if (compareByDay(endDate, firstWeekStartThisYear) < 0) {
             // if given date is before this years first week, then it belongs to the 53rd week of last year
             return '53';
           }
-  
+
           if (compareByDay(firstWeekStartNextYear, endDate) <= 0) {
             // if given date is after next years first week, then it belongs to the 01th week of next year
             return '01';
           }
-  
+
           // given date is in between CW 01..53 of this calendar year
           var daysDifference;
           if (firstWeekStartThisYear.getFullYear() < date.tm_year+1900) {
@@ -4714,7 +4714,7 @@ var ASM_CONSTS = {
           var janFirst = new Date(date.tm_year, 0, 1);
           var firstMonday = janFirst.getDay() === 1 ? janFirst : __addDays(janFirst, janFirst.getDay() === 0 ? 1 : 7-janFirst.getDay()+1);
           var endDate = new Date(date.tm_year+1900, date.tm_mon, date.tm_mday);
-  
+
           // is target date after the first Monday?
           if (compareByDay(firstMonday, endDate) < 0) {
             var februaryFirstUntilEndMonth = __arraySum(__isLeapYear(endDate.getFullYear()) ? __MONTH_DAYS_LEAP : __MONTH_DAYS_REGULAR, endDate.getMonth()-1)-31;
@@ -4754,12 +4754,12 @@ var ASM_CONSTS = {
           pattern = pattern.replace(new RegExp(rule, 'g'), EXPANSION_RULES_2[rule](date));
         }
       }
-  
+
       var bytes = intArrayFromString(pattern, false);
       if (bytes.length > maxsize) {
         return 0;
       }
-  
+
       writeArrayToMemory(bytes, s);
       return bytes.length-1;
     }function _strftime_l(s, maxsize, format, tm) {
@@ -5192,6 +5192,3 @@ run();
 
 
 // {{MODULE_ADDITIONS}}
-
-
-

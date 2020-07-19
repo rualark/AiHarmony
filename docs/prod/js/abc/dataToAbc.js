@@ -5,6 +5,7 @@ import {ares} from "../analysis/AnalysisResults.js";
 import { settings } from "../state/settings.js";
 
 export function dataToAbc(instrument) {
+  let mlen = nd.timesig.measure_len;
   let abc = '';
   abc += '%%barnumbers 1\n';
   abc += 'M:' + nd.timesig.beats_per_measure + '/' + nd.timesig.beat_type + '\n';
@@ -16,13 +17,13 @@ export function dataToAbc(instrument) {
     if (nd.algo === 'CA3') {
       let vocra = ares.getVocra(v);
       let spec = ares.getSpecies(v);
-      if (vocra != null && vc.name.slice(0, 3).toLowerCase() !== vocra.slice(0, 3).toLowerCase()) name += ` [${vocra}]`;
+      if (vocra != null && vc.name.slice(0, 3).toLowerCase() !== vocra.slice(0, 3).toLowerCase()) name += `\\n[${vocra}]`;
       if (spec != null && ares.av_cnt > 1) {
         if (spec === 0) {
-          name += ` (c.f.)`;
+          name += `\\n(c.f.)`;
         }
         else {
-          name += ` (sp. ${spec})`;
+          name += `\\n(sp. ${spec})`;
         }
       }
     }
@@ -33,7 +34,16 @@ export function dataToAbc(instrument) {
     let vc = nd.voices[v];
     abc += `[V: V${v}]`;
     let s = 0;
+    let old_m = 0;
+    let altmap = {};
+    let prev_altmap = {};
     for (let n=0; n<vc.notes.length; ++n) {
+      let m = Math.floor(s / mlen);
+      if (m != old_m) {
+        old_m = m;
+        prev_altmap = altmap;
+        altmap = {};
+      }
       let nt = vc.notes[n];
       nt.step = s;
       nd.abc_charStarts[abc.length] = {voice: v, note: n};
@@ -69,9 +79,29 @@ export function dataToAbc(instrument) {
         }
       }
       let d = nt.d;
+      let dc = nt.d % 7;
       if (d) {
+        let show_alter = nt.alter;
+        if (nt.alter == 10) {
+          if (!(d in altmap)) {
+            // First unaltered
+            if (d in prev_altmap && prev_altmap[d] != nt.alter && prev_altmap[d] != nd.keysig.imprint[dc]) {
+              // First unaltered after alter in previous measure
+              show_alter = nd.keysig.imprint[dc];
+            }
+          } else if (nt.alter != altmap[d]) {
+            // Changed to unaltered
+            show_alter = nd.keysig.imprint[dc];
+          }
+        } else {
+          if (d in altmap && nt.alter == altmap[d]) {
+            // Same altered
+            show_alter = 10;
+          }
+        }
+        altmap[d] = nt.alter;
         let abc_note = d2abc(d - clefs[vc.clef].transpose);
-        abc += alter2abc(nt.alter) + abc_note + nt.len;
+        abc += alter2abc(show_alter) + abc_note + nt.len;
       } else {
         abc += 'z' + nt.len;
       }

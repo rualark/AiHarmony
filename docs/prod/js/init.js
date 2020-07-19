@@ -77,8 +77,10 @@ window.addEventListener('DOMContentLoaded', async function() {
 });
 
 window.onload = function() {
+  let lastWidth = 0;
   window.onresize = () => {
-    //console.log('resize');
+    if (window.innerWidth == lastWidth) return;
+    lastWidth = window.innerWidth;
     $('body').css('padding-top', $('#toolbar').height() + 4);
     async_redraw();
   };
