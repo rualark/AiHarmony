@@ -10,7 +10,7 @@ import {
   is_locked
 } from "./edit/editNote.js";
 import {saveState} from "../state/history.js";
-import {button_enabled, button_enabled_active} from "./lib/uilib.js";
+import {button_enabled, button_enabled_active, button_active} from "./lib/uilib.js";
 import {rename_part, stop_advancing} from "./edit/editScore.js";
 import {can_pre_tie, can_tie, is_pre_tie} from "./edit/editTie.js";
 import {can_dot, can_len} from "./edit/editLen.js";
@@ -31,7 +31,11 @@ function selectionHasMistake() {
 }
 
 export function update_selection() {
-  let locked = is_locked();
+  const locked = is_locked();
+  const has_notes = nd.has_notes();
+  console.log('has-notes', has_notes);
+  button_enabled('play', has_notes);
+  button_enabled('ais', has_notes);
   button_enabled('transpose',
     selected.element != null && typeof selected.element.abselem !== 'undefined');
   button_enabled('del_bar',
