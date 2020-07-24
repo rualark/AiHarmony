@@ -107,6 +107,5 @@ function fullModeName(keysig) {
   st = st.replace('loc', 'locrian');
   st = st.replace('dor', 'dorian');
   st = st.replace('phr', 'phrygian');
-  st = st.replace('mix', 'mixolydian');
   return st;
 }
