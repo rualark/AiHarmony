@@ -53,8 +53,7 @@ export function readMusicXml(xml, filename) {
     decodeSpeciesHints();
     //stop_counter();
     if (error) {
-      storage2state();
-      alertify.alert('Error loading MusicXML', error);
+      throw error;
     } else if (xmlLoadWarnings.size) {
       alertify.notify([...xmlLoadWarnings].join('<br>'), 'custom', 10);
     }
@@ -73,11 +72,8 @@ export function readMusicXml(xml, filename) {
     saveState(true);
   } catch (e) {
     storage2state();
-    //console.log(e);
     alertify.alert('Error loading MusicXML', e.toString());
-    throw e;
   }
-  //console.log(nd);
   async_redraw();
 }
 
