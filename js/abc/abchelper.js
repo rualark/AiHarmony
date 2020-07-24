@@ -108,7 +108,11 @@ export function highlightNote() {
     abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_SELECTION);
   }
   let el = getElementByStartChar(abcjs, nt.abc_charStarts);
-  selected.element = el.abcelem;
+  if (el) {
+    selected.element = el.abcelem;
+  } else {
+    selected.element = {};
+  }
   selected.classes = "";
 }
 

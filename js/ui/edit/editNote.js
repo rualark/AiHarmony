@@ -16,6 +16,7 @@ export let future = {
 export function is_locked() {
   if (!selected.element || !selected.element.duration) return false;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (!el) return false;
   if (nd.voices[el.voice].locked) return true;
   return false;
 }
