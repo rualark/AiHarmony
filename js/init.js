@@ -34,7 +34,11 @@ function init() {
     }
     catch (e) {
       nd.reset();
-      alertify.error('Shared url is corrupted or expired');
+      if (e === 'version') {
+        alertify.error('Shared url is expired');
+      } else {
+        alertify.error('Shared url is corrupted');
+      }
     }
     saveState();
     window.history.replaceState("", "", urlNoParams());

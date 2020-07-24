@@ -196,7 +196,7 @@ export function init_abcjs(clickListener) {
     clickListener: clickListener,
     add_classes: true,
     dragging: true,
-    selectTypes: ['note', 'clef', 'keySignature', 'voiceName', 'timeSignature'],
+    selectTypes: ['note', 'clef', 'keySignature', 'voiceName', 'timeSignature', 'tempo'],
     selectionColor: COLOR_SELECTION,
     dragColor: "#3399FF",
     staffwidth: window.innerWidth - 60,

@@ -16,6 +16,7 @@ import {can_pre_tie, can_tie, is_pre_tie} from "./edit/editTie.js";
 import {can_dot, can_len} from "./edit/editLen.js";
 import {ares} from "../analysis/AnalysisResults.js";
 import {trackEvent} from "../integration/tracking.js";
+import { showTempoModal } from "./modal/tempoModal.js";
 
 function selectionHasMistake() {
   if (selected.note == null) return false;
@@ -33,7 +34,6 @@ function selectionHasMistake() {
 export function update_selection() {
   const locked = is_locked();
   const has_notes = nd.has_notes();
-  console.log('has-notes', has_notes);
   button_enabled('play', has_notes);
   button_enabled('ais', has_notes);
   button_enabled('transpose',
@@ -133,12 +133,18 @@ export function update_selection() {
 
 export function element_click(abcElem, tuneNumber, classes, pos, move) {
   //console.log('Click', abcElem, tuneNumber, classes, pos, move);
-  selected.element = abcElem;
-  selected.classes = classes;
-  selected.voice = pos.voice;
+  if (abcElem['el_type'] !== 'tempo') {
+    selected.element = abcElem;
+    selected.classes = classes;
+    selected.voice = pos.voice;
+  }
   //clicked.voice = get_voice(classes);
   selected.note = null;
-  if (abcElem['el_type'] === 'voiceName') {
+  if (abcElem['el_type'] === 'tempo') {
+    showTempoModal();
+    trackEvent('AiHarmony', 'click_tempo');
+  }
+  else if (abcElem['el_type'] === 'voiceName') {
     rename_part();
     trackEvent('AiHarmony', 'click_partname');
   }
