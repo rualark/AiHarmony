@@ -34,15 +34,22 @@
         M.splice(1, 1, tem[1]);
       return {name:M[0], version:M[1]};
     })();
+
     var checkUnsupportedBrowser = function() {
       if (document.getElementById("toolbar").innerHTML === '') {
-        document.getElementById("testResult").innerHTML = "<span style='color: red'><b>There was a problem executing javascript. Try to reload page. If the problem persists, this may mean that this browser " + navigator.browserSpecs.name + " " + navigator.browserSpecs.version + " is not supported. Supported browsers: Chrome (65 and later), Safari (11 and later)</b></span>";
+        let est = "There was a problem executing javascript. Try to reload page.";
+        if (navigator.browserSpecs.name === 'Chrome' && navigator.browserSpecs.version >= 65) {
+        } else if (navigator.browserSpecs.name === 'Safari' && navigator.browserSpecs.version >= 11) {
+        } else {
+          est += " If the problem persists, this may mean that this browser " + navigator.browserSpecs.name + " " + navigator.browserSpecs.version + " is not supported. Supported browsers: Chrome (65 and later), Safari (11 and later)";
+        }
+        document.getElementById("testResult").innerHTML = `<span style='color: red'><b>${est}</b></span>`;
       }
     };
     window.onload = function() {
       checkUnsupportedBrowser();
     };
-    setTimeout(checkUnsupportedBrowser, 4000);
+    setTimeout(checkUnsupportedBrowser, 8000);
     //window.addEventListener('DOMContentLoaded', checkUnsupportedBrowser);
   </script>
 </head>

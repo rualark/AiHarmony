@@ -37,6 +37,17 @@ export class NotesData {
     return 10;
   }
 
+  has_notes() {
+    for (let v=0; v<this.voices.length; ++v) {
+      let vc = this.voices[v];
+      for (let n = 0; n < vc.notes.length; ++n) {
+        let nt = vc.notes[n];
+        if (nt.d) return true;
+      }
+    }
+    return false;
+  }
+
   set_note(v, n, d, saveState=true) {
     this.voices[v].notes[n].d = d;
     let notes = this.voices[v].notes;
@@ -264,6 +275,7 @@ export class NotesData {
     this.modes = [
       mode
     ];
+    this.tempo = 140;
     this.timesig = {
       beats_per_measure: 4,
       beat_type: 4,
@@ -371,6 +383,12 @@ export class NotesData {
     if (st == null) this.name = '';
     else if (st === '') this.name = '-';
     else this.name = st.substr(0, 255);
+  }
+
+  set_tempo(tempo) {
+    if (tempo > 255) tempo = 255;
+    if (tempo < 1) tempo = 1;
+    this.tempo = tempo;
   }
 
   set_fileName(st) {

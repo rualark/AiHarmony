@@ -1,6 +1,6 @@
 export function initTooltips(show_ms, hide_ms) {
   let tts = $('[data-toggle="tooltip"]');
-  if (tts.length) {
+  if (tts.length && typeof tts.tooptip === 'function') {
     tts.tooltip({
       trigger: 'hover',
       container: 'body',

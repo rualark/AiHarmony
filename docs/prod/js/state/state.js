@@ -4,7 +4,7 @@ import {currentTimestamp, start_counter} from "../core/time.js";
 import {b256_safeString, safeString_b256, ui_b256, b256_ui} from "../core/base256.js";
 import { generateRandomId } from "../core/string.js";
 
-const ENCODING_VERSION = 14;
+const ENCODING_VERSION = 15;
 export const STATE_VOLATILE_SUFFIX = 7;
 const MAX_ARCHIVE_COUNT = 80;
 const MAX_ARCHIVE_BYTES = 200000;
@@ -60,6 +60,7 @@ export function data2plain() {
   }
   st += safeString_b256(nd.name, 1);
   st += safeString_b256(nd.fileName, 1);
+  st += ui_b256(nd.tempo, 1);
   if (selected.note == null) {
     st += ui_b256(255, 1);
     st += ui_b256(0, 2);
@@ -74,8 +75,11 @@ export function data2plain() {
 
 export function plain2data(st, pos, target, full) {
   let saved_encoding_version = b256_ui(st, pos, 1);
-  if (saved_encoding_version !== ENCODING_VERSION) {
+  if (saved_encoding_version < 14 || saved_encoding_version > ENCODING_VERSION) {
     throw('version');
+  }
+  if (saved_encoding_version !== ENCODING_VERSION) {
+    console.log('Loading deprecated version of state: ', saved_encoding_version);
   }
   target.algo = b256_safeString(st, pos, 1);
   target.algoMode = b256_ui(st, pos, 1);
@@ -140,6 +144,9 @@ export function plain2data(st, pos, target, full) {
   }
   target.set_name(b256_safeString(st, pos, 1));
   target.set_fileName(b256_safeString(st, pos, 1));
+  if (saved_encoding_version >= 15) {
+    target.set_tempo(b256_ui(st, pos, 1));
+  }
   let v = b256_ui(st, pos, 1);
   let n = b256_ui(st, pos, 2);
   if (full) {
