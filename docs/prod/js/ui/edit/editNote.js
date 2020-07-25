@@ -70,11 +70,11 @@ export function set_note(dc) {
   nd.set_note(el.voice, el.note, d, false);
   if (future.advancing && future.len) {
     future.advancing = false;
-    set_len(future.len);
+    set_len(future.len, false);
   } else {
     // Fix 5/4 note
     if (note.len == 20) {
-      set_len(12);
+      set_len(12, false);
     }
   }
   saveState();

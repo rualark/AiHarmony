@@ -12,7 +12,6 @@ function submitText(v, n, type) {
     nd.set_text(v, n, text);
   }
   $('#Modal1').modal('hide');
-  saveState();
   async_redraw();
 }
 

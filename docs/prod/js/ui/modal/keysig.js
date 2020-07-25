@@ -163,7 +163,6 @@ export function showKeysigModal() {
     document.getElementById('akeysig' + i).onclick=function() {
       $('#Modal1').modal('hide');
       nd.set_keysig(keysigs[keysig]);
-      saveState();
       async_redraw();
     };
     ++i;

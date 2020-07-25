@@ -49,7 +49,6 @@ export function showTimesigModal() {
     document.getElementById('atimesig' + i).onclick=function() {
       $('#Modal1').modal('hide');
       nd.set_timesig(timesigs[i]);
-      saveState();
       async_redraw();
     };
   }
