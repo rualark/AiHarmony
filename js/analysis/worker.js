@@ -98,7 +98,7 @@ function message(type, modName, funcName, data) {
 
 // Handle incoming messages
 self.addEventListener('message', async function(event) {
-  let { type, modName, funcName, data } = event.data;
+  let { type, modName, funcName, data, options } = event.data;
   if (type === "CALL") {
     //console.log('Worker call');
     try {
@@ -128,6 +128,7 @@ self.addEventListener('message', async function(event) {
       if (workerState.state !== 'ready') {
         throw "Error worker state: " + workerState.state;
       }
+      Module['__Z11set_optionsi'](options.debugLevel);
       const res = ccallArrays(funcName, "string", ["string"], [data], {
         heapIn: "HEAPU8",
         heapOut: "HEAPU8"

@@ -9,7 +9,7 @@ import {initTooltips} from "../ui/lib/tooltips.js";
 import {selected} from "../abc/abchelper.js";
 import {environment} from "../core/remote.js";
 
-let ARES_ENCODING_VERSION = 3;
+let ARES_ENCODING_VERSION = 4;
 export let SEVERITY_RED = 80;
 export let SEVERITY_RED_COLOR = "red";
 export let SEVERITY_YELLOW_COLOR = "#F19900";
@@ -96,6 +96,7 @@ class AnalysisResults {
             subName: b256_safeString(st, pos, 2),
             comment: b256_safeString(st, pos, 2),
             subComment: b256_safeString(st, pos, 2),
+            debugSt: b256_safeString(st, pos, 2),
           };
           this.flag[v][s + this.s_start].push(flag);
         }
@@ -157,7 +158,7 @@ class AnalysisResults {
   static getRuleTooltip(fla) {
     let st = '';
     if (debugLevel > 5 && environment !== 'prod') {
-      st += `[${fla.fl}] `;
+      st += `[${fla.fl}:${fla.debugSt}] `;
     }
     if (fla.comment)
       st += fla.comment;

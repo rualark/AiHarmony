@@ -1184,11 +1184,11 @@ function updateGlobalBufferAndViews(buf) {
 }
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 5384896,
+    STACK_BASE = 5385136,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 142016,
-    DYNAMIC_BASE = 5384896,
-    DYNAMICTOP_PTR = 141856;
+    STACK_MAX = 142256,
+    DYNAMIC_BASE = 5385136,
+    DYNAMICTOP_PTR = 142096;
 
 
 
@@ -1603,7 +1603,7 @@ var ASM_CONSTS = {
 
 
 
-// STATICTOP = STATIC_BASE + 140992;
+// STATICTOP = STATIC_BASE + 141232;
 /* global initializers */  __ATINIT__.push({ func: function() { ___wasm_call_ctors() } });
 
 
@@ -4159,7 +4159,7 @@ var ASM_CONSTS = {
     }
 
   function _emscripten_get_sbrk_ptr() {
-      return 141856;
+      return 142096;
     }
 
   function _emscripten_memcpy_big(dest, src, num) {
@@ -4819,6 +4819,10 @@ var ___wasm_call_ctors = Module["___wasm_call_ctors"] = function() {
 
 var __ZSt18uncaught_exceptionv = Module["__ZSt18uncaught_exceptionv"] = function() {
   return (__ZSt18uncaught_exceptionv = Module["__ZSt18uncaught_exceptionv"] = Module["asm"]["_ZSt18uncaught_exceptionv"]).apply(null, arguments);
+};
+
+var __Z11set_optionsi = Module["__Z11set_optionsi"] = function() {
+  return (__Z11set_optionsi = Module["__Z11set_optionsi"] = Module["asm"]["_Z11set_optionsi"]).apply(null, arguments);
 };
 
 var __Z7analysePhi = Module["__Z7analysePhi"] = function() {
