@@ -6,7 +6,6 @@ import { showModal } from "../lib/modal.js";
 function showInputTempo() {
   let st = '';
   st += `<div class="form-group">`;
-  st += `<label for="input_tempo"><b>Tempo</b></label>`;
   st += `<input class="form-control" type=tel min=1 max=255 id=input_tempo name=input_tempo value="${nd.tempo}">`;
   st += `</input>`;
   st += `</div>`;

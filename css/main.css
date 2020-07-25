@@ -3,8 +3,8 @@ body {padding-top:10px; background-color:white}
 .jumbotron2{background-color:#fff;margin-bottom:0;min-height:50%}
 .imgmo {-webkit-transition:all .5s ease; -moz-transition:all .5s ease; -o-transition:all .5s ease; -ms-transition:all .5s ease; transition:all .5s ease}
 .imgmo:hover {opacity:.5; filter:alpha(opacity=50)}
-.imgmo2 {-webkit-transition:all .5s ease; -moz-transition:all .5s ease; -o-transition:all .5s ease; -ms-transition:all .5s ease; transition:all .5s ease}
-.imgmo2:hover {filter:contrast(200%)}
+.imgmo2 {opacity: 0.5; filter: alpha(opacity=50); -webkit-transition:all .5s ease; -moz-transition:all .5s ease; -o-transition:all .5s ease; -ms-transition:all .5s ease; transition:all .5s ease }
+.imgmo2:hover {opacity:1; filter:alpha(opacity=100)}
 .btn:focus,.btn:active {outline:none !important; box-shadow:none}
 .btn {margin-top:2px !important; margin-bottom:2px !important;}
 .btn-outline-white {color: black; background-color: white; border-color: white; transition-duration: 0ms}
