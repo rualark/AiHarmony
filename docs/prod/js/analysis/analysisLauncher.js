@@ -47,7 +47,7 @@ async function workerMessageReceiver(event) {
   //console.log('Event from worker:', event.data.type, event.data.modName);
 }
 
-export function launchAnalysis(modName, funcName, data) {
+export function launchAnalysis(modName, funcName, data, options) {
   if (workers[modName] == null) {
     workers[modName] = {};
     workers[modName].worker = createWorker();
@@ -62,6 +62,7 @@ export function launchAnalysis(modName, funcName, data) {
     type: 'CALL',
     modName: modName,
     funcName: funcName,
-    data: data
+    data: data,
+    options: options
   });
 }

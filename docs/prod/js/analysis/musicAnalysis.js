@@ -2,6 +2,7 @@ import {launchAnalysis} from "./analysisLauncher.js";
 import {data2plain} from "../state/state.js";
 import {nd} from "../notes/NotesData.js";
 import {ares} from "./AnalysisResults.js";
+import { environment } from "../../docs/prod/js/core/remote.js";
 
 export function analyse() {
   /*
@@ -12,12 +13,16 @@ export function analyse() {
   let st = '';
   for (let i=0; i<20000; ++i) st += '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789';
   */
+  let debugLevel = 0;
+  if (environment !== 'prod') debugLevel = 10;
   if (nd.algo === '') {
     ares.reset();
     $('#mode').html('');
     $('#analysisConsole').html('');
   }
   else {
-    launchAnalysis(nd.algo, '__Z7analysePhi', data2plain());
+    launchAnalysis(nd.algo, '__Z7analysePhi', data2plain(), {
+      debugLevel: debugLevel
+    });
   }
 }
