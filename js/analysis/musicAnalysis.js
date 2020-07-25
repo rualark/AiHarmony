@@ -2,7 +2,7 @@ import {launchAnalysis} from "./analysisLauncher.js";
 import {data2plain} from "../state/state.js";
 import {nd} from "../notes/NotesData.js";
 import {ares} from "./AnalysisResults.js";
-import { environment } from "../../docs/prod/js/core/remote.js";
+import { environment } from "../../js/core/remote.js";
 
 export function analyse() {
   /*
