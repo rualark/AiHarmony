@@ -68,6 +68,7 @@ function newHist(state) {
 }
 
 function pushState(state) {
+  console.trace('pushState');
   if (history_pos !== -1 && history[history_pos].utf16 === state.utf16) return false;
   if (history.length > history_pos + 1) {
     history.splice(history_pos + 1, history.length - history_pos - 1);
