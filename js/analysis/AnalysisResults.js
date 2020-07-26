@@ -162,8 +162,8 @@ class AnalysisResults {
     let st = '';
     if (fla.paragraph_num) {
       const paragraph = rules_paragraphs[fla.paragraph_num];
-      let rules_url = "md/pdf/Counterpoint_rules.pdf";
-      if (mobileOrTablet) rules_url = "https://www.docdroid.net/tuGELg6/counterpoint-rules-pdf";
+      let rules_url = "md/pdf/Artinfuser_Counterpoint_rules.pdf";
+      if (mobileOrTablet) rules_url = "https://www.docdroid.net/T62f497/artinfuser-counterpoint-rules-pdf";
       st += ` <a href=${rules_url}#page=${paragraph.page} title="${fla.paragraph_num}. ${paragraph.name}" target=_blank>`;
       st += `<img class=imgmo2 src=img/book.png style='position:relative; top:-2px' height=18></a>`;
     }

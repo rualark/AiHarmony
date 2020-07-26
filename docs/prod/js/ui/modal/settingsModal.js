@@ -63,7 +63,7 @@ function showSelectRuleVerbose() {
   st += `<select class="form-control custom-select" id=sel_ruleVerbose name=sel_ruleVerbose>`;
   st += `<option value='0' ${settings.rule_verbose === 0 ? "selected" : ""}>Short mistake text</option>`;
   st += `<option value='1' ${settings.rule_verbose === 1 ? "selected" : ""}>Medium mistake text</option>`;
-  st += `<option value='2' ${settings.rule_verbose === 2 ? "selected" : ""}>Long mistake text</option>`;
+  st += `<option value='2' ${settings.rule_verbose === 2 ? "selected" : ""}>Full mistake text</option>`;
   st += `</select>`;
   st += `</div>`;
   return st;

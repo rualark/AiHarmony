@@ -8,8 +8,10 @@ import {encodeHtmlSpecialChars} from "../core/string.js";
 import {initTooltips} from "../ui/lib/tooltips.js";
 import {selected} from "../abc/abchelper.js";
 import {environment} from "../core/remote.js";
+import {rules_paragraphs} from "../data/rules_paragraphs.js";
+import { mobileOrTablet } from "../core/mobileCheck.js";
 
-let ARES_ENCODING_VERSION = 4;
+let ARES_ENCODING_VERSION = 5;
 export let SEVERITY_RED = 80;
 export let SEVERITY_RED_COLOR = "red";
 export let SEVERITY_YELLOW_COLOR = "#F19900";
@@ -97,6 +99,7 @@ class AnalysisResults {
             comment: b256_safeString(st, pos, 2),
             subComment: b256_safeString(st, pos, 2),
             debugSt: b256_safeString(st, pos, 2),
+            paragraph_num: b256_ui(st, pos, 1),
           };
           this.flag[v][s + this.s_start].push(flag);
         }
@@ -151,6 +154,18 @@ class AnalysisResults {
       else if (fla.fsl > fla.s) {
         st += " - to " + sl_st;
       }
+    }
+    return st;
+  }
+
+  static getParagraphLink(fla) {
+    let st = '';
+    if (fla.paragraph_num) {
+      const paragraph = rules_paragraphs[fla.paragraph_num];
+      let rules_url = "md/pdf/Artinfuser_Counterpoint_rules.pdf";
+      if (mobileOrTablet) rules_url = "https://www.docdroid.net/T62f497/artinfuser-counterpoint-rules-pdf";
+      st += ` <a href=${rules_url}#page=${paragraph.page} title="${fla.paragraph_num}. ${paragraph.name}" target=_blank>`;
+      st += `<img class=imgmo2 src=img/book.png style='position:relative; top:-2px' height=18></a>`;
     }
     return st;
   }
@@ -217,12 +232,15 @@ class AnalysisResults {
             st += `[bar ${m + 1}, beat ${beat + 1}] ${noteName}</a><br>\n`;
             noteClick.push({vi: vi, n: n});
           }
+          const paragraph_link = AnalysisResults.getParagraphLink(fla);
           let alertText = this.getRuleString(fla, settings.rule_verbose, false, false);
           let tooltipText = AnalysisResults.getRuleTooltip(fla);
           let htmlText = this.getRuleString(fla, settings.rule_verbose, true, false);
           st += `<a data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${encodeHtmlSpecialChars(tooltipText)}" href=# class='ares ares_${vi}_${s}_${f}' style='color: ${col}'>\n`;
           st += '- ' + encodeHtmlSpecialChars(htmlText);
-          st += `</a><br>\n`;
+          st += `</a> `;
+          st += paragraph_link;
+          st += `<br>\n`;
           let pf = {
             vi1: vi,
             vi2: this.vid[fla.fvl],
@@ -230,7 +248,7 @@ class AnalysisResults {
             s2: fla.fsl,
             f: f,
             severity: fla.severity,
-            text: encodeHtmlSpecialChars(alertText),
+            text: encodeHtmlSpecialChars(alertText) + ' ' + paragraph_link,
             num: this.pFlag.length
           };
           this.pFlag.push(pf);
