@@ -82,7 +82,7 @@ export function showSettingsModal() {
   let st = '';
   st += showCheckToolbarHints();
   st += showCheckAlterBeforeNote();
-  st += showCheckBox('check_showNht', settings.show_nht, `Label non-harmonic tones with 'nht' text`);
+  st += showCheckBox('check_showNht', settings.show_nht, `Label non-harmonic tones with ø symbol`);
   st += showSelectShortcutsLayout();
   st += showSelectRuleVerbose();
   st += showSelectWithLabel('Add legato when playing:', 'selectAddSlurs', settings.autoLegato, makeAutoLegatoOptions(), (val) => {
