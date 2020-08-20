@@ -12,11 +12,26 @@ export function stop_advancing() {
   future.len = 0;
 }
 
+export function insert_bar() {
+  if (state.state !== 'ready') return;
+  if (!selected.element || !selected.element.duration) return false;
+  if (selected.note == null) return false;
+  let el = nd.abc_charStarts[selected.element.startChar];
+  nd.insert_measure(el.voice, el.note);
+  selected.note = {
+    voice: selected.note.voice,
+    note: el.note + 1
+  };
+  stop_advancing();
+  async_redraw();
+}
+
 export function del_bar() {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return false;
   if (selected.note == null) return false;
   let el = nd.abc_charStarts[selected.element.startChar];
+  // Check that there are more than 1 measures (do not allow to delete last measure)
   let nt = nd.voices[el.voice].notes.slice(-1)[0];
   if (nt.step + nt.len <= nd.timesig.measure_len) return false;
   nd.delBar(el.voice, el.note);

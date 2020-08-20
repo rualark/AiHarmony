@@ -146,6 +146,49 @@ export class NotesData {
     if (saveState) this.saveState();
   }
 
+  insert_measure(v, n, saveState=true) {
+    let m = Math.floor(this.voices[v].notes[n].step / this.timesig.measure_len);
+    let p1 = m * this.timesig.measure_len;
+    let p2 = p1 + this.timesig.measure_len;
+    for (let v=0; v<this.voices.length; ++v) {
+      let vc = this.voices[v];
+      for (let n = 0; n < vc.notes.length; ++n) {
+        let nt = vc.notes[n];
+        if (nt.step == p1) {
+          vc.notes.splice(n, 0, {
+            d: 0,
+            alter: 10,
+            len: this.timesig.measure_len,
+            startsTie: false}
+          );
+          if (n) {
+            vc.notes[n - 1].startsTie = false;
+          }
+          break;
+        }
+      }
+    }
+    if (saveState) this.saveState();
+  }
+
+  delBar(v, n) {
+    let p1 = Math.floor(this.voices[v].notes[n].step / this.timesig.measure_len) * this.timesig.measure_len;
+    let p2 = p1 + this.timesig.measure_len;
+    for (let v=0; v<this.voices.length; ++v) {
+      let vc = this.voices[v];
+      for (let n = 0; n < vc.notes.length; ++n) {
+        let nt = vc.notes[n];
+        if (nt.step >= p1 && nt.step + nt.len <= p2) {
+          vc.notes.splice(n, 1);
+          if (n) {
+            vc.notes[n - 1].startsTie = false;
+          }
+          --n;
+        }
+      }
+    }
+  }
+
   build_keysig(fifths, mode) {
     this.keysig = {};
     this.keysig.fifths = fifths;
@@ -355,24 +398,6 @@ export class NotesData {
     return 0;
   }
 
-  delBar(v, n) {
-    let p1 = Math.floor(this.voices[v].notes[n].step / this.timesig.measure_len) * this.timesig.measure_len;
-    let p2 = p1 + this.timesig.measure_len;
-    for (let v=0; v<this.voices.length; ++v) {
-      let vc = this.voices[v];
-      for (let n = 0; n < vc.notes.length; ++n) {
-        let nt = vc.notes[n];
-        if (nt.step >= p1 && nt.step + nt.len <= p2) {
-          vc.notes.splice(n, 1);
-          if (n) {
-            vc.notes[n - 1].startsTie = false;
-          }
-          --n;
-        }
-      }
-    }
-  }
-
   constructor() {
     // Set values that should not be reset on new score, but should be inherited from previous score
     this.algo = 'CA3';
@@ -417,6 +442,18 @@ export class NotesData {
       const new_d = vc.notes[n].d + dd
       if (new_d < 1 || new_d > 74) continue;
       vc.notes[n].d = new_d;
+    }
+  }
+
+  update_note_steps() {
+    for (let v=0; v<nd.voices.length; ++v) {
+      let vc = nd.voices[v];
+      let s = 0;
+      for (let n=0; n<vc.notes.length; ++n) {
+        let nt = vc.notes[n];
+        nt.step = s;
+        s += nt.len;
+      }
     }
   }
 }
