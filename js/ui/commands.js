@@ -18,7 +18,7 @@ import {showShareModal} from "./modal/shareModal.js";
 import {redoState, saveState, undoState} from "../state/history.js";
 import {mobileOrTablet} from "../core/mobileCheck.js";
 import {sendToAic} from "../integration/aiCounterpoint.js";
-import {add_part, del_bar, del_part, new_file, stop_advancing, voiceChange} from "./edit/editScore.js";
+import {add_part, del_bar, del_part, new_file, stop_advancing, voiceChange, insert_bar} from "./edit/editScore.js";
 import {toggle_tie} from "./edit/editTie.js";
 import {next_note, prev_note} from "./edit/select.js";
 import {set_len, toggle_dot} from "./edit/editLen.js";
@@ -566,8 +566,8 @@ export let commands = [
     toolbar: {type: 'image', toolbar_id: 1},
     event: 'onclick',
     keys: ['Ctrl+B'],
-    command: () => { nd.append_measure(); async_redraw(); },
-    name: 'Add bar at end',
+    command: () => { insert_bar(); },
+    name: 'Add bar before cursor',
   },
   {
     id: 'del_bar',

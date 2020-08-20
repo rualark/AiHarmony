@@ -46,7 +46,6 @@ export function dataToAbc(instrument) {
         altmap = {};
       }
       let nt = vc.notes[n];
-      nt.step = s;
       nd.abc_charStarts[abc.length] = {voice: v, note: n};
       nt.abc_charStarts = abc.length;
       if (nt.d && settings.show_nht && nd.algo === 'CA3') {
