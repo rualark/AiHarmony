@@ -38,6 +38,8 @@ export function update_selection() {
   button_enabled('ais', has_notes);
   button_enabled('transpose',
     selected.element != null && typeof selected.element.abselem !== 'undefined');
+  button_enabled('add_bar',
+    selected.element != null && typeof selected.element.abselem !== 'undefined');
   button_enabled('del_bar',
     selected.element != null && typeof selected.element.abselem !== 'undefined');
   button_enabled('add_part',

@@ -3,6 +3,7 @@ import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import {initTooltips} from "../lib/tooltips.js";
 import { showModal } from "../lib/modal.js";
+import { nclip } from "../../notes/NotesClipboard.js";
 
 export let keysigs = {
   'C#': {name: 'C#', fifths: 7, mode: 0, base_note: 1},
@@ -162,6 +163,7 @@ export function showKeysigModal() {
   for (const keysig in keysigs) {
     document.getElementById('akeysig' + i).onclick=function() {
       $('#Modal1').modal('hide');
+      nclip.clear();
       nd.set_keysig(keysigs[keysig]);
       async_redraw();
     };

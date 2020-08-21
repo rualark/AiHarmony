@@ -7,6 +7,7 @@ export function ui_b256(num, chars=1) {
   //num = num || 0;
   let i = Math.floor(num);
   if (i < 0) {
+    console.trace();
     throw("ui_b256 can convert to Base256 only non-negative numbers, but got " + i);
   }
   let st = '';

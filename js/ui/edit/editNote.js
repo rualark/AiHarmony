@@ -2,12 +2,13 @@ import {nd} from "../../notes/NotesData.js";
 import {async_redraw, selected, highlightNote, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
 import {stop_advancing} from "./editScore.js";
-import {move_to_next_note, move_to_previous_note, select_note} from "./select.js";
+import {move_to_next_note, move_to_previous_note, select_note, select_range} from "./select.js";
 import {set_len} from "./editLen.js";
 import {clefs} from "../modal/clefs.js";
 import { settings } from "../../state/settings.js";
 import { copy_selection, paste_selection } from "./editSelection.js";
 import { nclip } from "../../notes/NotesClipboard.js";
+import { json_stringify_circular } from "../../core/string.js";
 
 export let future = {
   advancing: false,
@@ -97,12 +98,17 @@ export function repeat_element() {
     if (copy_selection(true)) {
       if (n12 >= nd.voices[v1].notes.length - 1) {
         nd.append_measure(false);
+        nd.update_note_steps();
       }
       select_note(v1, n12 + 1);
-      if (paste_selection()) {
+      if (paste_selection(false)) {
+        nd.update_note_steps();
+        const s1 = nd.voices[v1].notes[n12 + 1].step;
         const len = nclip.source.s2 - nclip.source.s1;
-        select_range(v1, v1 + nclip.source.v2 - nclip.source.v1, n12 + 1, n12 + 1 + len);
+        console.log('r', nd.voices[v1].notes[n12].step, nd.voices[v1].notes[n12 + 1].step, v1, v1 + nclip.source.v2 - nclip.source.v1, s1, s1 + len);
+        select_range(v1, v1 + nclip.source.v2 - nclip.source.v1, s1, s1 + len, null, false);
       }
+      async_redraw();
     }
     return;
   }

@@ -116,15 +116,18 @@ export function highlightNote() {
   selected.classes = "";
 }
 
-export function highlightRange(severity) {
+export function highlightRange() {
+  if (selected.note == null) return;
+  if (selected.note.n11 == null) return;
+  console.log(json_stringify_circular(selected.note));
   let nt11 = nd.voices[selected.note.v1].notes[selected.note.n11];
   let nt12 = nd.voices[selected.note.v1].notes[selected.note.n12];
   let nt21 = nd.voices[selected.note.v2].notes[selected.note.n21];
   let nt22 = nd.voices[selected.note.v2].notes[selected.note.n22];
   let color;
-  if (severity == null) {
+  if (selected.note.severity == null) {
     color = SELECTION_COLOR;
-  } else if (severity > SEVERITY_RED) {
+  } else if (selected.note.severity > SEVERITY_RED) {
     color = SEVERITY_RED_COLOR;
   } else {
     color = SEVERITY_YELLOW_COLOR;
@@ -141,7 +144,7 @@ export function highlightRange(severity) {
     false
   );
   // Highlight intermediate voices
-  if (severity == null) {
+  if (selected.note.severity == null) {
     const v1 = selected.note.v1;
     const v2 = selected.note.v2;
     const smin = nt11.step;
@@ -172,6 +175,7 @@ function notation_redraw() {
     //stop_counter();
     if (selected.note) {
       highlightNote();
+      highlightRange();
     } else {
       selected.element = {};
       selected.classes = "";

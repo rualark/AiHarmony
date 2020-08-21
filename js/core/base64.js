@@ -23,6 +23,7 @@ export function ui_b64(num, chars) {
   //num = num || 0;
   let i = Math.floor(num);
   if (i < 0) {
+    console.trace();
     throw("ui_b64 can convert to Base64 only non-negative numbers, but got " + i);
   }
   let st = '';
