@@ -105,7 +105,6 @@ export function repeat_element() {
         nd.update_note_steps();
         const s1 = nd.voices[v1].notes[n12 + 1].step;
         const len = nclip.source.s2 - nclip.source.s1;
-        console.log('r', nd.voices[v1].notes[n12].step, nd.voices[v1].notes[n12 + 1].step, v1, v1 + nclip.source.v2 - nclip.source.v1, s1, s1 + len);
         select_range(v1, v1 + nclip.source.v2 - nclip.source.v1, s1, s1 + len, null, false);
       }
       async_redraw();

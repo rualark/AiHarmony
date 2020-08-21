@@ -58,7 +58,6 @@ export class NotesClipboard {
     // Append measures if needed to all voices
     const last_note = nd.voices[0].notes[nd.voices[0].notes.length - 1];
     const new_measures = Math.floor((s2 - last_note.step + last_note.len) / mlen);
-    console.log('a', s1, s2, last_note, new_measures);
     if (new_measures > 0) {
       nd.append_measure(false);
       nd.update_note_steps();
@@ -81,7 +80,6 @@ export class NotesClipboard {
       // Split notes by measure borders
       let s = s1;
       for (let i=0; i<new_notes.length; ++i) {
-        console.log('Split?', i, s, new_notes[i].len, mlen);
         if (Math.floor(s / mlen) < Math.floor((s + new_notes[i].len - 1) / mlen)) {
           const excess = (s + new_notes[i].len) % mlen;
           new_notes.splice(
@@ -94,7 +92,6 @@ export class NotesClipboard {
           if (new_notes[i].d) {
             new_notes[i].startsTie = true;
           }
-          console.log('Split', i, new_notes);
         }
         s += new_notes[i].len;
       }
