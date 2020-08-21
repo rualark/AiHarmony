@@ -11,6 +11,7 @@ import { timesigs } from "./timesig.js";
 import { initTooltips } from "../lib/tooltips.js";
 import { trackEvent } from "../../integration/tracking.js";
 import { name2filename } from "../../core/string.js";
+import { nclip } from "../../notes/NotesClipboard.js";
 
 let okClicked = false;
 
@@ -181,6 +182,7 @@ function cantusToData(cid, arrangement, keysig, timesig) {
   let [d, alter] = transposeCantus(cid, arrangement, keysig);
   nd.set_name(`Cantus ${cid + 1} in ${arrangement.cantus}, ${arrangement.parts.length} parts, ${keysig.name}, ${timesig.beats_per_measure}/${timesig.beat_type}`);
   nd.set_fileName(name2filename(nd.name));
+  nclip.clear();
   nd.set_keysig(keysig);
   nd.set_timesig(timesig);
   nd.voices = [];

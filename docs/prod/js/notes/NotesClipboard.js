@@ -58,6 +58,7 @@ export class NotesClipboard {
     // Append measures if needed to all voices
     const last_note = nd.voices[0].notes[nd.voices[0].notes.length - 1];
     const new_measures = Math.floor((s2 - last_note.step + last_note.len) / mlen);
+    console.log('a', s1, s2, last_note, new_measures);
     if (new_measures > 0) {
       nd.append_measure(false);
       nd.update_note_steps();
@@ -65,12 +66,37 @@ export class NotesClipboard {
     for (let v=v1; v<=v2; ++v) {
       const vc = nd.voices[v];
       const notes = vc.notes;
-      const n1 = nd.getClosestNote(v, s1);
+      let n1 = nd.getClosestNote(v, s1);
       const n2 = nd.getClosestNote(v, s2);
+      // Cut previous note by selection border and do not delete it
+      if (notes[n1].step < s1) {
+        notes[n1].len = s1 - notes[n1].step;
+        ++n1;
+      }
       let left_rest = notes[n2].step + notes[n2].len - 1 - s2;
       let new_notes = JSON.parse(JSON.stringify(this.voices[v - v1].notes));
       if (left_rest) {
         new_notes.push({d: 0, alter: 10, len: left_rest, startsTie: false});
+      }
+      // Split notes by measure borders
+      let s = s1;
+      for (let i=0; i<new_notes.length; ++i) {
+        console.log('Split?', i, s, new_notes[i].len, mlen);
+        if (Math.floor(s / mlen) < Math.floor((s + new_notes[i].len - 1) / mlen)) {
+          const excess = (s + new_notes[i].len) % mlen;
+          new_notes.splice(
+            i,
+            0,
+            JSON.parse(JSON.stringify(new_notes[i]))
+          );
+          new_notes[i].len = new_notes[i].len - excess;
+          new_notes[i + 1].len = excess;
+          if (new_notes[i].d) {
+            new_notes[i].startsTie = true;
+          }
+          console.log('Split', i, new_notes);
+        }
+        s += new_notes[i].len;
       }
       // Remove old notes and add new
       notes.splice(

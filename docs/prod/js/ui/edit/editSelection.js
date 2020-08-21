@@ -20,7 +20,7 @@ export function grow_selection_horizontal(right=true) {
     if (el.note + (right?1:0) >= notes.length) return;
     const nt1 = notes[el.note - (right?0:1)];
     const nt2 = notes[el.note + (right?1:0)];
-    select_range(el.voice, el.voice, nt1.step, nt2.step + nt2.len - 1);
+    select_range(el.voice, el.voice, nt1.step, nt2.step + nt2.len - 1, null, false);
   } else {
     if (selected.note.v2 < selected.note.v1) return;
     if (selected.note.n12 < selected.note.n11) return;
@@ -38,7 +38,7 @@ export function grow_selection_horizontal(right=true) {
     let smax = nt12.step + nt12.len - 1;
     smin = nd.getCommonStart(v1, v2, smin);
     smax = nd.getCommonEnding(v1, v2, smax);
-    select_range(v1, v2, smin, smax);
+    select_range(v1, v2, smin, smax, null, false);
   }
 }
 
@@ -60,7 +60,7 @@ export function grow_selection_vertical(down=true) {
     let smax = nt1.step + nt1.len - 1;
     smin = nd.getCommonStart(v1, v2, smin);
     smax = nd.getCommonEnding(v1, v2, smax);
-    select_range(v1, v2, smin, smax);
+    select_range(v1, v2, smin, smax, null, false);
   } else {
     if (selected.note.v2 < selected.note.v1) return;
     if (selected.note.n12 < selected.note.n11) return;
@@ -76,7 +76,7 @@ export function grow_selection_vertical(down=true) {
     let smax = nt12.step + nt12.len - 1;
     smin = nd.getCommonStart(v1, v2, smin);
     smax = nd.getCommonEnding(v1, v2, smax);
-    select_range(v1, v2, smin, smax);
+    select_range(v1, v2, smin, smax, null, false);
   }
 }
 
@@ -104,11 +104,10 @@ export function copy_selection(quiet=false) {
   }
 }
 
-export function paste_selection() {
+export function paste_selection(redraw=true) {
   if (state.state !== 'ready') return;
   if (selected.note == null) return;
-  if (!selected.element || !selected.element.duration) return;
-  let el = nd.abc_charStarts[selected.element.startChar];
+  let el = selected.note;
   // Check if voices are locked
   for (let v=el.voice; v<=el.voice + nclip.source.v2 - nclip.source.v1; ++v) {
     if (v < nd.voices.length && nd.voices[v].locked) {
@@ -123,6 +122,8 @@ export function paste_selection() {
   }
   stop_advancing();
   saveState();
-  async_redraw();
+  if (redraw) {
+    async_redraw();
+  }
   return true;
 }

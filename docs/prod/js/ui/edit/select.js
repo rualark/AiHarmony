@@ -70,7 +70,8 @@ export function select_note(v, n) {
   update_selection();
 }
 
-export function select_range(v1, v2, s1, s2, severity) {
+export function select_range(v1, v2, s1, s2, severity, doSaveState=true) {
+  console.log('select_range', v1, v2, s1, s2, severity);
   if (state.state !== 'ready') return;
   if (nd.voices.length <= v1) return;
   if (nd.voices.length <= v2) return;
@@ -89,6 +90,8 @@ export function select_range(v1, v2, s1, s2, severity) {
   };
   stop_advancing();
   highlightRange(severity);
-  saveState(false);
+  if (doSaveState) {
+    saveState(false);
+  }
   update_selection();
 }
