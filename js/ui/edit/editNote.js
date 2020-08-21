@@ -35,11 +35,11 @@ export function check_voice_locked(el) {
 export function set_note(dc) {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
-  let el = nd.abc_charStarts[selected.element.startChar];
+  const el = nd.abc_charStarts[selected.element.startChar];
   if (check_voice_locked(el)) return;
-  let voice = nd.voices[el.voice];
-  let notes = voice.notes;
-  let note = notes[el.note];
+  const voice = nd.voices[el.voice];
+  const notes = voice.notes;
+  const note = notes[el.note];
   // Choose reference diatonic
   let pd = clefs[voice.clef].middleD;
   if (note.d && !future.advancing) {

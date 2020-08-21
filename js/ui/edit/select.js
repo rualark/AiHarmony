@@ -77,6 +77,7 @@ export function select_range(v1, v2, s1, s2, severity) {
     n21: nd.getClosestNote(v2, s1),
     n22: nd.getClosestNote(v2, s2)
   };
+  console.log(selected);
   stop_advancing();
   highlightRange(severity);
   saveState(false);

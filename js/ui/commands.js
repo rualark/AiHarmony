@@ -34,6 +34,7 @@ import { showOpenModal } from "./modal/openModal.js";
 import { showCantusModal } from "./modal/cantusModal.js";
 import { showTransposeModal } from "./modal/transposeModal.js";
 import { environment } from "../core/remote.js";
+import { grow_selection_right, grow_selection_down } from "./edit/editSelection.js";
 
 let mobileOpt = {
   true: {
@@ -724,6 +725,16 @@ export let commands = [
     keys: ['DownArrow'],
     command: () => { increment_note(-1) },
     name: 'Move note down',
+  },
+  {
+    keys: ['Shift+RightArrow'],
+    command: () => { grow_selection_right() },
+    name: 'Extend selection right',
+  },
+  {
+    keys: ['Shift+DownArrow'],
+    command: () => { grow_selection_down() },
+    name: 'Extend selection down',
   },
   {
     id: 'zoom-in',

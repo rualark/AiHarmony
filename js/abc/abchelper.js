@@ -25,7 +25,7 @@ export let selected = {
   voice: 0
 };
 
-const COLOR_SELECTION = "#33AAFF";
+const SELECTION_COLOR = "#33AAFF";
 //const COLOR_ADVANCING = "#00CC00";
 
 function getElementByStartChar(abcjs, startChar) {
@@ -103,9 +103,9 @@ export function highlightNote() {
     //let nt2 = nd.voices[selected.note.voice].notes[selected.note.note - 1];
     //abcRangeNotesHighlight(nt2.abc_charStarts, nt2.abc_charEnds, COLOR_SELECTION);
     //abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_ADVANCING, false);
-    abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_SELECTION);
+    abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, SELECTION_COLOR);
   } else {
-    abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_SELECTION);
+    abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, SELECTION_COLOR);
   }
   let el = getElementByStartChar(abcjs, nt.abc_charStarts);
   if (el) {
@@ -122,10 +122,11 @@ export function highlightRange(severity) {
   let nt21 = nd.voices[selected.note.v2].notes[selected.note.n21];
   let nt22 = nd.voices[selected.note.v2].notes[selected.note.n22];
   let color;
-  if (severity > SEVERITY_RED) {
+  if (severity == null) {
+    color = SELECTION_COLOR;
+  } else if (severity > SEVERITY_RED) {
     color = SEVERITY_RED_COLOR;
-  }
-  else {
+  } else {
     color = SEVERITY_YELLOW_COLOR;
   }
   abcRangeNotesHighlight(
@@ -139,6 +140,23 @@ export function highlightRange(severity) {
     color,
     false
   );
+  // Highlight intermediate voices
+  if (severity == null) {
+    const v1 = selected.note.v1;
+    const v2 = selected.note.v2;
+    const smin = nt11.step;
+    const smax = nt12.step + nt12.len - 1;
+    for (let v=v1+1; v<v2; v++) {
+      const n1 = nd.getClosestNote(v, smin);
+      const n2 = nd.getClosestNote(v, smax);
+      abcRangeNotesHighlight(
+        nd.voices[v].notes[n1].abc_charStarts,
+        nd.voices[v].notes[n2].abc_charEnds,
+        color,
+        false
+      );
+    }
+  }
   selected.element = null;
   selected.classes = "";
 }
@@ -199,7 +217,7 @@ export function init_abcjs(clickListener) {
     add_classes: true,
     dragging: true,
     selectTypes: ['note', 'clef', 'keySignature', 'voiceName', 'timeSignature', 'tempo'],
-    selectionColor: COLOR_SELECTION,
+    selectionColor: SELECTION_COLOR,
     dragColor: "#3399FF",
     staffwidth: window.innerWidth - 60,
     wrap: {minSpacing: 1.1, maxSpacing: 1.4, preferredMeasuresPerLine: 16},
