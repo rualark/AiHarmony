@@ -119,7 +119,6 @@ export function highlightNote() {
 export function highlightRange() {
   if (selected.note == null) return;
   if (selected.note.n11 == null) return;
-  console.log(json_stringify_circular(selected.note));
   let nt11 = nd.voices[selected.note.v1].notes[selected.note.n11];
   let nt12 = nd.voices[selected.note.v1].notes[selected.note.n12];
   let nt21 = nd.voices[selected.note.v2].notes[selected.note.n21];
