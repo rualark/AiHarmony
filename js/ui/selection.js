@@ -124,6 +124,8 @@ export function update_selection() {
     button_enabled_active('tie', can_tie() && !locked,
       selected.element != null && selected.element.abselem && selected.element.abselem.startTie);
   }
+  button_enabled('copy', selected.note);
+  button_enabled('paste', selected.note);
   button_enabled('anext', ares.pFlag != null && ares.pFlagCur < ares.pFlag.length - 1);
   button_enabled('aprev', ares.pFlag != null && ares.pFlagCur > 0);
   button_enabled('mistake', selectionHasMistake());
