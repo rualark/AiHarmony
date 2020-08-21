@@ -36,11 +36,18 @@ export function next_note() {
 
 export function move_to_previous_note() {
   if (!selected.note) return;
-  if (!selected.note.note) return;
-  selected.note = {
-    voice: selected.note.voice,
-    note: selected.note.note - 1
-  };
+  if (selected.note.note) {
+    // Decrement
+    selected.note = {
+      voice: selected.note.voice,
+      note: selected.note.note - 1
+    };
+  } else {
+    selected.note = {
+      voice: selected.note.voice,
+      note: selected.note.note
+    };
+  }
 }
 
 export function prev_note() {
@@ -75,9 +82,11 @@ export function select_range(v1, v2, s1, s2, severity) {
     n12: nd.getClosestNote(v1, s2),
     v2: v2,
     n21: nd.getClosestNote(v2, s1),
-    n22: nd.getClosestNote(v2, s2)
+    n22: nd.getClosestNote(v2, s2),
+    s1: s1,
+    s2: s2,
+    severity: severity
   };
-  console.log(selected);
   stop_advancing();
   highlightRange(severity);
   saveState(false);

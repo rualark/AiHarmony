@@ -115,6 +115,7 @@ export class NotesData {
     if (saveState) this.saveState();
   }
 
+  // Adds new empty voice before voice v
   add_voice(v) {
     if (!v) return;
     this.voices.splice(v, 0, []);
@@ -396,7 +397,7 @@ export class NotesData {
       let nt = this.voices[v].notes[n];
       if (nt.step <= pos && nt.step + nt.len > pos) return n;
     }
-    return 0;
+    return this.voices[v].notes.length - 1;
   }
 
   constructor() {

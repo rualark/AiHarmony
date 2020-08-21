@@ -34,7 +34,7 @@ import { showOpenModal } from "./modal/openModal.js";
 import { showCantusModal } from "./modal/cantusModal.js";
 import { showTransposeModal } from "./modal/transposeModal.js";
 import { environment } from "../core/remote.js";
-import { grow_selection_right, grow_selection_down } from "./edit/editSelection.js";
+import { grow_selection_horizontal, grow_selection_vertical, copy_selection, paste_selection } from "./edit/editSelection.js";
 
 let mobileOpt = {
   true: {
@@ -727,14 +727,41 @@ export let commands = [
     name: 'Move note down',
   },
   {
-    keys: ['Shift+RightArrow'],
-    command: () => { grow_selection_right() },
+    keys: ['Shift+LeftArrow'],
+    command: () => { grow_selection_horizontal(false) },
     name: 'Extend selection right',
   },
   {
+    keys: ['Shift+RightArrow'],
+    command: () => { grow_selection_horizontal(true) },
+    name: 'Extend selection right',
+  },
+  {
+    keys: ['Shift+UpArrow'],
+    command: () => { grow_selection_vertical(false) },
+    name: 'Extend selection up',
+  },
+  {
     keys: ['Shift+DownArrow'],
-    command: () => { grow_selection_down() },
+    command: () => { grow_selection_vertical(true) },
     name: 'Extend selection down',
+  },
+  { separator: true, toolbar: {toolbar_id: 3 } },
+  {
+    id: 'copy',
+    toolbar: {type: 'image', toolbar_id: 3, hintText: 'Copy'},
+    event: 'onclick',
+    keys: ['Alt+C'],
+    command: () => { copy_selection() },
+    name: 'Copy selection',
+  },
+  {
+    id: 'paste',
+    toolbar: {type: 'image', toolbar_id: 3, hintText: 'Paste'},
+    event: 'onclick',
+    keys: ['Alt+V'],
+    command: () => { paste_selection() },
+    name: 'Paste selection',
   },
   {
     id: 'zoom-in',
