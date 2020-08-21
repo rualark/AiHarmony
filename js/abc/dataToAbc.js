@@ -55,7 +55,7 @@ export function dataToAbc(instrument) {
       let flags = ares.getFlagsInInterval(v, s, s + nt.len);
       if (flags.red > 0) abc += '"^!"';
       else if (flags.yellow > 0) abc += '"^?"';
-      if (ares.harm != null && s in ares.harm && ares.vid != null && v === ares.vid[0]) {
+      if (ares.harm != null && s in ares.harm && ares.vid != null && v === ares.vid[0] && settings.show_harmony) {
         let harm_st = '';
         for (let s2 = 0; s2 < nt.len; ++s2) {
           if (!((s + s2) in ares.harm)) continue;
@@ -66,13 +66,13 @@ export function dataToAbc(instrument) {
         }
         abc += `"_${harm_st}"`;
       }
-      if (nt.text) {
+      if (settings.show_text && nt.text) {
         let ta = nt.text.split('\n');
         for (const text of ta) {
           abc += `"^${text}"`;
         }
       }
-      if (nt.lyric) {
+      if (settings.show_lyrics && nt.lyric) {
         let la = nt.lyric.split('\n');
         for (const lyric of la) {
           abc += `"_${lyric}"`;
