@@ -2,7 +2,7 @@ import {b256_safeString, b256_ui, safeString_b256, ui_b256} from "../core/base25
 import {engraverParams} from "../abc/abchelper.js";
 import {applyShortcutsLayout} from "../ui/shortcutsLayouts.js";
 
-const SETTINGS_ENCODING_VERSION = 8;
+const SETTINGS_ENCODING_VERSION = 9;
 
 class Settings {
   constructor() {
@@ -10,6 +10,9 @@ class Settings {
     this.show_allowed_flags = 0;
     this.show_ignored_flags = 0;
     this.show_nht = 0;
+    this.show_harmony = 1;
+    this.show_text = 1;
+    this.show_lyrics = 1;
     this.alter_before_note = 0;
     this.harm_notation = 3;
     this.toolbarHints = 1;
@@ -37,6 +40,9 @@ class Settings {
     st += ui_b256(this.alter_before_note, 1);
     st += ui_b256(engraverParams.scale * 1000, 2);
     st += ui_b256(this.show_nht, 1);
+    st += ui_b256(this.show_harmony, 1);
+    st += ui_b256(this.show_text, 1);
+    st += ui_b256(this.show_lyrics, 1);
     st += ui_b256(this.reverb_mix, 1);
     st += safeString_b256(this.instruments, 1);
     st += ui_b256(this.autoLegato, 1);
@@ -54,6 +60,9 @@ class Settings {
     this.alter_before_note = b256_ui(st, pos, 1);
     engraverParams.scale = b256_ui(st, pos, 2) / 1000;
     this.show_nht = b256_ui(st, pos, 1);
+    this.show_harmony = b256_ui(st, pos, 1);
+    this.show_text = b256_ui(st, pos, 1);
+    this.show_lyrics = b256_ui(st, pos, 1);
     this.reverb_mix = b256_ui(st, pos, 1);
     this.instruments = b256_safeString(st, pos, 1);
     this.autoLegato = b256_ui(st, pos, 1);

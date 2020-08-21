@@ -331,7 +331,6 @@ class AnalysisResults {
     if (!this.pFlag.length) return -1;
     for (const f in this.pFlag) {
       const fc = this.pFlag[f];
-      console.log(vi, s, fc.vi1, fc.s1);
       if (fc.vi1 > vi) return f;
       if (fc.vi1 == vi && fc.s1 > s) return f;
     }

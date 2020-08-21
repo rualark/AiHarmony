@@ -83,6 +83,9 @@ export function showSettingsModal() {
   st += showCheckToolbarHints();
   st += showCheckAlterBeforeNote();
   st += showCheckBox('check_showNht', settings.show_nht, `Label non-harmonic tones with ø symbol`);
+  st += showCheckBox('check_showHarmony', settings.show_harmony, `Show harmony below notes`);
+  st += showCheckBox('check_showText', settings.show_text, `Show user text above notes`);
+  st += showCheckBox('check_showLyrics', settings.show_lyrics, `Show user lyrics below notes`);
   st += showSelectShortcutsLayout();
   st += showSelectRuleVerbose();
   st += showSelectWithLabel('Add legato when playing:', 'selectAddSlurs', settings.autoLegato, makeAutoLegatoOptions(), (val) => {
@@ -116,6 +119,21 @@ export function showSettingsModal() {
   });
   $('#check_showNht').change(() => {
     settings.show_nht = Number($('#check_showNht').is(":checked"));
+    settings.settings2storage();
+    async_redraw();
+  });
+  $('#check_showHarmony').change(() => {
+    settings.show_harmony = Number($('#check_showHarmony').is(":checked"));
+    settings.settings2storage();
+    async_redraw();
+  });
+  $('#check_showText').change(() => {
+    settings.show_text = Number($('#check_showText').is(":checked"));
+    settings.settings2storage();
+    async_redraw();
+  });
+  $('#check_showLyrics').change(() => {
+    settings.show_lyrics = Number($('#check_showLyrics').is(":checked"));
     settings.settings2storage();
     async_redraw();
   });

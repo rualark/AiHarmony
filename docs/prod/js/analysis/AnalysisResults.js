@@ -326,10 +326,30 @@ class AnalysisResults {
     return this.vsp[va];
   }
 
+  findNextFlag(vi, s) {
+    if (this.pFlag == null) return -1;
+    if (!this.pFlag.length) return -1;
+    for (const f in this.pFlag) {
+      const fc = this.pFlag[f];
+      if (fc.vi1 > vi) return f;
+      if (fc.vi1 == vi && fc.s1 > s) return f;
+    }
+    return this.pFlag.length - 1;
+  }
+
   nextFlag() {
     if (this.pFlag == null) return;
-    if (this.pFlagCur >= this.pFlag.length - 1) return;
-    this.pFlagCur++;
+    if (this.pFlagCur === -1 && selected.note) {
+      let vi = selected.note.voice;
+      let notes = nd.voices[vi].notes;
+      let note = notes[selected.note.note];
+      let s = note.step;
+      this.pFlagCur = this.findNextFlag(vi, s);
+    } else {
+      if (this.pFlagCur >= this.pFlag.length - 1) return;
+      this.pFlagCur++;
+    }
+    if (this.pFlagCur === -1) return;
     let pf = this.pFlag[this.pFlagCur];
     this.selectFlag(pf);
     AnalysisResults.notifyFlag(pf);
@@ -337,6 +357,14 @@ class AnalysisResults {
 
   prevFlag() {
     if (this.pFlag == null) return;
+    // Find next flag before going to a previous flag
+    if (this.pFlagCur === -1 && selected.note) {
+      let vi = selected.note.voice;
+      let notes = nd.voices[vi].notes;
+      let note = notes[selected.note.note];
+      let s = note.step;
+      this.pFlagCur = this.findNextFlag(vi, s);
+    }
     if (this.pFlagCur <= 0) return;
     this.pFlagCur--;
     let pf = this.pFlag[this.pFlagCur];
