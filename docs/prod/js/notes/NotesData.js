@@ -115,6 +115,7 @@ export class NotesData {
     if (saveState) this.saveState();
   }
 
+  // Adds new empty voice before voice v
   add_voice(v) {
     if (!v) return;
     this.voices.splice(v, 0, []);
@@ -387,6 +388,7 @@ export class NotesData {
     return len;
   }
 
+  // TODO: Implement binary search
   getClosestNote(v, pos, hint=0) {
     if (this.voices.length <= v || !this.voices[v].notes.length) return;
     // Reset hint if it is wrong
@@ -395,7 +397,7 @@ export class NotesData {
       let nt = this.voices[v].notes[n];
       if (nt.step <= pos && nt.step + nt.len > pos) return n;
     }
-    return 0;
+    return this.voices[v].notes.length - 1;
   }
 
   constructor() {
@@ -454,6 +456,40 @@ export class NotesData {
         nt.step = s;
         s += nt.len;
       }
+    }
+  }
+
+  // Ensure that smax is ending of notes in all voices (selection is rectangular)
+  getCommonEnding(vmin, vmax, smax) {
+    for (let attempt=0; attempt<10000; ++attempt) {
+      let smax_new = smax;
+      for (let v=vmin; v<=vmax; v++) {
+        const voice = nd.voices[v];
+        const notes = voice.notes;
+        const n2 = nd.getClosestNote(v, smax_new);
+        if (notes[n2].step + notes[n2].len - 1 > smax_new) {
+          smax_new = notes[n2].step + notes[n2].len - 1;
+        }
+      }
+      if (smax === smax_new) return smax;
+      smax = smax_new;
+    }
+  }
+
+  // Ensure that smin is start of notes in all voices (selection is rectangular)
+  getCommonStart(vmin, vmax, smin) {
+    for (let attempt=0; attempt<10000; ++attempt) {
+      let smin_new = smin;
+      for (let v=vmin; v<=vmax; v++) {
+        const voice = nd.voices[v];
+        const notes = voice.notes;
+        const n2 = nd.getClosestNote(v, smin_new);
+        if (notes[n2].step < smin_new) {
+          smin_new = notes[n2].step;
+        }
+      }
+      if (smin === smin_new) return smin;
+      smin = smin_new;
     }
   }
 }

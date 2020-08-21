@@ -28,8 +28,8 @@ export function can_dot() {
 
 export function set_len(len, saveState = true) {
   if (state.state !== 'ready') return;
-  if (!selected.element || !selected.element.duration) return;
-  let el = nd.abc_charStarts[selected.element.startChar];
+  if (!selected.note) return;
+  let el = selected.note;
   if (check_voice_locked(el)) return;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];

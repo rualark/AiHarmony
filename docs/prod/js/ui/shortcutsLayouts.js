@@ -12,13 +12,13 @@ export function applyShortcutsLayout(layout) {
 }
 
 export let shortcutsLayouts = {
-  'AiHarmony default': {
+  'AiHarmony': {
     'whole': ['1', 'Numpad1'],
     'half': ['2', 'Numpad2'],
     'quarter': ['4', 'Numpad4'],
     '8th': ['8', 'Numpad8'],
     '16th': ['6', 'Numpad6'],
-    'tie': ['Backslash', 'NumpadDivide'],
+    'tie': ['T', 'Backslash', 'NumpadDivide'],
     'dblflat': ['Shift+Dash'],
     'flat': ['Dash', 'NumpadSubtract'],
     'natural': ['N'],
@@ -29,11 +29,15 @@ export let shortcutsLayouts = {
     'rest': ['R', '0', 'Numpad0'],
     'up_part': ['Ctrl+UpArrow'],
     'down_part': ['Ctrl+DownArrow'],
-    'timesig': ['T'],
+    'timesig': ['Shift+T'],
     'keysig': ['K'],
     'repeat': ['P'],
     'add_text': ['Alt+T'],
     'add_lyric': ['Alt+L'],
+    'select_left': ['Alt+LeftArrow'],
+    'select_right': ['Alt+RightArrow'],
+    'select_up': ['Alt+UpArrow'],
+    'select_down': ['Alt+DownArrow'],
   },
   'Finale': {
     'whole': ['7', 'Numpad7'],
@@ -52,11 +56,15 @@ export let shortcutsLayouts = {
     'rest': ['R', '0', 'Numpad0'],
     'up_part': ['Ctrl+UpArrow'],
     'down_part': ['Ctrl+DownArrow'],
-    'timesig': ['Alt+T'],
+    'timesig': ['Shift+T'],
     'keysig': ['Alt+K'],
     'repeat': ['P'],
     'add_text': ['Alt+T'],
     'add_lyric': ['Alt+L'],
+    'select_left': ['Alt+LeftArrow'],
+    'select_right': ['Alt+RightArrow'],
+    'select_up': ['Alt+UpArrow'],
+    'select_down': ['Alt+DownArrow'],
   },
   'Sibelius': {
     'whole': ['6', 'Numpad6'],
@@ -80,5 +88,9 @@ export let shortcutsLayouts = {
     'repeat': ['R'],
     'add_text': ['Alt+T'],
     'add_lyric': ['Alt+L'],
+    'select_left': ['Shift+LeftArrow'],
+    'select_right': ['Shift+RightArrow'],
+    'select_up': ['Shift+UpArrow'],
+    'select_down': ['Shift+DownArrow'],
   },
 };

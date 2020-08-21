@@ -2,10 +2,12 @@ import {nd} from "../../notes/NotesData.js";
 import {async_redraw, selected, highlightNote, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
 import {stop_advancing} from "./editScore.js";
-import {move_to_next_note, move_to_previous_note} from "./select.js";
+import {move_to_next_note, move_to_previous_note, select_note} from "./select.js";
 import {set_len} from "./editLen.js";
 import {clefs} from "../modal/clefs.js";
 import { settings } from "../../state/settings.js";
+import { copy_selection, paste_selection } from "./editSelection.js";
+import { nclip } from "../../notes/NotesClipboard.js";
 
 export let future = {
   advancing: false,
@@ -34,12 +36,12 @@ export function check_voice_locked(el) {
 
 export function set_note(dc) {
   if (state.state !== 'ready') return;
-  if (!selected.element || !selected.element.duration) return;
-  let el = nd.abc_charStarts[selected.element.startChar];
-  if (check_voice_locked(el)) return;
-  let voice = nd.voices[el.voice];
-  let notes = voice.notes;
-  let note = notes[el.note];
+  if (!selected.note) return;
+  const el = selected.note;
+  //if (check_voice_locked(el)) return;
+  const voice = nd.voices[el.voice];
+  const notes = voice.notes;
+  const note = notes[el.note];
   // Choose reference diatonic
   let pd = clefs[voice.clef].middleD;
   if (note.d && !future.advancing) {
@@ -88,6 +90,22 @@ export function set_note(dc) {
 
 export function repeat_element() {
   if (state.state !== 'ready') return;
+  if (selected.note == null) return;
+  if (selected.note.n11 != null) {
+    const v1 = selected.note.v1;
+    const n12 = selected.note.n12;
+    if (copy_selection(true)) {
+      if (n12 >= nd.voices[v1].notes.length - 1) {
+        nd.append_measure(false);
+      }
+      select_note(v1, n12 + 1);
+      if (paste_selection()) {
+        const len = nclip.source.s2 - nclip.source.s1;
+        select_range(v1, v1 + nclip.source.v2 - nclip.source.v1, n12 + 1, n12 + 1 + len);
+      }
+    }
+    return;
+  }
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
   if (check_voice_locked(el)) return;
@@ -97,7 +115,7 @@ export function repeat_element() {
     if (!n) return;
   } else {
     move_to_next_note();
-    highlightNote();
+    //highlightNote();
     future.advancing = true;
     future.len = notes[n].len;
     ++n;
@@ -110,6 +128,7 @@ export function repeat_element() {
   }
   move_to_previous_note();
   stop_advancing();
+  async_redraw();
 }
 
 export function set_rest(advance) {
