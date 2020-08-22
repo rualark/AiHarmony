@@ -20,6 +20,7 @@ export function publish(security) {
       browser_id: browser_id,
       base_url: urlNoParams(),
       root_eid: nd.root_eid,
+      logrocket: window.logrocketSessionUrl,
     },
     dataType: 'html',
     success: function (data) {

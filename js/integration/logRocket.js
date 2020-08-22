@@ -6,6 +6,7 @@ if (environment === 'prod') {
     LogRocket.identify(mgen_login);
   }
   LogRocket.getSessionURL(sessionURL => {
+    window.logrocketSessionUrl = sessionURL;
     Sentry.configureScope(scope => {
       scope.setExtra("sessionURL", sessionURL);
       console.log('Logrocket integrated with sentry');
