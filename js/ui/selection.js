@@ -17,6 +17,8 @@ import {can_dot, can_len} from "./edit/editLen.js";
 import {ares} from "../analysis/AnalysisResults.js";
 import {trackEvent} from "../integration/tracking.js";
 import { showTempoModal } from "./modal/tempoModal.js";
+import { nclip } from "../notes/NotesClipboard.js";
+import { select_from_to } from "./edit/editSelection.js";
 
 function selectionHasMistake() {
   if (selected.note == null) return false;
@@ -126,6 +128,8 @@ export function update_selection() {
   }
   button_enabled('copy', selected.note);
   button_enabled('paste', selected.note);
+  button_enabled('repeat', selected.note);
+  button_enabled_active('select', selected.note, nclip.mode == 'select');
   button_enabled('anext', ares.pFlag != null && ares.pFlagCur < ares.pFlag.length - 1);
   button_enabled('aprev', ares.pFlag != null && ares.pFlagCur > 0);
   button_enabled('mistake', selectionHasMistake());
@@ -142,30 +146,44 @@ export function element_click(abcElem, tuneNumber, classes, pos, move) {
     selected.classes = classes;
     selected.voice = pos.voice;
   }
-  //clicked.voice = get_voice(classes);
-  selected.note = null;
   if (abcElem['el_type'] === 'tempo') {
     showTempoModal();
     trackEvent('AiHarmony', 'click_tempo');
+    selected.note = null;
+    nclip.mode = 'standby';
   }
   else if (abcElem['el_type'] === 'voiceName') {
     rename_part();
     trackEvent('AiHarmony', 'click_partname');
+    selected.note = null;
+    nclip.mode = 'standby';
   }
   else if (typeof selected.element.clefPos !== 'undefined') {
     showClefsModal(nd.voices[selected.voice]);
     trackEvent('AiHarmony', 'click_clef');
+    selected.note = null;
+    nclip.mode = 'standby';
   }
   else if (typeof selected.element.value !== 'undefined') {
     showTimesigModal();
     trackEvent('AiHarmony', 'click_timesig');
+    selected.note = null;
+    nclip.mode = 'standby';
   }
   else if (typeof selected.element.mode !== 'undefined') {
     showKeysigModal();
     trackEvent('AiHarmony', 'click_keysig');
+    selected.note = null;
+    nclip.mode = 'standby';
   }
   if (selected.element.duration != null) {
-    selected.note = nd.abc_charStarts[selected.element.startChar];
+    if (nclip.mode === 'select') {
+      let el = nd.abc_charStarts[selected.element.startChar];
+      select_from_to(selected.note.voice, el.voice, selected.note.note, el.note);
+      nclip.mode = 'standby';
+    } else {
+      selected.note = nd.abc_charStarts[selected.element.startChar];
+    }
   }
   stop_advancing();
   if (move.step) {

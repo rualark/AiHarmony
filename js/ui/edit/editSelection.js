@@ -6,6 +6,7 @@ import { nclip } from "../../notes/NotesClipboard.js";
 import { saveState } from "../../state/history.js";
 import { stop_advancing } from "./editScore.js";
 import { json_stringify_circular } from "../../core/string.js";
+import { update_selection } from "../selection.js";
 
 export function grow_selection_horizontal(right=true) {
   if (state.state !== 'ready') return;
@@ -52,7 +53,6 @@ export function grow_selection_vertical(down=true) {
     if (el.voice + (down?1:0) >= nd.voices.length) return;
     const v1 = el.voice - (down?0:1);
     const v2 = el.voice + (down?1:0);
-    console.log(el.voice, v1, v2);
     const voice = nd.voices[el.voice];
     const notes = voice.notes;
     const nt1 = notes[el.note];
@@ -78,6 +78,31 @@ export function grow_selection_vertical(down=true) {
     smax = nd.getCommonEnding(v1, v2, smax);
     select_range(v1, v2, smin, smax, null, false);
   }
+}
+
+export function select_mode() {
+  if (state.state !== 'ready') return;
+  if (selected.note == null) return;
+  if (nclip.mode === 'select') {
+    nclip.mode = 'standby';
+  } else {
+    nclip.mode = 'select';
+  }
+  update_selection();
+}
+
+export function select_from_to(v1, v2, n1, n2) {
+  if (state.state !== 'ready') return;
+  if (selected.note == null) return;
+  const nt1 = nd.voices[v1].notes[n1];
+  const nt2 = nd.voices[v2].notes[n2];
+  let vmin = Math.min(v1, v2);
+  let vmax = Math.max(v1, v2);
+  let smin = Math.min(nt1.step, nt2.step);
+  let smax = Math.max(nt1.step + nt1.len - 1, nt2.step + nt2.len - 1);
+  smin = nd.getCommonStart(vmin, vmax, smin);
+  smax = nd.getCommonEnding(vmin, vmax, smax);
+  select_range(vmin, vmax, smin, smax, null, false);
 }
 
 export function copy_selection(quiet=false) {
