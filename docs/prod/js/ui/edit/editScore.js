@@ -48,7 +48,7 @@ export function del_bar() {
 
 export function voiceChange(dv) {
   if (state.state !== 'ready') return;
-  if (!selected.element || !selected.element.duration) return false;
+  if (!selected.note) return false;
   if (selected.note == null) return false;
   if (selected.note.voice + dv < 0 || selected.note.voice + dv >= nd.voices.length) return false;
   let note = nd.voices[selected.note.voice].notes[selected.note.note];

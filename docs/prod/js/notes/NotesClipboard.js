@@ -9,6 +9,7 @@ export class NotesClipboard {
   clear() {
     this.voices = [];
     this.source = {};
+    this.mode = 'standby';
   }
 
   copy(v1, v2, s1, s2) {

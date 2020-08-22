@@ -34,7 +34,7 @@ import { showOpenModal } from "./modal/openModal.js";
 import { showCantusModal } from "./modal/cantusModal.js";
 import { showTransposeModal } from "./modal/transposeModal.js";
 import { environment } from "../core/remote.js";
-import { grow_selection_horizontal, grow_selection_vertical, copy_selection, paste_selection } from "./edit/editSelection.js";
+import { grow_selection_horizontal, grow_selection_vertical, copy_selection, paste_selection, select_mode } from "./edit/editSelection.js";
 
 let mobileOpt = {
   true: {
@@ -695,12 +695,6 @@ export let commands = [
     name: 'Delete note',
   },
   {
-    id: 'repeat',
-    keys: ['R'],
-    command: () => { repeat_element() },
-    name: 'Repeat element',
-  },
-  {
     id: 'timesig',
     keys: ['T'],
     command: () => { showTimesigModal() },
@@ -752,6 +746,14 @@ export let commands = [
   },
   { separator: true, toolbar: {toolbar_id: 3 } },
   {
+    id: 'select',
+    toolbar: {type: 'image', toolbar_id: 3, hintText: 'Select'},
+    event: 'onclick',
+    keys: ['Shift+S'],
+    command: () => { select_mode() },
+    name: 'Select with mouse',
+  },
+  {
     id: 'copy',
     toolbar: {type: 'image', toolbar_id: 3, hintText: 'Copy'},
     event: 'onclick',
@@ -766,6 +768,14 @@ export let commands = [
     keys: ['Alt+V'],
     command: () => { paste_selection() },
     name: 'Paste selection',
+  },
+  {
+    id: 'repeat',
+    toolbar: {type: 'image', toolbar_id: 3, hintText: 'Repeat'},
+    event: 'onclick',
+    keys: ['R'],
+    command: () => { repeat_element() },
+    name: 'Repeat selection',
   },
   {
     id: 'zoom-in',
