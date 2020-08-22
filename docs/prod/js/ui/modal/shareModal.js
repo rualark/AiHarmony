@@ -1,8 +1,10 @@
 import {state2url} from "../../state/state.js";
-import {urlNoParams} from "../../core/remote.js";
+import {urlNoParams, mgen_login} from "../../core/remote.js";
 import { dataToAbc } from "../../abc/dataToAbc.js";
 import { showModal } from "../lib/modal.js";
 import { state } from "../../abc/abchelper.js";
+import { publish } from "../../integration/publish.js";
+import { showPublishModal } from "./publishModal.js";
 
 export function showShareModal() {
   if (state.state !== 'ready') return;
@@ -31,6 +33,13 @@ export function showShareModal() {
   st += `  </button>`;
   st += ` </div>`;
   st += `</div>`;
+
+  st += `<a class='btn btn-outline-primary' role=button id=apublish href=#>Publish to ArtInfuser database</a>`;
+  // mgen_login !== '' ? "as " + mgen_login : ""
+
   new ClipboardJS('.btn');
   showModal(1, 'Share music', st, '', [], [], false, ()=>{}, ()=>{});
+  $('#apublish').click(() => {
+    showPublishModal();
+  });
 }

@@ -90,6 +90,13 @@ class Settings {
     let utf16 = LZString.compressToUTF16(plain);
     localStorage.setItem('aihSettings', utf16);
   }
+
+  settings2url() {
+    let plain = '';
+    plain += this.settings2plain();
+    let b64 = LZString.compressToBase64(plain);
+    return b64.replace(/\//g, '.').replace(/=/g, '_').replace(/\+/g, '-');
+  }
 }
 
 export let settings = new Settings();
