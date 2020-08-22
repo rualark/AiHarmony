@@ -2,7 +2,7 @@ import {async_redraw, init_abcjs} from "./abc/abchelper.js";
 import {initFilenameClick} from "./ui/commands.js";
 import {getUrlParam, urlNoParams} from "./core/remote.js";
 import {showShortcutsModal} from "./ui/modal/shortcutsModal.js";
-import {url2state} from "./state/state.js";
+import {url2state, update_browser_id} from "./state/state.js";
 import {readRemoteMusicXmlFile} from "./MusicXml/readRemoteMusicXml.js";
 import {loadState, saveState} from "./state/history.js";
 import {initTooltips} from "./ui/lib/tooltips.js";
@@ -23,6 +23,7 @@ function checkBrowserSupported() {
 
 function init() {
   init_base64();
+  update_browser_id();
   settings.storage2settings();
   initFilenameClick();
   init_abcjs(element_click);
@@ -31,6 +32,8 @@ function init() {
     trackEvent('AiHarmony', 'open_shared');
     try {
       url2state(getUrlParam('state'));
+      const root_eid = getUrlParam('rid');
+      if (root_eid) nd.set_root_eid(root_eid);
     }
     catch (e) {
       nd.reset();

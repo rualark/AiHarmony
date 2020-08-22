@@ -309,6 +309,7 @@ export class NotesData {
     //const hash = generateRandomId(10);
     //this.set_name(`New exercise [${hash}]`);
     //this.set_fileName(`New-exercise-${hash}`);
+    this.root_eid = 0;
     this.set_name(generateRandomHashWords('A n n-###'));
     this.set_fileName(name2filename(this.name));
     this.algoMode = 0;
@@ -412,12 +413,6 @@ export class NotesData {
     else this.name = st.substr(0, 255);
   }
 
-  set_tempo(tempo) {
-    if (tempo > 255) tempo = 255;
-    if (tempo < 1) tempo = 1;
-    this.tempo = tempo;
-  }
-
   set_fileName(st) {
     if (st == null) this.fileName = '';
     else if (st === '') this.fileName = '-';
@@ -427,6 +422,16 @@ export class NotesData {
   set_voiceName(v, st) {
     if (st == null) this.voices[v].name = '';
     else this.voices[v].name = st.substr(0, 255);
+  }
+
+  set_tempo(tempo) {
+    if (tempo > 255) tempo = 255;
+    if (tempo < 1) tempo = 1;
+    this.tempo = tempo;
+  }
+
+  set_root_eid(root_eid) {
+    this.root_eid = root_eid;
   }
 
   set_voiceLocked(v, locked) {

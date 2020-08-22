@@ -1,7 +1,8 @@
 import { settings } from "../state/settings.js";
 import { nd } from "../notes/NotesData.js";
 import { mgen_login, urlNoParams } from "../core/remote.js";
-import { state2url } from "../state/state.js";
+import { state2url, browser_id } from "../state/state.js";
+import { saveState } from "../state/history.js";
 
 export function publish(security) {
   $.ajax({
@@ -16,8 +17,9 @@ export function publish(security) {
       fname: nd.fileName,
       security: security,
       uname: mgen_login,
-      browser_id: 'unavailable',
+      browser_id: browser_id,
       base_url: urlNoParams(),
+      root_eid: nd.root_eid,
     },
     dataType: 'html',
     success: function (data) {
@@ -32,10 +34,14 @@ export function publish(security) {
 
 function getPublishResult(data) {
   let spl = data.split('\n');
-  if (spl.length < 2 || spl[0] !== 'Published successfully' || isNaN(spl[1])) {
-    alertify.error('Error: ' + data);
+  if (spl.length < 3 || spl[0] !== 'Published successfully' || isNaN(spl[1]) || isNaN(spl[2])) {
+    alertify.error('Error publishing exercise: ' + data);
     return;
   }
-  const publish_id = spl[1];
-  alertify.notify(`Published successfully: <a style='color:yellow' href=https://artinfuser.com/studio/exercise.php?id=${publish_id} target=_blank>your link</a>`, 'success', 60);
+  const root_eid = spl[1];
+  const eid = spl[2];
+  alertify.notify(`Published successfully as #${root_eid}/${eid}: <a style='color:yellow' href=https://artinfuser.com/counterpoint/exercise.php?id=${root_eid} target=_blank>your link</a>`, 'success', 60);
+  nd.set_root_eid(root_eid);
+  saveState(false);
+  console.log(nd);
 }
