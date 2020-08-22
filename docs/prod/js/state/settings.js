@@ -24,7 +24,7 @@ class Settings {
   }
 
   reset() {
-    this.setShortcutsLayout('AiHarmony default');
+    this.setShortcutsLayout('AiHarmony');
   }
 
   setShortcutsLayout(layout) {
