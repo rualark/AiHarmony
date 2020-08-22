@@ -243,7 +243,7 @@ export function init_abcjs(clickListener) {
       tripletfont: "Verdana 9 italic bold",
       vocalfont: "Verdana 9 italic bold",
       wordsfont: "Verdana 9 italic bold",
-      annotationfont: "Verdana 9 italic bold",
+      annotationfont: "Verdana 9 bold",
     }
   };
 }
