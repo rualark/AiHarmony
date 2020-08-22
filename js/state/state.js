@@ -4,11 +4,13 @@ import {currentTimestamp, start_counter} from "../core/time.js";
 import {b256_safeString, safeString_b256, ui_b256, b256_ui} from "../core/base256.js";
 import { generateRandomId } from "../core/string.js";
 
-const ENCODING_VERSION = 15;
+const MIN_ENCODING_VERSION = 14;
+const MAX_ENCODING_VERSION = 16;
 export const STATE_VOLATILE_SUFFIX = 7;
 const MAX_ARCHIVE_COUNT = 80;
 const MAX_ARCHIVE_BYTES = 200000;
 export const session_id = generateRandomId(16);
+export let browser_id = "";
 
 function alter2contig(alt) {
   if (alt === 10) return 0;
@@ -22,7 +24,7 @@ function contig2alter(con) {
 
 export function data2plain() {
   let st = '';
-  st += ui_b256(ENCODING_VERSION, 1);
+  st += ui_b256(MAX_ENCODING_VERSION, 1);
   st += safeString_b256(nd.algo, 1);
   st += ui_b256(nd.algoMode, 1);
   st += ui_b256(nd.phrases.length, 1);
@@ -61,6 +63,7 @@ export function data2plain() {
   st += safeString_b256(nd.name, 1);
   st += safeString_b256(nd.fileName, 1);
   st += ui_b256(nd.tempo, 1);
+  st += ui_b256(nd.root_eid, 4);
   if (selected.note == null) {
     st += ui_b256(255, 1);
     st += ui_b256(0, 2);
@@ -75,10 +78,10 @@ export function data2plain() {
 
 export function plain2data(st, pos, target, full) {
   let saved_encoding_version = b256_ui(st, pos, 1);
-  if (saved_encoding_version < 14 || saved_encoding_version > ENCODING_VERSION) {
+  if (saved_encoding_version < MIN_ENCODING_VERSION || saved_encoding_version > MAX_ENCODING_VERSION) {
     throw('version');
   }
-  if (saved_encoding_version !== ENCODING_VERSION) {
+  if (saved_encoding_version !== MAX_ENCODING_VERSION) {
     console.log('Loading deprecated version of state: ', saved_encoding_version);
   }
   target.algo = b256_safeString(st, pos, 1);
@@ -147,6 +150,9 @@ export function plain2data(st, pos, target, full) {
   if (saved_encoding_version >= 15) {
     target.set_tempo(b256_ui(st, pos, 1));
   }
+  if (saved_encoding_version >= 16) {
+    target.set_root_eid(b256_ui(st, pos, 4));
+  }
   let v = b256_ui(st, pos, 1);
   let n = b256_ui(st, pos, 2);
   if (full) {
@@ -186,6 +192,14 @@ export function storage_utf16(utf16) {
   plain2data(plain, [0], nd, true);
   async_redraw();
   return plain;
+}
+
+export function update_browser_id() {
+  browser_id = localStorage.getItem('aihBrowserId');
+  if (!browser_id) {
+    browser_id = generateRandomId(16);
+    localStorage.setItem('aihBrowserId', browser_id);
+  }
 }
 
 export function storage2state() {
