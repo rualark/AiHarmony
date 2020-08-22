@@ -61,7 +61,6 @@ export function showTextModal(v, n, type) {
     {
       let el = document.querySelector('#textArea');
       el.focus();
-      //el.setSelectionRange(0, el.value.length)
       el.setSelectionRange(el.value.length, el.value.length)
     },
     () => {
@@ -69,16 +68,18 @@ export function showTextModal(v, n, type) {
   );
   for (const i in symbols) {
     document.getElementById('asymbol' + i).onclick=function() {
-      let el = document.querySelector('#textArea');
-      if (el.selectionStart || el.selectionStart == '0') {
-        var startPos = el.selectionStart;
-        var endPos = el.selectionEnd;
-        el.value = el.value.substring(0, startPos)
+      const el = document.querySelector('#textArea');
+      const selStart = el.selectionStart;
+      const selEnd = el.selectionEnd;
+      if (selStart || selStart == '0') {
+        el.value = el.value.substring(0, selStart)
           + symbols[i]
-          + el.value.substring(endPos, el.value.length);
+          + el.value.substring(selEnd, el.value.length);
       } else {
         el.value += symbols[i];
       }
+      el.focus();
+      el.setSelectionRange(selStart + 1, selEnd + 1);
     };
   }
   $("#textArea").keypress(function (e) {
