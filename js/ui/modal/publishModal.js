@@ -11,7 +11,7 @@ function showSelectSecurity() {
   st += `<select class="form-control custom-select" id=sel_security name=sel_security>`;
   st += `<option value=0>To anyone</option>`;
   st += `<option value=1 selected>To all authenticated users</option>`;
-  st += `<option value=2>To administrators only</option>`;
+  st += `<option value=2>To me and administrators</option>`;
   st += `<option value=3>To me only</option>`;
   st += `</select>`;
   st += `</div>`;
@@ -22,10 +22,10 @@ export function showPublishModal() {
   if (state.state !== 'ready') return;
   let st = '';
   st += "<b>Publish as:</b> "
-  if (mgen_login !== '') {
+  if (mgen_login) {
     st += mgen_login;
   } else {
-    st += `<a href=https://artinfuser.com/counterpoint/login.php target=_blank>Login</a>`;
+    st += `<a href=https://artinfuser.com/counterpoint/login.php style='color:red' target=_blank>Please login</a>`;
   }
   if (nd.root_eid) {
     st += "<br><b>Parent exercise:</b> "
@@ -33,7 +33,9 @@ export function showPublishModal() {
   }
   st += showSelectSecurity();
   let footer = '';
-  footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
+  if (mgen_login) {
+    footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
+  }
   footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>`;
   showModal(1, 'Publish exercise to ArtInfuser database', st, footer, [], [], true, ()=>{}, ()=>{});
   $('#modalOk').click(() => {
