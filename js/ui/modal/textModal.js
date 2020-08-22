@@ -4,6 +4,8 @@ import {saveState} from "../../state/history.js";
 import { showModal } from "../lib/modal.js";
 import { mobileOrTablet } from "../../core/mobileCheck.js";
 
+const symbols = ['⛔', '⭐', '❗', '❓', '✅', '❌', '🚩', '🚫', '⚠️'];
+
 function submitText(v, n, type) {
   let text = $('#textArea').val().trim().substr(0, 100);
   if (type === 'lyric') {
@@ -13,6 +15,23 @@ function submitText(v, n, type) {
   }
   $('#Modal1').modal('hide');
   async_redraw();
+}
+
+function showSymbol(i) {
+  let st = '';
+  st += `<a id=asymbol${i} class='btn btn-outline-white p-1' href=# role='button' style='min-width: 10px;'>`;
+  st += '';
+  st += `<div style='font-family: sans-serif; font-size: 1em'>${symbols[i]}</div>`;
+  st += '</a>';
+  return st;
+}
+
+function showSymbols() {
+  let st = ``;
+  for (const i in symbols) {
+    st += showSymbol(i);
+  }
+  return st + '<br>';
 }
 
 export function showTextModal(v, n, type) {
@@ -30,6 +49,7 @@ export function showTextModal(v, n, type) {
   st += `<div class="input-group mb-3">`;
   st += ` <textarea id=textArea type="text" rows=3 class="form-control">${text}</textarea>`;
   st += `</div>`;
+  st += showSymbols();
   if (!mobileOrTablet) {
     st += `<span style='color:#aaaaaa'><img src=img/keyboard3.png height=20 style='vertical-align:middle; opacity:0.3'> Press Shift+Enter to add new row</span>`
   }
@@ -47,6 +67,20 @@ export function showTextModal(v, n, type) {
     () => {
     }
   );
+  for (const i in symbols) {
+    document.getElementById('asymbol' + i).onclick=function() {
+      let el = document.querySelector('#textArea');
+      if (el.selectionStart || el.selectionStart == '0') {
+        var startPos = el.selectionStart;
+        var endPos = el.selectionEnd;
+        el.value = el.value.substring(0, startPos)
+          + symbols[i]
+          + el.value.substring(endPos, el.value.length);
+      } else {
+        el.value += symbols[i];
+      }
+    };
+  }
   $("#textArea").keypress(function (e) {
     if((e.which == 10 || e.which == 13) && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey && !mobileOrTablet) {
       submitText(v, n, type);
