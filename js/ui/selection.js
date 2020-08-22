@@ -126,6 +126,8 @@ export function update_selection() {
     button_enabled_active('tie', can_tie() && !locked,
       selected.element != null && selected.element.abselem && selected.element.abselem.startTie);
   }
+  button_enabled('add_lyric', selected.note);
+  button_enabled('add_text', selected.note);
   button_enabled('copy', selected.note);
   button_enabled('paste', selected.note);
   button_enabled('repeat', selected.note);
