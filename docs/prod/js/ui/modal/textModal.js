@@ -3,8 +3,9 @@ import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import { showModal } from "../lib/modal.js";
 import { mobileOrTablet } from "../../core/mobileCheck.js";
+import { keyCodes } from "../lib/keys.js";
 
-const symbols = ['⛔', '⭐', '❗', '❓', '✅', '❌', '🚩', '🚫', '⚠️'];
+const symbols = ['✅', '⚠️', '⛔', '⭐', '❗', '❓', '❌', '🚩', '🚫'];
 
 function submitText(v, n, type) {
   let text = $('#textArea').val().trim().substr(0, 100);
@@ -32,6 +33,21 @@ function showSymbols() {
     st += showSymbol(i);
   }
   return st + '<br>';
+}
+
+function add_symbol(i) {
+  const el = document.querySelector('#textArea');
+  const selStart = el.selectionStart;
+  const selEnd = el.selectionEnd;
+  if (selStart || selStart == '0') {
+    el.value = el.value.substring(0, selStart)
+      + symbols[i]
+      + el.value.substring(selEnd, el.value.length);
+  } else {
+    el.value += symbols[i];
+  }
+  el.focus();
+  el.setSelectionRange(selStart + 1, selEnd + 1);
 }
 
 export function showTextModal(v, n, type) {
@@ -67,26 +83,18 @@ export function showTextModal(v, n, type) {
     }
   );
   for (const i in symbols) {
-    document.getElementById('asymbol' + i).onclick=function() {
-      const el = document.querySelector('#textArea');
-      const selStart = el.selectionStart;
-      const selEnd = el.selectionEnd;
-      if (selStart || selStart == '0') {
-        el.value = el.value.substring(0, selStart)
-          + symbols[i]
-          + el.value.substring(selEnd, el.value.length);
-      } else {
-        el.value += symbols[i];
-      }
-      el.focus();
-      el.setSelectionRange(selStart + 1, selEnd + 1);
-    };
+    document.getElementById('asymbol' + i).onclick = () => {
+      add_symbol(i);
+    }
   }
   $("#textArea").keypress(function (e) {
     if((e.which == 10 || e.which == 13) && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey && !mobileOrTablet) {
       submitText(v, n, type);
       e.preventDefault();
     }
+    if(e.ctrlKey && e.code === "KeyQ") add_symbol(0);
+    if(e.ctrlKey && e.code === "IntlBackslash") add_symbol(1);
+    if(e.ctrlKey && e.code === "KeyB") add_symbol(2);
   });
   $('#modalOk').click(() => {
     submitText(v, n, type);
