@@ -3,6 +3,7 @@ import { nd } from "../notes/NotesData.js";
 import { mgen_login, urlNoParams } from "../core/remote.js";
 import { state2url, browser_id } from "../state/state.js";
 import { saveState } from "../state/history.js";
+import { ares } from "../analysis/AnalysisResults.js";
 
 export function publish(security) {
   $.ajax({
@@ -21,6 +22,10 @@ export function publish(security) {
       base_url: urlNoParams(),
       root_eid: nd.root_eid,
       logrocket: window.logrocketSessionUrl,
+      algo: nd.algo,
+      flags: ares.stats,
+      music_hash: nd.getMusicHash(),
+      annotations: nd.getAnnotationsCount(),
     },
     dataType: 'html',
     success: function (data) {
@@ -44,5 +49,4 @@ function getPublishResult(data) {
   alertify.notify(`Published successfully as #${root_eid}/${eid}: <a style='color:yellow' href=https://artinfuser.com/counterpoint/exercise.php?id=${root_eid} target=_blank>your link</a>`, 'success', 60);
   nd.set_root_eid(root_eid);
   saveState(false);
-  console.log(nd);
 }

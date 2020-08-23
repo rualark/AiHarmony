@@ -3,6 +3,7 @@ import {saveState} from "../state/history.js";
 import {selected} from "../abc/abchelper.js";
 import { name2filename } from "../core/string.js";
 import { generateRandomHashWords } from "../core/hashwords.js";
+import { MD5 } from "../core/string.js";
 
 export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
 
@@ -496,6 +497,33 @@ export class NotesData {
       if (smin === smin_new) return smin;
       smin = smin_new;
     }
+  }
+
+  getMusicHash() {
+    let st = '';
+    for (let v=0; v<this.voices.length; ++v) {
+      const vc = this.voices[v];
+      for (let n = 0; n < vc.notes.length; ++n) {
+        const nt = vc.notes[n];
+        if (!nt.d) continue;
+        const packed = v*1111111111 + n*1111111 + nt.len*11111 + nt.startsTie*1111 + nt.alter*111 + nt.d;
+        st += packed + ' ';
+      }
+    }
+    return MD5(st);
+  }
+
+  getAnnotationsCount() {
+    let cnt = 0;
+    for (let v=0; v<this.voices.length; ++v) {
+      const vc = this.voices[v];
+      for (let n = 0; n < vc.notes.length; ++n) {
+        const nt = vc.notes[n];
+        if (nt.text) cnt++;
+        if (nt.lyric) cnt++;
+      }
+    }
+    return cnt;
   }
 }
 

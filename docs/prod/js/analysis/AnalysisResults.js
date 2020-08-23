@@ -186,6 +186,7 @@ class AnalysisResults {
     this.stepFlags = {};
     this.pFlag = [];
     this.pFlagCur = -1;
+    this.stats = 0;
     let st = '';
     if (this.mode == null || this.mode === 13 || nd.algo !== 'CA3') {
       $('#mode').html('');
@@ -221,8 +222,13 @@ class AnalysisResults {
           let col;
           if (fla.accept !== 0) continue;
           if (fla.severity < settings.show_min_severity) continue;
-          if (fla.severity > SEVERITY_RED) col = SEVERITY_RED_COLOR;
-          else col = SEVERITY_YELLOW_COLOR;
+          if (fla.severity > SEVERITY_RED) {
+            col = SEVERITY_RED_COLOR;
+            this.stats += 10000;
+          } else {
+            col = SEVERITY_YELLOW_COLOR;
+            this.stats += 1;
+          }
           if (old_n !== n) {
             old_n = n;
             st += `<a href=# class='ares ares_${vi}_${n}' style='color: black'>\n`;
