@@ -58,9 +58,15 @@ export function showOpenExampleMusicXmlModal() {
 export function showOpenModal() {
   if (state.state !== 'ready') return;
   let st = '';
+
+  st += `<p style='text-align: center'>`;
+  st += `<a href=https://artinfuser.com/counterpoint/exercises.php class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;
+  st += `<b>Open from ArtInfuser database</b>`;
+  st += '</a></p>';
+
   st += `<p style='text-align: center'>`;
   st += `<a id=openLocal href=# class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;
-  st += `<b>Open MuxicXML file from this computer</b>`;
+  st += `<b>Open MuxicXML file from my computer</b>`;
   st += '</a></p>';
 
   /*

@@ -4,8 +4,10 @@ import {saveState} from "../../state/history.js";
 import { showModal } from "../lib/modal.js";
 import { mobileOrTablet } from "../../core/mobileCheck.js";
 import { keyCodes } from "../lib/keys.js";
+import { initTooltips } from "../lib/tooltips.js";
 
 const symbols = ['✅', '⚠️', '⛔', '⭐', '❗', '❓', '❌', '🚩', '🚫'];
+const symbol_shortcuts = ['Ctrl+Y', 'Ctrl+Q', 'Ctrl+B'];
 
 function submitText(v, n, type) {
   let text = $('#textArea').val().trim().substr(0, 100);
@@ -20,7 +22,7 @@ function submitText(v, n, type) {
 
 function showSymbol(i) {
   let st = '';
-  st += `<a id=asymbol${i} class='btn btn-outline-white p-1' href=# role='button' style='min-width: 10px;'>`;
+  st += `<a data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="Insert symbol<br>${i in symbol_shortcuts ? symbol_shortcuts[i] : ""}" id=asymbol${i} class='btn btn-outline-white p-1' href=# role='button' style='min-width: 10px;'>`;
   st += '';
   st += `<div style='font-family: sans-serif; font-size: 1em'>${symbols[i]}</div>`;
   st += '</a>';
@@ -78,6 +80,7 @@ export function showTextModal(v, n, type) {
       let el = document.querySelector('#textArea');
       el.focus();
       el.setSelectionRange(el.value.length, el.value.length)
+      initTooltips(200, 100);
     },
     () => {
     }
@@ -92,8 +95,8 @@ export function showTextModal(v, n, type) {
       submitText(v, n, type);
       e.preventDefault();
     }
-    if(e.ctrlKey && e.code === "KeyQ") add_symbol(0);
-    if(e.ctrlKey && e.code === "IntlBackslash") add_symbol(1);
+    if(e.ctrlKey && e.code === "KeyY") add_symbol(0);
+    if(e.ctrlKey && e.code === "KeyQ") add_symbol(1);
     if(e.ctrlKey && e.code === "KeyB") add_symbol(2);
   });
   $('#modalOk').click(() => {
