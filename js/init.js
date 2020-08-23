@@ -30,6 +30,7 @@ function init() {
   loadState();
   if (getUrlParam('state')) {
     trackEvent('AiHarmony', 'open_shared');
+    nd.reset();
     try {
       url2state(getUrlParam('state'));
       const root_eid = getUrlParam('rid');
@@ -49,6 +50,7 @@ function init() {
   }
   else if (getUrlParam('load')) {
     trackEvent('AiHarmony', 'open', 'Open server MusicXML');
+    nd.reset();
     readRemoteMusicXmlFile('musicxml/' + getUrlParam('load').replace('..', '') + '.xml');
     window.history.replaceState("", "", urlNoParams());
   }

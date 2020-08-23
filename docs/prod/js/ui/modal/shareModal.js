@@ -40,6 +40,7 @@ export function showShareModal() {
   new ClipboardJS('.btn');
   showModal(1, 'Share music', st, '', [], [], false, ()=>{}, ()=>{});
   $('#apublish').click(() => {
+    $('#Modal1').modal('hide');
     showPublishModal();
   });
 }

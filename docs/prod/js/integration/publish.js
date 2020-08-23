@@ -7,7 +7,7 @@ import { saveState } from "../state/history.js";
 export function publish(security) {
   $.ajax({
     type: 'POST',
-    url: 'https://artinfuser.com/studio/publish-exercise.php',
+    url: 'https://artinfuser.com/counterpoint/publish-exercise.php',
     data: {
       robot: 'robot_aih',
       token: 'xaJD5Bm9LwuQwRQ9',

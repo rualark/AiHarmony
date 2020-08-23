@@ -55,6 +55,7 @@ export function showRestoreModal() {
       //storage2archiveStorage();
       alertify.confirm('Recover', 'Warning! You are recovering a previous file. Currently opened file will be deleted and you will not be able to recovere it if you did not download it.',
         function(){
+          nd.reset();
           let plain = LZString.decompressFromUTF16(archive[i].utf16);
           plain2data(plain, [0], nd, false);
           saveState();

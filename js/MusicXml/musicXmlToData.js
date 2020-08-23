@@ -49,6 +49,7 @@ function decodeSpeciesHints() {
 export function readMusicXml(xml, filename) {
   try {
     start_counter('musicXmlToData');
+    nd.reset();
     let error = musicXmlToData(xml);
     decodeSpeciesHints();
     //stop_counter();
