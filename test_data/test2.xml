@@ -214,10 +214,14 @@
   <measure number="3">
    <attributes />
    <note color="#000000">
-    <rest />
+    <pitch>
+     <step>G</step>
+     <octave>4</octave>
+    </pitch>
     <duration>256</duration>
     <voice>1</voice>
     <type>quarter</type>
+    <accidental>natural</accidental>
     <staff>1</staff>
    </note>
    <note color="#000000">

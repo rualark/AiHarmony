@@ -18,9 +18,9 @@ The information collected is for statistical purposes. $company_name may use sof
 
 For site security purposes and to ensure that this service remains available to all users, $company_name may use software programs to monitor network traffic to identify unauthorized attempts to upload or change information, or otherwise cause damage.
 
-TwistedWave will not obtain personally-identifying information about you when you visit our site, unless you choose to provide such information to us, nor will such information be sold or otherwise transferred to unaffiliated third parties without the approval of the user at the time of collection.
+ArtInfuser will not obtain personally-identifying information about you when you visit our site, unless you choose to provide such information to us, nor will such information be sold or otherwise transferred to unaffiliated third parties without the approval of the user at the time of collection.
 
-You can provide personally-identifying information by creating an account by manually entering your contact information. That information is used only to identify you, and to send any correspondance related to your usage of your TwistedWave Online account.
+You can provide personally-identifying information by creating an account by manually entering your contact information. That information is used only to identify you, and to send any correspondance related to your usage of your ArtInfuser account.
 ";
 ?>
 </pre>
