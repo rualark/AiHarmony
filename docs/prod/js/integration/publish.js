@@ -25,7 +25,7 @@ export function publish(security) {
       algo: nd.algo,
       flags: ares.stats,
       music_hash: nd.getMusicHash(),
-      annotations: nd.getAnnotationsCount(),
+      annotations_hash: nd.getAnnotationsHash(),
     },
     dataType: 'html',
     success: function (data) {

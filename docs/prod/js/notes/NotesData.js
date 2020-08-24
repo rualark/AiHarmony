@@ -501,16 +501,36 @@ export class NotesData {
 
   getMusicHash() {
     let st = '';
+    st += this.keysig.name + this.keysig.mode + ' ';
+    st += this.timesig.measure_len + ' ' + this.timesig.beats_per_measure + ' ';
     for (let v=0; v<this.voices.length; ++v) {
       const vc = this.voices[v];
       for (let n = 0; n < vc.notes.length; ++n) {
         const nt = vc.notes[n];
         if (!nt.d) continue;
-        const packed = v*1111111111 + n*1111111 + nt.len*11111 + nt.startsTie*1111 + nt.alter*111 + nt.d;
+        let packed = '';
+        packed += nt.len;
+        packed += nt.startsTie ? 1 : 0;
+        packed += nt.alter;
+        packed += nt.d;
         st += packed + ' ';
       }
     }
     return MD5(st);
+  }
+
+  getAnnotationsHash() {
+    let st = '';
+    for (let v=0; v<this.voices.length; ++v) {
+      const vc = this.voices[v];
+      for (let n = 0; n < vc.notes.length; ++n) {
+        const nt = vc.notes[n];
+        if (nt.text) st += v + '' + n + nt.text + '~';
+        if (nt.lyric) st += v + '' + n + nt.lyric + '~';
+      }
+    }
+    if (st) return MD5(st);
+    else return '';
   }
 
   getAnnotationsCount() {
