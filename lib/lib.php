@@ -1,7 +1,10 @@
 <?php
   ini_set('error_reporting', E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED & ~E_WARNING);
+  //ini_set('error_reporting', E_ALL);
 require_once "vendor/autoload.php";
 require "sentry.php";
+
+$bheight = 24;
 
 $mtime = microtime(TRUE);
 
@@ -44,15 +47,13 @@ function mycount($ar) {
 }
 
 function secure_variable($st) {
-  GLOBAL $ml;
   if (isset($_GET[$st])) return $_GET[$st];
   if (isset($_POST[$st])) return $_POST[$st];
   return "";
 }
 
 function secure_variable_post($st) {
-  GLOBAL $ml;
-  if (isset($_POST[$st])) $_POST[$st];
+  if (isset($_POST[$st])) return $_POST[$st];
   return "";
 }
 
@@ -279,6 +280,10 @@ function make_color($r, $g=-1, $b=-1) {
 function send_mail($recipients, $headers, $body) {
   GLOBAL $mail_method, $mail_params;
   $mail_object =& Mail::factory($mail_method, $mail_params);
+  if (PEAR::isError($mail_object)) {
+    echo $mail_object->getMessage() . "\n" . $mail_object->getUserInfo() . "\n";
+    die();
+  }
   return $mail_object->send($recipients, $headers, $body);
 }
 
@@ -313,4 +318,14 @@ function my_mkdir($path, $mode, $recur) {
 function startsWith($string, $startString) {
   $len = strlen($startString);
   return (substr($string, 0, $len) === $startString);
+}
+
+function query($q) {
+  GLOBAL $ml;
+  $r = mysqli_query($ml, $q);
+  $err = mysqli_error($ml);
+  if ($err) {
+    die("$err: $q<br>");
+  }
+  return $r;
 }

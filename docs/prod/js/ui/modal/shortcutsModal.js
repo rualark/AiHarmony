@@ -7,7 +7,7 @@ import { state } from "../../abc/abchelper.js";
 export function showShortcutsModal() {
   if (state.state !== 'ready') return;
   let st = '';
-  st += 'Artinfuser Harmony allows to play, edit and <a href=https://artinfuser.com/counterpoint/docs.php?d=cp_analyse target=_blank>analyse</a> MusicXML files with exercises. ';
+  st += 'Artinfuser Harmony allows to play, edit and <a href=https://artinfuser.com/exercise/docs.php target=_blank>analyse</a> MusicXML files with exercises. ';
   st += 'Limitations: minimal supported note length is 1/16. Tuplets are not supported. Only single clef, key and time signature is supported per staff.<br><br>';
   st += '<table class=table>';
   st += '<tr>';

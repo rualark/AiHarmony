@@ -8,7 +8,7 @@ import { ares } from "../analysis/AnalysisResults.js";
 export function publish(security) {
   $.ajax({
     type: 'POST',
-    url: 'https://artinfuser.com/counterpoint/publish-exercise.php',
+    url: 'https://artinfuser.com/exercise/publish-exercise.php',
     data: {
       robot: 'robot_aih',
       token: 'xaJD5Bm9LwuQwRQ9',
@@ -46,7 +46,7 @@ function getPublishResult(data) {
   }
   const root_eid = spl[1];
   const eid = spl[2];
-  alertify.notify(`Published successfully as #${root_eid}/${eid}: <a style='color:yellow' href=https://artinfuser.com/counterpoint/exercise.php?id=${root_eid} target=_blank>your link</a>`, 'success', 60);
+  alertify.notify(`Published successfully as #${root_eid}/${eid}: <a style='color:yellow' href=https://artinfuser.com/exercise/exercise.php?id=${root_eid} target=_blank>your link</a>`, 'success', 60);
   nd.set_root_eid(root_eid);
   saveState(false);
 }

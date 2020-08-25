@@ -47,8 +47,31 @@ show_chatovod("artquiz");
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
       <ul class="navbar-nav mr-auto">
         <li class=nav-item><a class=nav-link href='editor.html'><b>Start</b></a></li>
+        <li class=nav-item><a class=nav-link href='exercises.php'>Exercises</a></li>
         <li class=nav-item><a class=nav-link href='docs.php'>Docs</a></li>
-        <li class=nav-item><a class=nav-link href=contact.php>Contact</a></li></ul>
+        <li class=nav-item><a class=nav-link href=contact.php>Contact</a></li>
+      </ul>
+      <ul class="navbar-nav">
+      <?php
+        if ($uid) {
+      ?>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href='javascript:void(0)' id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <?=$ua['u_name'] ?></a>
+          <div class="dropdown-menu" aria-labelledby="dropdown01">
+            <a class="dropdown-item" href="<?=$url_root_ai?>/profile.php">Profile</a>
+            <a class="dropdown-item" href="<?=$url_root_ai?>/login.php?action=out&ru=<?=$_SERVER['REQUEST_URI']?>">Log out</a>
+          </div>
+        </li>
+      <?php
+        } else {
+      ?>
+        <li class=nav-item><a class=nav-link href="login.php?ru=<?=$_SERVER['REQUEST_URI']?>"><b>Login</b></a></li>
+        <li class=nav-item><a class=nav-link href="reg.php"><b>Sign up</b></a></li>
+      <?php
+        }
+      ?>
+      </ul>
     </div>
   </div>
 </nav>

@@ -25,11 +25,11 @@ export function showPublishModal() {
   if (mgen_login) {
     st += mgen_login;
   } else {
-    st += `<a href=https://artinfuser.com/counterpoint/login.php style='color:red' target=_blank>Please login</a>`;
+    st += `<a href=https://artinfuser.com/exercise/login.php style='color:red' target=_blank>Please login</a>`;
   }
   if (nd.root_eid) {
     st += "<br><b>Parent exercise:</b> "
-    st += `<a href=https://artinfuser.com/counterpoint/exercise.php?id=${nd.root_eid} target=_blank>#${nd.root_eid}</a>`;
+    st += `<a href=https://artinfuser.com/exercise/exercise.php?id=${nd.root_eid} target=_blank>#${nd.root_eid}</a>`;
   }
   st += showSelectSecurity();
   let footer = '';
@@ -37,7 +37,7 @@ export function showPublishModal() {
     footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
   }
   footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>`;
-  showModal(1, `Publish exercise to <a href=https://artinfuser.com/counterpoint/exercises.php target=_blank>ArtInfuser database</a>`, st, footer, [], [], true, ()=>{}, ()=>{});
+  showModal(1, `Publish exercise to <a href=https://artinfuser.com/exercise/exercises.php target=_blank>ArtInfuser database</a>`, st, footer, [], [], true, ()=>{}, ()=>{});
   $('#modalOk').click(() => {
     $('#Modal1').modal('hide');
     publish(Number($("#sel_security option:selected").val()));

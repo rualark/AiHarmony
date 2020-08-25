@@ -23,6 +23,8 @@ $country_name = "Russian Federation";
 
 $mail_method = "sendmail";
 $mail_params = array('sendmail_path' => 'c:\ospanel\modules\sendmail\sendmail.exe -t');
+//$support_email = "support@$domain_mail";
+$support_email = "rualark@gmail.com";
 
 $ml = @mysqli_connect("localhost", "mgen", "Congress1");
 if (!$ml) {
