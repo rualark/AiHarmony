@@ -42,19 +42,20 @@ for ($i=0; $i<$n; ++$i) {
     continue;
   }
   // Admin
-  if ($w['security'] == 2 && !$ua['u_admin'] && $ua['u_login'] != $w['u_name']) {
+  if ($w['security'] == 2 && !$ua['u_admin'] && $ua['u_login'] != $w['u_cookie'] && $uid != $w['u_id']) {
     continue;
   }
   // Private
-  if ($w['security'] == 3 && $ua['u_login'] != $w['u_name']) {
+  if ($w['security'] == 3 && $ua['u_login'] != $w['u_cookie'] && $uid != $w['u_id']) {
     continue;
   }
   echo "<tr>";
   echo "<td>$w[root_eid]</td>";
   echo "<td><a href='exercise.php?id=$w[root_eid]'>$w[publish_time]</td>";
   echo "<td>$uname</td>";
-  echo "<td><a href='exercise.php?id=$w[root_eid]'>";
+  echo "<td>";
   show_elock($w['security']);
+  echo "<a href='exercise.php?id=$w[root_eid]'>";
   echo "$w[title]</td>";
   echo "<td>$w[ecount]</td>";
   echo "</tr>";
