@@ -2,7 +2,7 @@ import {async_redraw, init_abcjs} from "./abc/abchelper.js";
 import {initFilenameClick} from "./ui/commands.js";
 import {getUrlParam, urlNoParams} from "./core/remote.js";
 import {showShortcutsModal} from "./ui/modal/shortcutsModal.js";
-import {url2state, update_browser_id} from "./state/state.js";
+import {url2state, update_browser_id, storage2archiveStorage} from "./state/state.js";
 import {readRemoteMusicXmlFile} from "./MusicXml/readRemoteMusicXml.js";
 import {loadState, saveState} from "./state/history.js";
 import {initTooltips} from "./ui/lib/tooltips.js";
@@ -30,6 +30,7 @@ function init() {
   loadState();
   if (getUrlParam('state')) {
     trackEvent('AiHarmony', 'open_shared');
+    storage2archiveStorage(5);
     nd.reset();
     try {
       url2state(getUrlParam('state'));

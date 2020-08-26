@@ -13,6 +13,7 @@ function version_html(ver, id) {
   if (ver.why === 2) st += ` <span title='This file was auto-saved before opening another file'>(before Open)</span>`;
   if (ver.why === 3) st += ` <span title='This file was auto-saved before conflict with another session' style='color:red'>(before Conflict)</span>`;
   if (ver.why === 4) st += ` <span title='This file was auto-saved before creating new counterpoint exercise'>(before New cantus)</span>`;
+  if (ver.why === 5) st += ` <span title='This file was auto-saved before opening a shared file'>(before Open shared)</span>`;
   st += `</div>`;
   st += '</a><br>';
   return st;
