@@ -6,7 +6,7 @@ import { mobileOrTablet } from "../../core/mobileCheck.js";
 import { keyCodes } from "../lib/keys.js";
 import { initTooltips } from "../lib/tooltips.js";
 
-const symbols = ['✅', '⚠️', '⛔', '⭐', '❗', '❓', '❌', '🚩', '🚫'];
+const symbols = ['✅', '☝', '⛔', '⭐', '❗', '❓', '❌', '☢️', '🚫', '☠️', '⚡'];
 const symbol_shortcuts = ['Ctrl+Y', 'Ctrl+Q', 'Ctrl+B'];
 
 function submitText(v, n, type) {
