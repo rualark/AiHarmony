@@ -18,7 +18,7 @@ import {showShareModal} from "./modal/shareModal.js";
 import {redoState, saveState, undoState} from "../state/history.js";
 import {mobileOrTablet} from "../core/mobileCheck.js";
 import {sendToAic} from "../integration/aiCounterpoint.js";
-import {add_part, del_bar, del_part, new_file, stop_advancing, voiceChange, insert_bar} from "./edit/editScore.js";
+import {add_part, del_bar, del_part, new_file, stop_advancing, voiceChange, insert_bar, edit_exercise_name} from "./edit/editScore.js";
 import {toggle_tie} from "./edit/editTie.js";
 import {next_note, prev_note} from "./edit/select.js";
 import {set_len, toggle_dot} from "./edit/editLen.js";
@@ -35,6 +35,7 @@ import { showCantusModal } from "./modal/cantusModal.js";
 import { showTransposeModal } from "./modal/transposeModal.js";
 import { environment } from "../core/remote.js";
 import { grow_selection_horizontal, grow_selection_vertical, copy_selection, paste_selection, select_mode } from "./edit/editSelection.js";
+import { showPublishModal } from "./modal/publishModal.js";
 
 let mobileOpt = {
   true: {
@@ -220,19 +221,7 @@ export function initCommands() {
 
 export function initFilenameClick() {
   document.getElementById('filename').onclick=function(){
-    enableKeys(false);
-    bootbox.prompt({
-      title: "Exercise name",
-      value: nd.name,
-      callback: function(value) {
-        enableKeys(true);
-        if (value == null) return;
-        nd.set_name(value);
-        nd.set_fileName(name2filename(value));
-        $('#filename').html('&nbsp;&nbsp;' + nd.name);
-        saveState(false);
-      }
-    });
+    edit_exercise_name();
     return false;
   };
   $('#mode').click(() => {
@@ -325,7 +314,7 @@ export let commands = [
     id: 'settings',
     toolbar: {type: 'image', toolbar_id: 2, hintText: 'Settings'},
     event: 'onclick',
-    keys: [],
+    keys: ['Alt+S'],
     command: () => { showSettingsModal() },
     name: 'Settings',
   },
@@ -799,5 +788,15 @@ export let commands = [
       alertify.dismissAll();
     },
     name: 'Stop advancing edit',
+  },
+  {
+    keys: ['Alt+H'],
+    command: () => { edit_exercise_name() },
+    name: 'Edit exercise header (name)',
+  },
+  {
+    keys: ['Alt+P'],
+    command: () => { showPublishModal() },
+    name: 'Publish exercise to ArtInfuser database',
   },
 ];

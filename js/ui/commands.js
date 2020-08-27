@@ -35,6 +35,7 @@ import { showCantusModal } from "./modal/cantusModal.js";
 import { showTransposeModal } from "./modal/transposeModal.js";
 import { environment } from "../core/remote.js";
 import { grow_selection_horizontal, grow_selection_vertical, copy_selection, paste_selection, select_mode } from "./edit/editSelection.js";
+import { showPublishModal } from "./modal/publishModal.js";
 
 let mobileOpt = {
   true: {
@@ -791,6 +792,11 @@ export let commands = [
   {
     keys: ['Alt+H'],
     command: () => { edit_exercise_name() },
-    name: 'Edit exercise header',
+    name: 'Edit exercise header (name)',
+  },
+  {
+    keys: ['Alt+P'],
+    command: () => { showPublishModal() },
+    name: 'Publish exercise to ArtInfuser database',
   },
 ];

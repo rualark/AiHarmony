@@ -179,7 +179,6 @@ export function state2storage() {
 export function utf16_storage(name, utf16) {
   let previous_id = localStorage.getItem('aihSessionId');
   // If we are overwriting a different session, first archive it
-  console.log('Debug:', previous_id, session_id);
   if (previous_id != session_id) {
     storage2archiveStorage(3);
     alertify.message('Detected and saved your changes made in another session', 10);

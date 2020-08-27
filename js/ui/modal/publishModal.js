@@ -37,7 +37,16 @@ export function showPublishModal() {
     footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
   }
   footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>`;
-  showModal(1, `Publish exercise to <a href=https://artinfuser.com/exercise/exercises.php target=_blank>ArtInfuser database</a>`, st, footer, [], [], true, ()=>{}, ()=>{});
+  showModal(1, `Publish exercise to <a href=https://artinfuser.com/exercise/exercises.php target=_blank>ArtInfuser database</a>`, st, footer, [], [], true, ()=>{
+    const el = document.querySelector('#sel_security');
+    el.focus();
+    $("#sel_security").keypress(function(event) {
+      if (event.which == 13) {
+        event.preventDefault();
+        $('#modalOk').click();
+      }
+    });
+  }, ()=>{});
   $('#modalOk').click(() => {
     $('#Modal1').modal('hide');
     publish(Number($("#sel_security option:selected").val()));
