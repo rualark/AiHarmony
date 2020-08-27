@@ -5,6 +5,8 @@ import {update_selection} from "../selection.js";
 import {future} from "./editNote.js";
 import {showPartModal} from "../modal/partModal.js";
 import { storage2archiveStorage } from "../../state/state.js";
+import { enableKeys } from "../commands.js";
+import { name2filename } from "../../core/string.js";
 
 export function stop_advancing() {
   future.advancing = false;
@@ -91,4 +93,20 @@ export function add_part() {
 export function rename_part() {
   if (state.state !== 'ready') return;
   showPartModal(selected.voice);
+}
+
+export function edit_exercise_name() {
+  enableKeys(false);
+  bootbox.prompt({
+    title: "Exercise name",
+    value: nd.name,
+    callback: function(value) {
+      enableKeys(true);
+      if (value == null) return;
+      nd.set_name(value);
+      nd.set_fileName(name2filename(value));
+      $('#filename').html('&nbsp;&nbsp;' + nd.name);
+      saveState(false);
+    }
+  });
 }
