@@ -241,7 +241,7 @@ export let commands = [
     toolbar: {type: 'image', toolbar_id: 2},
     event: 'onclick',
     keys: [],
-    command: () => { openNewUrl('https://artinfuser.com') },
+    command: () => { openNewUrl('index.php') },
     name: 'Artinfuser site',
   },
   {

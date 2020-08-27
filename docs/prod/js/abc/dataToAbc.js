@@ -53,8 +53,8 @@ export function dataToAbc(instrument) {
         if (msh < 0) abc += `"^ø"`;
       }
       let flags = ares.getFlagsInInterval(v, s, s + nt.len);
-      if (flags.red > 0) abc += '"^!"';
-      else if (flags.yellow > 0) abc += '"^?"';
+      if (flags.red > 0) abc += '"^🚩"';
+      else if (flags.yellow > 0) abc += '"^⚠️"';
       if (ares.harm != null && s in ares.harm && ares.vid != null && v === ares.vid[0] && settings.show_harmony) {
         let harm_st = '';
         for (let s2 = 0; s2 < nt.len; ++s2) {
