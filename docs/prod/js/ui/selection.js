@@ -132,8 +132,8 @@ export function update_selection() {
   button_enabled('paste', selected.note);
   button_enabled('repeat', selected.note);
   button_enabled_active('select', selected.note, nclip.mode == 'select');
-  button_enabled('anext', ares.pFlag != null && ares.pFlagCur < ares.pFlag.length - 1);
-  button_enabled('aprev', ares.pFlag != null && ares.pFlagCur > 0);
+  button_enabled('anext', ares.pFlag != null); // && ares.pFlagCur < ares.pFlag.length - 1
+  button_enabled('aprev', ares.pFlag != null); // && ares.pFlagCur > 0
   button_enabled('mistake', selectionHasMistake());
   if (selected.note != null && selected.note.v1 == null && selected.note.note != null) {
     $('.ares').css({"font-weight": ''});

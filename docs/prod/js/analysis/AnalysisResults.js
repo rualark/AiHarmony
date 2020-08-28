@@ -352,8 +352,7 @@ class AnalysisResults {
       let s = note.step;
       this.pFlagCur = this.findNextFlag(vi, s);
     } else {
-      if (this.pFlagCur >= this.pFlag.length - 1) return;
-      this.pFlagCur++;
+      if (this.pFlagCur < this.pFlag.length - 1) this.pFlagCur++;
     }
     if (this.pFlagCur === -1) return;
     let pf = this.pFlag[this.pFlagCur];
@@ -371,8 +370,7 @@ class AnalysisResults {
       let s = note.step;
       this.pFlagCur = this.findNextFlag(vi, s);
     }
-    if (this.pFlagCur <= 0) return;
-    this.pFlagCur--;
+    if (this.pFlagCur > 0) this.pFlagCur--;
     let pf = this.pFlag[this.pFlagCur];
     this.selectFlag(pf);
     AnalysisResults.notifyFlag(pf);
