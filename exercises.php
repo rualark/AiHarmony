@@ -20,6 +20,7 @@ echo "<th scope=col>ID</th>";
 echo "<th scope=col>Published</th>";
 echo "<th scope=col>User</th>";
 echo "<th scope=col>Title</th>";
+echo "<th scope=col>Analysis</th>";
 echo "<th scope=col>Revisions</th>";
 echo "</tr>\n";
 echo "</thead>";
@@ -56,8 +57,27 @@ for ($i=0; $i<$n; ++$i) {
   echo "<td>";
   show_elock($w['security']);
   echo "<a href='exercise.php?id=$w[root_eid]'>";
-  echo "$w[title]</td>";
-  echo "<td>$w[ecount]</td>";
+  echo "$w[title]";
+  echo "<td> ";
+  if ($w['algo'] == 'CA3') {
+    if ($w['ecount'] == 1) {
+      echo "<a target=_blank href='editor.html?state=$w[state]&rid=$w[root_eid]' role=button>";
+      if ($w['flags'] == 0) {
+        echo "✅";
+      } else {
+        if (floor($w['flags'] / 10000)) {
+          echo floor($w['flags'] / 10000) . "🚩 &nbsp;";
+        }
+        if ($w['flags'] % 10000) {
+          echo ($w['flags'] % 10000) . "⚠️";
+        }
+      }
+      echo "</a>";
+    } else {
+      echo "<a href='exercise.php?id=$w[root_eid]'>...";
+    }
+  }
+  echo "<td>$w[ecount] ";
   echo "</tr>";
 }
 echo "</tbody>";
