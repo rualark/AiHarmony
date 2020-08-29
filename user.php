@@ -24,7 +24,8 @@ echo "<div class=container><br>";
 
 echo "<h3><center>$sua[u_name]</center></h3>";
 
-show_keysig_stat($suid);
+show_keysig_matrix($suid);
+show_cantusin_stat($suid);
 show_species_timesig_stat($suid);
 show_species_voices_stat($suid);
 

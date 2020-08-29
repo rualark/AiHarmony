@@ -2,6 +2,9 @@
 
 $species_names = array('Cantus', 1, 2, 3, 4, 5, 'Mixed', 'Free');
 $timesigs = array('2/4', '3/4', '2/2', '4/4', '5/4', '6/4', '3/2');
+$keysigs = array('C#', 'F#', 'B', 'E', 'A', 'D', 'G', 'C', 'F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Cb');
+$modes = array('major', 'minor', 'other');
+$cantus_in = array('higher', 'middle', 'lower');
 
 function show_elock($private) {
   GLOBAL $bheight, $vtypes;
@@ -11,7 +14,6 @@ function show_elock($private) {
 }
 
 function show_keysig_stat($suid) {
-  GLOBAL $ml;
   $r = query("
     SELECT keysig, COUNT(*) AS cnt
     FROM exercises
@@ -37,8 +39,80 @@ function show_keysig_stat($suid) {
   echo "</table>";
 }
 
+function show_cantusin_stat($suid) {
+  GLOBAL $cantus_in;
+  $r = query("
+    SELECT species, COUNT(*) AS cnt
+    FROM exercises
+    WHERE u_id=$suid AND species != ''
+    GROUP BY species
+    ORDER BY cnt DESC
+  ");
+  $n = mysqli_num_rows($r);
+  echo "<p><table class='table table-sm table-striped table-bordered' style='max-width:300px'>"; // table-hover
+  echo "<thead>";
+  echo "<tr>";
+  echo "<th scope=col>Cantus in</th>";
+  echo "<th scope=col class='text-center'>Exercises</th>";
+  echo "</tr>\n";
+  echo "</thead>";
+  echo "<tbody>";
+  $cnt = array();
+  for ($i=0; $i<$n; ++$i) {
+    $w = mysqli_fetch_assoc($r);
+    $species = $w['species'];
+    $pos = strpos($species, 'C');
+    if ($pos === false) continue;
+    if (strlen($species) == 1) continue;
+    if ($pos == 0) $cnt['higher'] += $w['cnt'];
+    else if ($pos == strlen($species) - 1) $cnt['lower'] += $w['cnt'];
+    else $cnt['middle'] += $w['cnt'];
+  }
+  foreach ($cantus_in as $in) {
+    echo "<tr>";
+    echo "<th>$in voice";
+    echo "<td class='text-center'>" . $cnt[$in];
+  }
+  echo "</table>";
+}
+
+function show_keysig_matrix($suid) {
+  GLOBAL $keysigs, $modes;
+  $r = query("
+    SELECT keysig, COUNT(*) AS cnt
+    FROM exercises
+    WHERE u_id=$suid AND keysig != ''
+    GROUP BY keysig
+    ORDER BY cnt DESC
+  ");
+  $n = mysqli_num_rows($r);
+  $cnt = array();
+  for ($i=0; $i<$n; ++$i) {
+    $w = mysqli_fetch_assoc($r);
+    $sa = explode(' ', $w['keysig']);
+    $cnt[$sa[0] . ' ' . get_mode($sa[1])] += $w['cnt'];
+  }
+  echo "<p><table class='table table-sm table-bordered table-striped' style='max-width:350px'>"; // table-hover
+  echo "<thead>";
+  echo "<tr>";
+  echo "<th scope=col>Key signature</th>";
+  foreach ($modes as $mode) {
+    echo "<th scope=col class='text-center'>";
+    echo $mode;
+  }
+  echo "</thead>";
+  echo "<tbody>";
+  foreach ($keysigs as $keysig) {
+    echo "<tr>";
+    echo "<th>$keysig";
+    foreach ($modes as $mode) {
+      echo "<td class='text-center'>" . $cnt[$keysig . " " . $mode];
+    }
+  }
+  echo "</table>";
+}
+
 function show_timesig_stat($suid) {
-  GLOBAL $ml;
   $r = query("
     SELECT timesig, COUNT(*) AS cnt
     FROM exercises
@@ -80,13 +154,19 @@ function get_species($st) {
   }
   if (strlen($st) == 1) return 'Cantus';
   if (strlen($st) == 2 && $cnt['C']) return $max_species;
-  if (strlen($st) == 3 && $cnt['C']) return $max_species;
+  if (strlen($st) == 3 && $cnt['C'] && $cnt[1]) return $max_species;
+  if ($cnt['5'] + $cnt['C'] == strlen($st)) return $max_species;
   if (!$cnt['C']) return 'Free';
   return 'Mixed';
 }
 
+function get_mode($st) {
+  if ($st == "major" || $st == "minor") return $st;
+  return "other";
+}
+
 function show_species_timesig_stat($suid) {
-  GLOBAL $ml, $species_names, $timesigs;
+  GLOBAL $species_names, $timesigs;
   $r = query("
     SELECT timesig, species
     FROM exercises
@@ -99,7 +179,7 @@ function show_species_timesig_stat($suid) {
     $species = get_species($w['species']);
     $cnt[$w['timesig'] . ':' . $species] ++;
   }
-  echo "<p><table class='table table-bordered table-striped' style='max-width:900px'>"; // table-hover
+  echo "<p><table class='table table-sm table-bordered table-striped' style='max-width:900px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
   echo "<th scope=col>Time signature</th>";
@@ -121,7 +201,7 @@ function show_species_timesig_stat($suid) {
 }
 
 function show_species_voices_stat($suid) {
-  GLOBAL $ml, $species_names, $timesigs;
+  GLOBAL $species_names, $timesigs;
   $r = query("
     SELECT species
     FROM exercises
@@ -135,7 +215,7 @@ function show_species_voices_stat($suid) {
     $voices = strlen($w['species']);
     $cnt[$voices . ':' . $species] ++;
   }
-  echo "<p><table class='table table-bordered table-striped' style='max-width:800px'>"; // table-hover
+  echo "<p><table class='table table-sm table-bordered table-striped' style='max-width:800px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
   echo "<th scope=col>Voices</th>";
@@ -157,7 +237,7 @@ function show_species_voices_stat($suid) {
 }
 
 function show_exercises($suid) {
-  GLOBAL $ml, $ua, $uid, $login_result, $sua;
+  GLOBAL $ua, $uid, $login_result, $sua;
   if ($suid) {
     $cond = "AND exercises.u_id='$suid'";
     echo "<h3><center>Exercises by $sua[u_name]</center></h3>";
