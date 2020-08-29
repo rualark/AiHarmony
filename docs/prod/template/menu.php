@@ -60,6 +60,13 @@ show_chatovod("artquiz");
             <?=$ua['u_name'] ?></a>
           <div class="dropdown-menu" aria-labelledby="dropdown01">
             <a class="dropdown-item" href="<?=$url_root_ai?>/profile.php">Profile</a>
+      <?php
+        if ($ua['u_admin']) {
+      ?>
+            <a class="dropdown-item" href="users.php">Users</a>
+      <?php
+        }
+      ?>
             <a class="dropdown-item" href="<?=$url_root_ai?>/login.php?action=out&ru=<?=$_SERVER['REQUEST_URI']?>">Log out</a>
           </div>
         </li>

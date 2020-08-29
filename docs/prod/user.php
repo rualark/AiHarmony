@@ -6,7 +6,7 @@ require_once "lib/auth.php";
 
 $suid = secure_variable("suid");
 
-if (!login()) {
+if (!$login_result = login()) {
   die ("<script language=javascript>location.replace('login.php?ru=user.php?suid=$suid');</script>");
 }
 

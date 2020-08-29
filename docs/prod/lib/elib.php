@@ -15,7 +15,7 @@ function show_keysig_stat($suid) {
   $r = query("
     SELECT keysig, COUNT(*) AS cnt
     FROM exercises
-    WHERE u_id=$suid
+    WHERE u_id=$suid AND keysig != ''
     GROUP BY keysig
     ORDER BY cnt DESC
   ");
@@ -42,7 +42,7 @@ function show_timesig_stat($suid) {
   $r = query("
     SELECT timesig, COUNT(*) AS cnt
     FROM exercises
-    WHERE u_id=$suid
+    WHERE u_id=$suid AND timesig != ''
     GROUP BY timesig
     ORDER BY cnt DESC
   ");
@@ -169,7 +169,7 @@ function show_exercises($suid) {
   echo "<tr>";
   echo "<th scope=col>ID</th>";
   echo "<th scope=col>Published</th>";
-  echo "<th scope=col>User</th>";
+  if (!$suid) echo "<th scope=col>User</th>";
   echo "<th scope=col>Title</th>";
   echo "<th scope=col>Counterpoint</th>";
   echo "<th scope=col>Analysis</th>";
@@ -205,7 +205,7 @@ function show_exercises($suid) {
     echo "<tr>";
     echo "<td>$w[root_eid]</td>";
     echo "<td><a href='exercise.php?id=$w[root_eid]'>$w[publish_time]</td>";
-    echo "<td><a href=user.php?suid=$w[u_id]>$uname</td>";
+    if (!$suid) echo "<td><a href=user.php?suid=$w[u_id]>$uname</td>";
     echo "<td>";
     show_elock($w['security']);
     echo "<a href='exercise.php?id=$w[root_eid]'>";
