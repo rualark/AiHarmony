@@ -43,3 +43,6 @@ path:focus, text:focus, g:focus {
     -webkit-user-select: none;
     -ms-user-select: none;
   }
+.table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
+    background-color:#f7f7f7;
+ }

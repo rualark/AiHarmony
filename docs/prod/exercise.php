@@ -81,7 +81,7 @@ for ($i=0; $i<$n; ++$i) {
       echo "<b>Music is same</b> as in revision " . $wa[$found]['eid'] . "<br>";
     }
   }
-  echo "<a class='btn btn-outline-primary' target=_blank href='editor.html?state=$w[state]&rid=$w[root_eid]' role=button>Open revision</a> ";
+  echo "<a class='btn btn-outline-primary' target=_blank href='editor.html?state=$w[state]&rid=$w[root_eid]&eid=$w[eid]' role=button>Open revision</a> ";
 }
 
 require_once "template/footer.php";

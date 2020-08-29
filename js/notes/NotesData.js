@@ -3,7 +3,6 @@ import {saveState} from "../state/history.js";
 import {selected} from "../abc/abchelper.js";
 import { name2filename } from "../core/string.js";
 import { generateRandomHashWords } from "../core/hashwords.js";
-import { MD5 } from "../core/string.js";
 
 export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
 
@@ -311,6 +310,7 @@ export class NotesData {
     //this.set_name(`New exercise [${hash}]`);
     //this.set_fileName(`New-exercise-${hash}`);
     this.root_eid = 0;
+    this.eid = 0;
     this.set_name(generateRandomHashWords('A n n-###'));
     this.set_fileName(name2filename(this.name));
     this.algoMode = 0;
@@ -435,6 +435,11 @@ export class NotesData {
     this.root_eid = root_eid;
   }
 
+  set_eid(eid) {
+    this.eid = eid;
+    console.log('Eid', this.eid);
+  }
+
   set_voiceLocked(v, locked) {
     this.voices[v].locked = locked;
   }
@@ -497,53 +502,6 @@ export class NotesData {
       if (smin === smin_new) return smin;
       smin = smin_new;
     }
-  }
-
-  getMusicHash() {
-    let st = '';
-    st += this.keysig.name + this.keysig.mode + ' ';
-    st += this.timesig.measure_len + ' ' + this.timesig.beats_per_measure + ' ';
-    for (let v=0; v<this.voices.length; ++v) {
-      const vc = this.voices[v];
-      for (let n = 0; n < vc.notes.length; ++n) {
-        const nt = vc.notes[n];
-        if (!nt.d) continue;
-        let packed = '';
-        packed += nt.len;
-        packed += nt.startsTie ? 1 : 0;
-        packed += nt.alter;
-        packed += nt.d;
-        st += packed + ' ';
-      }
-    }
-    return MD5(st);
-  }
-
-  getAnnotationsHash() {
-    let st = '';
-    for (let v=0; v<this.voices.length; ++v) {
-      const vc = this.voices[v];
-      for (let n = 0; n < vc.notes.length; ++n) {
-        const nt = vc.notes[n];
-        if (nt.text) st += v + '' + n + nt.text + '~';
-        if (nt.lyric) st += v + '' + n + nt.lyric + '~';
-      }
-    }
-    if (st) return MD5(st);
-    else return '';
-  }
-
-  getAnnotationsCount() {
-    let cnt = 0;
-    for (let v=0; v<this.voices.length; ++v) {
-      const vc = this.voices[v];
-      for (let n = 0; n < vc.notes.length; ++n) {
-        const nt = vc.notes[n];
-        if (nt.text) cnt++;
-        if (nt.lyric) cnt++;
-      }
-    }
-    return cnt;
   }
 }
 

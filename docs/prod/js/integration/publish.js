@@ -4,8 +4,9 @@ import { mgen_login, urlNoParams } from "../core/remote.js";
 import { state2url, browser_id } from "../state/state.js";
 import { saveState } from "../state/history.js";
 import { ares } from "../analysis/AnalysisResults.js";
+import { getMusicHash, getAnnotationsHash, getPublishedModeName, getSpeciesString, getVocraString, getCantusHash } from "../notes/NotesPublish.js";
 
-export function publish(security) {
+export function publish(security, update=false) {
   $.ajax({
     type: 'POST',
     url: 'https://artinfuser.com/exercise/publish-exercise.php',
@@ -21,11 +22,17 @@ export function publish(security) {
       browser_id: browser_id,
       base_url: urlNoParams(),
       root_eid: nd.root_eid,
+      eid: update ? nd.eid : 0,
       logrocket: window.logrocketSessionUrl,
       algo: nd.algo,
       flags: ares.stats,
-      music_hash: nd.getMusicHash(),
-      annotations_hash: nd.getAnnotationsHash(),
+      music_hash: getMusicHash(),
+      annotations_hash: getAnnotationsHash(),
+      keysig: getPublishedModeName(),
+      species: getSpeciesString(),
+      cantus_hash: getCantusHash(),
+      vocra: getVocraString(),
+      timesig: nd.timesig.beats_per_measure + '/' + nd.timesig.beat_type,
     },
     dataType: 'html',
     success: function (data) {

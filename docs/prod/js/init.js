@@ -14,6 +14,7 @@ import {settings} from "./state/settings.js";
 import {nd} from "./notes/NotesData.js";
 import {trackEvent} from "./integration/tracking.js";
 import { showCantusModal } from "./ui/modal/cantusModal.js";
+import { publish } from "./integration/publish.js";
 
 function checkBrowserSupported() {
   if (navigator.browserSpecs.name !== 'Chrome' && navigator.browserSpecs.name !== 'Safari') {
@@ -36,6 +37,8 @@ function init() {
       url2state(getUrlParam('state'));
       const root_eid = getUrlParam('rid');
       if (root_eid) nd.set_root_eid(root_eid);
+      const eid = getUrlParam('eid');
+      if (eid) nd.set_eid(eid);
     }
     catch (e) {
       nd.reset();

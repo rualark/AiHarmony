@@ -24,12 +24,30 @@ $algo = mysqli_real_escape_string($ml, $_POST["algo"]);
 $flags = mysqli_real_escape_string($ml, $_POST["flags"]);
 $music_hash = mysqli_real_escape_string($ml, $_POST["music_hash"]);
 $annotations_hash = mysqli_real_escape_string($ml, $_POST["annotations_hash"]);
+$keysig = mysqli_real_escape_string($ml, $_POST["keysig"]);
+$species = mysqli_real_escape_string($ml, $_POST["species"]);
+$cantus_hash = mysqli_real_escape_string($ml, $_POST["cantus_hash"]);
+$vocra = mysqli_real_escape_string($ml, $_POST["vocra"]);
+$timesig = mysqli_real_escape_string($ml, $_POST["timesig"]);
+$eid = mysqli_real_escape_string($ml, $_POST["eid"]);
 
 if (isset($_SERVER["HTTP_X_REMOTE_ADDR"])) $ip =  $_SERVER["HTTP_X_REMOTE_ADDR"];
 else $ip = $_SERVER['REMOTE_ADDR'];
 
 $r = query("SELECT u_id FROM users WHERE u_login='$uname'");
 $wu = mysqli_fetch_assoc($r);
+
+if ($eid) {
+  query("
+    UPDATE exercises
+    SET keysig='$keysig', species='$species', cantus_hash='$cantus_hash', vocra='$vocra', timesig='$timesig'
+    WHERE root_eid='$root_eid' AND eid='$eid'
+  ");
+  echo "Published successfully\n";
+  echo "$root_eid\n";
+  echo "$eid\n";
+  die();
+}
 
 if (!$root_eid) {
   query("INSERT INTO root_exercises VALUES(0, 1)");
@@ -63,7 +81,7 @@ if (!$root_eid) {
 
 query("
   INSERT INTO exercises
-  VALUES('$root_eid', '$eid', NOW(), '$uname', '$wu[u_id]', '$browser_id', '$state', '$settings', '$title', '$fname', '$security', '$robot', '$token', '$base_url', '$ip', '$logrocket', '$algo', '$flags', '$music_hash', '$annotations_hash')
+  VALUES('$root_eid', '$eid', NOW(), '$uname', '$wu[u_id]', '$browser_id', '$state', '$settings', '$title', '$fname', '$security', '$robot', '$token', '$base_url', '$ip', '$logrocket', '$algo', '$flags', '$music_hash', '$annotations_hash', '$keysig', '$species', '$cantus_hash', '$vocra', '$timesig')
 ");
 
 echo "Published successfully\n";
