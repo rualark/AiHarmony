@@ -632,7 +632,7 @@ export let commands = [
   },
   {
     id: 'aic',
-    toolbar: {type: 'image', toolbar_id: 3, hintText: 'Report'},
+    toolbar: {type: 'image', toolbar_id: 3, hintText: 'Report', environment: 'dev'},
     event: 'onclick',
     keys: ['Ctrl+A'],
     command: () => { sendToAic() },
