@@ -201,7 +201,7 @@ function cantusToData(cid, arrangement, keysig, timesig) {
     nd.voices.push({
       clef: vocras[vocra].clef,
       name: vocras[vocra].short,
-      species: 10,
+      species: is_cantus ? 0 : 10,
       locked: is_cantus,
       notes: notes
     });
