@@ -1,5 +1,5 @@
 import {enableKeys} from "../ui/commands.js";
-import {environment, pageLoadTime, urlNoParams, mgen_login} from "../core/remote.js";
+import {environment, pageLoadTime, urlNoParams, mgen_login, mgen_name} from "../core/remote.js";
 import {debugError} from "../core/debug.js";
 import {state2url} from "../state/state.js";
 
@@ -10,7 +10,7 @@ window.showReportDialog = function (eventId) {
     console.log(e);
   }
   console.log(eventId);
-  Sentry.showReportDialog({eventId: eventId});
+  Sentry.showReportDialog({eventId: eventId, user: {email: mgen_login, name: mgen_name}});
 };
 
 if (environment !== 'prod?') {

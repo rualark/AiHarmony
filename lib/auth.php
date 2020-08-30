@@ -64,6 +64,7 @@ function enter() {
       session_start();
       $uid = $w['u_id'];
       SetCookie("mgen_login", $w['u_login'], time() + 50000, '/');
+      SetCookie("mgen_name", $w['u_name'], time() + 50000, '/');
       SetCookie("mgen_pass", md5($w['u_login'].$w['u_pass']), time() + 50000, '/');
       $_SESSION['mgen_u_id'] = $uid;
       lastAct();
@@ -86,6 +87,7 @@ function logout () {
   //echo "Current session u_id is ".$_SESSION['mgen_u_id'];
   unset($_SESSION['mgen_u_id']);
   SetCookie("mgen_login", "", -1, '/');
+  SetCookie("mgen_name", "", -1, '/');
   SetCookie("mgen_pass", "", -1, '/');
   //echo "Current cookies: ".$_COOKIE['mgen_login']." ".$_COOKIE['mgen_pass'];
   //echo "You are logged out";
@@ -102,8 +104,10 @@ function login() {
     if(isset($_COOKIE['mgen_login']) && isset($_COOKIE['mgen_pass'])) {
       // If both session and cookies exist, update cookies time
       SetCookie("mgen_login", "", -1, '/');
+      SetCookie("mgen_name", "", -1, '/');
       SetCookie("mgen_pass","", -1, '/');
       SetCookie("mgen_login", $_COOKIE['mgen_login'], time() + 50000, '/');
+      SetCookie("mgen_name", $_COOKIE['mgen_name'], time() + 50000, '/');
       SetCookie("mgen_pass", $_COOKIE['mgen_pass'], time() + 50000, '/');
       $uid = $_SESSION['mgen_u_id'];
       lastAct();
@@ -117,6 +121,7 @@ function login() {
       if (mysqli_num_rows($r) == 1) {
         $w = mysqli_fetch_assoc($r);
         SetCookie("mgen_login", $w['u_login'], time() + 50000, '/');
+        SetCookie("mgen_name", $w['u_name'], time() + 50000, '/');
         SetCookie("mgen_pass", md5($w['u_pass'].$w['u_pass']), time() + 50000, '/');
         $uid = $_SESSION['mgen_u_id'];
         lastAct();
@@ -143,6 +148,7 @@ function login() {
       else {
         // Clear cookies if failed authentication
         SetCookie("mgen_login", "", time() - 360000, '/');
+        SetCookie("mgen_name", "", time() - 360000, '/');
         SetCookie("mgen_pass", "", time() - 360000, '/');
         return 0;
       }

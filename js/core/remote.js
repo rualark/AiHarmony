@@ -26,7 +26,23 @@ function get_mgen_login() {
   return login ? login : '';
 }
 
+function get_mgen_name() {
+  let name = getCookie('mgen_name');
+  if (name) {
+    try {
+      if (name) name = decodeURIComponent(name.replace(/\+/g, "%20"));
+    }
+    catch (e) {}
+    // Save name to local storage, because it is stored longer
+    localStorage.setItem('mgen_name', name);
+  } else {
+    name = localStorage.getItem('mgen_name');
+  }
+  return name ? name : '';
+}
+
 export const mgen_login = get_mgen_login();
+export const mgen_name = get_mgen_name();
 
 function getEnvironment() {
   if (getUrlParam('test')) return "test";

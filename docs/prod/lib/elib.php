@@ -86,7 +86,7 @@ function show_cantusin_stat($suid) {
   echo "<p><table class='table table-sm table-dark table-bordered' style='max-width:300px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
-  echo "<th scope=col>Cantus in</th>";
+  echo "<th scope=col class='text-right'>Cantus in</th>";
   echo "<th scope=col class='text-center'>Exercises</th>";
   echo "</tr>\n";
   echo "</thead>";
@@ -104,7 +104,7 @@ function show_cantusin_stat($suid) {
   }
   foreach ($cantus_in as $in) {
     echo "<tr>";
-    echo "<th>$in voice";
+    echo "<th class='text-right'>$in voice";
     echo "<td class='text-center'>" . $cnt[$in];
   }
   echo "</table>";
@@ -133,7 +133,7 @@ function show_keysig_matrix($suid) {
   echo "<p><table class='table table-sm table-bordered table-dark' style='max-width:350px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
-  echo "<th scope=col>Key signature</th>";
+  echo "<th scope=col class='text-right'>Key signature</th>";
   foreach ($modes as $mode) {
     echo "<th scope=col class='text-center'>";
     echo $mode;
@@ -142,7 +142,7 @@ function show_keysig_matrix($suid) {
   echo "<tbody>";
   foreach ($keysigs as $keysig) {
     echo "<tr>";
-    echo "<th>$keysig";
+    echo "<th class='text-right' >$keysig";
     foreach ($modes as $mode) {
       $key = $keysig . " " . $mode;
       $title = '';
@@ -178,7 +178,7 @@ function show_close_vocra_matrix($suid) {
   echo "<p><table class='table table-sm table-dark table-bordered' style='max-width:350px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
-  echo "<th scope=col>Vocal range</th>";
+  echo "<th scope=col class='text-right'>Vocal range</th>";
   foreach ($vocras as $vocra) {
     echo "<th scope=col class='text-center'>";
     echo $vocra;
@@ -189,7 +189,7 @@ function show_close_vocra_matrix($suid) {
   foreach ($vocras as $vocra) {
     ++$x;
     echo "<tr>";
-    echo "<th>$vocra";
+    echo "<th class='text-right'>$vocra";
     $y = 0;
     foreach ($vocras as $vocra2) {
       ++$y;
@@ -215,7 +215,7 @@ function show_timesig_stat($suid) {
   echo "<p><table class='table table-striped table-bordered' style='max-width:300px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
-  echo "<th scope=col>Time signature</th>";
+  echo "<th scope=col class='text-right'>Time signature</th>";
   echo "<th scope=col>Exercises</th>";
   echo "</tr>\n";
   echo "</thead>";
@@ -223,7 +223,7 @@ function show_timesig_stat($suid) {
   for ($i=0; $i<$n; ++$i) {
     $w = mysqli_fetch_assoc($r);
     echo "<tr>";
-    echo "<td>$w[timesig]";
+    echo "<td class='text-right'>$w[timesig]";
     echo "<td>$w[cnt]";
   }
   echo "</table>";
@@ -250,7 +250,7 @@ function show_species_timesig_stat($suid) {
   echo "<p><table class='table table-sm table-bordered table-dark table-hover' style='max-width:570px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
-  echo "<th scope=col>Time signature</th>";
+  echo "<th scope=col class='text-right'>Time signature</th>";
   foreach ($species_names as $species) {
     echo "<th scope=col class='text-center'>";
     if (is_numeric($species)) echo "sp.";
@@ -260,7 +260,7 @@ function show_species_timesig_stat($suid) {
   echo "<tbody>";
   foreach ($timesigs as $timesig) {
     echo "<tr>";
-    echo "<th>$timesig";
+    echo "<th class='text-right'>$timesig";
     foreach ($species_names as $species) {
       $key = $timesig . ":" . $species;
       $title = implode(', ', array_keys($mapping[$key]));
@@ -294,7 +294,7 @@ function show_species_voices_stat($suid) {
   echo "<p><table class='table table-sm table-bordered table-dark table-hover' style='max-width:540px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
-  echo "<th scope=col>Voices</th>";
+  echo "<th scope=col class='text-right'>Voices</th>";
   foreach ($species_names as $species) {
     echo "<th scope=col class='text-center'>";
     if (is_numeric($species)) echo "sp.";
@@ -304,7 +304,7 @@ function show_species_voices_stat($suid) {
   echo "<tbody>";
   for ($voices=1; $voices<=$max_voices; ++$voices) {
     echo "<tr>";
-    echo "<th>$voices voices";
+    echo "<th class='text-right'>$voices voices";
     foreach ($species_names as $species) {
       $key = $voices . ":" . $species;
       $title = implode(', ', array_keys($mapping[$key]));

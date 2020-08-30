@@ -36,7 +36,7 @@ export function publish(security, update=false) {
     },
     dataType: 'html',
     success: function (data) {
-      console.log('Publish success', data);
+      console.log('Publish result', data);
       getPublishResult(data);
     },
     error: function (error) {
@@ -48,8 +48,7 @@ export function publish(security, update=false) {
 function getPublishResult(data) {
   let spl = data.split('\n');
   if (spl.length < 3 || spl[0] !== 'Published successfully' || isNaN(spl[1]) || isNaN(spl[2])) {
-    alertify.error('Error publishing exercise: ' + data);
-    return;
+    throw 'Error publishing exercise: ' + data;
   }
   const root_eid = spl[1];
   const eid = spl[2];
