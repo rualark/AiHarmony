@@ -5,6 +5,12 @@ $timesigs = array('2/4', '3/4', '2/2', '4/4', '5/4', '6/4', '3/2');
 $keysigs = array('C#', 'F#', 'B', 'E', 'A', 'D', 'G', 'C', 'F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Cb');
 $modes = array('major', 'minor', 'other');
 $cantus_in = array('higher', 'middle', 'lower');
+$vocras = array(
+  'S' => 'Soprano',
+  'A' => 'Alto',
+  'T' => 'Tenor',
+  'B' => 'Bass',
+);
 
 function show_elock($private) {
   GLOBAL $bheight, $vtypes;
@@ -49,7 +55,8 @@ function show_cantusin_stat($suid) {
     ORDER BY cnt DESC
   ");
   $n = mysqli_num_rows($r);
-  echo "<p><table class='table table-sm table-striped table-bordered' style='max-width:300px'>"; // table-hover
+  echo '<p><b>Exercises by voice with cantus:</b>';
+  echo "<p><table class='table table-sm table-dark table-bordered' style='max-width:300px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
   echo "<th scope=col>Cantus in</th>";
@@ -92,7 +99,8 @@ function show_keysig_matrix($suid) {
     $sa = explode(' ', $w['keysig']);
     $cnt[$sa[0] . ' ' . get_mode($sa[1])] += $w['cnt'];
   }
-  echo "<p><table class='table table-sm table-bordered table-striped' style='max-width:350px'>"; // table-hover
+  echo '<p><b>Exercises by key signature:</b>';
+  echo "<p><table class='table table-sm table-bordered table-dark' style='max-width:350px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
   echo "<th scope=col>Key signature</th>";
@@ -107,6 +115,51 @@ function show_keysig_matrix($suid) {
     echo "<th>$keysig";
     foreach ($modes as $mode) {
       echo "<td class='text-center'>" . $cnt[$keysig . " " . $mode];
+    }
+  }
+  echo "</table>";
+}
+
+function show_close_vocra_matrix($suid) {
+  GLOBAL $vocras;
+  $r = query("
+    SELECT vocra, COUNT(*) AS cnt
+    FROM exercises
+    WHERE u_id=$suid AND vocra != ''
+    GROUP BY vocra
+    ORDER BY cnt DESC
+  ");
+  $n = mysqli_num_rows($r);
+  $cnt = array();
+  for ($i=0; $i<$n; ++$i) {
+    $w = mysqli_fetch_assoc($r);
+    $st = $w['vocra'];
+    for ($v=0; $v<strlen($st)-1; $v++) {
+      $cnt[$st[$v] . $st[$v + 1]] += $w['cnt'];
+    }
+  }
+  echo '<p><b>Exercises by consecutive vocal ranges:</b>';
+  echo "<p><table class='table table-sm table-dark table-bordered' style='max-width:350px'>"; // table-hover
+  echo "<thead>";
+  echo "<tr>";
+  echo "<th scope=col>Vocal range</th>";
+  foreach ($vocras as $vocra) {
+    echo "<th scope=col class='text-center'>";
+    echo $vocra;
+  }
+  echo "</thead>";
+  echo "<tbody>";
+  $x = 0;
+  foreach ($vocras as $vocra) {
+    ++$x;
+    echo "<tr>";
+    echo "<th>$vocra";
+    $y = 0;
+    foreach ($vocras as $vocra2) {
+      ++$y;
+      $class = '';
+      if ($y < $x) $class = "bg-success";
+      echo "<td class='text-center $class'>" . $cnt[$vocra2[0] . $vocra[0]];
     }
   }
   echo "</table>";
@@ -179,7 +232,8 @@ function show_species_timesig_stat($suid) {
     $species = get_species($w['species']);
     $cnt[$w['timesig'] . ':' . $species] ++;
   }
-  echo "<p><table class='table table-sm table-bordered table-striped' style='max-width:900px'>"; // table-hover
+  echo '<p><b>Exercises by species and time signature:</b>';
+  echo "<p><table class='table table-sm table-bordered table-dark' style='max-width:900px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
   echo "<th scope=col>Time signature</th>";
@@ -201,7 +255,8 @@ function show_species_timesig_stat($suid) {
 }
 
 function show_species_voices_stat($suid) {
-  GLOBAL $species_names, $timesigs;
+  GLOBAL $species_names;
+  $max_voices = 4;
   $r = query("
     SELECT species
     FROM exercises
@@ -214,8 +269,10 @@ function show_species_voices_stat($suid) {
     $species = get_species($w['species']);
     $voices = strlen($w['species']);
     $cnt[$voices . ':' . $species] ++;
+    if ($voices > $max_voices) $max_voices = $voices;
   }
-  echo "<p><table class='table table-sm table-bordered table-striped' style='max-width:800px'>"; // table-hover
+  echo '<p><b>Exercises by species and key signature:</b>';
+  echo "<p><table class='table table-sm table-bordered table-dark' style='max-width:800px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
   echo "<th scope=col>Voices</th>";
@@ -226,7 +283,7 @@ function show_species_voices_stat($suid) {
   }
   echo "</thead>";
   echo "<tbody>";
-  for ($voices=1; $voices<6; ++$voices) {
+  for ($voices=1; $voices<=$max_voices; ++$voices) {
     echo "<tr>";
     echo "<th>$voices voices";
     foreach ($species_names as $species) {

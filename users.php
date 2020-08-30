@@ -23,6 +23,7 @@ $r = query("
   SELECT
     u_id,
     COUNT(*) AS cnt,
+    MAX(publish_time) as last_publish_time,
     MIN(u_name) AS u_name,
     MIN(u_login) AS u_login,
     MIN(u_lastact) AS u_lastact
@@ -39,6 +40,7 @@ echo "<tr>";
 echo "<th scope=col>User</th>";
 echo "<th scope=col>Email</th>";
 echo "<th scope=col>Exercises</th>";
+echo "<th scope=col>Last publish</th>";
 echo "<th scope=col>Last active</th>";
 echo "</tr>\n";
 echo "</thead>";
@@ -49,6 +51,7 @@ for ($i=0; $i<$n; ++$i) {
   echo "<td><a href=user.php?suid=$w[u_id]>$w[u_name]";
   echo "<td>$w[u_login]";
   echo "<td>$w[cnt]";
+  echo "<td>$w[last_publish_time]";
   echo "<td>$w[u_lastact]";
 }
 echo "</table>";

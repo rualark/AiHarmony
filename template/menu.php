@@ -59,7 +59,8 @@ show_chatovod("artquiz");
           <a class="nav-link dropdown-toggle" href='javascript:void(0)' id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <?=$ua['u_name'] ?></a>
           <div class="dropdown-menu" aria-labelledby="dropdown01">
-            <a class="dropdown-item" href="<?=$url_root_ai?>/profile.php">Profile</a>
+          <a class="dropdown-item" href="<?=$url_root_ai?>/profile.php">Profile</a>
+          <a class="dropdown-item" href="user.php?suid=<?=$uid?>">My exercises</a>
       <?php
         if ($ua['u_admin']) {
       ?>
