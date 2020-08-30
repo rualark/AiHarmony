@@ -121,10 +121,13 @@ function show_keysig_matrix($suid) {
   ");
   $n = mysqli_num_rows($r);
   $cnt = array();
+  $mapping = array();
   for ($i=0; $i<$n; ++$i) {
     $w = mysqli_fetch_assoc($r);
     $sa = explode(' ', $w['keysig']);
-    $cnt[$sa[0] . ' ' . get_mode($sa[1])] += $w['cnt'];
+    $key = $sa[0] . ' ' . get_mode($sa[1]);
+    $cnt[$key] += $w['cnt'];
+    $mapping[$key][$w['keysig']] += $w['cnt'];
   }
   echo '<p><b>Exercises by key signature:</b>';
   echo "<p><table class='table table-sm table-bordered table-dark' style='max-width:350px'>"; // table-hover
@@ -141,7 +144,10 @@ function show_keysig_matrix($suid) {
     echo "<tr>";
     echo "<th>$keysig";
     foreach ($modes as $mode) {
-      echo "<td class='text-center'>" . $cnt[$keysig . " " . $mode];
+      $key = $keysig . " " . $mode;
+      $title = '';
+      if ($mode == 'other') $title = implode(', ', array_keys($mapping[$key]));
+      echo "<td class='text-center' data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title='$title'>" . $cnt[$key];
     }
   }
   echo "</table>";
@@ -158,14 +164,17 @@ function show_close_vocra_matrix($suid) {
   ");
   $n = mysqli_num_rows($r);
   $cnt = array();
+  $mapping = array();
   for ($i=0; $i<$n; ++$i) {
     $w = mysqli_fetch_assoc($r);
     $st = $w['vocra'];
     for ($v=0; $v<strlen($st)-1; $v++) {
-      $cnt[$st[$v] . $st[$v + 1]] += $w['cnt'];
+      $key = $st[$v] . $st[$v + 1];
+      $cnt[$key] += $w['cnt'];
+      $mapping[$key][$w['vocra']] += $w['cnt'];
     }
   }
-  echo '<p><b>Exercises by consecutive vocal ranges:</b>';
+  echo '<p><b>Exercises by pairs of consecutive vocal ranges:</b>';
   echo "<p><table class='table table-sm table-dark table-bordered' style='max-width:350px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
@@ -186,7 +195,9 @@ function show_close_vocra_matrix($suid) {
       ++$y;
       $class = '';
       if ($y < $x) $class = "bg-success";
-      echo "<td class='text-center $class'>" . $cnt[$vocra2[0] . $vocra[0]];
+      $key = $vocra2[0] . $vocra[0];
+      $title = implode(', ', array_keys($mapping[$key]));
+      echo "<td class='text-center $class' data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title='$title'>" . $cnt[$key];
     }
   }
   echo "</table>";

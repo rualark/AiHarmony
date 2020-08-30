@@ -115,8 +115,8 @@ function fullModeName(keysig) {
   let st = keysig.name;
   if (keysig.mode === 0) st += ' major';
   if (st.endsWith('m')) st = st.slice(0, -1) + ' minor';
-  st = st.replace('mix', 'mixolydian');
   st = st.replace('lyd', 'lydian');
+  st = st.replace('mix', 'mixolydian');
   st = st.replace('loc', 'locrian');
   st = st.replace('dor', 'dorian');
   st = st.replace('phr', 'phrygian');
