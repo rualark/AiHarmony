@@ -17,3 +17,13 @@
 </footer>
 
 <script  defer src="plugin/bootstrap-4.3.1/js/bootstrap.bundle.min.js"></script>
+<script defer>
+$(function () {
+  let tts = $('[data-toggle="tooltip"]');
+  if (tts.length) {
+    tts.tooltip({
+      trigger: 'hover'
+    });
+  }
+});
+</script>

@@ -16,7 +16,7 @@ export let SEVERITY_RED = 80;
 export let SEVERITY_RED_COLOR = "red";
 export let SEVERITY_YELLOW_COLOR = "#F19900";
 
-let vocra_name = {
+export const vocra_name = {
   1: 'Bas.',
   2: 'Ten.',
   3: 'Alt.',

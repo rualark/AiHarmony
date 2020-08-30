@@ -12,6 +12,33 @@ $vocras = array(
   'B' => 'Bass',
 );
 
+function get_species($st) {
+  $cnt = array();
+  $max_species = 0;
+  if (strpos($st, 'C') === false) {
+    if (strpos($st, '1') !== false) {
+      $st[strpos($st, '1')] = 'C';
+    }
+  }
+  for ($i=0; $i<strlen($st); ++$i) {
+    $char = $st[$i];
+    $cnt[$char] ++;
+    if ($char == 'C') continue;
+    if ($char > $max_species) $max_species = $char;
+  }
+  if (strlen($st) == 1) return 'Cantus';
+  if (!$cnt['C']) return 'Free';
+  if (strlen($st) == 2 && $cnt['C']) return $max_species;
+  if (strlen($st) == 3 && $cnt['C'] && $cnt[1]) return $max_species;
+  if ($cnt['5'] + $cnt['C'] == strlen($st)) return $max_species;
+  return 'Mixed';
+}
+
+function get_mode($st) {
+  if ($st == "major" || $st == "minor") return $st;
+  return "other";
+}
+
 function show_elock($private) {
   GLOBAL $bheight, $vtypes;
   if ($private == 1) echo "<img data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title='Access allowed to all authenticated users' src=img/lock3.png height=$bheight> ";
@@ -191,33 +218,6 @@ function show_timesig_stat($suid) {
   echo "</table>";
 }
 
-function get_species($st) {
-  $cnt = array();
-  $max_species = 0;
-  if (strpos($st, 'C') === false) {
-    if (strpos($st, '1') !== false) {
-      $st[strpos($st, '1')] = 'C';
-    }
-  }
-  for ($i=0; $i<strlen($st); ++$i) {
-    $char = $st[$i];
-    $cnt[$char] ++;
-    if ($char == 'C') continue;
-    if ($char > $max_species) $max_species = $char;
-  }
-  if (strlen($st) == 1) return 'Cantus';
-  if (strlen($st) == 2 && $cnt['C']) return $max_species;
-  if (strlen($st) == 3 && $cnt['C'] && $cnt[1]) return $max_species;
-  if ($cnt['5'] + $cnt['C'] == strlen($st)) return $max_species;
-  if (!$cnt['C']) return 'Free';
-  return 'Mixed';
-}
-
-function get_mode($st) {
-  if ($st == "major" || $st == "minor") return $st;
-  return "other";
-}
-
 function show_species_timesig_stat($suid) {
   GLOBAL $species_names, $timesigs;
   $r = query("
@@ -227,19 +227,22 @@ function show_species_timesig_stat($suid) {
   ");
   $n = mysqli_num_rows($r);
   $cnt = array();
+  $mapping = array();
   for ($i=0; $i<$n; ++$i) {
     $w = mysqli_fetch_assoc($r);
     $species = get_species($w['species']);
-    $cnt[$w['timesig'] . ':' . $species] ++;
+    $key = $w['timesig'] . ':' . $species;
+    $mapping[$key][$w['species']]++;
+    $cnt[$key] ++;
   }
-  echo '<p><b>Exercises by species and time signature:</b>';
-  echo "<p><table class='table table-sm table-bordered table-dark' style='max-width:900px'>"; // table-hover
+  echo '<p><b>Exercises by counterpoint species and time signature:</b>';
+  echo "<p><table class='table table-sm table-bordered table-dark table-hover' style='max-width:570px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
   echo "<th scope=col>Time signature</th>";
   foreach ($species_names as $species) {
     echo "<th scope=col class='text-center'>";
-    if (is_numeric($species)) echo "Species ";
+    if (is_numeric($species)) echo "sp.";
     echo $species;
   }
   echo "</thead>";
@@ -248,7 +251,9 @@ function show_species_timesig_stat($suid) {
     echo "<tr>";
     echo "<th>$timesig";
     foreach ($species_names as $species) {
-      echo "<td class='text-center'>" . $cnt[$timesig . ":" . $species];
+      $key = $timesig . ":" . $species;
+      $title = implode(', ', array_keys($mapping[$key]));
+      echo "<td class='text-center' data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title='$title'>" . $cnt[$key];
     }
   }
   echo "</table>";
@@ -264,21 +269,24 @@ function show_species_voices_stat($suid) {
   ");
   $n = mysqli_num_rows($r);
   $cnt = array();
+  $mapping = array();
   for ($i=0; $i<$n; ++$i) {
     $w = mysqli_fetch_assoc($r);
     $species = get_species($w['species']);
     $voices = strlen($w['species']);
-    $cnt[$voices . ':' . $species] ++;
+    $key = $voices . ':' . $species;
+    $cnt[$key] ++;
+    $mapping[$key][$w['species']]++;
     if ($voices > $max_voices) $max_voices = $voices;
   }
-  echo '<p><b>Exercises by species and key signature:</b>';
-  echo "<p><table class='table table-sm table-bordered table-dark' style='max-width:800px'>"; // table-hover
+  echo '<p><b>Exercises by counterpoint species and key signature:</b>';
+  echo "<p><table class='table table-sm table-bordered table-dark table-hover' style='max-width:540px'>"; // table-hover
   echo "<thead>";
   echo "<tr>";
   echo "<th scope=col>Voices</th>";
   foreach ($species_names as $species) {
     echo "<th scope=col class='text-center'>";
-    if (is_numeric($species)) echo "Species ";
+    if (is_numeric($species)) echo "sp.";
     echo $species;
   }
   echo "</thead>";
@@ -287,7 +295,9 @@ function show_species_voices_stat($suid) {
     echo "<tr>";
     echo "<th>$voices voices";
     foreach ($species_names as $species) {
-      echo "<td class='text-center'>" . $cnt[$voices . ":" . $species];
+      $key = $voices . ":" . $species;
+      $title = implode(', ', array_keys($mapping[$key]));
+      echo "<td class='text-center' data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title='$title'>" . $cnt[$key];
     }
   }
   echo "</table>";

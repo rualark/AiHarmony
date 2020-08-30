@@ -1,5 +1,5 @@
 import {nd} from "../notes/NotesData.js";
-import { ares } from "../analysis/AnalysisResults.js";
+import { ares, vocra_name } from "../analysis/AnalysisResults.js";
 import { MD5 } from "../core/string.js";
 import { modeName } from "./noteHelper.js";
 
@@ -27,8 +27,6 @@ export function getCantusHash() {
   let st = '';
   for (let v=0; v<nd.voices.length; ++v) {
     const species = ares.getSpecies(v);
-    // Return empty string if there is problem with analysis
-    if (species == null) return '';
     if (species) continue;
     const vc = nd.voices[v];
     for (let n = 0; n < vc.notes.length; ++n) {
@@ -48,21 +46,19 @@ export function getCantusHash() {
 
 export function getSpeciesString() {
   let st = '';
-  for (let v=0; v<nd.voices.length; ++v) {
-    const species = ares.getSpecies(v);
-    // Return empty string if there is problem with analysis
-    if (species == null) return '';
+  console.log('vc', nd.voices.length);
+  for (let v=ares.vsp.length - 1; v>=0; --v) {
+    const species = ares.vsp[v];
     st += species ? species : "C";
   }
+  console.log('st', st);
   return st;
 }
 
 export function getVocraString() {
   let st = '';
-  for (let v=0; v<nd.voices.length; ++v) {
-    const vocra = ares.getVocra(v);
-    // Return empty string if there is problem with analysis
-    if (vocra == null) return '';
+  for (let v=ares.vocra.length - 1; v>=0; --v) {
+    const vocra = vocra_name[ares.vocra[v]];
     st += vocra[0];
   }
   return st;
