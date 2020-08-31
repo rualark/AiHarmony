@@ -39,23 +39,20 @@ export function getCantusHash() {
       st += packed + ' ';
     }
   }
-  console.log(st);
   if (st) return MD5(st);
   else return '';
 }
 
-export function getSpeciesString() {
+export function getSpeciesPacked() {
   let st = '';
-  console.log('vc', nd.voices.length);
   for (let v=ares.vsp.length - 1; v>=0; --v) {
     const species = ares.vsp[v];
     st += species ? species : "C";
   }
-  console.log('st', st);
   return st;
 }
 
-export function getVocraString() {
+export function getVocraPacked() {
   let st = '';
   for (let v=ares.vocra.length - 1; v>=0; --v) {
     const vocra = vocra_name[ares.vocra[v]];
@@ -78,6 +75,19 @@ export function getAnnotationsHash() {
   else return '';
 }
 
+export function getAnnotationsPacked() {
+  let st = '';
+  for (let v=0; v<nd.voices.length; ++v) {
+    const vc = nd.voices[v];
+    for (let n = 0; n < vc.notes.length; ++n) {
+      const nt = vc.notes[n];
+      if (nt.text) st += 't|' + v + '|' + n + '|' + nt.text.replace(/\~/g, "∼") + '~';
+      if (nt.lyric) st += 'l|' + v + '|' + n + '|' + nt.lyric.replace(/\~/g, "∼") + '~';
+    }
+  }
+  return st;
+}
+
 export function getAnnotationsCount() {
   let cnt = 0;
   for (let v=0; v<nd.voices.length; ++v) {
@@ -92,7 +102,6 @@ export function getAnnotationsCount() {
 }
 
 export function getPublishedModeName() {
-  console.log(nd.keysig, ares.mode);
   if (ares.mode != null) {
     return modeName(nd.keysig.fifths, ares.mode);
   } else {

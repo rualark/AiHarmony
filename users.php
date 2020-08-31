@@ -23,6 +23,7 @@ $r = query("
   SELECT
     u_id,
     COUNT(*) AS cnt,
+    COUNT(IF(security=3,1,NULL)) AS private_cnt,
     MAX(publish_time) as last_publish_time,
     MIN(u_name) AS u_name,
     MIN(u_login) AS u_login,
@@ -50,7 +51,12 @@ for ($i=0; $i<$n; ++$i) {
   echo "<tr>";
   echo "<td><a href=user.php?suid=$w[u_id]>$w[u_name]";
   echo "<td>$w[u_login]";
-  echo "<td>$w[cnt]";
+  $cnt = $w['cnt'] - $w['private_cnt'];
+  echo "<td>$cnt";
+  if ($w['private_cnt']) {
+    echo ", $w[private_cnt] ";
+    show_elock(3);
+  }
   echo "<td>$w[last_publish_time]";
   echo "<td>$w[u_lastact]";
 }

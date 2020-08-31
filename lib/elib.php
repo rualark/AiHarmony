@@ -41,9 +41,9 @@ function get_mode($st) {
 
 function show_elock($private) {
   GLOBAL $bheight, $vtypes;
-  if ($private == 1) echo "<img data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title='Access allowed to all authenticated users' src=img/lock3.png height=$bheight> ";
-  if ($private == 2) echo "<img data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title='Access allowed to author and administrators only' src=img/lock.png height=$bheight> ";
-  if ($private >= 3) echo "<img data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title='Access allowed to author only' src=img/lock2.png height=$bheight> ";
+  if ($private == 1) echo "<img style='vertical-align:bottom' data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title='Access allowed to all authenticated users' src=img/lock3.png height=$bheight> ";
+  if ($private == 2) echo "<img style='vertical-align:bottom' data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title='Access allowed to author and administrators only' src=img/lock.png height=$bheight> ";
+  if ($private >= 3) echo "<img style='vertical-align:bottom' data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title='Access allowed to author only' src=img/lock2.png height=$bheight> ";
 }
 
 function show_keysig_stat($suid) {
@@ -317,9 +317,10 @@ function show_species_voices_stat($suid) {
 function show_exercises($suid) {
   GLOBAL $ua, $uid, $login_result, $sua;
   if ($suid) {
-    $cond = "AND exercises.u_id='$suid'";
-    echo "<h3><center>Exercises by $sua[u_name]</center></h3>";
+    $cond = "exercises.u_id='$suid'";
+    echo "<h3><center>Revisions published by $sua[u_name]</center></h3>";
   } else {
+    $cond = "eid=1";
     echo "<h3><center>Exercises</center></h3>";
   }
   echo "<table class='table'>"; // table-striped table-hover
@@ -340,7 +341,7 @@ function show_exercises($suid) {
     SELECT * FROM exercises
     LEFT JOIN root_exercises USING (root_eid)
     LEFT JOIN users ON (exercises.u_id=users.u_id)
-    WHERE eid=1 $cond
+    WHERE $cond
     ORDER BY root_eid DESC
     LIMIT 1000
   ");
@@ -361,7 +362,8 @@ function show_exercises($suid) {
       continue;
     }
     echo "<tr>";
-    echo "<td>$w[root_eid]</td>";
+    echo "<td>$w[root_eid]";
+    if ($suid) echo ":$w[eid]";
     echo "<td><a href='exercise.php?id=$w[root_eid]'>$w[publish_time]</td>";
     if (!$suid) echo "<td><a href=user.php?suid=$w[u_id]>$uname</td>";
     echo "<td>";
@@ -372,7 +374,7 @@ function show_exercises($suid) {
     echo "$w[keysig] $w[timesig] $w[vocra] $w[species]";
     echo "<td> ";
     if ($w['algo'] == 'CA3') {
-      if ($w['ecount'] < 10) {
+      if ($w['ecount'] < 100) {
         echo "<a target=_blank href='editor.html?state=$w[state]&rid=$w[root_eid]&eid=$w[eid]' role=button>";
         if ($w['flags'] == 0) {
           echo "✅";

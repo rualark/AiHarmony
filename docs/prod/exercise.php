@@ -63,8 +63,8 @@ for ($i=0; $i<$n; ++$i) {
     }
     echo "<br>";
   }
-  if ($w['annotations_hash'] != '') {
-    $found = compareHash($w, $wa, "annotations_hash");
+  if ($w['annotations'] != '') {
+    $found = compareHash($w, $wa, "annotations");
     if ($found == -1) {
       if ($i) {
         echo "<b>Annotations changed</b><br>";

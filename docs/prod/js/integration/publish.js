@@ -4,7 +4,7 @@ import { mgen_login, urlNoParams } from "../core/remote.js";
 import { state2url, browser_id } from "../state/state.js";
 import { saveState } from "../state/history.js";
 import { ares } from "../analysis/AnalysisResults.js";
-import { getMusicHash, getAnnotationsHash, getPublishedModeName, getSpeciesString, getVocraString, getCantusHash } from "../notes/NotesPublish.js";
+import { getMusicHash, getAnnotationsHash, getPublishedModeName, getSpeciesPacked, getVocraPacked, getCantusHash, getAnnotationsPacked } from "../notes/NotesPublish.js";
 
 export function publish(security, update=false) {
   $.ajax({
@@ -27,11 +27,11 @@ export function publish(security, update=false) {
       algo: nd.algo,
       flags: ares.stats,
       music_hash: getMusicHash(),
-      annotations_hash: getAnnotationsHash(),
+      annotations: getAnnotationsPacked(),
       keysig: getPublishedModeName(),
-      species: getSpeciesString(),
+      species: getSpeciesPacked(),
       cantus_hash: getCantusHash(),
-      vocra: getVocraString(),
+      vocra: getVocraPacked(),
       timesig: nd.timesig.beats_per_measure + '/' + nd.timesig.beat_type,
     },
     dataType: 'html',
