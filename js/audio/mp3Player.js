@@ -16,7 +16,7 @@ function show_jplayer() {
   st += `
   <div class=p-1 id="jp_container">
     <span style='white-space:nowrap;'>
-      <a data-toggle=tooltip data-placement=top title='Play' class="btn btn-primary jp-play" href="#"><img src='img/play5.png' height=15></a>
+      <a class="btn btn-primary jp-play" href="#"><img src='img/play5.png' height=15></a>
       <a class="btn btn-primary jp-pause" href="#"><img src="img/pause3.png" height="15"></a>
       <a class="btn btn-primary jp-stop" href="#"><img src="img/stop2.png" height="15"></a>
     </span>

@@ -34,6 +34,7 @@ export function dataToAbc(instrument) {
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
     abc += `[V: V${v}]`;
+    if (instrument) abc += `!mp!`;
     let s = 0;
     let old_m = 0;
     let altmap = {};
