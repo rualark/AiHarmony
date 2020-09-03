@@ -15,12 +15,32 @@ export function getMusicHash() {
       let packed = '';
       packed += nt.len;
       packed += nt.startsTie ? 1 : 0;
-      packed += nt.alter;
+      packed += nd.get_realAlter(v, n);
       packed += nt.d;
       st += packed + ' ';
     }
   }
   return MD5(st);
+}
+
+export function getMusicPacked() {
+  let st = '';
+  st += nd.keysig.name + nd.keysig.mode + ' ';
+  st += nd.timesig.measure_len + ' ' + nd.timesig.beats_per_measure + ' ';
+  for (let v=0; v<nd.voices.length; ++v) {
+    const vc = nd.voices[v];
+    for (let n = 0; n < vc.notes.length; ++n) {
+      const nt = vc.notes[n];
+      if (!nt.d) continue;
+      let packed = '';
+      packed += nt.len;
+      packed += nt.startsTie ? 1 : 0;
+      packed += nd.get_realAlter(v, n);
+      packed += nt.d;
+      st += packed + ' ';
+    }
+  }
+  return st;
 }
 
 export function getCantusHash() {
@@ -34,13 +54,32 @@ export function getCantusHash() {
       if (!nt.d) continue;
       let packed = '';
       packed += nt.startsTie ? 1 : 0;
-      packed += nt.alter == 10 ? 0 : 1;
+      packed += nd.get_realAlter(v, n);
       packed += nt.d;
       st += packed + ' ';
     }
   }
   if (st) return MD5(st);
   else return '';
+}
+
+export function getCantusPacked() {
+  let st = '';
+  for (let v=0; v<nd.voices.length; ++v) {
+    const species = ares.getSpecies(v);
+    if (species) continue;
+    const vc = nd.voices[v];
+    for (let n = 0; n < vc.notes.length; ++n) {
+      const nt = vc.notes[n];
+      if (!nt.d) continue;
+      let packed = '';
+      packed += nt.startsTie ? 1 : 0;
+      packed += nd.get_realAlter(v, n);
+      packed += nt.d;
+      st += packed + ' ';
+    }
+  }
+  return st;
 }
 
 export function getSpeciesPacked() {

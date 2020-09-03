@@ -2,5 +2,11 @@
     "editor.tabSize": 2,
     "search.exclude": {
         "docs/prod/**": true
+    },
+    "files.exclude": {
+        "docs/prod/**": true
+    },
+    "files.watcherExclude": {
+        "docs/prod/**": true
     }
 }

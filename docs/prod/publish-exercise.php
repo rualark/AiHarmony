@@ -30,6 +30,7 @@ $cantus_hash = mysqli_real_escape_string($ml, $_POST["cantus_hash"]);
 $vocra = mysqli_real_escape_string($ml, $_POST["vocra"]);
 $timesig = mysqli_real_escape_string($ml, $_POST["timesig"]);
 $eid = mysqli_real_escape_string($ml, $_POST["eid"]);
+$debug = mysqli_real_escape_string($ml, $_POST["debug"]);
 
 if (isset($_SERVER["HTTP_X_REMOTE_ADDR"])) $ip =  $_SERVER["HTTP_X_REMOTE_ADDR"];
 else $ip = $_SERVER['REMOTE_ADDR'];
@@ -40,7 +41,7 @@ $wu = mysqli_fetch_assoc($r);
 if ($eid) {
   query("
     UPDATE exercises
-    SET keysig='$keysig', species='$species', cantus_hash='$cantus_hash', vocra='$vocra', timesig='$timesig'
+    SET keysig='$keysig', species='$species', music_hash='$music_hash', debug='$debug', cantus_hash='$cantus_hash', vocra='$vocra', timesig='$timesig', debug='$debug'
     WHERE root_eid='$root_eid' AND eid='$eid'
   ");
   echo "Published successfully\n";
@@ -81,7 +82,7 @@ if (!$root_eid) {
 
 query("
   INSERT INTO exercises
-  VALUES('$root_eid', '$eid', NOW(), '$uname', '$wu[u_id]', '$browser_id', '$state', '$settings', '$title', '$fname', '$security', '$robot', '$token', '$base_url', '$ip', '$logrocket', '$algo', '$flags', '$music_hash', '$annotations', '$keysig', '$species', '$cantus_hash', '$vocra', '$timesig')
+  VALUES('$root_eid', '$eid', NOW(), '$uname', '$wu[u_id]', '$browser_id', '$state', '$settings', '$title', '$fname', '$security', '$robot', '$token', '$base_url', '$ip', '$logrocket', '$algo', '$flags', '$music_hash', '$annotations', '$keysig', '$species', '$cantus_hash', '$vocra', '$timesig', '$debug')
 ");
 
 echo "Published successfully\n";

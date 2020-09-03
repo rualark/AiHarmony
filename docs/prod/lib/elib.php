@@ -317,10 +317,9 @@ function show_species_voices_stat($suid) {
 function show_exercises($suid) {
   GLOBAL $ua, $uid, $login_result, $sua;
   if ($suid) {
-    $cond = "exercises.u_id='$suid'";
-    echo "<h3><center>Revisions published by $sua[u_name]</center></h3>";
+    $cond = "WHERE exercises.u_id='$suid'";
+    echo "<h3><center>Exercises published by $sua[u_name]</center></h3>";
   } else {
-    $cond = "eid=1";
     echo "<h3><center>Exercises</center></h3>";
   }
   echo "<table class='table'>"; // table-striped table-hover
@@ -341,8 +340,8 @@ function show_exercises($suid) {
     SELECT * FROM exercises
     LEFT JOIN root_exercises USING (root_eid)
     LEFT JOIN users ON (exercises.u_id=users.u_id)
-    WHERE $cond
-    ORDER BY root_eid DESC
+    $cond
+    ORDER BY publish_time DESC
     LIMIT 1000
   ");
   $n = mysqli_num_rows($r);
@@ -363,7 +362,7 @@ function show_exercises($suid) {
     }
     echo "<tr>";
     echo "<td>$w[root_eid]";
-    if ($suid) echo ":$w[eid]";
+    echo ":$w[eid]";
     echo "<td><a href='exercise.php?id=$w[root_eid]'>$w[publish_time]</td>";
     if (!$suid) echo "<td><a href=user.php?suid=$w[u_id]>$uname</td>";
     echo "<td>";
