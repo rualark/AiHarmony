@@ -377,6 +377,7 @@ class AnalysisResults {
   }
 
   selectFlag(pf) {
+    if (!pf) return;
     let id = '.ares_' + pf.vi1 + '_' + pf.s1 + '_' + pf.f;
     $('.ares').css({"font-weight": ''});
     $(id).css({"font-weight": 'bold'});

@@ -1,5 +1,6 @@
 <?php
 
+$cookie_days = 30;
 $robot = secure_variable("robot");
 $token = secure_variable("token");
 $auth_error = "";
@@ -55,7 +56,7 @@ function pass_valid() {
 }
 
 function enter() {
-  GLOBAL $ml, $login, $password, $auth_error, $uid;
+  GLOBAL $ml, $login, $password, $auth_error, $uid, $cookie_days;
   $r = mysqli_query($ml,"SELECT * FROM users WHERE u_login='$login'");
   echo mysqli_error($ml);
   if (mysqli_num_rows($r) == 1) {
@@ -63,9 +64,9 @@ function enter() {
     if (md5(md5($password).$w['u_salt']) == $w['u_pass']) {
       session_start();
       $uid = $w['u_id'];
-      SetCookie("mgen_login", $w['u_login'], time() + 50000, '/');
-      SetCookie("mgen_name", $w['u_name'], time() + 50000, '/');
-      SetCookie("mgen_pass", md5($w['u_login'].$w['u_pass']), time() + 50000, '/');
+      SetCookie("mgen_login", $w['u_login'], time() + $cookie_days*24*60*60, '/');
+      SetCookie("mgen_name", $w['u_name'], time() + $cookie_days*24*60*60, '/');
+      SetCookie("mgen_pass", md5($w['u_login'].$w['u_pass']), time() + $cookie_days*24*60*60, '/');
       $_SESSION['mgen_u_id'] = $uid;
       lastAct();
       return 1;
@@ -97,7 +98,7 @@ function logout () {
 }
 
 function login() {
-  GLOBAL $ml, $uid, $robot, $token;
+  GLOBAL $ml, $uid, $robot, $token, $cookie_days;
   ini_set("session.use_trans_sid", true);
   session_start();
   if (isset($_SESSION['mgen_u_id'])) {
@@ -106,9 +107,9 @@ function login() {
       SetCookie("mgen_login", "", -1, '/');
       SetCookie("mgen_name", "", -1, '/');
       SetCookie("mgen_pass","", -1, '/');
-      SetCookie("mgen_login", $_COOKIE['mgen_login'], time() + 50000, '/');
-      SetCookie("mgen_name", $_COOKIE['mgen_name'], time() + 50000, '/');
-      SetCookie("mgen_pass", $_COOKIE['mgen_pass'], time() + 50000, '/');
+      SetCookie("mgen_login", $_COOKIE['mgen_login'], time() + $cookie_days*24*60*60, '/');
+      SetCookie("mgen_name", $_COOKIE['mgen_name'], time() + $cookie_days*24*60*60, '/');
+      SetCookie("mgen_pass", $_COOKIE['mgen_pass'], time() + $cookie_days*24*60*60, '/');
       $uid = $_SESSION['mgen_u_id'];
       lastAct();
       load_user();
@@ -120,9 +121,9 @@ function login() {
       echo mysqli_error($ml);
       if (mysqli_num_rows($r) == 1) {
         $w = mysqli_fetch_assoc($r);
-        SetCookie("mgen_login", $w['u_login'], time() + 50000, '/');
-        SetCookie("mgen_name", $w['u_name'], time() + 50000, '/');
-        SetCookie("mgen_pass", md5($w['u_pass'].$w['u_pass']), time() + 50000, '/');
+        SetCookie("mgen_login", $w['u_login'], time() + $cookie_days*24*60*60, '/');
+        SetCookie("mgen_name", $w['u_name'], time() + $cookie_days*24*60*60, '/');
+        SetCookie("mgen_pass", md5($w['u_pass'].$w['u_pass']), time() + $cookie_days*24*60*60, '/');
         $uid = $_SESSION['mgen_u_id'];
         lastAct();
         load_user();
