@@ -99,6 +99,10 @@ export function dataToAbc(instrument) {
             // Same altered
             show_alter = 10;
           }
+          if (n && vc.notes[n - 1].startsTie && vc.notes[n - 1].d && nt.d) {
+            // Hide alteration after tie
+            show_alter = 10;
+          }
         }
         altmap[d] = nt.alter;
         let abc_note = d2abc(d - clefs[vc.clef].transpose);
