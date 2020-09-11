@@ -5,5 +5,5 @@ K:C
 L:1/16
 V: V0 clef=treble name="Piano\n[Sop.]\n(sp. 5)"
 V: V1 clef=bass name="Piano\n[Bas.]\n(c.f.)"
-[V: V0]z4G4e4c4|B4A4G4F4|G8c8-|"^?"c4B2A2B8|A8d8-|d4c2B2c4A4|B4g4f4e4|d8A8|G8c8-|c4B2A2B8|c16|z16|
-[V: V1]C,16|D,16|E,16|G,16|F,16|A,16|G,16|F,16|E,16|D,16|C,16|z16|
+[V: V0]z4G4e4c4|B4"^ø"A4"^ø"G4F4|G8c8-|"^ø""^⚠️"c4"^ø"B2"^ø"A2B8|A8d8-|"^ø"d4"^ø"c2"^ø"B2c4A4|B4g4"^ø"f4"^ø"e4|d8A8|G8c8-|"^ø"c4"^ø"B2"^ø"A2B8|c16|z16|
+[V: V1]"_I"C,16|"_VII6"D,16|"_I6"E,16|"_V"G,16|"_II6"F,16|"_VI"A,16|"_V"G,16|"_II6"F,16|"_I6"E,16|"_VII6"D,16|"_I"C,16|z16|

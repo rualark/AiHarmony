@@ -65,6 +65,7 @@ show_chatovod("artquiz");
         if ($ua['u_admin']) {
       ?>
             <a class="dropdown-item" href="users.php">Users</a>
+            <a class="dropdown-item" target=_blank href="<?=$url_root_ai?>/stats.php">Stats</a>
       <?php
         }
       ?>
