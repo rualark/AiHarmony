@@ -4,7 +4,8 @@ import { mgen_login, urlNoParams } from "../core/remote.js";
 import { state2url, browser_id } from "../state/state.js";
 import { saveState } from "../state/history.js";
 import { ares } from "../analysis/AnalysisResults.js";
-import { getMusicHash, getAnnotationsHash, getPublishedModeName, getSpeciesPacked, getVocraPacked, getCantusHash, getAnnotationsPacked, getMusicPacked, getCantusPacked } from "../notes/NotesPublish.js";
+import { getMusicHash, getPublishedModeName, getSpeciesPacked, getVocraPacked, getCantusHash, getAnnotationsPacked, getMusicPacked, getCantusPacked } from "../notes/NotesPublish.js";
+import { getMistakesPacked } from "../notes/NotesPublish.js";
 
 export function publish(security, update=false) {
   $.ajax({
@@ -33,6 +34,7 @@ export function publish(security, update=false) {
       species: getSpeciesPacked(),
       cantus_hash: getCantusHash(),
       vocra: getVocraPacked(),
+      mistakes: getMistakesPacked(),
       timesig: nd.timesig.beats_per_measure + '/' + nd.timesig.beat_type,
     },
     dataType: 'html',

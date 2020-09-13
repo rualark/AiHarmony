@@ -30,6 +30,10 @@ show_close_vocra_matrix($suid);
 show_species_timesig_stat($suid);
 show_species_voices_stat($suid);
 
+if ($ua['u_admin']) {
+  show_mistakes_stat($suid);
+}
+
 show_exercises($suid);
 
 require_once "template/footer.php";

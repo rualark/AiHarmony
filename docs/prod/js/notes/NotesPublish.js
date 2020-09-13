@@ -2,6 +2,7 @@ import {nd} from "../notes/NotesData.js";
 import { ares, vocra_name } from "../analysis/AnalysisResults.js";
 import { MD5 } from "../core/string.js";
 import { modeName } from "./noteHelper.js";
+import { settings } from "../state/settings.js";
 
 export function getMusicHash() {
   let st = '';
@@ -88,6 +89,42 @@ export function getSpeciesPacked() {
     const species = ares.vsp[v];
     st += species ? species : "C";
   }
+  return st;
+}
+
+export function getMistakesPacked() {
+  let st = '';
+  let mistakes = {};
+  for (let v=ares.flag.length - 1; v>=0; --v) {
+    for (const s in ares.flag[v]) {
+      for (const f in ares.flag[v][s]) {
+        let fla = ares.flag[v][s][f];
+        if (fla.accept !== 0) continue;
+        if (fla.severity < settings.show_min_severity) continue;
+        let ruleName = fla.name;
+        if (ruleName.includes(":")) {
+          ruleName = ruleName.slice(0, ruleName.indexOf(':'));
+        }
+        const name = fla.class + ': ' + ruleName;
+        const key = name + fla.fl + fla.severity;
+        if (key in mistakes) {
+          mistakes[key].count += 1;
+        } else {
+          mistakes[key] = {
+            name: name,
+            rid: fla.fl,
+            severity: fla.severity,
+            count: 1,
+          };
+        }
+      }
+    }
+  }
+  for (const key in mistakes) {
+    const mistake = mistakes[key];
+    st += `${mistake.rid}|${mistake.severity}|${mistake.count}|${mistake.name}~`;
+  }
+  console.log(st);
   return st;
 }
 

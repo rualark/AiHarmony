@@ -46,8 +46,8 @@ async function workerMessageReceiver(event) {
     ares.printFlags();
     if (mgen_login === 'rualark@gmail.com' && nd.eid) {
       // Update in database
-      //publish(0, true);
-      //nd.eid = 0;
+      publish(0, true);
+      nd.eid = 0;
     }
     //console.log(ares);
     async_redraw();

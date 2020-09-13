@@ -31,6 +31,7 @@ $vocra = mysqli_real_escape_string($ml, $_POST["vocra"]);
 $timesig = mysqli_real_escape_string($ml, $_POST["timesig"]);
 $eid = mysqli_real_escape_string($ml, $_POST["eid"]);
 $debug = mysqli_real_escape_string($ml, $_POST["debug"]);
+$mistakes_st = mysqli_real_escape_string($ml, $_POST["mistakes"]);
 
 if (isset($_SERVER["HTTP_X_REMOTE_ADDR"])) $ip =  $_SERVER["HTTP_X_REMOTE_ADDR"];
 else $ip = $_SERVER['REMOTE_ADDR'];
@@ -38,12 +39,25 @@ else $ip = $_SERVER['REMOTE_ADDR'];
 $r = query("SELECT u_id FROM users WHERE u_login='$uname'");
 $wu = mysqli_fetch_assoc($r);
 
+$mistakes = array();
+if ($mistakes_st) {
+  $msa = explode("~", $mistakes_st);
+  for ($i=0; $i<count($msa); ++$i) {
+    $mistakes[] = explode("|", $msa[$i]);
+  }
+}
+
 if ($eid) {
   query("
     UPDATE exercises
     SET keysig='$keysig', species='$species', music_hash='$music_hash', debug='$debug', cantus_hash='$cantus_hash', vocra='$vocra', timesig='$timesig', debug='$debug'
     WHERE root_eid='$root_eid' AND eid='$eid'
   ");
+  query("DELETE FROM mistakes WHERE root_eid='$root_eid' AND eid='$eid'");
+  foreach ($mistakes as $mistake) {
+    if (!$mistake[0]) break;
+    query("INSERT INTO mistakes VALUES('$root_eid', '$eid', '$mistake[0]', '$mistake[1]', '$mistake[2]', '$mistake[3]')");
+  }
   echo "Published successfully\n";
   echo "$root_eid\n";
   echo "$eid\n";

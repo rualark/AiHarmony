@@ -72,6 +72,43 @@ function show_keysig_stat($suid) {
   echo "</table>";
 }
 
+function show_mistakes_stat($suid) {
+  $r = query("
+    SELECT
+      MAX(severity) AS severity,
+      mtext,
+      SUM(cnt) AS total,
+      COUNT(*) AS exercises
+    FROM exercises
+    INNER JOIN mistakes USING (root_eid, eid)
+    WHERE u_id=$suid
+    GROUP BY mtext
+    ORDER BY total DESC
+    LIMIT 20
+  ");
+  $n = mysqli_num_rows($r);
+  echo '<p><b>Most frequent mistakes:</b>';
+  echo "<p><table class='table table-sm table-dark table-bordered' style='max-width:700px'>"; // table-hover
+  echo "<thead>";
+  echo "<tr>";
+  echo "<th scope=col>Mistke</th>";
+  echo "<th scope=col>Count</th>";
+  echo "<th scope=col>Exercises</th>";
+  echo "</tr>\n";
+  echo "</thead>";
+  echo "<tbody>";
+  for ($i=0; $i<$n; ++$i) {
+    $w = mysqli_fetch_assoc($r);
+    echo "<tr>";
+    $color = '#dddd00';
+    if ($w['severity'] > 80) $color='#ff8877';
+    echo "<td><span style='color:$color'>$w[mtext]";
+    echo "<td>$w[total]";
+    echo "<td>$w[exercises]";
+  }
+  echo "</table>";
+}
+
 function show_cantusin_stat($suid) {
   GLOBAL $cantus_in;
   $r = query("
