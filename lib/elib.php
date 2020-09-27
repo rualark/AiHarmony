@@ -1,5 +1,6 @@
 <?php
 
+$SEVERITY_RED = 80;
 $species_names = array('Cantus', 1, 2, 3, 4, 5, 'Mixed', 'Free');
 $timesigs = array('2/4', '3/4', '2/2', '4/4', '5/4', '6/4', '3/2');
 $keysigs = array('C#', 'F#', 'B', 'E', 'A', 'D', 'G', 'C', 'F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Cb');

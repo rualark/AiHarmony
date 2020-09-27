@@ -19,6 +19,59 @@ function compareHash($w, $wa, $key) {
   return -1;
 }
 
+function get_mistakes($root_eid, $eid) {
+  $r = query("SELECT * FROM mistakes WHERE root_eid=$root_eid AND eid=$eid");
+  $n = mysqli_num_rows($r);
+  $m = array();
+  for ($i=0; $i<$n; ++$i) {
+    $w = mysqli_fetch_assoc($r);
+    $key = $w['severity'] . '|' . $w['mtext'];
+    $m[$key] = $w['cnt'];
+  }
+  return $m;
+}
+
+function show_mistake_changes($w, $wa, $key) {
+  GLOBAL $SEVERITY_RED;
+  $root_eid = $w['root_eid'];
+  $eid1 = $wa[$key]['eid'];
+  $eid2 = $w['eid'];
+  $m1 = get_mistakes($root_eid, $eid1);
+  $m2 = get_mistakes($root_eid, $eid2);
+  foreach ($m1 as $key => $cnt) {
+    $delta = $cnt - $m2[$key];
+    if ($delta < 1) continue;
+    $sa = explode("|", $key);
+    $severity = $sa[0];
+    $mtext = $sa[1];
+    if ($severity >= $SEVERITY_RED) {
+      echo "<strike style='color:red'>";
+    } else {
+      echo "<strike style='color:orange'>";
+    }
+    echo $mtext;
+    if ($delta > 1) echo " (x$delta)";
+    echo "</strike>";
+    echo "<br>";
+  }
+  foreach ($m2 as $key => $cnt) {
+    $delta = $cnt - $m1[$key];
+    if ($delta < 1) continue;
+    $sa = explode("|", $key);
+    $severity = $sa[0];
+    $mtext = $sa[1];
+    if ($severity >= $SEVERITY_RED) {
+      echo "<span style='color:red'>";
+    } else {
+      echo "<span style='color:orange'>";
+    }
+    echo $mtext;
+    if ($delta > 1) echo " (x$delta)";
+    echo "</span>";
+    echo "<br>";
+  }
+}
+
 $r = query("
   SELECT * FROM exercises
   LEFT JOIN users USING (u_id)
@@ -37,7 +90,7 @@ for ($i=0; $i<$n; ++$i) {
   echo "<hr>";
   show_elock($w['security']);
   echo "<b>Revision $w[eid]</b> ";
-  echo "uploaded $w[publish_time] by $uname<br>";
+  echo "uploaded $w[publish_time] by <a href=user.php?suid=$w[u_id]>$uname</a><br>";
   if ($w['security'] > 0 && !$login_result) {
     echo "<span style='color:red'>Accessing this revision requires authentication</span><br>";
     continue;
@@ -79,6 +132,7 @@ for ($i=0; $i<$n; ++$i) {
       echo "<b>Music changed</b><br>";
     } else {
       echo "<b>Music is same</b> as in revision " . $wa[$found]['eid'] . "<br>";
+      show_mistake_changes($w, $wa, $found);
     }
   }
   echo "<a class='btn btn-outline-primary' target=_blank href='editor.html?state=$w[state]&rid=$w[root_eid]&eid=$w[eid]' role=button>Open revision</a> ";
