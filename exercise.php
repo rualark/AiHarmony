@@ -13,7 +13,7 @@ require_once "template/menu.php";
 echo "<div class=container><br>";
 
 function compareHash($w, $wa, $key) {
-  for ($i=0; $i<count($wa) - 1; ++$i) {
+  for ($i=count($wa) - 2; $i>=0; --$i) {
     if ($w[$key] == $wa[$i][$key]) return $i;
   }
   return -1;
