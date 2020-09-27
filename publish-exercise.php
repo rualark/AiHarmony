@@ -59,7 +59,7 @@ function update_mistakes($mistakes) {
 if ($eid) {
   query("
     UPDATE exercises
-    SET keysig='$keysig', species='$species', music_hash='$music_hash', debug='$debug', cantus_hash='$cantus_hash', vocra='$vocra', timesig='$timesig', debug='$debug'
+    SET keysig='$keysig', species='$species', music_hash='$music_hash', debug='$debug', cantus_hash='$cantus_hash', vocra='$vocra', timesig='$timesig', debug='$debug', annotations='$annotations'
     WHERE root_eid='$root_eid' AND eid='$eid'
   ");
   update_mistakes($mistakes);
