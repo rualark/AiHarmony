@@ -60,6 +60,7 @@ function show_mistake_changes($w, $wa, $key) {
     $sa = explode("|", $key);
     $severity = $sa[0];
     $mtext = $sa[1];
+    echo "+ ";
     if ($severity >= $SEVERITY_RED) {
       echo "<span style='color:red'>";
     } else {
