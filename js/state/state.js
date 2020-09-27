@@ -1,6 +1,6 @@
 import {nd, NotesData} from "../notes/NotesData.js";
 import {async_redraw, selected} from "../abc/abchelper.js";
-import {currentTimestamp, start_counter} from "../core/time.js";
+import {currentTimestamp, start_counter, timestamp2date} from "../core/time.js";
 import {b256_safeString, safeString_b256, ui_b256, b256_ui} from "../core/base256.js";
 import { generateRandomId } from "../core/string.js";
 
@@ -161,8 +161,7 @@ export function plain2data(st, pos, target, full) {
       selected.note = null;
     }
   }
-  //let time = b256_ui(st, pos, 4);
-  //console.log('Decoded time:', time, timestamp2date(time));
+  target.decoded_time = timestamp2date(b256_ui(st, pos, 4));
   //console.log(nd);
 }
 
@@ -235,6 +234,7 @@ export function url2state(url) {
   let plain = LZString.decompressFromBase64(b64);
   //console.log('url2state plain', plain);
   plain2data(plain, [0], nd, true);
+  console.log('This url was shared', nd.decoded_time)
 }
 
 export function storage2archiveStorage(why) {

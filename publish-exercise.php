@@ -47,17 +47,22 @@ if ($mistakes_st) {
   }
 }
 
+function update_mistakes($mistakes) {
+  GLOBAL $root_eid, $eid;
+  query("DELETE FROM mistakes WHERE root_eid='$root_eid' AND eid='$eid'");
+  foreach ($mistakes as $mistake) {
+    if (!$mistake[0]) break;
+    query("INSERT INTO mistakes VALUES('$root_eid', '$eid', '$mistake[0]', '$mistake[1]', '$mistake[2]', '$mistake[3]')");
+  }
+}
+
 if ($eid) {
   query("
     UPDATE exercises
     SET keysig='$keysig', species='$species', music_hash='$music_hash', debug='$debug', cantus_hash='$cantus_hash', vocra='$vocra', timesig='$timesig', debug='$debug'
     WHERE root_eid='$root_eid' AND eid='$eid'
   ");
-  query("DELETE FROM mistakes WHERE root_eid='$root_eid' AND eid='$eid'");
-  foreach ($mistakes as $mistake) {
-    if (!$mistake[0]) break;
-    query("INSERT INTO mistakes VALUES('$root_eid', '$eid', '$mistake[0]', '$mistake[1]', '$mistake[2]', '$mistake[3]')");
-  }
+  update_mistakes($mistakes);
   echo "Published successfully\n";
   echo "$root_eid\n";
   echo "$eid\n";
@@ -98,6 +103,7 @@ query("
   INSERT INTO exercises
   VALUES('$root_eid', '$eid', NOW(), '$uname', '$wu[u_id]', '$browser_id', '$state', '$settings', '$title', '$fname', '$security', '$robot', '$token', '$base_url', '$ip', '$logrocket', '$algo', '$flags', '$music_hash', '$annotations', '$keysig', '$species', '$cantus_hash', '$vocra', '$timesig', '$debug')
 ");
+update_mistakes($mistakes);
 
 echo "Published successfully\n";
 echo "$root_eid\n";
