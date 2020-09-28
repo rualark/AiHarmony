@@ -26,7 +26,7 @@ function get_mistakes($root_eid, $eid) {
   for ($i=0; $i<$n; ++$i) {
     $w = mysqli_fetch_assoc($r);
     $key = $w['severity'] . '|' . $w['mtext'];
-    $m[$key] = $w['cnt'];
+    $m[$key] += $w['cnt'];
   }
   return $m;
 }
