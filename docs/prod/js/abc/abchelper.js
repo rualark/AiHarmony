@@ -224,6 +224,7 @@ export function init_abcjs(clickListener) {
     dragColor: "#3399FF",
     staffwidth: window.innerWidth - 60,
     wrap: {minSpacing: 1.1, maxSpacing: 1.4, preferredMeasuresPerLine: 16},
+    //showDebug: ['grid', 'box'],
     //responsive: true,
     format: {
       titlefont: "Verdana 9 italic bold",
