@@ -59,8 +59,11 @@ export class NotesClipboard {
     // Append measures if needed to all voices
     const last_note = nd.voices[0].notes[nd.voices[0].notes.length - 1];
     const new_measures = Math.floor((s2 - last_note.step + last_note.len) / mlen);
+    console.log('new_mea', new_measures, s2, last_note.step, last_note.len, mlen);
     if (new_measures > 0) {
-      nd.append_measure(false);
+      for (let i=0; i<new_measures; ++i) {
+        nd.append_measure(false);
+      }
       nd.update_note_steps();
     }
     for (let v=v1; v<=v2; ++v) {
