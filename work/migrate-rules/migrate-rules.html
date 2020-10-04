@@ -496,9 +496,16 @@ console.log(newRules);
 console.assert(rules.length == newRules.length);
 
 let st = '';
+st += '<table>';
 for (let i=0; i<rules.length; ++i) {
-  st += toString(rules[i]) + " -> " + toString(newRules[i]) + '<br>';
+  console.log(rules[i][0], '=>', newRules[i][0]);
+  st += '<tr>';
+  for (const r of newRules[i]) {
+    st += `<td>${r}</td>`;
+  }
+  st += '</tr>';
 }
+st += '</table>';
 document.getElementById('output').innerHTML = st;
 
 </script>
