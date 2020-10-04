@@ -109,11 +109,13 @@ echo "Published successfully\n";
 echo "$root_eid\n";
 echo "$eid\n";
 
-if ($uname != 'ru@gmail.com') {
+if ($uname != 'rualark@gmail.com') {
   $res = send_mail(array('rualark@gmail.com'), array (
     'From' => "$site_name <noreply@$domain_mail>",
     'To' => 'rualark@gmail.com',
     'Subject' => "Published #$root_eid/$eid. $uname $title",
   ), "$uname published #$root_eid/$eid. $title:\r\n\r\n".
-    "$url_main/exercise.php?id=$root_eid\r\n\r\nYou are receiving this email because you signed up for $site_name.\r\nPlease do not reply to this email.\r\nVisit $url_main/profile.php to modify your email notification settings.");
+    "$url_main/exercise.php?id=$root_eid\r\n\r\n" .
+    count($mistakes) . " mistakes" .
+    "\r\n\r\nYou are receiving this email because you signed up for $site_name.\r\nPlease do not reply to this email.\r\nVisit $url_main/profile.php to modify your email notification settings.");
 }
