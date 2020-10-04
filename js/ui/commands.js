@@ -1,4 +1,5 @@
 import {
+  delete_selection,
   increment_note,
   increment_octave,
   repeat_element,
@@ -680,7 +681,13 @@ export let commands = [
   },
   {
     keys: ['Delete'],
-    command: () => { set_rest(false) },
+    command: () => {
+      if (selected.note && selected.note.n12) {
+        delete_selection();
+      } else {
+        set_rest(false)
+      }
+    },
     name: 'Delete note',
   },
   {

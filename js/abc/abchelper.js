@@ -5,7 +5,6 @@ import {update_selection} from "../ui/selection.js";
 import {settings} from "../state/settings.js";
 import {SEVERITY_RED, SEVERITY_RED_COLOR, SEVERITY_YELLOW_COLOR} from "../analysis/AnalysisResults.js";
 import { future } from "../ui/edit/editNote.js";
-import { json_stringify_circular } from "../core/string.js";
 
 export let MAX_ABC_NOTE = 60;
 export let MIN_ABC_NOTE = 1;
