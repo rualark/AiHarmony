@@ -134,11 +134,9 @@ export function paste_selection(redraw=true) {
   if (selected.note == null) return;
   let el = selected.note;
   // Check if voices are locked
-  for (let v=el.voice; v<=el.voice + nclip.source.v2 - nclip.source.v1; ++v) {
-    if (v < nd.voices.length && nd.voices[v].locked) {
-      alertify.error('Note editing is prohibited in this part. Please click part name and disable protection.', 10);
-      return;
-    }
+  if (nd.voicesAreLocked(el.voice, el.voice + nclip.source.v2 - nclip.source.v1)) {
+    alertify.error('Note editing is prohibited in this part. Please click part name and disable protection.', 10);
+    return;
   }
   const result = nclip.paste(el.voice, el.note);
   if (result) {

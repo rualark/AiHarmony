@@ -1,6 +1,8 @@
 import {
+  delete_selection,
   increment_note,
   increment_octave,
+  increment_selection,
   repeat_element,
   set_note,
   set_rest,
@@ -513,7 +515,13 @@ export let commands = [
     toolbar: {type: 'text', text: '+8', fullText: '+8ve', fontSize: 1.2, toolbar_id: 1},
     event: 'onclick',
     keys: ['Shift+UpArrow'],
-    command: () => { increment_octave(1) },
+    command: () => {
+      if (selected.note && selected.note.n12) {
+        increment_selection(7);
+      } else {
+        increment_octave(1);
+      }
+    },
     name: 'Move note up an octave',
   },
   {
@@ -521,7 +529,13 @@ export let commands = [
     toolbar: {type: 'text', text: '-8', fullText: '-8ve', fontSize: 1.2, toolbar_id: 1},
     event: 'onclick',
     keys: ['Shift+DownArrow'],
-    command: () => { increment_octave(-1) },
+    command: () => {
+      if (selected.note && selected.note.n12) {
+        increment_selection(-7);
+      } else {
+        increment_octave(-1);
+      }
+    },
     name: 'Move note down an octave',
   },
   { separator: true, toolbar: {toolbar_id: 1} },
@@ -680,7 +694,13 @@ export let commands = [
   },
   {
     keys: ['Delete'],
-    command: () => { set_rest(false) },
+    command: () => {
+      if (selected.note && selected.note.n12) {
+        delete_selection();
+      } else {
+        set_rest(false)
+      }
+    },
     name: 'Delete note',
   },
   {
@@ -701,12 +721,24 @@ export let commands = [
   },
   {
     keys: ['UpArrow'],
-    command: () => { increment_note(1) },
+    command: () => {
+      if (selected.note && selected.note.n12) {
+        increment_selection(1);
+      } else {
+        increment_note(1);
+      }
+    },
     name: 'Move note up',
   },
   {
     keys: ['DownArrow'],
-    command: () => { increment_note(-1) },
+    command: () => {
+      if (selected.note && selected.note.n12) {
+        increment_selection(-1);
+      } else {
+        increment_note(-1);
+      }
+    },
     name: 'Move note down',
   },
   {

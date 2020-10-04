@@ -93,7 +93,7 @@ export class NotesData {
       let debt = len - note.len;
       for (let n = ni + 1; n < notes.length; ++n) {
         if (debt < notes[n].len) {
-          nd.set_rest(v, n, false);
+          this.set_rest(v, n, false);
           notes[n].len = notes[n].len - debt;
           notes[n].startsTie = false;
           break;
@@ -108,7 +108,7 @@ export class NotesData {
     }
     else {
       notes.splice(ni + 1, 0, {d: 0, alter: 10, len: note.len - len, startsTie: false});
-      nd.set_rest(v, ni + 1, false);
+      this.set_rest(v, ni + 1, false);
     }
     note.len = len;
     note.startsTie = false;
@@ -459,8 +459,8 @@ export class NotesData {
   }
 
   update_note_steps() {
-    for (let v=0; v<nd.voices.length; ++v) {
-      let vc = nd.voices[v];
+    for (let v=0; v<this.voices.length; ++v) {
+      let vc = this.voices[v];
       let s = 0;
       for (let n=0; n<vc.notes.length; ++n) {
         let nt = vc.notes[n];
@@ -475,9 +475,9 @@ export class NotesData {
     for (let attempt=0; attempt<10000; ++attempt) {
       let smax_new = smax;
       for (let v=vmin; v<=vmax; v++) {
-        const voice = nd.voices[v];
+        const voice = this.voices[v];
         const notes = voice.notes;
-        const n2 = nd.getClosestNote(v, smax_new);
+        const n2 = this.getClosestNote(v, smax_new);
         if (notes[n2].step + notes[n2].len - 1 > smax_new) {
           smax_new = notes[n2].step + notes[n2].len - 1;
         }
@@ -492,9 +492,9 @@ export class NotesData {
     for (let attempt=0; attempt<10000; ++attempt) {
       let smin_new = smin;
       for (let v=vmin; v<=vmax; v++) {
-        const voice = nd.voices[v];
+        const voice = this.voices[v];
         const notes = voice.notes;
-        const n2 = nd.getClosestNote(v, smin_new);
+        const n2 = this.getClosestNote(v, smin_new);
         if (notes[n2].step < smin_new) {
           smin_new = notes[n2].step;
         }
@@ -502,6 +502,16 @@ export class NotesData {
       if (smin === smin_new) return smin;
       smin = smin_new;
     }
+  }
+
+  // Check if any voice in range is locked
+  voicesAreLocked(vmin, vmax) {
+    for (let v=vmin; v<=vmax; ++v) {
+      if (v < this.voices.length && this.voices[v].locked) {
+        return true;
+      }
+    }
+    return false;
   }
 }
 

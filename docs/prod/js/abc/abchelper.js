@@ -1,11 +1,10 @@
 import {dataToAbc} from "./dataToAbc.js";
 import {nd} from "../notes/NotesData.js";
-import {start_counter} from "../core/time.js";
+import {start_counter, stop_counter} from "../core/time.js";
 import {update_selection} from "../ui/selection.js";
 import {settings} from "../state/settings.js";
 import {SEVERITY_RED, SEVERITY_RED_COLOR, SEVERITY_YELLOW_COLOR} from "../analysis/AnalysisResults.js";
 import { future } from "../ui/edit/editNote.js";
-import { json_stringify_circular } from "../core/string.js";
 
 export let MAX_ABC_NOTE = 60;
 export let MIN_ABC_NOTE = 1;
@@ -171,7 +170,7 @@ function notation_redraw() {
     $('#filename').prop('title', 'File name: ' + nd.fileName);
     start_counter('renderAbc');
     abcjs = ABCJS.renderAbc('abc', dataToAbc(), parserParams, engraverParams);
-    //stop_counter();
+    stop_counter();
     if (selected.note) {
       highlightNote();
       highlightRange();

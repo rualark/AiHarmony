@@ -136,6 +136,66 @@ export function repeat_element() {
   async_redraw();
 }
 
+export function delete_selection() {
+  if (state.state !== 'ready') return;
+  if (!selected.note || !selected.note.n12) return;
+  const v1 = selected.note.v1;
+  const v2 = selected.note.v2;
+  // Check if voices are locked
+  if (nd.voicesAreLocked(v1, v2)) {
+    alertify.error('Note editing is prohibited in this part. Please click part name and disable protection.', 10);
+    return;
+  }
+  const s1 = selected.note.s1;
+  const s2 = selected.note.s2;
+  for (let v=v1; v<=v2; ++v) {
+    const vc = nd.voices[v];
+    const notes = vc.notes;
+    const n1 = nd.getClosestNote(v, s1);
+    const n2 = nd.getClosestNote(v, s2);
+    for (let n=n1; n<=n2; n++) {
+      nd.set_rest(v, n, false);
+      if (n) {
+        notes[n - 1].startsTie = false;
+      }
+    }
+  }
+  saveState();
+  async_redraw();
+}
+
+export function increment_selection(dnote) {
+  if (state.state !== 'ready') return;
+  if (!selected.note || !selected.note.n12) return;
+  const v1 = selected.note.v1;
+  const v2 = selected.note.v2;
+  // Check if voices are locked
+  if (nd.voicesAreLocked(v1, v2)) {
+    alertify.error('Note editing is prohibited in this part. Please click part name and disable protection.', 10);
+    return;
+  }
+  const s1 = selected.note.s1;
+  const s2 = selected.note.s2;
+  for (let v=v1; v<=v2; ++v) {
+    const vc = nd.voices[v];
+    const notes = vc.notes;
+    const n1 = nd.getClosestNote(v, s1);
+    const n2 = nd.getClosestNote(v, s2);
+    for (let n=n1; n<=n2; n++) {
+      const note = notes[n];
+      const d = note.d;
+      // Skip rests
+      if (!d) continue;
+      // Skip too high/low notes
+      if (d + dnote >= MAX_ABC_NOTE || d + dnote <= MIN_ABC_NOTE) continue;
+      note.alter = nd.inherited_alter(v, n, d + dnote);
+      nd.set_note(v, n, d + dnote, false);
+    }
+  }
+  saveState();
+  async_redraw();
+}
+
 export function set_rest(advance) {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
