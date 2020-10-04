@@ -5,7 +5,7 @@ import {b256_safeString, safeString_b256, ui_b256, b256_ui} from "../core/base25
 import { generateRandomId } from "../core/string.js";
 
 const MIN_ENCODING_VERSION = 14;
-const MAX_ENCODING_VERSION = 16;
+const MAX_ENCODING_VERSION = 17;
 export const STATE_VOLATILE_SUFFIX = 7;
 const MAX_ARCHIVE_COUNT = 80;
 const MAX_ARCHIVE_BYTES = 200000;
@@ -64,6 +64,10 @@ export function data2plain() {
   st += safeString_b256(nd.fileName, 1);
   st += ui_b256(nd.tempo, 1);
   st += ui_b256(nd.root_eid, 4);
+  st += ui_b256(Object.keys(nd.rules_whitelist).length, 1);
+  for (const rid in nd.rules_whitelist) {
+    st += ui_b256(rid, 2);
+  }
   if (selected.note == null) {
     st += ui_b256(255, 1);
     st += ui_b256(0, 2);
@@ -152,6 +156,13 @@ export function plain2data(st, pos, target, full) {
   }
   if (saved_encoding_version >= 16) {
     target.set_root_eid(b256_ui(st, pos, 4));
+  }
+  target.rules_whitelist = Object.create(null);
+  if (saved_encoding_version >= 17) {
+    let wcount = b256_ui(st, pos, 1);
+    for (let i = 0; i<wcount; ++i) {
+      target.rules_whitelist[b256_ui(st, pos, 2)] = true;
+    }
   }
   let v = b256_ui(st, pos, 1);
   let n = b256_ui(st, pos, 2);
