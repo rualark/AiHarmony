@@ -72,8 +72,15 @@ export function readMusicXml(xml, filename) {
     selected.note = {voice: 0, note: 0};
     saveState(true);
   } catch (e) {
-    storage2state();
     alertify.alert('Error loading MusicXML', e.toString());
+    try {
+      storage2state();
+    }
+    catch (e2) {
+      if (e2 === "No previous state stored in this browser") {
+        alertify.notify("Your exercises will be stored in this browser");
+      } else console.trace(e2);
+    }
   }
   async_redraw();
 }
