@@ -418,6 +418,7 @@ class AnalysisResults {
 
   static notifyFlag(pf) {
     alertify.dismissAll();
+    if (!pf) return;
     let color = '#A36F00';
     if (pf.severity > SEVERITY_RED) color = 'red';
     alertify.notify(`<span style='color: ${color}'><b>${pf.text}</b></span>`, 'custom', 60);

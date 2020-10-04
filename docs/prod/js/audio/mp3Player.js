@@ -9,7 +9,7 @@ function show_jplayer() {
   let st = '';
   st += "<div style='line-height:50%'><br></div>";
   st += "<div style='position: relative; overflow: hidden'>";
-  st += `<img width=100% height=120 class='jplayer_waveform' style='border-top: 1px solid #DDDDDD;border-bottom: 1px solid #DDDDDD;' id='jplayer_waveform' src='${ais.j_url_png}'>`;
+  st += `<img width=100% height=120 class='jplayer_waveform' style='border-top: 1px solid #DDDDDD;border-bottom: 1px solid #DDDDDD;' id='jplayer_waveform'>`;
   st += "<img class='jplayer_progress' id='jplayer_progress' src=img/black.png height=400 width=0 style='opacity: 0.25; position: absolute; top: 0px; left: 0px;'></a>";
   st += "<input class='jplayer_pos_input' id='jplayer_pos_input' type=image name=icor src='img/red.png' width='100%' height='100%' style='position: absolute; top: 0px; left: 0px; opacity: 0; cursor: url(img/aim40_32.png) 17  18, auto'>";
   st += "</div>";
@@ -96,5 +96,6 @@ function show_jplayer() {
 export function showMp3Player() {
   if (my_jPlayer == null) show_jplayer();
   $('#aisFileLink').attr('href', `https://artinfuser.com/studio/file.php?f_id=${ais.f_id}`);
+  $('#jplayer_waveform').attr('src', ais.j_url_png);
   my_jPlayer.jPlayer('setMedia', {mp3: ais.j_url});
 }
