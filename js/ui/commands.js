@@ -38,6 +38,7 @@ import { showTransposeModal } from "./modal/transposeModal.js";
 import { environment } from "../core/remote.js";
 import { grow_selection_horizontal, grow_selection_vertical, copy_selection, paste_selection, select_mode } from "./edit/editSelection.js";
 import { showPublishModal } from "./modal/publishModal.js";
+import { showNewFileModal } from "./modal/newFileModal.js";
 
 let mobileOpt = {
   true: {
@@ -260,7 +261,7 @@ export let commands = [
     toolbar: {type: 'image', toolbar_id: 2, hintText: 'New'},
     event: 'onclick',
     keys: ['Alt+N'],
-    command: () => { new_file() },
+    command: () => { showNewFileModal() },
     name: 'New file',
   },
   {
