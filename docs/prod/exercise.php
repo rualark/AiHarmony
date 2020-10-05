@@ -133,7 +133,9 @@ for ($i=0; $i<$n; ++$i) {
       echo "<b>Music changed</b><br>";
     } else {
       echo "<b>Music is same</b> as in revision " . $wa[$found]['eid'] . "<br>";
-      show_mistake_changes($w, $wa, $found);
+      if ($w['algo'] == 'CA3' && $wa[$found]['algo'] == 'CA3') {
+        show_mistake_changes($w, $wa, $found);
+      }
     }
   }
   echo "<a class='btn btn-outline-primary' target=_blank href='editor.html?state=$w[state]&rid=$w[root_eid]&eid=$w[eid]' role=button>Open revision</a> ";

@@ -305,7 +305,7 @@ export class NotesData {
     this.saveState();
   }
 
-  reset() {
+  reset(parts) {
     //const hash = generateRandomId(10);
     //this.set_name(`New exercise [${hash}]`);
     //this.set_fileName(`New-exercise-${hash}`);
@@ -378,6 +378,9 @@ export class NotesData {
         ]
       },
     ];
+    if (parts < 4) {
+      this.voices.splice(1, 3 - parts + 1);
+    }
     selected.note = {voice: 0, note: 0};
     this.abc_charStarts = [];
   }

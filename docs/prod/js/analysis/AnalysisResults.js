@@ -10,6 +10,8 @@ import {selected} from "../abc/abchelper.js";
 import {environment} from "../core/remote.js";
 import {rules_paragraphs} from "../data/rules_paragraphs.js";
 import { mobileOrTablet } from "../core/mobileCheck.js";
+import { enableKeys } from "../ui/commands.js";
+import { saveState } from "../state/history.js";
 
 let ARES_ENCODING_VERSION = 5;
 export let SEVERITY_RED = 80;
@@ -101,6 +103,9 @@ class AnalysisResults {
             debugSt: b256_safeString(st, pos, 2),
             paragraph_num: b256_ui(st, pos, 1),
           };
+          if (environment !== 'prod') {
+            if (Object.keys(nd.rules_whitelist).length && !(flag.fl in nd.rules_whitelist)) continue;
+          }
           this.flag[v][s + this.s_start].push(flag);
         }
       }
@@ -268,6 +273,17 @@ class AnalysisResults {
     if (!this.errors.length && !fcnt) st += `<span style='color:green'><b>&#x2705; No mistakes</b></span>`;
     // if (this.previous_print_st !== st) {
     // this.previous_print_st = st;
+    if (environment !== 'prod') {
+      st += `<br>`;
+      if (window.location.href.includes('/exercise/')) {
+        st += `<a href=# id=harmony_dev><img class=imgmo2 alt='Go to development environment' src=img/sandbox.png height=24 /></a> `;
+      }
+      st += `<a href=# id=rules_whitelist><img class=imgmo2 alt='Rules whitelist' src=img/filter.png height=24 /></a> `;
+      if (Object.keys(nd.rules_whitelist).length) {
+        st += `Rules whitelist enabled: ${Object.keys(nd.rules_whitelist).join(',')}`;
+      }
+    }
+    st += '<br><br>';
     document.getElementById('analysisConsole').innerHTML = st;
     for (const fc of noteClick) {
       $('.ares_' + fc.vi + '_' + fc.n).click(() => {
@@ -279,6 +295,30 @@ class AnalysisResults {
       let id = '.ares_' + fc.vi1 + '_' + fc.s1 + '_' + fc.f;
       $(id).click(() => {
         this.selectFlag(fc);
+        return false;
+      });
+    }
+    if (environment !== 'prod') {
+      $('#harmony_dev').click(() => {
+        window.location.href = window.location.href.replace(/\/exercise\//, "/harmony-dev/");
+      });
+      $('#rules_whitelist').click(() => {
+        enableKeys(false);
+        bootbox.prompt({
+          title: "Rules whitelist",
+          value: Object.keys(nd.rules_whitelist).join(','),
+          callback: function(value) {
+            enableKeys(true);
+            if (value == null) return;
+            nd.rules_whitelist = Object.create(null);
+            for (const st of value.split(',')) {
+              const rid = st.trim();
+              if (rid === "") continue;
+              nd.rules_whitelist[rid] = true;
+            }
+            saveState(true);
+          }
+        });
         return false;
       });
     }

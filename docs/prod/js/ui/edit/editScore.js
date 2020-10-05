@@ -64,10 +64,10 @@ export function voiceChange(dv) {
   update_selection();
 }
 
-export function new_file() {
+export function new_file(parts=4) {
   if (state.state !== 'ready') return;
   storage2archiveStorage(1);
-  nd.reset();
+  nd.reset(parts);
   saveState(true);
   async_redraw();
 }
