@@ -274,9 +274,13 @@ class AnalysisResults {
     // if (this.previous_print_st !== st) {
     // this.previous_print_st = st;
     if (environment !== 'prod') {
-      st += `<br><a href=# id=rules_whitelist><img class=imgmo2 alt='Rules whitelist' src=img/filter.png height=22 /></a>`;
+      st += `<br>`;
+      if (window.location.href.includes('/exercise/')) {
+        st += `<a href=# id=harmony_dev><img class=imgmo2 alt='Go to development environment' src=img/sandbox.png height=24 /></a> `;
+      }
+      st += `<a href=# id=rules_whitelist><img class=imgmo2 alt='Rules whitelist' src=img/filter.png height=24 /></a> `;
       if (Object.keys(nd.rules_whitelist).length) {
-        st += ` Rules whitelist enabled: ${Object.keys(nd.rules_whitelist).join(',')}`;
+        st += `Rules whitelist enabled: ${Object.keys(nd.rules_whitelist).join(',')}`;
       }
     }
     st += '<br><br>';
@@ -295,6 +299,9 @@ class AnalysisResults {
       });
     }
     if (environment !== 'prod') {
+      $('#harmony_dev').click(() => {
+        window.location.href = window.location.href.replace(/\/exercise\//, "/harmony-dev/");
+      });
       $('#rules_whitelist').click(() => {
         enableKeys(false);
         bootbox.prompt({
