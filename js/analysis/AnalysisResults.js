@@ -276,7 +276,7 @@ class AnalysisResults {
     if (environment !== 'prod') {
       st += `<br><a href=# id=rules_whitelist><img class=imgmo2 alt='Rules whitelist' src=img/filter.png height=22 /></a>`;
       if (Object.keys(nd.rules_whitelist).length) {
-        st += ` <span title='${Object.keys(nd.rules_whitelist).join(',')}'>Rules whitelist enabled</span>`;
+        st += ` Rules whitelist enabled: ${Object.keys(nd.rules_whitelist).join(',')}`;
       }
     }
     st += '<br><br>';
