@@ -314,6 +314,7 @@ export class NotesData {
     this.set_name(generateRandomHashWords('A n n-###'));
     this.set_fileName(name2filename(this.name));
     this.rules_whitelist = Object.create(null);
+    this.rules_blacklist = Object.create(null);
     this.algoMode = 0;
     this.phrases = [ 0 ];
     this.build_keysig(0, 13);
