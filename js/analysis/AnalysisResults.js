@@ -277,6 +277,8 @@ class AnalysisResults {
       st += `<br>`;
       if (window.location.href.includes('/exercise/')) {
         st += `<a href=# id=harmony_dev><img class=imgmo2 alt='Go to development environment' src=img/sandbox.png height=24 /></a> `;
+      } else {
+        st += `<a href=# id=harmony_dev><img class=imgmo2 alt='Go to production environment' src=img/worker.png height=24 /></a> `;
       }
       st += `<a href=# id=rules_whitelist><img class=imgmo2 alt='Rules whitelist' src=img/filter.png height=24 /></a> `;
       if (Object.keys(nd.rules_whitelist).length) {
@@ -300,7 +302,11 @@ class AnalysisResults {
     }
     if (environment !== 'prod') {
       $('#harmony_dev').click(() => {
-        window.location.href = window.location.href.replace(/\/exercise\//, "/harmony-dev/");
+        if (window.location.href.includes('/exercise/')) {
+          window.location.href = window.location.href.replace(/\/exercise\//, "/harmony-dev/");
+        } else {
+          window.location.href = window.location.href.replace(/\/harmony-dev\//, "/exercise/");
+        }
       });
       $('#rules_whitelist').click(() => {
         enableKeys(false);
@@ -357,6 +363,7 @@ class AnalysisResults {
     let va = this.vid2[v];
     if (!this.msh || va >= this.msh.length) return 0;
     if (!(pos in this.msh[va])) return 0;
+    console.log(JSON.stringify(this.msh[va]));
     return this.msh[va][pos];
   }
 
