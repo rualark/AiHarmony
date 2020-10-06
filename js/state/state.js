@@ -66,7 +66,10 @@ export function data2plain() {
   st += ui_b256(nd.root_eid, 4);
   st += ui_b256(Object.keys(nd.rules_whitelist).length, 1);
   for (const rid in nd.rules_whitelist) {
-    st += ui_b256(rid, 2);
+    st += ui_b256(Number(rid), 2);
+  }
+  for (const rid in nd.rules_blacklist) {
+    st += ui_b256(Number(rid) + 1024, 2);
   }
   if (selected.note == null) {
     st += ui_b256(255, 1);
@@ -158,10 +161,16 @@ export function plain2data(st, pos, target, full) {
     target.set_root_eid(b256_ui(st, pos, 4));
   }
   target.rules_whitelist = Object.create(null);
+  target.rules_blacklist = Object.create(null);
   if (saved_encoding_version >= 17) {
     let wcount = b256_ui(st, pos, 1);
     for (let i = 0; i<wcount; ++i) {
-      target.rules_whitelist[b256_ui(st, pos, 2)] = true;
+      const packed = b256_ui(st, pos, 2);
+      if (packed > 1024) {
+        target.rules_blacklist[packed - 1024] = true;
+      } else {
+        target.rules_whitelist[packed] = true;
+      }
     }
   }
   let v = b256_ui(st, pos, 1);

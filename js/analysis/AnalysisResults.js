@@ -105,6 +105,7 @@ class AnalysisResults {
           };
           if (environment !== 'prod') {
             if (Object.keys(nd.rules_whitelist).length && !(flag.fl in nd.rules_whitelist)) continue;
+            if (flag.fl in nd.rules_blacklist) continue;
           }
           this.flag[v][s + this.s_start].push(flag);
         }
@@ -280,9 +281,12 @@ class AnalysisResults {
       } else {
         st += `<a href=# id=harmony_dev><img class=imgmo2 alt='Go to production environment' src=img/worker.png height=24 /></a> `;
       }
-      st += `<a href=# id=rules_whitelist><img class=imgmo2 alt='Rules whitelist' src=img/filter.png height=24 /></a> `;
+      st += `<a href=# id=rules_filter><img class=imgmo2 alt='Rules filter' src=img/filter.png height=24 /></a> `;
       if (Object.keys(nd.rules_whitelist).length) {
-        st += `Rules whitelist enabled: ${Object.keys(nd.rules_whitelist).join(',')}`;
+        st += ` Rules whitelist: ${Object.keys(nd.rules_whitelist).join(',')}`;
+      }
+      if (Object.keys(nd.rules_blacklist).length) {
+        st += ` Rules blacklist: <strike>${Object.keys(nd.rules_blacklist).join(',')}</strike)`;
       }
     }
     st += '<br><br>';
@@ -308,11 +312,18 @@ class AnalysisResults {
           window.location.href = window.location.href.replace(/\/harmony-dev\//, "/exercise/");
         }
       });
-      $('#rules_whitelist').click(() => {
+      $('#rules_filter').click(() => {
         enableKeys(false);
+        let st = Object.keys(nd.rules_whitelist).join(',');
+        const st2 = Object.keys(nd.rules_blacklist).map(v => -v).join(',');
+        if (st && st2) {
+          st = st + "," + st2;
+        } else {
+          st = st + st2;
+        }
         bootbox.prompt({
-          title: "Rules whitelist",
-          value: Object.keys(nd.rules_whitelist).join(','),
+          title: "Rules filter",
+          value: st,
           callback: function(value) {
             enableKeys(true);
             if (value == null) return;
@@ -320,8 +331,14 @@ class AnalysisResults {
             for (const st of value.split(',')) {
               const rid = st.trim();
               if (rid === "") continue;
-              nd.rules_whitelist[rid] = true;
+              console.log(rid);
+              if (rid < 0) {
+                nd.rules_blacklist[-rid] = true;
+              } else {
+                nd.rules_whitelist[rid] = true;
+              }
             }
+            console.log(nd.rules_blacklist);
             saveState(true);
           }
         });
@@ -363,7 +380,6 @@ class AnalysisResults {
     let va = this.vid2[v];
     if (!this.msh || va >= this.msh.length) return 0;
     if (!(pos in this.msh[va])) return 0;
-    console.log(JSON.stringify(this.msh[va]));
     return this.msh[va][pos];
   }
 

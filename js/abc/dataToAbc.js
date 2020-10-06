@@ -51,7 +51,6 @@ export function dataToAbc(instrument) {
       nt.abc_charStarts = abc.length;
       if (nt.d && settings.show_nht && nd.algo === 'CA3') {
         const msh = ares.getMsh(v, s);
-        console.log(v, n, msh);
         if (msh < 0) abc += `"^ø"`;
       }
       let flags = ares.getFlagsInInterval(v, s, s + nt.len);
