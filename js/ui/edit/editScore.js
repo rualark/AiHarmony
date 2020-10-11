@@ -107,7 +107,7 @@ export function edit_exercise_name() {
       if (value == null) return;
       nd.set_name(value);
       nd.set_fileName(name2filename(value));
-      $('#filename').html('&nbsp;&nbsp;' + nd.name);
+      $('#filename').html(nd.name);
       saveState(false);
     }
   });
