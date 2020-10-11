@@ -14,7 +14,7 @@ export function analyse() {
   for (let i=0; i<20000; ++i) st += '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789';
   */
   let debugLevel = 0;
-  if (environment !== 'prod') debugLevel = 10;
+  if (!environment.startsWith('prod')) debugLevel = 10;
   if (nd.algo === '') {
     ares.reset();
     $('#mode').html('');

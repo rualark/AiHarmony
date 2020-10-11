@@ -103,7 +103,7 @@ class AnalysisResults {
             debugSt: b256_safeString(st, pos, 2),
             paragraph_num: b256_ui(st, pos, 1),
           };
-          if (environment !== 'prod') {
+          if (!environment.startsWith('prod')) {
             if (Object.keys(nd.rules_whitelist).length && !(flag.fl in nd.rules_whitelist)) continue;
             if (flag.fl in nd.rules_blacklist) continue;
           }
@@ -178,7 +178,7 @@ class AnalysisResults {
 
   static getRuleTooltip(fla) {
     let st = '';
-    if (debugLevel > 5 && environment !== 'prod') {
+    if (debugLevel > 5 && !environment.startsWith('prod')) {
       st += `[${fla.fl}:${fla.debugSt}] `;
     }
     if (fla.comment)
@@ -278,7 +278,7 @@ class AnalysisResults {
     if (!this.errors.length && !fcnt) st += `<span style='color:green'><b>&#x2705; No mistakes</b></span>`;
     // if (this.previous_print_st !== st) {
     // this.previous_print_st = st;
-    if (environment !== 'prod') {
+    if (!environment.startsWith('prod')) {
       st += `<br>`;
       if (window.location.href.includes('/exercise/')) {
         st += `<a href=# id=harmony_dev><img class=imgmo2 alt='Go to development environment' src=img/sandbox.png height=24 /></a> `;
@@ -308,7 +308,7 @@ class AnalysisResults {
         return false;
       });
     }
-    if (environment !== 'prod') {
+    if (!environment.startsWith('prod')) {
       $('#harmony_dev').click(() => {
         if (window.location.href.includes('/exercise/')) {
           window.location.href = window.location.href.replace(/\/exercise\//, "/harmony-dev/");

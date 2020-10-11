@@ -59,10 +59,12 @@ export function showOpenModal() {
   if (state.state !== 'ready') return;
   let st = '';
 
-  st += `<p style='text-align: center'>`;
-  st += `<a href=exercises.php class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;
-  st += `<b>Open from ArtInfuser database</b>`;
-  st += '</a></p>';
+  if (!environment.includes('serverless')) {
+    st += `<p style='text-align: center'>`;
+    st += `<a href=exercises.php class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;
+    st += `<b>Open from ArtInfuser database</b>`;
+    st += '</a></p>';
+  }
 
   st += `<p style='text-align: center'>`;
   st += `<a id=openLocal href=# class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;

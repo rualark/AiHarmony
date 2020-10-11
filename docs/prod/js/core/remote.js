@@ -47,7 +47,8 @@ export const mgen_name = get_mgen_name();
 function getEnvironment() {
   if (getUrlParam('test')) return "test";
   if (urlNoParams().includes("/harmony-dev")) return "dev";
-  if (mgen_login.startsWith('rualark')) return "prod-in";
+  if (mgen_login.startsWith('rualark')) return "admin";
+  if (urlNoParams().includes(".github.")) return "prod-serverless";
   return "prod";
 }
 

@@ -1,6 +1,6 @@
 import {environment, mgen_login} from "../core/remote.js";
 
-if (environment === 'prod') {
+if (environment.startsWith('prod')) {
   window.LogRocket && window.LogRocket.init('rgvzmt/aiharmony');
   if (mgen_login) {
     LogRocket.identify(mgen_login);
