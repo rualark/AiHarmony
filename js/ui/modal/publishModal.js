@@ -20,7 +20,7 @@ function showSelectSecurity() {
 
 export function showPublishModal() {
   if (environment.includes('serverless')) {
-    alertify.warning('Artinfuser Database is not available in this environment. Please visit <a href=artinfuser.com>artinfuser.com</a> site for full funcionality');
+    alertify.warning('Artinfuser Database is not available in this environment. Please visit <a href=https://artinfuser.com>artinfuser.com</a> site for full funcionality');
     return;
   }
   if (state.state !== 'ready') return;
