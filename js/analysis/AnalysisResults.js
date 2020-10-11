@@ -208,6 +208,7 @@ class AnalysisResults {
         if (err.level > 50) color = 'red';
       st += `<span style='color: ${color}'><b>- ${err.message}</b></span><br>`;
     }
+    st += `<table style='border-collapse: collapse'>`;
     let fcnt = 0;
     let npm = nd.timesig.measure_len;
     let noteClick = [];
@@ -237,11 +238,13 @@ class AnalysisResults {
           }
           if (old_n !== n) {
             old_n = n;
+            st += `<tr><td style="vertical-align:top">`;
             st += `<a href=# class='ares ares_${vi}_${n}' style='color: black'>\n`;
             if (this.flag.length > 1) {
               st += `${nd.voices[vi].name} `;
             }
-            st += `[bar ${m + 1}, beat ${beat + 1}] ${noteName}</a><br>\n`;
+            st += `[bar ${m + 1}, beat ${beat + 1}] ${noteName}</a>\n`;
+            st += `<td>&nbsp;<td style="vertical-align:top">`;
             noteClick.push({vi: vi, n: n});
           }
           const paragraph_link = AnalysisResults.getParagraphLink(fla);
@@ -271,6 +274,7 @@ class AnalysisResults {
         }
       }
     }
+    st += `</table>`;
     if (!this.errors.length && !fcnt) st += `<span style='color:green'><b>&#x2705; No mistakes</b></span>`;
     // if (this.previous_print_st !== st) {
     // this.previous_print_st = st;
