@@ -2,6 +2,7 @@ import { showModal } from "../lib/modal.js";
 import { readLocalMusicXmlFile } from "../../MusicXml/readLocalMusicXml.js";
 import { showRestoreModal } from "./restoreModal.js";
 import { state } from "../../abc/abchelper.js";
+import { environment } from "../../core/remote.js";
 
 export function showOpenLocalMusicXmlModal() {
   let st = '';

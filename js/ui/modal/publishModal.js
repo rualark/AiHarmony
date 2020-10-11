@@ -1,7 +1,7 @@
 import {state} from "../../abc/abchelper.js";
 import { showModal } from "../lib/modal.js";
 import { publish } from "../../integration/publish.js";
-import { mgen_login } from "../../core/remote.js";
+import { environment, mgen_login } from "../../core/remote.js";
 import { nd } from "../../notes/NotesData.js";
 
 function showSelectSecurity() {
