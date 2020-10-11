@@ -7,6 +7,7 @@ import {showPartModal} from "../modal/partModal.js";
 import { storage2archiveStorage } from "../../state/state.js";
 import { enableKeys } from "../commands.js";
 import { name2filename } from "../../core/string.js";
+import { trackEvent } from "../../integration/tracking.js";
 
 export function stop_advancing() {
   future.advancing = false;
@@ -91,6 +92,7 @@ export function add_part() {
 }
 
 export function rename_part() {
+  trackEvent('AiHarmony', 'click_partname');
   if (state.state !== 'ready') return;
   showPartModal(selected.voice);
 }

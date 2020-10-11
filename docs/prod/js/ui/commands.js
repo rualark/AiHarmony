@@ -39,6 +39,7 @@ import { environment } from "../core/remote.js";
 import { grow_selection_horizontal, grow_selection_vertical, copy_selection, paste_selection, select_mode } from "./edit/editSelection.js";
 import { showPublishModal } from "./modal/publishModal.js";
 import { showNewFileModal } from "./modal/newFileModal.js";
+import { showTempoModal } from "./modal/tempoModal.js";
 
 let mobileOpt = {
   true: {
@@ -222,13 +223,17 @@ export function initCommands() {
   }
 }
 
-export function initFilenameClick() {
+export function initHeaderClick() {
   document.getElementById('filename').onclick=function(){
     edit_exercise_name();
     return false;
   };
   $('#mode').click(() => {
     showKeysigModal();
+    return false;
+  });
+  $('#tempo').click(() => {
+    showTempoModal();
     return false;
   });
 }

@@ -150,13 +150,11 @@ export function element_click(abcElem, tuneNumber, classes, pos, move, mouseEven
   }
   if (abcElem['el_type'] === 'tempo') {
     showTempoModal();
-    trackEvent('AiHarmony', 'click_tempo');
     selected.note = null;
     nclip.mode = 'standby';
   }
   else if (abcElem['el_type'] === 'voiceName') {
     rename_part();
-    trackEvent('AiHarmony', 'click_partname');
     selected.note = null;
     nclip.mode = 'standby';
   }
@@ -174,7 +172,6 @@ export function element_click(abcElem, tuneNumber, classes, pos, move, mouseEven
   }
   else if (typeof selected.element.mode !== 'undefined') {
     showKeysigModal();
-    trackEvent('AiHarmony', 'click_keysig');
     selected.note = null;
     nclip.mode = 'standby';
   }

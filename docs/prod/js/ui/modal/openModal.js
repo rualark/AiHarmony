@@ -60,7 +60,7 @@ export function showOpenModal() {
   let st = '';
 
   st += `<p style='text-align: center'>`;
-  st += `<a href=https://artinfuser.com/exercise/exercises.php class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;
+  st += `<a href=exercises.php class='btn btn-outline-white p-3' href=# role='button' style='min-width: 30px;'>`;
   st += `<b>Open from ArtInfuser database</b>`;
   st += '</a></p>';
 
