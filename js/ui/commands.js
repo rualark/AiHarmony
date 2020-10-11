@@ -190,7 +190,7 @@ function makeToolbar(toolbar_id) {
       }
       else continue;
     }
-    if (environment === 'prod' && command.toolbar.environment === 'dev') continue;
+    if (environment.startsWith('prod') && command.toolbar.environment === 'dev') continue;
     let nbsp = '&nbsp;';
     //if (!mobileOrTablet) nbsp = '';
     if (command.separator) {
@@ -214,7 +214,7 @@ export function initCommands() {
       if (!mobileOrTablet && !(command.toolbar.dev & 2)) continue;
     }
     if (!command.id) continue;
-    if (environment === 'prod' && command.toolbar && command.toolbar.environment === 'dev') continue;
+    if (environment.startsWith('prod') && command.toolbar && command.toolbar.environment === 'dev') continue;
     document.getElementById(command.id)[command.event] = function(){
       command.command();
       trackEvent('AiHarmony', 'action_click', command.name);

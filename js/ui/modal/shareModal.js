@@ -42,6 +42,10 @@ export function showShareModal() {
   showModal(1, 'Share music', st, '', [], [], false, ()=>{}, ()=>{});
   $('#apublish').click(() => {
     $('#Modal1').modal('hide');
-    showPublishModal();
+    if (environment.includes('serverless')) {
+      alertify.warning('Artinfuser Database is not available in this environment. Please visit <a href=artinfuser.com>artinfuser.com</a> site for full funcionality');
+    } else {
+      showPublishModal();
+    }
   });
 }

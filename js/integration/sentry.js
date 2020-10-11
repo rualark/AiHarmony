@@ -13,7 +13,7 @@ window.showReportDialog = function (eventId) {
   Sentry.showReportDialog({eventId: eventId, user: {email: mgen_login, name: mgen_name}});
 };
 
-if (environment !== 'prod?') {
+if (!environment.startsWith('prod?')) {
   Sentry.init({
     dsn: 'https://ad05883cb9534743b6ca504ece76bba6@sentry.io/1894684',
     environment: environment,
