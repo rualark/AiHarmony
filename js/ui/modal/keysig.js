@@ -4,6 +4,7 @@ import {saveState} from "../../state/history.js";
 import {initTooltips} from "../lib/tooltips.js";
 import { showModal } from "../lib/modal.js";
 import { nclip } from "../../notes/NotesClipboard.js";
+import { trackEvent } from "../../integration/tracking.js";
 
 export let keysigs = {
   'C#': {name: 'C#', fifths: 7, mode: 0, base_note: 1},
@@ -120,6 +121,7 @@ export let keysigs = {
 };
 
 export function showKeysigModal() {
+  trackEvent('AiHarmony', 'click_keysig');
   if (state.state !== 'ready') return;
   let ksig = [];
   let i;

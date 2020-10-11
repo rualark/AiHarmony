@@ -1,5 +1,5 @@
 import {async_redraw, init_abcjs} from "./abc/abchelper.js";
-import {initFilenameClick} from "./ui/commands.js";
+import {initHeaderClick} from "./ui/commands.js";
 import {getUrlParam, urlNoParams} from "./core/remote.js";
 import {showShortcutsModal} from "./ui/modal/shortcutsModal.js";
 import {url2state, update_browser_id, storage2archiveStorage} from "./state/state.js";
@@ -26,7 +26,7 @@ function init() {
   init_base64();
   update_browser_id();
   settings.storage2settings();
-  initFilenameClick();
+  initHeaderClick();
   init_abcjs(element_click);
   loadState();
   if (getUrlParam('state')) {
