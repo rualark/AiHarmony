@@ -43,7 +43,9 @@ $mistakes = array();
 if ($mistakes_st) {
   $msa = explode("~", $mistakes_st);
   for ($i=0; $i<count($msa); ++$i) {
-    $mistakes[] = explode("|", $msa[$i]);
+    $mistake = explode("|", $msa[$i]);
+    if (!$mistake[0]) break;
+    $mistakes[] = $mistake;
   }
 }
 
@@ -51,7 +53,6 @@ function update_mistakes($mistakes) {
   GLOBAL $root_eid, $eid;
   query("DELETE FROM mistakes WHERE root_eid='$root_eid' AND eid='$eid'");
   foreach ($mistakes as $mistake) {
-    if (!$mistake[0]) break;
     query("INSERT INTO mistakes VALUES('$root_eid', '$eid', '$mistake[0]', '$mistake[1]', '$mistake[2]', '$mistake[3]')");
   }
 }
