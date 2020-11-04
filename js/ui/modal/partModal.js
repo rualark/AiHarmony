@@ -3,6 +3,8 @@ import {async_redraw, state} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
 import { showModal } from "../lib/modal.js";
 
+const standardNames = ['Sop.', 'Alt.', 'Ten.', 'Bas.'];
+
 function showCheckLocked(v) {
   let st = '';
   st += `<div class="form-check">`;
@@ -18,6 +20,30 @@ function showInputPartName(v) {
   st += `<label for="input_partName"><b>Part name</b></label>`;
   st += `<input class="form-control" id=input_partName name=input_partName value="${nd.voices[v].name}">`;
   st += `</input>`;
+  st += `</div>`;
+  return st;
+}
+
+function showSelectPartName(v) {
+  let st = '';
+  st += `<div class="form-group">`;
+  st += `<label for="sel_partName"><b>Vocal range</b></label>`;
+  st += `<select class="form-control custom-select" id=sel_partName name=sel_partName>`;
+  let cur_name = nd.voices[v].name;
+  let foundStandard = false;
+  for (const name of standardNames) {
+    let sel = "";
+    if (cur_name.toLowerCase().startsWith(name.toLowerCase().slice(0, -1))) {
+      sel = "selected";
+      foundStandard = true;
+    } else sel = "";
+    st += `<option value="${name}" ${sel}>${name}</option>`;
+  }
+  if (!foundStandard) {
+    let sel = "selected";
+    st += `<option value="${cur_name}" ${sel}>Auto</option>`;
+  }
+  st += `</select>`;
   st += `</div>`;
   return st;
 }
@@ -48,7 +74,8 @@ function showSelectSpecies(v) {
 export function showPartModal(v) {
   if (state.state !== 'ready') return;
   let st = '';
-  st += showInputPartName(v);
+  st += showSelectPartName(v);
+  //st += showInputPartName(v);
   if (nd.algo === 'CA3') {
     st += showSelectSpecies(v);
   }
@@ -61,10 +88,11 @@ export function showPartModal(v) {
   });
   $('#modalOk').click(() => {
     nd.set_voiceLocked(v, $('#check_voiceLocked').is(":checked"));
-    nd.set_voiceName(v, $('#input_partName').val().substr(0, 50));
+    //nd.set_voiceName(v, $('#input_partName').val().substr(0, 50));
     if (nd.algo === 'CA3') {
       nd.set_species(v, Number($("#sel_partSpecies option:selected").val()));
     }
+    nd.set_voiceName(v, $("#sel_partName option:selected").val());
     $('#Modal1').modal('hide');
     saveState();
     async_redraw();
