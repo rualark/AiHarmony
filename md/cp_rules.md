@@ -1,7 +1,7 @@
 ## Counterpoint rules in english
 
 - <a href="md/pdf/Artinfuser_Counterpoint_rules.pdf" target="_blank">Rules, that are used to analyse uploaded counterpoint exercises in $site_name$</a>
-- <a href='https://docs.google.com/spreadsheets/d/1Qv6xwMnbqW60VqO5ktlE2p3VyU49xr_LbBYCPUZi7Ho/edit?usp=sharing' target=_blank>Table of all rules used in $site_name$</a>
+- <a href='https://docs.google.com/spreadsheets/d/1SvWKShw6yb-exEu8ULRMobndwSgtwBplfNFmXlhMAPI/edit?usp=sharing' target=_blank>Table of all rules used in $site_name$</a>
 
 ## Правила контрапункта на русском
 
