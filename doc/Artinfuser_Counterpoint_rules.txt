@@ -1,0 +1,85 @@
+COLOR LEGEND	3
+DEFINITIONS, PRINCIPLES AND LIMITATIONS	3
+Definitions	3
+1.	Counterpoint	3
+2.	Strict counterpoint	3
+3.	Cantus firmus	3
+Principles	4
+4.	Modes	4
+5.	Main principles of combining the voices	4
+6.	Chord and non-chord tones	5
+7.	Harmonic intervals	7
+8.	Chords	7
+9.	Non-harmonic tones	7
+Limitations	9
+10.	Number of voices	9
+11.	Vocal ranges	9
+12.	Counterpoint species	9
+13.	Mixed species	10
+14.	Voice order	10
+15.	General counterpoint principles	10
+RHYTHM RULES	11
+16.	Time signature	11
+17.	Rhythmic limitations of each counterpoint species	12
+18.	First measure	14
+19.	Last measure	15
+20.	Mixed species	15
+Fifth species counterpoint	17
+21.	Allowed rhythms	17
+22.	First measure	17
+23.	Rhythms distribution	17
+MELODIC RULES	18
+24.	Stepwise movement	18
+25.	Leaps	19
+26.	Leaps between measures	22
+27.	Melodic intervals between two consecutive notes	23
+28.	Melodic intervals between more than two consecutive notes	24
+29.	Obligatory note preparation	24
+30.	Obligatory resolution of chord tones	25
+31.	Notes repeat	26
+32.	Melody organization	27
+Melodic minor	28
+33.	Two forms of melodic minor	28
+34.	Use of non-chord tones VI# or VII	28
+35.	Use of chord tones VI# or VII	28
+36.	Close positioning of two forms of VI or VII degree in melodic minor	28
+HARMONIC RULES	30
+37.	Contrary motion of voices	30
+38.	Oblique motion	30
+39.	Similar motion	30
+40.	Consecutive 3rds, 4ths and 6ths	31
+41.	Similar motion to 3rd, 4th or 6th	31
+42.	Consecutive 5ths or 8ves	32
+43.	5ths or 8ves, separated by one or multiple notes	33
+44.	Similar motion to 5th or 8ve between outer voices	34
+45.	Similar motion to 5th or 8ve except between outer voices	34
+46.	Consecutive 2nds, 7ths, 9ths	36
+47.	Similar motion to 2nd, 7th and 9th	37
+48.	2nd, 7th or 9th at the beginning of the voice	38
+49.	Distance between voices	38
+50.	Voice crossing and overlapping	39
+51.	Voice crossing arrangement	39
+52.	Doubling	41
+53.	Unison	42
+54.	Harmonic 4th	43
+55.	Harmonic tritone	44
+56.	Second inversion chords	46
+57.	Obligatory harmonies	47
+58.	Incomplete chords	49
+59.	Harmonic rhythm	50
+60.	Modulation	50
+NON-CHORD TONES	51
+Suspensions	51
+61.	Suspensions, which resolve downwards	51
+62.	Suspensions, which resolve up	51
+63.	Suspension preparation	52
+64.	Suspension resolution	53
+65.	Suspension and suspension resolution	55
+Passing and neighbor tones	57
+66.	Passing and neighbor tones	57
+67.	Simultaneous sounding of melodic and harmonic notes	57
+Double neighbor tones, passing downbeat dissonance and cambiata	58
+68.	Double neighbor tones	58
+69.	Cambiata	58
+70.	Passing downbeat dissonance	58
+71.	Combining multiple melodic patterns	59
