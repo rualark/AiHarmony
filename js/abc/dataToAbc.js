@@ -40,6 +40,7 @@ export function dataToAbc(instrument) {
     let old_m = 0;
     let altmap = {};
     let prev_altmap = {};
+    let end_shape = {};
     for (let n=0; n<vc.notes.length; ++n) {
       let m = Math.floor(s / mlen);
       if (m != old_m) {
@@ -48,13 +49,21 @@ export function dataToAbc(instrument) {
         altmap = {};
       }
       let nt = vc.notes[n];
+      let flags = ares.getFlagsInInterval(v, s, s + nt.len);
+      if (flags.red_slur > 0) {
+        abc += '!mark!.(';
+        end_shape[n + 1] = ')';
+      }
+      if (flags.yellow_slur > 0) {
+        abc += '.(';
+        end_shape[n + 1] = ')';
+      }
       nd.abc_charStarts[abc.length] = {voice: v, note: n};
       nt.abc_charStarts = abc.length;
       if (nt.d && settings.show_nht && nd.algo === 'CA3') {
         const msh = ares.getMsh(v, s);
         if (msh < 0) abc += `"^ø"`;
       }
-      let flags = ares.getFlagsInInterval(v, s, s + nt.len);
       if (flags.red > 0) abc += '"^🚩"';
       else if (flags.yellow > 0) abc += '"^⚠️"';
       if (ares.harm != null && s in ares.harm && ares.vid != null && v === ares.vid[0] && settings.show_harmony) {
@@ -114,6 +123,10 @@ export function dataToAbc(instrument) {
       s += nt.len;
       if (nt.startsTie && n < vc.notes.length - 1 && vc.notes[n + 1].d) {
         abc += '-';
+      }
+      if (end_shape[n]) {
+        abc += end_shape[n];
+        end_shape[n] = '';
       }
       nt.abc_charEnds = abc.length;
       if (s % nd.timesig.measure_len === 0) {
