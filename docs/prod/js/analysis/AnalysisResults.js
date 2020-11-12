@@ -13,10 +13,12 @@ import { mobileOrTablet } from "../core/mobileCheck.js";
 import { enableKeys } from "../ui/commands.js";
 import { saveState } from "../state/history.js";
 
-let ARES_ENCODING_VERSION = 5;
-export let SEVERITY_RED = 80;
-export let SEVERITY_RED_COLOR = "red";
-export let SEVERITY_YELLOW_COLOR = "#F19900";
+const ARES_ENCODING_VERSION = 5;
+export const SEVERITY_RED = 80;
+export const SEVERITY_RED_COLOR = "red";
+export const SEVERITY_YELLOW_COLOR = "#F19900";
+
+const slur_flag_ids = new Set([8,22,58,88,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,140,141,142,143,144,145,146,147,148,149,175,176,177,178,179,180,181,182,183,184,185,186,191,192,203,204,205,206,207,267,268,269,270,271,277,278,279,280,281,296,297,298,299,300,304,315,316,317,318,319,327,328,329,330,331,336,337,338,339,340,348,351,352,353,354,355,386,389,390,391,392,393,394,395,396,397,398,414,415,416,417,418,421,422,423,424,425,438,439,440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,459,460,461,462,463,464,465,466,467,468,469,470,471,472,473,474,475,476,477,478,506,507,508,509,510]);
 
 export const vocra_name = {
   1: 'Bas.',
@@ -335,14 +337,12 @@ class AnalysisResults {
             for (const st of value.split(',')) {
               const rid = st.trim();
               if (rid === "") continue;
-              console.log(rid);
               if (rid < 0) {
                 nd.rules_blacklist[-rid] = true;
               } else {
                 nd.rules_whitelist[rid] = true;
               }
             }
-            console.log(nd.rules_blacklist);
             saveState(true);
           }
         });
@@ -358,23 +358,33 @@ class AnalysisResults {
     if (!(pos in this.flag[va])) return {};
     let yellow = 0;
     let red = 0;
+    let yellow_slur = 0;
+    let red_slur = 0;
     for (const fla of this.flag[va][pos]) {
       if (fla.accept !== 0) continue;
-      if (fla.severity > SEVERITY_RED) red++;
-      else if (fla.severity >= settings.show_min_severity) yellow++;
+      if (fla.severity > SEVERITY_RED) {
+        if (slur_flag_ids.has(fla.fl)) red_slur++;
+        red++;
+      }
+      else if (fla.severity >= settings.show_min_severity) {
+        if (slur_flag_ids.has(fla.fl)) yellow_slur++;
+        yellow++;
+      }
     }
-    return {red: red, yellow: yellow};
+    return {red: red, yellow: yellow, red_slur: red_slur, yellow_slur: yellow_slur};
   }
 
   getFlagsInInterval(v, pos1, pos2) {
     if (this.vid2 == null || !(v in this.vid2)) return {};
     let va = this.vid2[v];
     if (!this.flag || va >= this.flag.length) return {};
-    let total = {red: 0, yellow: 0};
+    let total = {red: 0, yellow: 0, red_slur: 0, yellow_slur: 0};
     for (let pos = pos1; pos < pos2; ++pos) {
       let flags = this.getFlags(va, pos);
       if (flags.red) total.red += flags.red;
       if (flags.yellow) total.yellow += flags.yellow;
+      if (flags.red_slur) total.red_slur += flags.red_slur;
+      if (flags.yellow_slur) total.yellow_slur += flags.yellow_slur;
     }
     return total;
   }
@@ -465,7 +475,6 @@ class AnalysisResults {
     let st = '';
     for (let f=0; f<this.stepFlags[vi][s].length; ++f) {
       let pf = this.stepFlags[vi][s][f];
-      //console.log(pf);
       // Select first flag
       if (st === '') {
         this.pFlagCur = pf.num;

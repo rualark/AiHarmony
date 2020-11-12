@@ -45,4 +45,8 @@ path:focus, text:focus, g:focus {
   }
 .table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
     background-color:#f7f7f7;
- }
+}
+.abcjs-slur mark {
+    stroke-width: 2;
+    stroke: red;
+}

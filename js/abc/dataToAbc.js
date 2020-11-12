@@ -51,7 +51,7 @@ export function dataToAbc(instrument) {
       let nt = vc.notes[n];
       let flags = ares.getFlagsInInterval(v, s, s + nt.len);
       if (flags.red_slur > 0) {
-        abc += '!mark!.(';
+        abc += '.(';
         end_shape[n + 1] = ')';
       }
       if (flags.yellow_slur > 0) {

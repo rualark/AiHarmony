@@ -96,8 +96,12 @@ for ($i=0; $i<$n; ++$i) {
     echo "<span style='color:red'>Accessing this revision requires authentication</span><br>";
     continue;
   }
-  if ($w['security'] > 1 && !$ua['u_admin']) {
-    echo "<span style='color:red'>This revision can be accessed by administrators only</span><br>";
+  if ($w['security'] > 1 && !$ua['u_admin'] && $w['u_id'] != $uid) {
+    echo "<span style='color:red'>This revision can be accessed by administrators and author only</span><br>";
+    continue;
+  }
+  if ($w['security'] > 2 && $w['u_id'] != $uid) {
+    echo "<span style='color:red'>This revision can be accessed by author only</span><br>";
     continue;
   }
   if ($w['title'] != $wa[0]['title']) {
