@@ -178,9 +178,7 @@ function notation_redraw() {
     start_counter('renderAbc');
     abcjs = ABCJS.renderAbc('abc', dataToAbc(), parserParams, engraverParams);
     stop_counter();
-    start_counter('apply_styles');
     apply_abcjs_styles();
-    stop_counter();
     if (selected.note) {
       highlightNote();
       highlightRange();

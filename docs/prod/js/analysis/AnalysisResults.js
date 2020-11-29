@@ -364,11 +364,11 @@ class AnalysisResults {
       if (fla.accept !== 0) continue;
       if (fla.severity > SEVERITY_RED) {
         if (slur_flag_ids.has(fla.fl)) red_slur++;
-        red++;
+        else red++;
       }
       else if (fla.severity >= settings.show_min_severity) {
         if (slur_flag_ids.has(fla.fl)) yellow_slur++;
-        yellow++;
+        else yellow++;
       }
     }
     return {red: red, yellow: yellow, red_slur: red_slur, yellow_slur: yellow_slur};
