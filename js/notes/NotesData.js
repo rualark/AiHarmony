@@ -309,6 +309,7 @@ export class NotesData {
     //const hash = generateRandomId(10);
     //this.set_name(`New exercise [${hash}]`);
     //this.set_fileName(`New-exercise-${hash}`);
+    this.styles = [];
     this.root_eid = 0;
     this.eid = 0;
     this.set_name(generateRandomHashWords('A n n-###'));
