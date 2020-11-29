@@ -74,7 +74,7 @@ async function waitForState(stage, obj, vals, pause, timeout) {
     };
   }
   //console.log(stage);
-  //await sleep(50);
+  await sleep(500);
 }
 
 function assert2strings(stage, fname, st1, st2, max_diff=0) {

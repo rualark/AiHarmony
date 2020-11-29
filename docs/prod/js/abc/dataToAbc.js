@@ -5,6 +5,7 @@ import {ares} from "../analysis/AnalysisResults.js";
 import { settings } from "../state/settings.js";
 
 export function dataToAbc(instrument) {
+  nd.styles = [];
   let mlen = nd.timesig.measure_len;
   let abc = '';
   abc += '%%barnumbers 1\n';
@@ -41,8 +42,11 @@ export function dataToAbc(instrument) {
     let altmap = {};
     let prev_altmap = {};
     let end_shape = {};
+    let note_in_measure = 0;
     for (let n=0; n<vc.notes.length; ++n) {
       let m = Math.floor(s / mlen);
+      ++note_in_measure;
+      if (s % mlen == 0) note_in_measure = 0;
       if (m != old_m) {
         old_m = m;
         prev_altmap = altmap;
@@ -53,10 +57,18 @@ export function dataToAbc(instrument) {
       if (flags.red_slur > 0) {
         abc += '.(';
         end_shape[n + 1] = ')';
+        nd.styles.push({
+          style: `.abcjs-slur.abcjs-dotted.abcjs-start-m${m}-n${note_in_measure}.abcjs-v${v}`,
+          stroke: 'red'
+        });
       }
-      if (flags.yellow_slur > 0) {
+      else if (flags.yellow_slur > 0) {
         abc += '.(';
         end_shape[n + 1] = ')';
+        nd.styles.push({
+          style: `.abcjs-slur.abcjs-dotted.abcjs-start-m${m}-n${note_in_measure}.abcjs-v${v}`,
+          stroke: 'orange'
+        });
       }
       nd.abc_charStarts[abc.length] = {voice: v, note: n};
       nt.abc_charStarts = abc.length;

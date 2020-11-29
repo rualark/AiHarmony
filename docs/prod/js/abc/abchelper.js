@@ -162,6 +162,13 @@ export function highlightRange() {
   selected.classes = "";
 }
 
+function apply_abcjs_styles() {
+  for (let style of nd.styles) {
+    const el = document.querySelector(style.style);
+    el.style.stroke = style.stroke;
+  }
+}
+
 function notation_redraw() {
   try {
     parserParams.staffwidth = window.innerWidth - 60;
@@ -170,6 +177,9 @@ function notation_redraw() {
     $('#filename').prop('title', 'File name: ' + nd.fileName);
     start_counter('renderAbc');
     abcjs = ABCJS.renderAbc('abc', dataToAbc(), parserParams, engraverParams);
+    stop_counter();
+    start_counter('apply_styles');
+    apply_abcjs_styles();
     stop_counter();
     if (selected.note) {
       highlightNote();
