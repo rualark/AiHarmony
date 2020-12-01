@@ -54,12 +54,12 @@ export class NotesClipboard {
       ++voices_added;
     }
     if (voices_added) nd.update_note_steps();
+    // Target steps: first and last
     const s1 = nd.voices[v1].notes[n].step;
     const s2 = s1 + (this.source.s2 - this.source.s1);
     // Append measures if needed to all voices
     const last_note = nd.voices[0].notes[nd.voices[0].notes.length - 1];
-    const new_measures = Math.floor((s2 - last_note.step + last_note.len) / mlen);
-    console.log('new_mea', new_measures, s2, last_note.step, last_note.len, mlen);
+    const new_measures = Math.ceil((s2 - last_note.step + last_note.len) / mlen);
     if (new_measures > 0) {
       for (let i=0; i<new_measures; ++i) {
         nd.append_measure(false);
