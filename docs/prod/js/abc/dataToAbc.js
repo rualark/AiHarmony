@@ -54,24 +54,9 @@ export function dataToAbc(instrument) {
       }
       let nt = vc.notes[n];
       let flags = ares.getFlagsInInterval(v, s, s + nt.len);
-      if (flags.red_slur > 0) {
-        abc += '.(';
-        end_shape[n + 1] = ')';
-        nd.styles.push({
-          style: `.abcjs-slur.abcjs-dotted.abcjs-start-m${m}-n${note_in_measure}.abcjs-v${v}`,
-          stroke: 'red'
-        });
-      }
-      else if (flags.yellow_slur > 0) {
-        abc += '.(';
-        end_shape[n + 1] = ')';
-        nd.styles.push({
-          style: `.abcjs-slur.abcjs-dotted.abcjs-start-m${m}-n${note_in_measure}.abcjs-v${v}`,
-          stroke: 'orange'
-        });
-      }
       nd.abc_charStarts[abc.length] = {voice: v, note: n};
       nt.abc_charStarts = abc.length;
+
       if (nt.d && settings.show_nht && nd.algo === 'CA3') {
         const msh = ares.getMsh(v, s);
         if (msh < 0) abc += `"^ø"`;
@@ -101,6 +86,24 @@ export function dataToAbc(instrument) {
           abc += `"_${lyric}"`;
         }
       }
+
+      if (flags.red_slur > 0) {
+        abc += '.(';
+        end_shape[n + 1] = ')';
+        nd.styles.push({
+          style: `.abcjs-slur.abcjs-dotted.abcjs-start-m${m}-n${note_in_measure}.abcjs-v${v}`,
+          stroke: 'red'
+        });
+      }
+      else if (flags.yellow_slur > 0) {
+        abc += '.(';
+        end_shape[n + 1] = ')';
+        nd.styles.push({
+          style: `.abcjs-slur.abcjs-dotted.abcjs-start-m${m}-n${note_in_measure}.abcjs-v${v}`,
+          stroke: 'orange'
+        });
+      }
+
       let d = nt.d;
       let dc = nt.d % 7;
       if (d) {

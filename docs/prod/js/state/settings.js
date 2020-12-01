@@ -2,7 +2,8 @@ import {b256_safeString, b256_ui, safeString_b256, ui_b256} from "../core/base25
 import {engraverParams} from "../abc/abchelper.js";
 import {applyShortcutsLayout} from "../ui/shortcutsLayouts.js";
 
-const SETTINGS_ENCODING_VERSION = 9;
+const MIN_SETTINGS_ENCODING_VERSION = 9;
+const MAX_SETTINGS_ENCODING_VERSION = 10;
 
 class Settings {
   constructor() {
@@ -21,6 +22,7 @@ class Settings {
     this.reverb_mix = 20;
     this.instruments = 'Vocals';
     this.autoLegato = 40;
+    this.editPlayVelocity = 90;
   }
 
   reset() {
@@ -34,7 +36,7 @@ class Settings {
 
   settings2plain() {
     let st = '';
-    st += ui_b256(SETTINGS_ENCODING_VERSION, 1);
+    st += ui_b256(MAX_SETTINGS_ENCODING_VERSION, 1);
     st += ui_b256(this.toolbarHints, 1);
     st += ui_b256(this.rule_verbose, 1);
     st += ui_b256(this.alter_before_note, 1);
@@ -47,13 +49,17 @@ class Settings {
     st += safeString_b256(this.instruments, 1);
     st += ui_b256(this.autoLegato, 1);
     st += safeString_b256(this.shortcutsLayout, 1);
+    st += ui_b256(this.editPlayVelocity, 1);
     return st;
   }
 
   plain2settings(st, pos) {
     let saved_encoding_version = b256_ui(st, pos, 1);
-    if (saved_encoding_version !== SETTINGS_ENCODING_VERSION) {
+    if (saved_encoding_version < MIN_SETTINGS_ENCODING_VERSION || saved_encoding_version > MAX_SETTINGS_ENCODING_VERSION) {
       throw('version');
+    }
+    if (saved_encoding_version !== MAX_SETTINGS_ENCODING_VERSION) {
+      console.log('Loading deprecated version of settings: ', saved_encoding_version);
     }
     this.toolbarHints = b256_ui(st, pos, 1);
     this.rule_verbose = b256_ui(st, pos, 1);
@@ -67,6 +73,9 @@ class Settings {
     this.instruments = b256_safeString(st, pos, 1);
     this.autoLegato = b256_ui(st, pos, 1);
     this.setShortcutsLayout(b256_safeString(st, pos, 1));
+    if (saved_encoding_version >= 10) {
+      this.editPlayVelocity = b256_ui(st, pos, 1);
+    }
   }
 
   storage2settings() {

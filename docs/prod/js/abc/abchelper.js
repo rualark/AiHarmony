@@ -35,6 +35,7 @@ function getElementByStartChar(abcjs, startChar) {
     for (let voice = 0; voice < voices.length; voice++) {
       let elems = voices[voice].children;
       for (let elem = 0; elem < elems.length; elem++) {
+        //console.log(elems[elem].abcelem.startChar, nd.abcString[elems[elem].abcelem.startChar]);
         if (startChar === elems[elem].abcelem.startChar) {
           return elems[elem];
         }
@@ -108,8 +109,10 @@ export function highlightNote() {
   }
   let el = getElementByStartChar(abcjs, nt.abc_charStarts);
   if (el) {
+    //console.log('Found note', nt.abc_charStarts, nd, nd.abcString.slice(Math.max(0, nt.abc_charStarts - 3), nt.abc_charStarts + 3));
     selected.element = el.abcelem;
   } else {
+    //console.log('Cannot find note', nt.abc_charStarts, nd, nd.abcString.slice(Math.max(0, nt.abc_charStarts - 3), nt.abc_charStarts + 3));
     selected.element = {};
   }
   selected.classes = "";
@@ -176,7 +179,8 @@ function notation_redraw() {
     $('#filename').html(nd.name);
     $('#filename').prop('title', 'File name: ' + nd.fileName);
     start_counter('renderAbc');
-    abcjs = ABCJS.renderAbc('abc', dataToAbc(), parserParams, engraverParams);
+    nd.abcString = dataToAbc();
+    abcjs = ABCJS.renderAbc('abc', nd.abcString, parserParams, engraverParams);
     stop_counter();
     apply_abcjs_styles();
     if (selected.note) {

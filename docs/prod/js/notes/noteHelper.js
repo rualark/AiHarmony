@@ -55,6 +55,10 @@ export function c2d(c) {
   return chrom_to_dia[(c + 12) % 12] + Math.floor((c + 12) / 12) * 7;
 }
 
+export function d2midi(d) {
+  return d2c(d) + 12;
+}
+
 export function alter2abc(alter) {
   if (alter === 0) return '=';
   if (alter === 10) return '';
