@@ -1,5 +1,8 @@
 import {abcjs} from "../abc/abchelper.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
+import { d2c, d2midi } from "../notes/noteHelper.js";
+import { nd } from "../notes/NotesData.js";
+import { settings } from "../state/settings.js";
 
 let synthControl = {};
 
@@ -48,4 +51,31 @@ export function play3() {
   }).catch(function (error) {
     console.warn("Audio problem:", error);
   });
+}
+
+export function play_pitch(pitch, velocity) {
+  ABCJS.synth.playEvent(
+    [{
+      "cmd": "note",
+      "pitch": pitch,
+      "volume": velocity,
+      "start": 0,
+      "duration": 5,
+      "instrument": 0,
+      "gap": 0
+    }],
+    [],
+    1000 // a measure takes one second
+  ).then(function (response) {
+    //console.log("note played");
+  }).catch(function (error) {
+    console.error("Error playing note:", error);
+  });
+}
+
+export function play_note(v, n) {
+  if (!settings.editPlayVelocity) return;
+  const d = nd.voices[v].notes[n].d;
+  if (!d) return;
+  play_pitch(d2midi(d) + nd.get_realAlter(v, n), settings.editPlayVelocity);
 }

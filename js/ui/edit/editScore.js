@@ -8,6 +8,7 @@ import { storage2archiveStorage } from "../../state/state.js";
 import { enableKeys } from "../commands.js";
 import { name2filename } from "../../core/string.js";
 import { trackEvent } from "../../integration/tracking.js";
+import { play_note } from "../../audio/audio.js";
 
 export function stop_advancing() {
   future.advancing = false;
@@ -59,6 +60,7 @@ export function voiceChange(dv) {
     voice: selected.note.voice + dv,
     note: nd.getClosestNote(selected.note.voice + dv, note.step)
   };
+  play_note(selected.note.voice, selected.note.note);
   stop_advancing();
   highlightNote();
   saveState();

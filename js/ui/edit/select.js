@@ -3,6 +3,7 @@ import {stop_advancing} from "./editScore.js";
 import {saveState} from "../../state/history.js";
 import {update_selection} from "../selection.js";
 import {nd} from "../../notes/NotesData.js";
+import { play_note } from "../../audio/audio.js";
 
 export function move_to_next_note(saveState = true) {
   if (!selected.note) return false;
@@ -30,6 +31,7 @@ export function next_note() {
   } else {
     highlightNote();
   }
+  play_note(selected.note.voice, selected.note.note);
   saveState(false);
   update_selection();
 }
@@ -53,6 +55,7 @@ export function move_to_previous_note() {
 export function prev_note() {
   if (state.state !== 'ready') return;
   move_to_previous_note();
+  play_note(selected.note.voice, selected.note.note);
   stop_advancing();
   highlightNote();
   saveState(false);

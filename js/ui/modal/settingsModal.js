@@ -86,6 +86,7 @@ export function showSettingsModal() {
   st += showCheckBox('check_showHarmony', settings.show_harmony, `Show harmony below notes`);
   st += showCheckBox('check_showText', settings.show_text, `Show user text above notes`);
   st += showCheckBox('check_showLyrics', settings.show_lyrics, `Show user lyrics below notes`);
+  st += showCheckBox('check_editPlay', settings.editPlayVelocity, `Play notes as you edit`);
   st += showSelectShortcutsLayout();
   st += showSelectRuleVerbose();
   st += showSelectWithLabel('Add legato when playing:', 'selectAddSlurs', settings.autoLegato, makeAutoLegatoOptions(), (val) => {
@@ -134,6 +135,12 @@ export function showSettingsModal() {
   });
   $('#check_showLyrics').change(() => {
     settings.show_lyrics = Number($('#check_showLyrics').is(":checked"));
+    settings.settings2storage();
+    async_redraw();
+  });
+  $('#check_editPlay').change(() => {
+    settings.editPlayVelocity = Number($('#check_editPlay').is(":checked")) ? 90 : 0;
+    console.log(settings.editPlayVelocity);
     settings.settings2storage();
     async_redraw();
   });

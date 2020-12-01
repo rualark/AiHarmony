@@ -19,6 +19,7 @@ import {trackEvent} from "../integration/tracking.js";
 import { showTempoModal } from "./modal/tempoModal.js";
 import { nclip } from "../notes/NotesClipboard.js";
 import { select_from_to } from "./edit/editSelection.js";
+import { play_note } from "../audio/audio.js";
 
 function selectionHasMistake() {
   if (selected.note == null) return false;
@@ -182,6 +183,7 @@ export function element_click(abcElem, tuneNumber, classes, pos, move, mouseEven
       nclip.mode = 'standby';
     } else {
       selected.note = nd.abc_charStarts[selected.element.startChar];
+      play_note(selected.note.voice, selected.note.note);
     }
   }
   stop_advancing();

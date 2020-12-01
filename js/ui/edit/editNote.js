@@ -9,6 +9,7 @@ import { settings } from "../../state/settings.js";
 import { copy_selection, paste_selection } from "./editSelection.js";
 import { nclip } from "../../notes/NotesClipboard.js";
 import { json_stringify_circular } from "../../core/string.js";
+import { play_note } from "../../audio/audio.js";
 
 export let future = {
   advancing: false,
@@ -85,6 +86,7 @@ export function set_note(dc) {
   future.advancing = true;
   future.alteration = 10;
   future.len = note.len;
+  play_note(selected.note.voice, selected.note.note);
   move_to_next_note();
   async_redraw();
 }
@@ -249,6 +251,7 @@ export function increment_octave(doct) {
   let note = notes[n];
   let d = note.d;
   nd.set_note(el.voice, n, d + 7 * doct);
+  play_note(selected.note.voice, selected.note.note);
   async_redraw();
 }
 
@@ -267,6 +270,7 @@ export function increment_note(dnote) {
   let d = note.d;
   note.alter = nd.inherited_alter(el.voice, n, d + dnote);
   nd.set_note(el.voice, n, d + dnote);
+  play_note(selected.note.voice, selected.note.note);
   async_redraw();
 }
 
@@ -291,6 +295,7 @@ export function toggle_alter(alt) {
     } else {
       nd.set_alter(el.voice, n, alt);
     }
+    play_note(selected.note.voice, selected.note.note);
   }
   async_redraw();
 }
