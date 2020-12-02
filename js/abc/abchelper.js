@@ -5,6 +5,7 @@ import {update_selection} from "../ui/selection.js";
 import {settings} from "../state/settings.js";
 import {SEVERITY_RED, SEVERITY_RED_COLOR, SEVERITY_YELLOW_COLOR} from "../analysis/AnalysisResults.js";
 import { future } from "../ui/edit/editNote.js";
+import { trackEvent } from "../integration/tracking.js";
 
 export let MAX_ABC_NOTE = 60;
 export let MIN_ABC_NOTE = 1;
@@ -168,6 +169,7 @@ export function highlightRange() {
 function apply_abcjs_styles() {
   for (let style of nd.styles) {
     const el = document.querySelector(style.style);
+    if (!el) return;
     el.style.stroke = style.stroke;
   }
 }
@@ -195,7 +197,13 @@ function notation_redraw() {
   catch (e) {
     state.error = e;
     state.state = 'ready';
-    throw e;
+    console.log(e);
+    if (e == "Can't find variable: ABCJS" || e == "ReferenceError: ABCJS is not defined") {
+      trackEvent('AiHarmony', 'error_not_found_abcjs');
+      alertify.warning(`Please check your internet connection and reload page. Could not load music visualization module.`, 60);
+    } else {
+      throw e;
+    }
   }
   state.state = 'ready';
 }
