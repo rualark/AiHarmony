@@ -179,8 +179,10 @@ export function element_click(abcElem, tuneNumber, classes, pos, move, mouseEven
   if (selected.element && selected.element.duration != null) {
     if (nclip.mode === 'select' || mouseEvent.shiftKey) {
       let el = nd.abc_charStarts[selected.element.startChar];
-      select_from_to(selected.note.voice, el.voice, selected.note.note, el.note);
-      nclip.mode = 'standby';
+      if (el) {
+        select_from_to(selected.note.voice, el.voice, selected.note.note, el.note);
+        nclip.mode = 'standby';
+      }
     } else {
       selected.note = nd.abc_charStarts[selected.element.startChar];
       play_note(selected.note.voice, selected.note.note);

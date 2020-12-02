@@ -27,8 +27,13 @@ async function workerMessageReceiver(event) {
       worker.firstResultReceived = true;
     }
     debugLog(5, modName, funcName, data);
-    alertify.warning(`If analysis is not working, try to <a href='https://www.digitaltrends.com/computing/how-to-clear-your-browser-cache/' target=_blank>clear Cached Images and Files</a>, reopen browser and reload page`, 60);
-    throw data;
+    if (data.startsWith('Timeout ')) {
+      trackEvent('AiHarmony', 'analysis_timeout', modName, new Date() - worker.startedTime);
+      alertify.warning(`Please check your internet connection and reload page. Error loading music analysis module.`, 60);
+    } else {
+      alertify.warning(`If analysis is not working, try to <a href='https://www.digitaltrends.com/computing/how-to-clear-your-browser-cache/' target=_blank>clear Cached Images and Files</a>, reopen browser and reload page`, 60);
+      throw data;
+    }
   }
   if (type === 'RESULT') {
     if (worker.startedTime != null) {

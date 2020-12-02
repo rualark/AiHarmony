@@ -115,6 +115,7 @@ export function repeat_element() {
   }
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (!el) return;
   if (check_voice_locked(el)) return;
   let notes = nd.voices[el.voice].notes;
   let n = el.note;
@@ -202,6 +203,7 @@ export function set_rest(advance) {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (!el) return;
   if (check_voice_locked(el)) return;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
@@ -227,6 +229,7 @@ export function set_rest(advance) {
 export function can_increment_note(dnote) {
   if (!selected.element || !selected.element.duration) return false;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (!el) return false;
   if (nd.voices[el.voice].locked) return false;
   let n = el.note;
   if (future.advancing && el.note) {
@@ -242,6 +245,7 @@ export function increment_octave(doct) {
   if (!selected.element || !selected.element.duration) return;
   if (!can_increment_note(doct * 7)) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (!el) return;
   if (check_voice_locked(el)) return;
   let n = el.note;
   if (future.advancing && el.note) {
@@ -259,6 +263,7 @@ export function increment_note(dnote) {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (!el) return;
   if (check_voice_locked(el)) return;
   if (!can_increment_note(dnote)) return;
   let n = el.note;
@@ -278,6 +283,7 @@ export function toggle_alter(alt) {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (!el) return;
   if (check_voice_locked(el)) return;
   let n = el.note;
   if (future.advancing && el.note && !settings.alter_before_note) {
