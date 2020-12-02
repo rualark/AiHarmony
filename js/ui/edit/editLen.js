@@ -49,6 +49,7 @@ export function toggle_dot() {
   if (state.state !== 'ready') return;
   if (!selected.element || !selected.element.duration) return;
   let el = nd.abc_charStarts[selected.element.startChar];
+  if (!el) return;
   if (check_voice_locked(el)) return;
   let notes = nd.voices[el.voice].notes;
   let note = notes[el.note];
