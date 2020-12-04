@@ -1,7 +1,7 @@
 import {next_note, prev_note} from "../ui/edit/select.js";
 import {start_counter, stop_counter} from "../core/time.js";
 import {readRemoteMusicXmlFile} from "../MusicXml/readRemoteMusicXml.js";
-import {async_redraw, selected, state} from "../abc/abchelper.js";
+import {abcjs, async_redraw, selected, state} from "../abc/abchelper.js";
 import {nd} from "../notes/NotesData.js";
 import {set_len, toggle_dot} from "../ui/edit/editLen.js";
 import {
@@ -22,7 +22,7 @@ import {data2plain} from "../state/state.js";
 import {keysigs, showKeysigModal} from "../ui/modal/keysig.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
 import {waitForVar, sleep} from "../core/promise.js";
-import {makePatch} from "../core/string.js";
+import {json_stringify_circular, makePatch} from "../core/string.js";
 import {sendToAis} from "../integration/aiStudio.js";
 import {unicode_b64} from "../core/base64.js";
 import {ares} from "../analysis/AnalysisResults.js";
@@ -38,6 +38,7 @@ import { showShortcutsModal } from "../ui/modal/shortcutsModal.js";
 import { showTextModal } from "../ui/modal/textModal.js";
 import { showTimesigModal } from "../ui/modal/timesig.js";
 import { settings } from "../state/settings.js";
+import { element_click } from "../ui/selection.js";
 
 export let testState = {
   testing: false
@@ -74,7 +75,7 @@ async function waitForState(stage, obj, vals, pause, timeout) {
     };
   }
   //console.log(stage);
-  await sleep(500);
+  //await sleep(500);
 }
 
 function assert2strings(stage, fname, st1, st2, max_diff=0) {
@@ -89,6 +90,29 @@ function assert2strings(stage, fname, st1, st2, max_diff=0) {
       data: st2
     };
   }
+}
+
+async function test_startChar() {
+  let engraver = abcjs[0].engraver;
+  for (let line = 0; line < engraver.staffgroups.length; line++) {
+    let voices = engraver.staffgroups[line].voices;
+    for (let voice = 0; voice < voices.length; voice++) {
+      let elems = voices[voice].children;
+      for (let elem = 0; elem < elems.length; elem++) {
+        console.log('Clicking', json_stringify_circular(elems[elem].abcelem));
+        element_click(elems[elem].abcelem, 0, "", {voice: voice}, {step: 0}, {shiftKey: 0});
+        async_redraw();
+        await sleep(100);
+        $('#Modal1').modal('hide');
+      }
+    }
+  }
+  for (let i=0; i<73; ++i) {
+    await waitForState('undo', state, ['ready'], 50, 5000);
+    undoState(false);
+  }
+  await waitForState('undo', state, ['ready'], 50, 5000);
+  undoState();
 }
 
 async function test_actions() {
@@ -131,6 +155,10 @@ async function test_actions() {
   repeat_element();
   await waitForState('append_measure', state, ['ready'], 50, 5000);
   nd.append_measure();
+
+  await waitForState('test_startChar', state, ['ready'], 50, 5000);
+  await test_startChar();
+
   await waitForState('next_note', state, ['ready'], 50, 5000);
   next_note();
   await waitForState('next_note', state, ['ready'], 50, 5000);
@@ -157,8 +185,12 @@ async function test_actions() {
   prev_note();
   await waitForState('toggle_tie', state, ['ready'], 50, 5000);
   toggle_tie();
+  await waitForState('voiceChange', state, ['ready'], 50, 5000);
+  voiceChange(-1);
   await waitForState('addPart', state, ['ready'], 50, 5000);
   add_part();
+  await waitForState('voiceChange', state, ['ready'], 50, 5000);
+  voiceChange(1);
   await waitForState('set_len', state, ['ready'], 50, 5000);
   set_len(1);
   await waitForState('set_keysig', state, ['ready'], 50, 5000);
@@ -277,7 +309,7 @@ async function test_do(test_level) {
   assert2strings('Edited ca3', 'test2.ca3',
     await httpRequestNoCache('GET', 'test_data/test2.ca3'),
     $('#analysisConsole').html());
-  for (let i=0; i<34; ++i) {
+  for (let i=0; i<35; ++i) {
     await waitForState('undo', state, ['ready'], 50, 5000);
     undoState();
   }

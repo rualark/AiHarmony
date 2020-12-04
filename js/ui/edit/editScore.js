@@ -6,7 +6,7 @@ import {future} from "./editNote.js";
 import {showPartModal} from "../modal/partModal.js";
 import { storage2archiveStorage } from "../../state/state.js";
 import { enableKeys } from "../commands.js";
-import { name2filename } from "../../core/string.js";
+import { json_stringify_circular, name2filename } from "../../core/string.js";
 import { trackEvent } from "../../integration/tracking.js";
 import { play_note } from "../../audio/audio.js";
 
@@ -79,7 +79,7 @@ export function del_part() {
   if (state.state !== 'ready') return;
   if (typeof selected.element.abselem === 'undefined') return;
   if (nd.voices.length === 1) return;
-  nd.del_voice(selected.voice);
+  nd.del_voice(selected.note.voice);
   selected.note = null;
   selected.element = {};
   async_redraw();
@@ -89,14 +89,15 @@ export function add_part() {
   if (state.state !== 'ready') return;
   if (nd.voices.length > 62) return;
   if (typeof selected.element.abselem === 'undefined') return;
-  nd.add_voice(selected.voice + 1);
+  console.log(json_stringify_circular(selected));
+  nd.add_voice(selected.note.voice + 1);
   async_redraw();
 }
 
-export function rename_part() {
+export function rename_part(v) {
   trackEvent('AiHarmony', 'click_partname');
   if (state.state !== 'ready') return;
-  showPartModal(selected.voice);
+  showPartModal(v);
 }
 
 export function edit_exercise_name() {
