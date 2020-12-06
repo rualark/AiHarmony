@@ -6,7 +6,6 @@ import {future} from "./editNote.js";
 import {showPartModal} from "../modal/partModal.js";
 import { storage2archiveStorage } from "../../state/state.js";
 import { enableKeys } from "../commands.js";
-import { json_stringify_circular, name2filename } from "../../core/string.js";
 import { trackEvent } from "../../integration/tracking.js";
 import { play_note } from "../../audio/audio.js";
 
@@ -27,6 +26,7 @@ export function insert_bar() {
     note: el.note + 1
   };
   stop_advancing();
+  saveState();
   async_redraw();
 }
 
@@ -77,19 +77,23 @@ export function new_file(parts=4) {
 
 export function del_part() {
   if (state.state !== 'ready') return;
+  if (!selected.element) return;
+  if (!selected.note) return;
   if (typeof selected.element.abselem === 'undefined') return;
   if (nd.voices.length === 1) return;
   nd.del_voice(selected.note.voice);
   selected.note = null;
   selected.element = {};
+  saveState(true);
   async_redraw();
 }
 
 export function add_part() {
   if (state.state !== 'ready') return;
+  if (!selected.element) return;
+  if (!selected.note) return;
   if (nd.voices.length > 62) return;
   if (typeof selected.element.abselem === 'undefined') return;
-  console.log(json_stringify_circular(selected));
   nd.add_voice(selected.note.voice + 1);
   async_redraw();
 }

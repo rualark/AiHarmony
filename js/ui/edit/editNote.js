@@ -8,7 +8,6 @@ import {clefs} from "../modal/clefs.js";
 import { settings } from "../../state/settings.js";
 import { copy_selection, paste_selection } from "./editSelection.js";
 import { nclip } from "../../notes/NotesClipboard.js";
-import { json_stringify_circular } from "../../core/string.js";
 import { play_note } from "../../audio/audio.js";
 
 export let future = {
@@ -97,6 +96,7 @@ export function repeat_element() {
   if (selected.note.n11 != null) {
     const v1 = selected.note.v1;
     const n12 = selected.note.n12;
+    console.log(selected);
     if (copy_selection(true)) {
       if (n12 >= nd.voices[v1].notes.length - 1) {
         nd.append_measure(false);
@@ -255,7 +255,7 @@ export function increment_octave(doct) {
   let note = notes[n];
   let d = note.d;
   nd.set_note(el.voice, n, d + 7 * doct);
-  play_note(selected.note.voice, selected.note.note);
+  play_note(el.voice, n);
   async_redraw();
 }
 
@@ -275,7 +275,7 @@ export function increment_note(dnote) {
   let d = note.d;
   note.alter = nd.inherited_alter(el.voice, n, d + dnote);
   nd.set_note(el.voice, n, d + dnote);
-  play_note(selected.note.voice, selected.note.note);
+  play_note(el.voice, n);
   async_redraw();
 }
 

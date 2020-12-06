@@ -78,42 +78,25 @@ function abcRangeNotesHighlight(start, end, color, clear=true) {
 
 export function highlightNote() {
   if (!selected.note) return;
-  let nt = nd.voices[selected.note.voice].notes[selected.note.note];
-  /*
-  if (selected.element.abselem) {
-    if (!document.querySelector("#abc svg .abcjs-cursor")) {
-      let svg = document.querySelector("#abc svg");
-      let cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
-      cursor.setAttribute("class", "abcjs-cursor");
-      cursor.setAttributeNS(null, 'x1', 0);
-      cursor.setAttributeNS(null, 'y1', 0);
-      cursor.setAttributeNS(null, 'x2', 0);
-      cursor.setAttributeNS(null, 'y2', 0);
-      cursor.style.stroke = "red";
-      svg.appendChild(cursor);
-    }
-    let cursor = document.querySelector("#abc svg .abcjs-cursor");
-    let el = selected.element.abselem;
-    cursor.setAttribute("x1", el.x - 2);
-    cursor.setAttribute("x2", el.x - 2);
-    cursor.setAttribute("y1", el.top);
-    cursor.setAttribute("y2", el.top + 20);
+  const vc = nd.voices[selected.note.voice];
+  if (!vc) {
+    console.log(nd, selected);
+    throw "Cannot find note";
   }
-  */
+  const nt = vc.notes[selected.note.note];
+  if (!nt) {
+    console.log(nd, selected);
+    throw "Cannot find note";
+  }
   if (future.advancing && selected.note.note) {
-    //let nt2 = nd.voices[selected.note.voice].notes[selected.note.note - 1];
-    //abcRangeNotesHighlight(nt2.abc_charStarts, nt2.abc_charEnds, COLOR_SELECTION);
-    //abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, COLOR_ADVANCING, false);
     abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, SELECTION_COLOR);
   } else {
     abcRangeNotesHighlight(nt.abc_charStarts, nt.abc_charEnds, SELECTION_COLOR);
   }
   let el = getElementByStartChar(abcjs, nt.abc_charStarts);
   if (el) {
-    //console.log('Found note', nt.abc_charStarts, nd, nd.abcString.slice(Math.max(0, nt.abc_charStarts - 3), nt.abc_charStarts + 3));
     selected.element = el.abcelem;
   } else {
-    //console.log('Cannot find note', nt.abc_charStarts, nd, nd.abcString.slice(Math.max(0, nt.abc_charStarts - 3), nt.abc_charStarts + 3));
     selected.element = {};
   }
   selected.classes = "";

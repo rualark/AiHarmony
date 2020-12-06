@@ -25,6 +25,7 @@ export function move_to_next_note(saveState = true) {
 
 export function next_note() {
   if (state.state !== 'ready') return;
+  if (!selected.note) return;
   stop_advancing();
   if (move_to_next_note(false)) {
     async_redraw();
@@ -54,6 +55,7 @@ export function move_to_previous_note() {
 
 export function prev_note() {
   if (state.state !== 'ready') return;
+  if (!selected.note) return;
   move_to_previous_note();
   play_note(selected.note.voice, selected.note.note);
   stop_advancing();

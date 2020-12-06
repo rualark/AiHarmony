@@ -15,7 +15,6 @@ import {
 import {add_part, del_bar, new_file, voiceChange} from "../ui/edit/editScore.js";
 import {toggle_tie} from "../ui/edit/editTie.js";
 import {undoState} from "../state/history.js";
-import {aic, sendToAic} from "../integration/aiCounterpoint.js";
 import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
 import {httpRequestNoCache} from "../core/remote.js";
 import {data2plain} from "../state/state.js";
@@ -39,10 +38,13 @@ import { showTextModal } from "../ui/modal/textModal.js";
 import { showTimesigModal } from "../ui/modal/timesig.js";
 import { settings } from "../state/settings.js";
 import { element_click } from "../ui/selection.js";
+import { commands } from "../ui/commands.js";
 
 export let testState = {
   testing: false
 };
+
+const ignore_commands = new Set(['logo', 'support', 'docs', 'aic', 'ais', 'Edit exercise header (name)', 'zoom-in', 'zoom-out']);
 
 function console2html() {
   let old = console.log;
@@ -92,6 +94,84 @@ function assert2strings(stage, fname, st1, st2, max_diff=0) {
   }
 }
 
+async function validate_ignore_commands() {
+  // Check if all ignore_commands exist
+  for (const id of ignore_commands) {
+    let found = false;
+    for (const command of commands) {
+      if (id === command.id || id === command.name) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      throw {
+        message: `${id} ignore_command not found in commands`,
+      };
+    }
+  }
+}
+
+async function validate_nd() {
+  let voices_end = -1;
+  for (let v=0; v<nd.voices.length; ++v) {
+    let vc = nd.voices[v];
+    const nt = vc.notes[vc.notes.length - 1];
+    let voice_end = nt.step + nt.len;
+    if (voice_end % nd.timesig.measure_len) {
+      throw {
+        message: `Voice ${v} has length ${voice_end}, not whole measures of ${nd.timesing.measure_len} steps`,
+      };
+    }
+    if (voices_end !== -1 && voices_end !== voice_end) {
+      throw {
+        message: `Voice ${v} has length ${voice_end}, not ${voices_end}`,
+      };
+    }
+    voices_end = voice_end;
+  }
+}
+
+function rand0n(n) {
+  return Math.floor(Math.random() * n);
+}
+
+async function random_command(test_command_number) {
+  await waitForState('random_command', state, ['ready'], 50, 5000);
+  for (let attempt=0; attempt<1000; ++attempt) {
+    const i = rand0n(commands.length);
+    const command = commands[i];
+    //console.log('Try command number', i, command);
+    if (command.separator) continue;
+    if (command.event === 'onchange') continue;
+    if (ignore_commands.has(command.id)) continue;
+    if (ignore_commands.has(command.name)) continue;
+
+    console.log(test_command_number, 'Executing', command.id, command.name);
+    command.command();
+    $('#Modal1').modal('hide');
+    //console.log(json_stringify_circular(nd), json_stringify_circular(selected));
+    await validate_nd();
+    if (!selected.note) {
+      await waitForState('set_selection', state, ['ready'], 50, 5000);
+      const voice = rand0n(nd.voices.length);
+      selected.note = {
+        voice: voice,
+        note: rand0n(nd.voices[voice].notes.length)
+      };
+      async_redraw();
+    }
+    break;
+  }
+}
+
+async function test_random() {
+  await validate_ignore_commands();
+  for (let i=0; i<3000; ++i) {
+    await random_command(i);
+  }
+}
+
 async function test_startChar() {
   let engraver = abcjs[0].engraver;
   for (let line = 0; line < engraver.staffgroups.length; line++) {
@@ -99,10 +179,8 @@ async function test_startChar() {
     for (let voice = 0; voice < voices.length; voice++) {
       let elems = voices[voice].children;
       for (let elem = 0; elem < elems.length; elem++) {
-        console.log('Clicking', json_stringify_circular(elems[elem].abcelem));
         element_click(elems[elem].abcelem, 0, "", {voice: voice}, {step: 0}, {shiftKey: 0});
         async_redraw();
-        await sleep(100);
         $('#Modal1').modal('hide');
       }
     }
@@ -277,11 +355,16 @@ async function test_modal() {
 
 async function test_do(test_level) {
   const STATE_IGNORE_SUFFIX = 16;
-  console.log('START TEST');
+  console.log('START TEST level:', test_level);
   await test_framework();
   await waitForState('new_file', state, ['ready'], 50, 5000);
   new_file();
   await waitForState('readRemoteMusicXmlFile', state, ['ready'], 50, 5000);
+  readRemoteMusicXmlFile('musicxml/ca3-examples/good-cp5-extract.xml');
+
+  await test_random();
+  return;
+
   await waitForState('analysis', ares, ['ready'], 50, 5000);
   readRemoteMusicXmlFile('musicxml/ca3-examples/good-cp5-extract.xml');
   await waitForState('data2plain', state, ['ready'], 50, 5000);
@@ -298,7 +381,9 @@ async function test_do(test_level) {
     $('#analysisConsole').html());
   assert2strings('Base64 compression', '', loaded_plain, LZString.decompressFromBase64(LZString.compressToBase64(loaded_plain)));
   assert2strings('UTF16 compression', '', loaded_plain, LZString.decompressFromUTF16(LZString.compressToUTF16(loaded_plain)));
+
   await test_actions();
+
   await waitForState('analysis', ares, ['ready'], 50, 5000);
   assert2strings('Edited plain', 'test2.plain',
     await httpRequestNoCache('GET', 'test_data/test2.plain'),
@@ -314,20 +399,13 @@ async function test_do(test_level) {
     undoState();
   }
   assert2strings('Undo plain', '', loaded_plain, data2plain().slice(0, -STATE_IGNORE_SUFFIX));
-  if (test_level > 1) {
-    sendToAic(false);
-    try {
-      await waitForState('PDF', aic, ['ready'], 50, 10000);
-    } catch (e) {
-      console.log('Aic is probably busy, check for first response');
-      await waitForState('PDF', aic, ['queued', 'running', 'ready'], 50, 5000);
-    }
+  if (test_level > 2) {
     sendToAis(false);
     try {
-      await waitForState('MP3', aic, ['ready'], 50, 10000);
+      await waitForState('MP3', ais, ['ready'], 50, 10000);
     } catch (e) {
       console.log('Ais is probably busy, check for first response');
-      await waitForState('MP3', aic, ['queued', 'running', 'ready'], 50, 5000);
+      await waitForState('MP3', ais, ['queued', 'running', 'ready'], 50, 5000);
     }
   }
   await test_modal();

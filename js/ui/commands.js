@@ -24,7 +24,6 @@ import {add_part, del_bar, del_part, new_file, stop_advancing, voiceChange, inse
 import {toggle_tie} from "./edit/editTie.js";
 import {next_note, prev_note} from "./edit/select.js";
 import {set_len, toggle_dot} from "./edit/editLen.js";
-import {name2filename} from "../core/string.js";
 import {sendToAis} from "../integration/aiStudio.js";
 import {showSettingsModal} from "./modal/settingsModal.js";
 import {ares} from "../analysis/AnalysisResults.js";
@@ -567,7 +566,9 @@ export let commands = [
     toolbar: {type: 'image', toolbar_id: 2, hintText: 'Transpose'},
     event: 'onclick',
     keys: [],
-    command: () => { showTransposeModal(selected.note.voice) },
+    command: () => {
+      if (selected.note) showTransposeModal(selected.note.voice)
+    },
     name: 'Transpose part',
   },
   { separator: true, toolbar: {toolbar_id: 1} },

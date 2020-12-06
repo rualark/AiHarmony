@@ -5,8 +5,8 @@ import {nd} from "../../notes/NotesData.js";
 import { nclip } from "../../notes/NotesClipboard.js";
 import { saveState } from "../../state/history.js";
 import { stop_advancing } from "./editScore.js";
-import { json_stringify_circular } from "../../core/string.js";
 import { update_selection } from "../selection.js";
+import { json_stringify_circular } from "../../core/string.js";
 
 export function grow_selection_horizontal(right=true) {
   if (state.state !== 'ready') return;
@@ -113,6 +113,7 @@ export function copy_selection(quiet=false) {
     let el = nd.abc_charStarts[selected.element.startChar];
     const v = el.voice;
     const nt = nd.voices[v].notes[el.note];
+    console.log('Copy one note', nt, v);
     if (nclip.copy(v, v, nt.step, nt.step + nt.len - 1)) {
       if (!quiet) {
         alertify.notify(`Copied selection`, 'success');
@@ -120,6 +121,7 @@ export function copy_selection(quiet=false) {
       return true;
     }
   } else {
+    console.log('Copy selection', json_stringify_circular(selected));
     if (nclip.copy(selected.note.v1, selected.note.v2, selected.note.s1, selected.note.s2)) {
       if (!quiet) {
         alertify.notify(`Copied selection`, 'success');

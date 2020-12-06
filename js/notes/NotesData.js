@@ -136,7 +136,6 @@ export class NotesData {
   del_voice(v) {
     if (v == null) return;
     this.voices.splice(v, 1);
-    this.saveState();
   }
 
   append_measure(saveState=true) {
@@ -147,7 +146,7 @@ export class NotesData {
     if (saveState) this.saveState();
   }
 
-  insert_measure(v, n, saveState=true) {
+  insert_measure(v, n) {
     let m = Math.floor(this.voices[v].notes[n].step / this.timesig.measure_len);
     let p1 = m * this.timesig.measure_len;
     let p2 = p1 + this.timesig.measure_len;
@@ -169,7 +168,6 @@ export class NotesData {
         }
       }
     }
-    if (saveState) this.saveState();
   }
 
   delBar(v, n) {
