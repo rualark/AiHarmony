@@ -52,9 +52,9 @@ function console2html() {
   console.log = function () {
     for (let i = 0; i < arguments.length; i++) {
       if (typeof arguments[i] == 'object') {
-        logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(arguments[i], null, 2) : arguments[i]) + '<br />';
+        //logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(arguments[i], null, 2) : arguments[i]) + '<br />';
       } else {
-        logger.innerHTML += arguments[i] + '<br />';
+        //logger.innerHTML += arguments[i] + '<br />';
       }
     }
     old.apply(console, arguments);
@@ -152,7 +152,8 @@ async function random_command(test_command_number) {
     $('#Modal1').modal('hide');
     //console.log(json_stringify_circular(nd), json_stringify_circular(selected));
     await validate_nd();
-    if (!selected.note) {
+    // If nothing is selected, make about 10 commands before reselecting
+    if (!selected.note && Math.random() < 0.1) {
       await waitForState('set_selection', state, ['ready'], 50, 5000);
       const voice = rand0n(nd.voices.length);
       selected.note = {
@@ -167,7 +168,7 @@ async function random_command(test_command_number) {
 
 async function test_random() {
   await validate_ignore_commands();
-  for (let i=0; i<3000; ++i) {
+  for (let i=0; i<30000; ++i) {
     await random_command(i);
   }
 }

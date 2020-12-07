@@ -1,4 +1,4 @@
-import {nd} from "./NotesData.js";
+import {nd, NotesData} from "./NotesData.js";
 import { state2storage } from "../state/state.js";
 import { json_stringify_circular } from "../core/string.js";
 
@@ -61,12 +61,14 @@ export class NotesClipboard {
       ++voices_added;
     }
     if (voices_added) nd.update_note_steps();
-    // Target steps: first and last
+    // Target steps: first and last (not next after last)
     const s1 = nd.voices[v1].notes[n].step;
     const s2 = s1 + (this.source.s2 - this.source.s1);
-    // Append measures if needed to all voices
+    // Last note in first voice
     const last_note = nd.voices[0].notes[nd.voices[0].notes.length - 1];
-    const new_measures = Math.ceil((s2 - last_note.step + last_note.len) / mlen);
+    const last_note_end = last_note.step + last_note.len - 1;
+    // Append measures if needed to all voices
+    const new_measures = Math.ceil((s2 - last_note_end) / mlen);
     console.log('Paste: ', new_measures, this.voices, this.source);
     if (new_measures > 0) {
       for (let i=0; i<new_measures; ++i) {
@@ -89,7 +91,7 @@ export class NotesClipboard {
       let new_notes = JSON.parse(JSON.stringify(this.voices[v - v1].notes));
       console.log(`Paste v${v} left_rest:${left_rest}`, json_stringify_circular(new_notes));
       if (left_rest) {
-        new_notes.push({d: 0, alter: 10, len: left_rest, startsTie: false});
+        new_notes.push(...NotesData.make_rests(left_rest));
       }
       console.log(`Paste v${v}`, json_stringify_circular(new_notes))
       // Split notes by measure borders
@@ -97,16 +99,25 @@ export class NotesClipboard {
       for (let i=0; i<new_notes.length; ++i) {
         if (Math.floor(s / mlen) < Math.floor((s + new_notes[i].len - 1) / mlen)) {
           const excess = (s + new_notes[i].len) % mlen;
+          // Insert copy of note
           new_notes.splice(
             i,
             0,
             JSON.parse(JSON.stringify(new_notes[i]))
           );
+          // Split by measure length
           new_notes[i].len = new_notes[i].len - excess;
           new_notes[i + 1].len = excess;
           if (new_notes[i].d) {
             new_notes[i].startsTie = true;
           }
+          // Split notes by length
+          new_notes.splice(
+            i,
+            2,
+            ...NotesData.split_note(new_notes[i]),
+            ...NotesData.split_note(new_notes[i + 1])
+          );
         }
         s += new_notes[i].len;
         console.log(`Paste v${v} s:${s}`, json_stringify_circular(new_notes));

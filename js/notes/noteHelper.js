@@ -126,3 +126,19 @@ function fullModeName(keysig) {
   st = st.replace('phr', 'phrygian');
   return st;
 }
+
+export function split_len(len) {
+  if (len === 23) return [7, 16];
+  if (len === 22) return [6, 16];
+  if (len === 21) return [1, 4, 16];
+  if (len === 20) return [4, 16];
+  if (len === 19) return [3, 16];
+  if (len === 18) return [2, 16];
+  if (len === 17) return [1, 16];
+  if (len === 13) return [1, 4, 8];
+  if (len === 11) return [1, 2, 8];
+  if (len === 10) return [2, 8];
+  if (len === 9)  return [1, 8];
+  if (len === 5)  return [1, 4];
+  return [len];
+}

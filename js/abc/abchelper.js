@@ -6,6 +6,7 @@ import {settings} from "../state/settings.js";
 import {SEVERITY_RED, SEVERITY_RED_COLOR, SEVERITY_YELLOW_COLOR} from "../analysis/AnalysisResults.js";
 import { future } from "../ui/edit/editNote.js";
 import { trackEvent } from "../integration/tracking.js";
+import { json_stringify_circular } from "../core/string.js";
 
 export let MAX_ABC_NOTE = 60;
 export let MIN_ABC_NOTE = 1;
@@ -80,12 +81,12 @@ export function highlightNote() {
   if (!selected.note) return;
   const vc = nd.voices[selected.note.voice];
   if (!vc) {
-    console.log(nd, selected);
+    console.log(json_stringify_circular(nd), json_stringify_circular(selected));
     throw "Cannot find note";
   }
   const nt = vc.notes[selected.note.note];
   if (!nt) {
-    console.log(nd, selected);
+    console.log(json_stringify_circular(nd), json_stringify_circular(selected));
     throw "Cannot find note";
   }
   if (future.advancing && selected.note.note) {

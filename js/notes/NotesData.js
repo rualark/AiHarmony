@@ -1,4 +1,4 @@
-import {fifths2keysig, keysig_imprint} from "./noteHelper.js";
+import {fifths2keysig, keysig_imprint, split_len} from "./noteHelper.js";
 import {saveState} from "../state/history.js";
 import {selected} from "../abc/abchelper.js";
 import { name2filename } from "../core/string.js";
@@ -89,16 +89,19 @@ export class NotesData {
   set_len(v, ni, len, saveState=true) {
     let notes = this.voices[v].notes;
     let note = notes[ni];
+    // If we are enlarging current note
     if (len > note.len) {
+      // Debt is the length that we owe to the newly inserted note due to making it shorter
       let debt = len - note.len;
       for (let n = ni + 1; n < notes.length; ++n) {
+        // If we can cover the debt fully with current note, do it
         if (debt < notes[n].len) {
-          this.set_rest(v, n, false);
-          notes[n].len = notes[n].len - debt;
-          notes[n].startsTie = false;
+          // Replace this note with residue rest(s)
+          notes.splice(n, 1, ...NotesData.make_rests(notes[n].len - debt));
           break;
         }
         else {
+          // If current note is smaller than debt, just remove it
           debt -= notes[n].len;
           notes.splice(n, 1);
           --n;
@@ -106,13 +109,39 @@ export class NotesData {
         }
       }
     }
+    // If we are making current note smaller
     else {
-      notes.splice(ni + 1, 0, {d: 0, alter: 10, len: note.len - len, startsTie: false});
+      console.log(`Insert residue rest old_len:${note.len} - len:${len}`);
+      // Insert residue rest(s) after our note
+      notes.splice(ni + 1, 0, ...NotesData.make_rests(note.len - len));
       this.set_rest(v, ni + 1, false);
     }
     note.len = len;
     note.startsTie = false;
+    console.log(nd);
     if (saveState) this.saveState();
+  }
+
+  static make_rests(len) {
+    let result = [];
+    for (const ln of split_len(len)) {
+      result.push({d: 0, alter: 10, len: ln, startsTie: false});
+    }
+    return result;
+  }
+
+  static split_note(note) {
+    let result = [];
+    const lens = split_len(note.len);
+    for (let i=0; i<lens.length; i++) {
+      let copy_of_note = JSON.parse(JSON.stringify(note));
+      copy_of_note.len = lens[i];
+      if (note.d && i < lens.length - 1) {
+        copy_of_note.startsTie = true;
+      }
+      result.push(copy_of_note);
+    }
+    return result;
   }
 
   // Adds new empty voice before voice v
