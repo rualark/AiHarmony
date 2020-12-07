@@ -111,7 +111,7 @@ export class NotesClipboard {
           if (new_notes[i].d) {
             new_notes[i].startsTie = true;
           }
-          // Split notes by length
+          // Split notes by allowed note length
           new_notes.splice(
             i,
             2,

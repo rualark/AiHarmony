@@ -149,7 +149,9 @@ async function random_command(test_command_number) {
 
     console.log(test_command_number, 'Executing', command.id, command.name);
     command.command();
-    $('#Modal1').modal('hide');
+    if (Math.random() < 0.4) {
+      $('#Modal1').modal('hide');
+    }
     //console.log(json_stringify_circular(nd), json_stringify_circular(selected));
     await validate_nd();
     // If nothing is selected, make about 10 commands before reselecting
@@ -168,12 +170,9 @@ async function random_command(test_command_number) {
 
 async function test_random() {
   await validate_ignore_commands();
-  for (let i=0; i<30000; ++i) {
+  for (let i=1; i<30000; ++i) {
     await random_command(i);
-    if (i % 3000 == 0) {
-      await waitForState('readRemoteMusicXmlFile', state, ['ready'], 50, 5000);
-      readRemoteMusicXmlFile('musicxml/ca3-examples/good-cp5-extract.xml');
-    }
+    if (i % 1000 == 0) location.reload();
   }
 }
 

@@ -112,12 +112,7 @@ export function repeat_element() {
       nd.update_note_steps();
     }
     select_note(v1, n12 + 1);
-    if (paste_selection(false)) {
-      nd.update_note_steps();
-      const s1 = nd.voices[v1].notes[n12 + 1].step;
-      const len = nclip.source.s2 - nclip.source.s1;
-      select_range(v1, v1 + nclip.source.v2 - nclip.source.v1, s1, s1 + len, null, false);
-    }
+    paste_selection(false);
     async_redraw();
   }
 }

@@ -134,6 +134,7 @@ export function copy_selection(quiet=false) {
 export function paste_selection(redraw=true) {
   if (state.state !== 'ready') return;
   if (selected.note == null) return;
+  if (!nclip.voices.length) return;
   let el = selected.note;
   // Check if voices are locked
   if (nd.voicesAreLocked(el.voice, el.voice + nclip.source.v2 - nclip.source.v1)) {
@@ -146,9 +147,12 @@ export function paste_selection(redraw=true) {
     return;
   }
   stop_advancing();
+  nd.update_note_steps();
+  const s1 = nd.voices[el.voice].notes[el.note].step;
+  const len = nclip.source.s2 - nclip.source.s1;
+  select_range(el.voice, el.voice + nclip.source.v2 - nclip.source.v1, s1, s1 + len, null, false);
   saveState();
   if (redraw) {
     async_redraw();
   }
-  return true;
 }

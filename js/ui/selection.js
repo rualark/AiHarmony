@@ -146,7 +146,6 @@ export function element_click(abcElem, tuneNumber, classes, pos, move, mouseEven
   //console.log('Click', abcElem, tuneNumber, classes, pos, move, mouseEvent);
   if (abcElem['el_type'] !== 'tempo') {
     selected.element = abcElem;
-    selected.classes = classes;
   }
   if (abcElem['el_type'] === 'tempo') {
     showTempoModal();

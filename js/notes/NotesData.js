@@ -118,7 +118,6 @@ export class NotesData {
     }
     note.len = len;
     note.startsTie = false;
-    console.log(nd);
     if (saveState) this.saveState();
   }
 

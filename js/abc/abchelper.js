@@ -21,7 +21,6 @@ export let state = {};
 
 export let selected = {
   element: {},
-  classes: '',
   note: {voice: 0, note: 0},
   voice: 0
 };
@@ -82,7 +81,7 @@ export function highlightNote() {
   const vc = nd.voices[selected.note.voice];
   if (!vc) {
     console.log(json_stringify_circular(nd), json_stringify_circular(selected));
-    throw "Cannot find note";
+    throw "Cannot find voice";
   }
   const nt = vc.notes[selected.note.note];
   if (!nt) {
@@ -100,7 +99,6 @@ export function highlightNote() {
   } else {
     selected.element = {};
   }
-  selected.classes = "";
 }
 
 export function highlightRange() {
@@ -118,17 +116,24 @@ export function highlightRange() {
   } else {
     color = SEVERITY_YELLOW_COLOR;
   }
-  abcRangeNotesHighlight(
-    Math.min(nt11.abc_charStarts, nt12.abc_charStarts),
-    Math.max(nt11.abc_charEnds, nt12.abc_charEnds),
-    color
-  );
-  abcRangeNotesHighlight(
-    Math.min(nt21.abc_charStarts, nt22.abc_charStarts),
-    Math.max(nt21.abc_charEnds, nt22.abc_charEnds),
-    color,
-    false
-  );
+  try {
+    abcRangeNotesHighlight(
+      Math.min(nt11.abc_charStarts, nt12.abc_charStarts),
+      Math.max(nt11.abc_charEnds, nt12.abc_charEnds),
+      color
+    );
+    abcRangeNotesHighlight(
+      Math.min(nt21.abc_charStarts, nt22.abc_charStarts),
+      Math.max(nt21.abc_charEnds, nt22.abc_charEnds),
+      color,
+      false
+    );
+  }
+  catch (e) {
+    console.log(nd);
+    console.log(selected, nt11, nt12, nt21, nt22);
+    throw e;
+  }
   // Highlight intermediate voices
   if (selected.note.severity == null) {
     const v1 = selected.note.v1;
@@ -147,7 +152,6 @@ export function highlightRange() {
     }
   }
   selected.element = null;
-  selected.classes = "";
 }
 
 function apply_abcjs_styles() {
@@ -174,7 +178,6 @@ function notation_redraw() {
       highlightRange();
     } else {
       selected.element = {};
-      selected.classes = "";
     }
     update_selection();
   }
@@ -206,15 +209,6 @@ export function notation_zoom(zoom) {
   console.log('Zoom scale', engraverParams.scale);
   settings.settings2storage();
   async_redraw();
-}
-
-export function get_voice(classes) {
-  for (let cla of classes) {
-    for (let cl of cla.split(' ')) {
-      if (!cl.startsWith('abcjs-v')) continue;
-      return Number(cl[7]);
-    }
-  }
 }
 
 export function init_abcjs(clickListener) {
