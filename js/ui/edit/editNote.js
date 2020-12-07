@@ -6,7 +6,7 @@ import {move_to_next_note, move_to_previous_note, select_note, select_range} fro
 import {set_len} from "./editLen.js";
 import {clefs} from "../modal/clefs.js";
 import { settings } from "../../state/settings.js";
-import { copy_selection, paste_selection } from "./editSelection.js";
+import { copy_selection, paste_selection, select_from_to } from "./editSelection.js";
 import { nclip } from "../../notes/NotesClipboard.js";
 import { play_note } from "../../audio/audio.js";
 
@@ -93,50 +93,33 @@ export function set_note(dc) {
 export function repeat_element() {
   if (state.state !== 'ready') return;
   if (selected.note == null) return;
-  if (selected.note.n11 != null) {
-    const v1 = selected.note.v1;
-    const n12 = selected.note.n12;
-    console.log(selected);
-    if (copy_selection(true)) {
-      if (n12 >= nd.voices[v1].notes.length - 1) {
-        nd.append_measure(false);
-        nd.update_note_steps();
-      }
-      select_note(v1, n12 + 1);
-      if (paste_selection(false)) {
-        nd.update_note_steps();
-        const s1 = nd.voices[v1].notes[n12 + 1].step;
-        const len = nclip.source.s2 - nclip.source.s1;
-        select_range(v1, v1 + nclip.source.v2 - nclip.source.v1, s1, s1 + len, null, false);
-      }
-      async_redraw();
+
+  if (selected.note.n11 == null) {
+    if (!selected.element || !selected.element.duration) return;
+    let el = nd.abc_charStarts[selected.element.startChar];
+    if (!el) return;
+    let notes = nd.voices[el.voice].notes;
+    let n = el.note;
+    stop_advancing();
+    select_from_to(el.voice, el.voice, n, n);
+  }
+  const v1 = selected.note.v1;
+  const n12 = selected.note.n12;
+  console.log(selected);
+  if (copy_selection(true)) {
+    if (n12 >= nd.voices[v1].notes.length - 1) {
+      nd.append_measure(false);
+      nd.update_note_steps();
     }
-    return;
+    select_note(v1, n12 + 1);
+    if (paste_selection(false)) {
+      nd.update_note_steps();
+      const s1 = nd.voices[v1].notes[n12 + 1].step;
+      const len = nclip.source.s2 - nclip.source.s1;
+      select_range(v1, v1 + nclip.source.v2 - nclip.source.v1, s1, s1 + len, null, false);
+    }
+    async_redraw();
   }
-  if (!selected.element || !selected.element.duration) return;
-  let el = nd.abc_charStarts[selected.element.startChar];
-  if (!el) return;
-  if (check_voice_locked(el)) return;
-  let notes = nd.voices[el.voice].notes;
-  let n = el.note;
-  if (future.advancing) {
-    if (!n) return;
-  } else {
-    move_to_next_note();
-    //highlightNote();
-    future.advancing = true;
-    future.len = notes[n].len;
-    ++n;
-  }
-  future.alteration = notes[n-1].alter;
-  if (!notes[n - 1].d) {
-    set_rest(true);
-  } else {
-    set_note(notes[n - 1].d % 7);
-  }
-  move_to_previous_note();
-  stop_advancing();
-  async_redraw();
 }
 
 export function delete_selection() {

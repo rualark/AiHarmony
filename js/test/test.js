@@ -170,6 +170,10 @@ async function test_random() {
   await validate_ignore_commands();
   for (let i=0; i<30000; ++i) {
     await random_command(i);
+    if (i % 3000 == 0) {
+      await waitForState('readRemoteMusicXmlFile', state, ['ready'], 50, 5000);
+      readRemoteMusicXmlFile('musicxml/ca3-examples/good-cp5-extract.xml');
+    }
   }
 }
 
