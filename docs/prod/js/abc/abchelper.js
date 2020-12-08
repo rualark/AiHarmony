@@ -8,9 +8,6 @@ import { future } from "../ui/edit/editNote.js";
 import { trackEvent } from "../integration/tracking.js";
 import { json_stringify_circular } from "../core/string.js";
 
-export let MAX_ABC_NOTE = 60;
-export let MIN_ABC_NOTE = 1;
-
 export let engraverParams = {
   scale: 1
 };
