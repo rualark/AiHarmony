@@ -11,6 +11,7 @@ const symbol_shortcuts = ['Ctrl+Y', 'Ctrl+Q', 'Ctrl+B'];
 
 function submitText(v, n, type) {
   let text = $('#textArea').val().trim().substr(0, 100);
+  text = text.replace(/%/g, '*').replace(/"/g, "'").replace(/\\/g, '/');
   if (type === 'lyric') {
     nd.set_lyric(v, n, text);
   } else {
