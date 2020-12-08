@@ -4,6 +4,7 @@ import {readRemoteMusicXmlFile} from "../MusicXml/readRemoteMusicXml.js";
 import {abcjs, async_redraw, selected, state} from "../abc/abchelper.js";
 import {nd} from "../notes/NotesData.js";
 import {set_len, toggle_dot} from "../ui/edit/editLen.js";
+import { transpositions } from "../ui/modal/transposeModal.js";
 import {
   increment_note,
   increment_octave,
@@ -14,14 +15,14 @@ import {
 } from "../ui/edit/editNote.js";
 import {add_part, del_bar, new_file, voiceChange} from "../ui/edit/editScore.js";
 import {toggle_tie} from "../ui/edit/editTie.js";
-import {undoState} from "../state/history.js";
+import {saveState, undoState} from "../state/history.js";
 import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
 import {httpRequestNoCache} from "../core/remote.js";
 import {data2plain} from "../state/state.js";
 import {keysigs, showKeysigModal} from "../ui/modal/keysig.js";
 import {dataToAbc} from "../abc/dataToAbc.js";
 import {waitForVar, sleep} from "../core/promise.js";
-import {json_stringify_circular, makePatch} from "../core/string.js";
+import {makePatch} from "../core/string.js";
 import {sendToAis} from "../integration/aiStudio.js";
 import {unicode_b64} from "../core/base64.js";
 import {ares} from "../analysis/AnalysisResults.js";
@@ -53,9 +54,9 @@ function console2html() {
   console.log = function () {
     for (let i = 0; i < arguments.length; i++) {
       if (typeof arguments[i] == 'object') {
-        //logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(arguments[i], null, 2) : arguments[i]) + '<br />';
+        logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(arguments[i], null, 2) : arguments[i]) + '<br />';
       } else {
-        //logger.innerHTML += arguments[i] + '<br />';
+        logger.innerHTML += arguments[i] + '<br />';
       }
     }
     old.apply(console, arguments);
@@ -150,6 +151,18 @@ function random_selection() {
   };
 }
 
+export function generateRandomLyric(length) {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$^&*()_+=-`;:/.,?><|\'[]{} ';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  var smiles = ['😊', '😁', '😂', '😃', '😄', '😉', '😏'];
+  result += smiles[Math.floor(Math.random() * smiles.length)];
+  return result;
+}
+
 async function random_command(test_command_number) {
   await waitForState('random_command', state, ['ready'], 50, 5000);
   for (let attempt=0; attempt<1000; ++attempt) {
@@ -188,10 +201,24 @@ async function random_command(test_command_number) {
       async_redraw();
     }
     // Transpose periodically
-    if (Math.random() < 0.01) {
-      await waitForState('change_timesig', state, ['ready'], 50, 5000);
-      selected.note = null;
-      nd.set_timesig(timesigs[rand0n(timesigs.length)]);
+    if (Math.random() < 0.03) {
+      await waitForState('transpose', state, ['ready'], 50, 5000);
+      nd.transpose_voice(rand0n(nd.voices.length), transpositions[rand0n(transpositions.length)].dd);
+      saveState();
+      async_redraw();
+    }
+    // Add text periodically
+    if (Math.random() < 0.02) {
+      await waitForState('set_text', state, ['ready'], 50, 5000);
+      const v = rand0n(nd.voices.length);
+      nd.set_text(v, rand0n(nd.voices[v].notes.length), generateRandomLyric(4));
+      async_redraw();
+    }
+    // Add lyric periodically
+    if (Math.random() < 0.02) {
+      await waitForState('set_lyric', state, ['ready'], 50, 5000);
+      const v = rand0n(nd.voices.length);
+      nd.set_lyric(v, rand0n(nd.voices[v].notes.length), generateRandomLyric(4));
       async_redraw();
     }
     // Stop after successful attempt
@@ -214,6 +241,7 @@ async function test_startChar() {
     for (let voice = 0; voice < voices.length; voice++) {
       let elems = voices[voice].children;
       for (let elem = 0; elem < elems.length; elem++) {
+        await waitForState('click', state, ['ready'], 50, 5000);
         element_click(elems[elem].abcelem, 0, "", {voice: voice}, {step: 0}, {shiftKey: 0});
         async_redraw();
         $('#Modal1').modal('hide');
@@ -450,7 +478,7 @@ async function test_do(test_level) {
 
 export async function test(test_level) {
   testState.testing = true;
-  console2html();
+  //console2html();
   start_counter('test');
   try {
     settings.settings2storage();

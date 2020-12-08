@@ -81,13 +81,14 @@ export class NotesClipboard {
       const notes = vc.notes;
       let n1 = nd.getClosestNote(v, s1);
       const n2 = nd.getClosestNote(v, s2);
-      console.log(`Paste v${v} s1:${s1} s2:${s2} n1.step:${notes[n1].step} n1.len:${notes[n1].len}`);
+      console.log(`Paste v${v} s1:${s1} s2:${s2} n1.step:${notes[n1].step} n1.len:${notes[n1].len} n2.step:${notes[n2].step} n2.len:${notes[n2].len}`);
+      // Calculate left_rest before cutting (because first and last note can be the same)
+      const left_rest = notes[n2].step + notes[n2].len - 1 - s2;
       // Cut previous note by selection border and do not delete it
       if (notes[n1].step < s1) {
         notes[n1].len = s1 - notes[n1].step;
         ++n1;
       }
-      const left_rest = notes[n2].step + notes[n2].len - 1 - s2;
       let new_notes = JSON.parse(JSON.stringify(this.voices[v - v1].notes));
       console.log(`Paste v${v} left_rest:${left_rest}`, json_stringify_circular(new_notes));
       if (left_rest) {

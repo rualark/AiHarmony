@@ -193,14 +193,14 @@
    <note color="#000000">
     <pitch>
      <step>A</step>
-     <alter>1</alter>
-     <octave>5</octave>
+     <alter>-2</alter>
+     <octave>4</octave>
     </pitch>
     <duration>384</duration>
     <voice>1</voice>
     <type>quarter</type>
     <dot />
-    <accidental>sharp</accidental>
+    <accidental>flat-flat</accidental>
     <staff>1</staff>
    </note>
    <note color="#000000">
@@ -214,14 +214,10 @@
   <measure number="3">
    <attributes />
    <note color="#000000">
-    <pitch>
-     <step>G</step>
-     <octave>4</octave>
-    </pitch>
+    <rest />
     <duration>256</duration>
     <voice>1</voice>
     <type>quarter</type>
-    <accidental>natural</accidental>
     <staff>1</staff>
    </note>
    <note color="#000000">
