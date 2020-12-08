@@ -3,7 +3,7 @@ import {nd} from "../../notes/NotesData.js";
 import {saveState} from "../../state/history.js";
 import { showModal } from "../lib/modal.js";
 
-const transpositions = [
+export const transpositions = [
   {dd: 7, text: "Up octave"},
   {dd: -7, text: "Down octave"},
 ];

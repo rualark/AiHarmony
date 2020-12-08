@@ -1,7 +1,7 @@
-import {fifths2keysig, keysig_imprint} from "./noteHelper.js";
+import {fifths2keysig, keysig_imprint, split_len} from "./noteHelper.js";
 import {saveState} from "../state/history.js";
 import {selected} from "../abc/abchelper.js";
-import { name2filename } from "../core/string.js";
+import { json_stringify_circular, name2filename } from "../core/string.js";
 import { generateRandomHashWords } from "../core/hashwords.js";
 
 export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
@@ -89,16 +89,19 @@ export class NotesData {
   set_len(v, ni, len, saveState=true) {
     let notes = this.voices[v].notes;
     let note = notes[ni];
+    // If we are enlarging current note
     if (len > note.len) {
+      // Debt is the length that we owe to the newly inserted note due to making it shorter
       let debt = len - note.len;
       for (let n = ni + 1; n < notes.length; ++n) {
+        // If we can cover the debt fully with current note, do it
         if (debt < notes[n].len) {
-          this.set_rest(v, n, false);
-          notes[n].len = notes[n].len - debt;
-          notes[n].startsTie = false;
+          // Replace this note with residue rest(s)
+          notes.splice(n, 1, ...NotesData.make_rests(notes[n].len - debt));
           break;
         }
         else {
+          // If current note is smaller than debt, just remove it
           debt -= notes[n].len;
           notes.splice(n, 1);
           --n;
@@ -106,13 +109,74 @@ export class NotesData {
         }
       }
     }
+    // If we are making current note smaller
     else {
-      notes.splice(ni + 1, 0, {d: 0, alter: 10, len: note.len - len, startsTie: false});
+      console.log(`Insert residue rest old_len:${note.len} - len:${len}`);
+      // Insert residue rest(s) after our note
+      notes.splice(ni + 1, 0, ...NotesData.make_rests(note.len - len));
       this.set_rest(v, ni + 1, false);
     }
     note.len = len;
     note.startsTie = false;
     if (saveState) this.saveState();
+  }
+
+  static make_rests(len) {
+    let result = [];
+    for (const ln of split_len(len)) {
+      result.push({d: 0, alter: 10, len: ln, startsTie: false});
+    }
+    return result;
+  }
+
+  static split_note(note) {
+    let result = [];
+    const lens = split_len(note.len);
+    for (let i=0; i<lens.length; i++) {
+      let copy_of_note = JSON.parse(JSON.stringify(note));
+      copy_of_note.len = lens[i];
+      if (note.d && i < lens.length - 1) {
+        copy_of_note.startsTie = true;
+      }
+      result.push(copy_of_note);
+    }
+    return result;
+  }
+
+  split_note_into_measures(note) {
+    let result = [];
+    const mlen = this.timesig.measure_len;
+    const first_measure = Math.floor(note.step / mlen) + 1;
+    const note_end = note.step + note.len - 1;
+    let split_step = note.step;
+    console.log(`Split by measures starting with ${first_measure} at ${split_step}, ${note_end}`);
+    for (let m=first_measure; m<first_measure + 100; m++) {
+      const measure_start = m * mlen;
+      console.log(`Split by measure ${split_step}-${measure_start}, ${note_end}`);
+      // Stop splitting as we reach last measure in note
+      if (measure_start > note_end + 1) break;
+      // Create copy of note from split_step to measure_start
+      let copy_of_note = JSON.parse(JSON.stringify(note));
+      copy_of_note.step = split_step;
+      copy_of_note.len = measure_start - split_step;
+      console.log(`Split by measure ${split_step}-${measure_start}, ${note_end}`, json_stringify_circular(copy_of_note));
+      // Remember step where we finished splitting
+      split_step = measure_start;
+      // Tie notes until we reach end of note
+      if (note.d && split_step <= note_end) {
+        copy_of_note.startsTie = true;
+      }
+      result.push(copy_of_note);
+    }
+    // Create last copy of note from last split_step to end of note
+    if (split_step <= note_end) {
+      let copy_of_note = JSON.parse(JSON.stringify(note));
+      copy_of_note.step = split_step;
+      copy_of_note.len = note_end - split_step + 1;
+      console.log(`End by measure ${split_step}-${note_end}`, json_stringify_circular(copy_of_note));
+      result.push(copy_of_note);
+    }
+    return result;
   }
 
   // Adds new empty voice before voice v
@@ -136,7 +200,6 @@ export class NotesData {
   del_voice(v) {
     if (v == null) return;
     this.voices.splice(v, 1);
-    this.saveState();
   }
 
   append_measure(saveState=true) {
@@ -147,7 +210,7 @@ export class NotesData {
     if (saveState) this.saveState();
   }
 
-  insert_measure(v, n, saveState=true) {
+  insert_measure(v, n) {
     let m = Math.floor(this.voices[v].notes[n].step / this.timesig.measure_len);
     let p1 = m * this.timesig.measure_len;
     let p2 = p1 + this.timesig.measure_len;
@@ -169,7 +232,6 @@ export class NotesData {
         }
       }
     }
-    if (saveState) this.saveState();
   }
 
   delBar(v, n) {
@@ -456,6 +518,13 @@ export class NotesData {
 
   transpose_voice(v, dd) {
     let vc = this.voices[v];
+    // Test if can transpose
+    for (let n = 0; n < vc.notes.length; ++n) {
+      if (!vc.notes[n].d) continue;
+      const new_d = vc.notes[n].d + dd
+      if (new_d < 1 || new_d > 74) return;
+    }
+    // Transpose
     for (let n = 0; n < vc.notes.length; ++n) {
       if (!vc.notes[n].d) continue;
       const new_d = vc.notes[n].d + dd

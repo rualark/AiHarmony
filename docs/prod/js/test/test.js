@@ -1,9 +1,10 @@
 import {next_note, prev_note} from "../ui/edit/select.js";
 import {start_counter, stop_counter} from "../core/time.js";
 import {readRemoteMusicXmlFile} from "../MusicXml/readRemoteMusicXml.js";
-import {async_redraw, selected, state} from "../abc/abchelper.js";
+import {abcjs, async_redraw, selected, state} from "../abc/abchelper.js";
 import {nd} from "../notes/NotesData.js";
 import {set_len, toggle_dot} from "../ui/edit/editLen.js";
+import { transpositions } from "../ui/modal/transposeModal.js";
 import {
   increment_note,
   increment_octave,
@@ -14,8 +15,7 @@ import {
 } from "../ui/edit/editNote.js";
 import {add_part, del_bar, new_file, voiceChange} from "../ui/edit/editScore.js";
 import {toggle_tie} from "../ui/edit/editTie.js";
-import {undoState} from "../state/history.js";
-import {aic, sendToAic} from "../integration/aiCounterpoint.js";
+import {saveState, undoState} from "../state/history.js";
 import {dataToMusicXml} from "../MusicXml/dataToMusicXml.js";
 import {httpRequestNoCache} from "../core/remote.js";
 import {data2plain} from "../state/state.js";
@@ -36,12 +36,17 @@ import { showRestoreModal } from "../ui/modal/restoreModal.js";
 import { showShareModal } from "../ui/modal/shareModal.js";
 import { showShortcutsModal } from "../ui/modal/shortcutsModal.js";
 import { showTextModal } from "../ui/modal/textModal.js";
-import { showTimesigModal } from "../ui/modal/timesig.js";
+import { showTimesigModal, timesigs } from "../ui/modal/timesig.js";
 import { settings } from "../state/settings.js";
+import { element_click } from "../ui/selection.js";
+import { commands } from "../ui/commands.js";
+import { nclip } from "../notes/NotesClipboard.js";
 
 export let testState = {
   testing: false
 };
+
+const ignore_commands = new Set(['logo', 'support', 'docs', 'aic', 'ais', 'Edit exercise header (name)', 'zoom-in', 'zoom-out']);
 
 function console2html() {
   let old = console.log;
@@ -74,7 +79,7 @@ async function waitForState(stage, obj, vals, pause, timeout) {
     };
   }
   //console.log(stage);
-  await sleep(500);
+  //await sleep(500);
 }
 
 function assert2strings(stage, fname, st1, st2, max_diff=0) {
@@ -89,6 +94,166 @@ function assert2strings(stage, fname, st1, st2, max_diff=0) {
       data: st2
     };
   }
+}
+
+async function validate_ignore_commands() {
+  // Check if all ignore_commands exist
+  for (const id of ignore_commands) {
+    let found = false;
+    for (const command of commands) {
+      if (id === command.id || id === command.name) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      throw {
+        message: `${id} ignore_command not found in commands`,
+      };
+    }
+  }
+}
+
+async function validate_nd() {
+  let voices_end = -1;
+  for (let v=0; v<nd.voices.length; ++v) {
+    let vc = nd.voices[v];
+    const nt = vc.notes[vc.notes.length - 1];
+    let voice_end = nt.step + nt.len;
+    if (voice_end % nd.timesig.measure_len) {
+      throw {
+        message: `Voice ${v} has length ${voice_end}, not whole measures of ${nd.timesing.measure_len} steps`,
+      };
+    }
+    if (voices_end !== -1 && voices_end !== voice_end) {
+      throw {
+        message: `Voice ${v} has length ${voice_end}, not ${voices_end}`,
+      };
+    }
+    voices_end = voice_end;
+  }
+}
+
+function rand0n(n) {
+  return Math.floor(Math.random() * n);
+}
+
+function randomProperty(obj) {
+  var keys = Object.keys(obj);
+  return obj[keys[ keys.length * Math.random() << 0]];
+};
+
+function random_selection() {
+  const voice = rand0n(nd.voices.length);
+  selected.note = {
+    voice: voice,
+    note: rand0n(nd.voices[voice].notes.length)
+  };
+}
+
+export function generateRandomLyric(length) {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$^&*()_+=-`;:/.,?><|\'[]{} ';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  var smiles = ['😊', '😁', '😂', '😃', '😄', '😉', '😏'];
+  result += smiles[Math.floor(Math.random() * smiles.length)];
+  return result;
+}
+
+async function random_command(test_command_number) {
+  await waitForState('random_command', state, ['ready'], 50, 5000);
+  for (let attempt=0; attempt<1000; ++attempt) {
+    const i = rand0n(commands.length);
+    const command = commands[i];
+    //console.log('Try command number', i, command);
+    if (command.separator) continue;
+    if (command.event === 'onchange') continue;
+    if (ignore_commands.has(command.id)) continue;
+    if (ignore_commands.has(command.name)) continue;
+
+    console.log(test_command_number, 'Executing', command.id, command.name);
+    command.command();
+    if (Math.random() < 0.4) {
+      $('#Modal1').modal('hide');
+    }
+    await validate_nd();
+    // If nothing is selected, make about 10 commands before reselecting
+    if (!selected.note && Math.random() < 0.1) {
+      await waitForState('set_selection', state, ['ready'], 50, 5000);
+      random_selection();
+      async_redraw();
+    }
+    // Change key signature periodically
+    if (Math.random() < 0.03) {
+      await waitForState('change_keysig', state, ['ready'], 50, 5000);
+      nclip.clear();
+      nd.set_keysig(randomProperty(keysigs));
+      async_redraw();
+    }
+    // Change time signature periodically
+    if (Math.random() < 0.02) {
+      await waitForState('change_timesig', state, ['ready'], 50, 5000);
+      selected.note = null;
+      nd.set_timesig(timesigs[rand0n(timesigs.length)]);
+      async_redraw();
+    }
+    // Transpose periodically
+    if (Math.random() < 0.03) {
+      await waitForState('transpose', state, ['ready'], 50, 5000);
+      nd.transpose_voice(rand0n(nd.voices.length), transpositions[rand0n(transpositions.length)].dd);
+      saveState();
+      async_redraw();
+    }
+    // Add text periodically
+    if (Math.random() < 0.02) {
+      await waitForState('set_text', state, ['ready'], 50, 5000);
+      const v = rand0n(nd.voices.length);
+      nd.set_text(v, rand0n(nd.voices[v].notes.length), generateRandomLyric(4));
+      async_redraw();
+    }
+    // Add lyric periodically
+    if (Math.random() < 0.02) {
+      await waitForState('set_lyric', state, ['ready'], 50, 5000);
+      const v = rand0n(nd.voices.length);
+      nd.set_lyric(v, rand0n(nd.voices[v].notes.length), generateRandomLyric(4));
+      async_redraw();
+    }
+    // Stop after successful attempt
+    break;
+  }
+}
+
+async function test_random() {
+  await validate_ignore_commands();
+  for (let i=1; i<1000; ++i) {
+    await random_command(i);
+  }
+  location.reload();
+}
+
+async function test_startChar() {
+  let engraver = abcjs[0].engraver;
+  for (let line = 0; line < engraver.staffgroups.length; line++) {
+    let voices = engraver.staffgroups[line].voices;
+    for (let voice = 0; voice < voices.length; voice++) {
+      let elems = voices[voice].children;
+      for (let elem = 0; elem < elems.length; elem++) {
+        await waitForState('click', state, ['ready'], 50, 5000);
+        element_click(elems[elem].abcelem, 0, "", {voice: voice}, {step: 0}, {shiftKey: 0});
+        async_redraw();
+        $('#Modal1').modal('hide');
+      }
+    }
+  }
+  for (let i=0; i<73; ++i) {
+    await waitForState('undo', state, ['ready'], 50, 5000);
+    undoState(false);
+  }
+  await waitForState('undo', state, ['ready'], 50, 5000);
+  undoState();
 }
 
 async function test_actions() {
@@ -131,6 +296,10 @@ async function test_actions() {
   repeat_element();
   await waitForState('append_measure', state, ['ready'], 50, 5000);
   nd.append_measure();
+
+  await waitForState('test_startChar', state, ['ready'], 50, 5000);
+  await test_startChar();
+
   await waitForState('next_note', state, ['ready'], 50, 5000);
   next_note();
   await waitForState('next_note', state, ['ready'], 50, 5000);
@@ -157,8 +326,12 @@ async function test_actions() {
   prev_note();
   await waitForState('toggle_tie', state, ['ready'], 50, 5000);
   toggle_tie();
+  await waitForState('voiceChange', state, ['ready'], 50, 5000);
+  voiceChange(-1);
   await waitForState('addPart', state, ['ready'], 50, 5000);
   add_part();
+  await waitForState('voiceChange', state, ['ready'], 50, 5000);
+  voiceChange(1);
   await waitForState('set_len', state, ['ready'], 50, 5000);
   set_len(1);
   await waitForState('set_keysig', state, ['ready'], 50, 5000);
@@ -245,11 +418,17 @@ async function test_modal() {
 
 async function test_do(test_level) {
   const STATE_IGNORE_SUFFIX = 16;
-  console.log('START TEST');
+  console.log('START TEST level:', test_level);
   await test_framework();
   await waitForState('new_file', state, ['ready'], 50, 5000);
   new_file();
   await waitForState('readRemoteMusicXmlFile', state, ['ready'], 50, 5000);
+  readRemoteMusicXmlFile('musicxml/ca3-examples/good-cp5-extract.xml');
+
+  if (test_level == 2) {
+    await test_random();
+  }
+
   await waitForState('analysis', ares, ['ready'], 50, 5000);
   readRemoteMusicXmlFile('musicxml/ca3-examples/good-cp5-extract.xml');
   await waitForState('data2plain', state, ['ready'], 50, 5000);
@@ -266,7 +445,9 @@ async function test_do(test_level) {
     $('#analysisConsole').html());
   assert2strings('Base64 compression', '', loaded_plain, LZString.decompressFromBase64(LZString.compressToBase64(loaded_plain)));
   assert2strings('UTF16 compression', '', loaded_plain, LZString.decompressFromUTF16(LZString.compressToUTF16(loaded_plain)));
+
   await test_actions();
+
   await waitForState('analysis', ares, ['ready'], 50, 5000);
   assert2strings('Edited plain', 'test2.plain',
     await httpRequestNoCache('GET', 'test_data/test2.plain'),
@@ -277,25 +458,18 @@ async function test_do(test_level) {
   assert2strings('Edited ca3', 'test2.ca3',
     await httpRequestNoCache('GET', 'test_data/test2.ca3'),
     $('#analysisConsole').html());
-  for (let i=0; i<34; ++i) {
+  for (let i=0; i<35; ++i) {
     await waitForState('undo', state, ['ready'], 50, 5000);
     undoState();
   }
   assert2strings('Undo plain', '', loaded_plain, data2plain().slice(0, -STATE_IGNORE_SUFFIX));
-  if (test_level > 1) {
-    sendToAic(false);
-    try {
-      await waitForState('PDF', aic, ['ready'], 50, 10000);
-    } catch (e) {
-      console.log('Aic is probably busy, check for first response');
-      await waitForState('PDF', aic, ['queued', 'running', 'ready'], 50, 5000);
-    }
+  if (test_level > 2) {
     sendToAis(false);
     try {
-      await waitForState('MP3', aic, ['ready'], 50, 10000);
+      await waitForState('MP3', ais, ['ready'], 50, 10000);
     } catch (e) {
       console.log('Ais is probably busy, check for first response');
-      await waitForState('MP3', aic, ['queued', 'running', 'ready'], 50, 5000);
+      await waitForState('MP3', ais, ['queued', 'running', 'ready'], 50, 5000);
     }
   }
   await test_modal();
@@ -304,7 +478,7 @@ async function test_do(test_level) {
 
 export async function test(test_level) {
   testState.testing = true;
-  console2html();
+  //console2html();
   start_counter('test');
   try {
     settings.settings2storage();

@@ -1,5 +1,6 @@
-import {nd} from "./NotesData.js";
+import {nd, NotesData} from "./NotesData.js";
 import { state2storage } from "../state/state.js";
+import { json_stringify_circular } from "../core/string.js";
 
 export class NotesClipboard {
   constructor() {
@@ -13,7 +14,8 @@ export class NotesClipboard {
   }
 
   copy(v1, v2, s1, s2) {
-    if (v1 > v2 || s1 > s2) return;
+    // Check if selection is backwards (this can happen if it is analysis selection)
+    if (v1 > v2 || s1 > s2) return false;
     this.clear();
     this.source = {
       v1: v1,
@@ -31,6 +33,11 @@ export class NotesClipboard {
         let nt = vc.notes[n];
         if (nt.step > s2) {
           break;
+        }
+        // Check if selection is not rectangular (this can happen if it is analysis selection)
+        if (nt.step < s1 || nt.step + nt.len - 1 > s2) {
+          this.clear();
+          return false;
         }
         let nt_copy = JSON.parse(JSON.stringify(nt));
         if (nt.step + nt.len > s2) {
@@ -54,12 +61,15 @@ export class NotesClipboard {
       ++voices_added;
     }
     if (voices_added) nd.update_note_steps();
-    // Target steps: first and last
+    // Target steps: first and last (not next after last)
     const s1 = nd.voices[v1].notes[n].step;
     const s2 = s1 + (this.source.s2 - this.source.s1);
-    // Append measures if needed to all voices
+    // Last note in first voice
     const last_note = nd.voices[0].notes[nd.voices[0].notes.length - 1];
-    const new_measures = Math.ceil((s2 - last_note.step + last_note.len) / mlen);
+    const last_note_end = last_note.step + last_note.len - 1;
+    // Append measures if needed to all voices
+    const new_measures = Math.ceil((s2 - last_note_end) / mlen);
+    console.log('Paste: ', new_measures, this.voices, this.source);
     if (new_measures > 0) {
       for (let i=0; i<new_measures; ++i) {
         nd.append_measure(false);
@@ -71,34 +81,46 @@ export class NotesClipboard {
       const notes = vc.notes;
       let n1 = nd.getClosestNote(v, s1);
       const n2 = nd.getClosestNote(v, s2);
+      console.log(`Paste v${v} s1:${s1} s2:${s2} n1.step:${notes[n1].step} n1.len:${notes[n1].len} n2.step:${notes[n2].step} n2.len:${notes[n2].len}`);
+      // Calculate left_rest before cutting (because first and last note can be the same)
+      const left_rest = notes[n2].step + notes[n2].len - 1 - s2;
       // Cut previous note by selection border and do not delete it
       if (notes[n1].step < s1) {
         notes[n1].len = s1 - notes[n1].step;
         ++n1;
       }
-      let left_rest = notes[n2].step + notes[n2].len - 1 - s2;
       let new_notes = JSON.parse(JSON.stringify(this.voices[v - v1].notes));
+      console.log(`Paste v${v} left_rest:${left_rest}`, json_stringify_circular(new_notes));
       if (left_rest) {
-        new_notes.push({d: 0, alter: 10, len: left_rest, startsTie: false});
+        new_notes.push(...NotesData.make_rests(left_rest));
       }
+      console.log(`Paste v${v}`, json_stringify_circular(new_notes))
       // Split notes by measure borders
       let s = s1;
       for (let i=0; i<new_notes.length; ++i) {
+        const len = new_notes[i].len;
+        // Calculate new note starts
+        new_notes[i].step = s;
         if (Math.floor(s / mlen) < Math.floor((s + new_notes[i].len - 1) / mlen)) {
-          const excess = (s + new_notes[i].len) % mlen;
-          new_notes.splice(
-            i,
-            0,
-            JSON.parse(JSON.stringify(new_notes[i]))
-          );
-          new_notes[i].len = new_notes[i].len - excess;
-          new_notes[i + 1].len = excess;
-          if (new_notes[i].d) {
-            new_notes[i].startsTie = true;
+          // First split notes by measures into notes-in-measure
+          console.log('Note', json_stringify_circular(new_notes[i]), i);
+          const measured_notes = nd.split_note_into_measures(new_notes[i]);
+          let splitted_notes = [];
+          for (const measured_note of measured_notes) {
+            // Split every note-in-measure by allowed note length and insert them
+            splitted_notes.push(
+              ...NotesData.split_note(measured_note)
+            );
           }
+          // Replace with splitted notes at once to preserve order
+          new_notes.splice(i, 1, ...splitted_notes);
+          // Skip splitted notes to prevent splitting them again
+          i += splitted_notes.length - 1;
         }
-        s += new_notes[i].len;
+        s += len;
+        console.log(`Paste v${v} s:${s}`, json_stringify_circular(new_notes));
       }
+      console.log(`Paste v${v} n1:${n1} n2:${n2}`, json_stringify_circular(new_notes));
       // Remove old notes and add new
       notes.splice(
         n1,

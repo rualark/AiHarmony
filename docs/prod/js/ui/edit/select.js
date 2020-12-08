@@ -25,6 +25,7 @@ export function move_to_next_note(saveState = true) {
 
 export function next_note() {
   if (state.state !== 'ready') return;
+  if (!selected.note) return;
   stop_advancing();
   if (move_to_next_note(false)) {
     async_redraw();
@@ -54,6 +55,7 @@ export function move_to_previous_note() {
 
 export function prev_note() {
   if (state.state !== 'ready') return;
+  if (!selected.note) return;
   move_to_previous_note();
   play_note(selected.note.voice, selected.note.note);
   stop_advancing();
@@ -74,6 +76,7 @@ export function select_note(v, n) {
 }
 
 export function select_range(v1, v2, s1, s2, severity, doSaveState=true) {
+  console.log('Selecting range...', state, nd.voices.length, v1, v2);
   if (state.state !== 'ready') return;
   if (nd.voices.length <= v1) return;
   if (nd.voices.length <= v2) return;
@@ -90,6 +93,7 @@ export function select_range(v1, v2, s1, s2, severity, doSaveState=true) {
     s2: s2,
     severity: severity
   };
+  console.log(selected);
   stop_advancing();
   highlightRange(severity);
   if (doSaveState) {

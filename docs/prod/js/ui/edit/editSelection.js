@@ -5,8 +5,8 @@ import {nd} from "../../notes/NotesData.js";
 import { nclip } from "../../notes/NotesClipboard.js";
 import { saveState } from "../../state/history.js";
 import { stop_advancing } from "./editScore.js";
-import { json_stringify_circular } from "../../core/string.js";
 import { update_selection } from "../selection.js";
+import { json_stringify_circular } from "../../core/string.js";
 
 export function grow_selection_horizontal(right=true) {
   if (state.state !== 'ready') return;
@@ -113,6 +113,7 @@ export function copy_selection(quiet=false) {
     let el = nd.abc_charStarts[selected.element.startChar];
     const v = el.voice;
     const nt = nd.voices[v].notes[el.note];
+    console.log('Copy one note', nt, v);
     if (nclip.copy(v, v, nt.step, nt.step + nt.len - 1)) {
       if (!quiet) {
         alertify.notify(`Copied selection`, 'success');
@@ -120,6 +121,7 @@ export function copy_selection(quiet=false) {
       return true;
     }
   } else {
+    console.log('Copy selection', json_stringify_circular(selected));
     if (nclip.copy(selected.note.v1, selected.note.v2, selected.note.s1, selected.note.s2)) {
       if (!quiet) {
         alertify.notify(`Copied selection`, 'success');
@@ -132,6 +134,7 @@ export function copy_selection(quiet=false) {
 export function paste_selection(redraw=true) {
   if (state.state !== 'ready') return;
   if (selected.note == null) return;
+  if (!nclip.voices.length) return;
   let el = selected.note;
   // Check if voices are locked
   if (nd.voicesAreLocked(el.voice, el.voice + nclip.source.v2 - nclip.source.v1)) {
@@ -144,9 +147,12 @@ export function paste_selection(redraw=true) {
     return;
   }
   stop_advancing();
+  nd.update_note_steps();
+  const s1 = nd.voices[el.voice].notes[el.note].step;
+  const len = nclip.source.s2 - nclip.source.s1;
+  select_range(el.voice, el.voice + nclip.source.v2 - nclip.source.v1, s1, s1 + len, null, false);
   saveState();
   if (redraw) {
     async_redraw();
   }
-  return true;
 }

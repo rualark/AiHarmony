@@ -146,8 +146,6 @@ export function element_click(abcElem, tuneNumber, classes, pos, move, mouseEven
   //console.log('Click', abcElem, tuneNumber, classes, pos, move, mouseEvent);
   if (abcElem['el_type'] !== 'tempo') {
     selected.element = abcElem;
-    selected.classes = classes;
-    selected.voice = pos.voice;
   }
   if (abcElem['el_type'] === 'tempo') {
     showTempoModal();
@@ -155,12 +153,12 @@ export function element_click(abcElem, tuneNumber, classes, pos, move, mouseEven
     nclip.mode = 'standby';
   }
   else if (abcElem['el_type'] === 'voiceName') {
-    rename_part();
+    rename_part(pos.voice);
     selected.note = null;
     nclip.mode = 'standby';
   }
   else if (typeof selected.element.clefPos !== 'undefined') {
-    showClefsModal(nd.voices[selected.voice]);
+    showClefsModal(nd.voices[pos.voice]);
     trackEvent('AiHarmony', 'click_clef');
     selected.note = null;
     nclip.mode = 'standby';
