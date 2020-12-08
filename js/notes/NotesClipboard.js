@@ -97,29 +97,26 @@ export class NotesClipboard {
       // Split notes by measure borders
       let s = s1;
       for (let i=0; i<new_notes.length; ++i) {
+        const len = new_notes[i].len;
+        // Calculate new note starts
+        new_notes[i].step = s;
         if (Math.floor(s / mlen) < Math.floor((s + new_notes[i].len - 1) / mlen)) {
-          const excess = (s + new_notes[i].len) % mlen;
-          // Insert copy of note
-          new_notes.splice(
-            i,
-            0,
-            JSON.parse(JSON.stringify(new_notes[i]))
-          );
-          // Split by measure length
-          new_notes[i].len = new_notes[i].len - excess;
-          new_notes[i + 1].len = excess;
-          if (new_notes[i].d) {
-            new_notes[i].startsTie = true;
+          // First split notes by measures into notes-in-measure
+          console.log('Note', json_stringify_circular(new_notes[i]), i);
+          const measured_notes = nd.split_note_into_measures(new_notes[i]);
+          let splitted_notes = [];
+          for (const measured_note of measured_notes) {
+            // Split every note-in-measure by allowed note length and insert them
+            splitted_notes.push(
+              ...NotesData.split_note(measured_note)
+            );
           }
-          // Split notes by allowed note length
-          new_notes.splice(
-            i,
-            2,
-            ...NotesData.split_note(new_notes[i]),
-            ...NotesData.split_note(new_notes[i + 1])
-          );
+          // Replace with splitted notes at once to preserve order
+          new_notes.splice(i, 1, ...splitted_notes);
+          // Skip splitted notes to prevent splitting them again
+          i += splitted_notes.length - 1;
         }
-        s += new_notes[i].len;
+        s += len;
         console.log(`Paste v${v} s:${s}`, json_stringify_circular(new_notes));
       }
       console.log(`Paste v${v} n1:${n1} n2:${n2}`, json_stringify_circular(new_notes));

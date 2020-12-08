@@ -35,10 +35,11 @@ import { showRestoreModal } from "../ui/modal/restoreModal.js";
 import { showShareModal } from "../ui/modal/shareModal.js";
 import { showShortcutsModal } from "../ui/modal/shortcutsModal.js";
 import { showTextModal } from "../ui/modal/textModal.js";
-import { showTimesigModal } from "../ui/modal/timesig.js";
+import { showTimesigModal, timesigs } from "../ui/modal/timesig.js";
 import { settings } from "../state/settings.js";
 import { element_click } from "../ui/selection.js";
 import { commands } from "../ui/commands.js";
+import { nclip } from "../notes/NotesClipboard.js";
 
 export let testState = {
   testing: false
@@ -136,6 +137,19 @@ function rand0n(n) {
   return Math.floor(Math.random() * n);
 }
 
+function randomProperty(obj) {
+  var keys = Object.keys(obj);
+  return obj[keys[ keys.length * Math.random() << 0]];
+};
+
+function random_selection() {
+  const voice = rand0n(nd.voices.length);
+  selected.note = {
+    voice: voice,
+    note: rand0n(nd.voices[voice].notes.length)
+  };
+}
+
 async function random_command(test_command_number) {
   await waitForState('random_command', state, ['ready'], 50, 5000);
   for (let attempt=0; attempt<1000; ++attempt) {
@@ -152,28 +166,45 @@ async function random_command(test_command_number) {
     if (Math.random() < 0.4) {
       $('#Modal1').modal('hide');
     }
-    //console.log(json_stringify_circular(nd), json_stringify_circular(selected));
     await validate_nd();
     // If nothing is selected, make about 10 commands before reselecting
     if (!selected.note && Math.random() < 0.1) {
       await waitForState('set_selection', state, ['ready'], 50, 5000);
-      const voice = rand0n(nd.voices.length);
-      selected.note = {
-        voice: voice,
-        note: rand0n(nd.voices[voice].notes.length)
-      };
+      random_selection();
       async_redraw();
     }
+    // Change key signature periodically
+    if (Math.random() < 0.03) {
+      await waitForState('change_keysig', state, ['ready'], 50, 5000);
+      nclip.clear();
+      nd.set_keysig(randomProperty(keysigs));
+      async_redraw();
+    }
+    // Change time signature periodically
+    if (Math.random() < 0.02) {
+      await waitForState('change_timesig', state, ['ready'], 50, 5000);
+      selected.note = null;
+      nd.set_timesig(timesigs[rand0n(timesigs.length)]);
+      async_redraw();
+    }
+    // Transpose periodically
+    if (Math.random() < 0.01) {
+      await waitForState('change_timesig', state, ['ready'], 50, 5000);
+      selected.note = null;
+      nd.set_timesig(timesigs[rand0n(timesigs.length)]);
+      async_redraw();
+    }
+    // Stop after successful attempt
     break;
   }
 }
 
 async function test_random() {
   await validate_ignore_commands();
-  for (let i=1; i<30000; ++i) {
+  for (let i=1; i<1000; ++i) {
     await random_command(i);
-    if (i % 1000 == 0) location.reload();
   }
+  location.reload();
 }
 
 async function test_startChar() {
@@ -366,8 +397,9 @@ async function test_do(test_level) {
   await waitForState('readRemoteMusicXmlFile', state, ['ready'], 50, 5000);
   readRemoteMusicXmlFile('musicxml/ca3-examples/good-cp5-extract.xml');
 
-  await test_random();
-  return;
+  if (test_level == 2) {
+    await test_random();
+  }
 
   await waitForState('analysis', ares, ['ready'], 50, 5000);
   readRemoteMusicXmlFile('musicxml/ca3-examples/good-cp5-extract.xml');

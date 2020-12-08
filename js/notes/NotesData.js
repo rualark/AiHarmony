@@ -1,7 +1,7 @@
 import {fifths2keysig, keysig_imprint, split_len} from "./noteHelper.js";
 import {saveState} from "../state/history.js";
 import {selected} from "../abc/abchelper.js";
-import { name2filename } from "../core/string.js";
+import { json_stringify_circular, name2filename } from "../core/string.js";
 import { generateRandomHashWords } from "../core/hashwords.js";
 
 export let supportedNoteLen = new Set([1, 2, 3, 4, 6, 8, 12, 16, 20, 24]);
@@ -138,6 +138,42 @@ export class NotesData {
       if (note.d && i < lens.length - 1) {
         copy_of_note.startsTie = true;
       }
+      result.push(copy_of_note);
+    }
+    return result;
+  }
+
+  split_note_into_measures(note) {
+    let result = [];
+    const mlen = this.timesig.measure_len;
+    const first_measure = Math.floor(note.step / mlen) + 1;
+    const note_end = note.step + note.len - 1;
+    let split_step = note.step;
+    console.log(`Split by measures starting with ${first_measure} at ${split_step}, ${note_end}`);
+    for (let m=first_measure; m<first_measure + 100; m++) {
+      const measure_start = m * mlen;
+      console.log(`Split by measure ${split_step}-${measure_start}, ${note_end}`);
+      // Stop splitting as we reach last measure in note
+      if (measure_start > note_end + 1) break;
+      // Create copy of note from split_step to measure_start
+      let copy_of_note = JSON.parse(JSON.stringify(note));
+      copy_of_note.step = split_step;
+      copy_of_note.len = measure_start - split_step;
+      console.log(`Split by measure ${split_step}-${measure_start}, ${note_end}`, json_stringify_circular(copy_of_note));
+      // Remember step where we finished splitting
+      split_step = measure_start;
+      // Tie notes until we reach end of note
+      if (note.d && split_step <= note_end) {
+        copy_of_note.startsTie = true;
+      }
+      result.push(copy_of_note);
+    }
+    // Create last copy of note from last split_step to end of note
+    if (split_step <= note_end) {
+      let copy_of_note = JSON.parse(JSON.stringify(note));
+      copy_of_note.step = split_step;
+      copy_of_note.len = note_end - split_step + 1;
+      console.log(`End by measure ${split_step}-${note_end}`, json_stringify_circular(copy_of_note));
       result.push(copy_of_note);
     }
     return result;
