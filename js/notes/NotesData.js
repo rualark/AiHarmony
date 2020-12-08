@@ -518,6 +518,13 @@ export class NotesData {
 
   transpose_voice(v, dd) {
     let vc = this.voices[v];
+    // Test if can transpose
+    for (let n = 0; n < vc.notes.length; ++n) {
+      if (!vc.notes[n].d) continue;
+      const new_d = vc.notes[n].d + dd
+      if (new_d < 1 || new_d > 74) return;
+    }
+    // Transpose
     for (let n = 0; n < vc.notes.length; ++n) {
       if (!vc.notes[n].d) continue;
       const new_d = vc.notes[n].d + dd
