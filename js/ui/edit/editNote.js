@@ -1,14 +1,14 @@
 import {nd} from "../../notes/NotesData.js";
-import {async_redraw, selected, highlightNote, MAX_ABC_NOTE, MIN_ABC_NOTE, state} from "../../abc/abchelper.js";
+import {async_redraw, selected, state} from "../../abc/abchelper.js";
 import {saveState} from "../../state/history.js";
 import {stop_advancing} from "./editScore.js";
-import {move_to_next_note, move_to_previous_note, select_note, select_range} from "./select.js";
+import {move_to_next_note, select_note} from "./select.js";
 import {set_len} from "./editLen.js";
 import {clefs} from "../modal/clefs.js";
 import { settings } from "../../state/settings.js";
 import { copy_selection, paste_selection, select_from_to } from "./editSelection.js";
-import { nclip } from "../../notes/NotesClipboard.js";
 import { play_note } from "../../audio/audio.js";
+import { MAX_D, MIN_D } from "../../notes/noteHelper.js";
 
 export let future = {
   advancing: false,
@@ -35,6 +35,7 @@ export function check_voice_locked(el) {
   return false;
 }
 
+// Set note to closest note in diatonic class (dc)
 export function set_note(dc) {
   if (state.state !== 'ready') return;
   if (!selected.note) return;
@@ -55,9 +56,9 @@ export function set_note(dc) {
     pd = notes[el.note + 1].d;
   }
   // Choose diatonic closest to reference
-  let d = dc;
-  while (pd - d > 3) d += 7;
-  while (d - pd > 3) d -= 7;
+  let d = dc + 7;
+  while (pd - d > 3 && d + 7 <= MAX_D) d += 7;
+  while (d - pd > 3 && d - 7 >= MIN_D) d -= 7;
   // If we are advancing, get future alteration
   // If pause is selected, get future alteration
   if (!note.d || future.advancing) {
@@ -168,7 +169,7 @@ export function increment_selection(dnote) {
       // Skip rests
       if (!d) continue;
       // Skip too high/low notes
-      if (d + dnote >= MAX_ABC_NOTE || d + dnote <= MIN_ABC_NOTE) continue;
+      if (d + dnote >= MAX_D || d + dnote <= MIN_D) continue;
       note.alter = nd.inherited_alter(v, n, d + dnote);
       nd.set_note(v, n, d + dnote, false);
     }
@@ -215,7 +216,7 @@ export function can_increment_note(dnote) {
   }
   let note = nd.voices[el.voice].notes[n];
   let d = note.d;
-  return d && d + dnote < MAX_ABC_NOTE && d + dnote > MIN_ABC_NOTE;
+  return d && d + dnote < MAX_D && d + dnote > MIN_D;
 }
 
 export function increment_octave(doct) {

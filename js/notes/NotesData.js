@@ -1,4 +1,4 @@
-import {fifths2keysig, keysig_imprint, split_len} from "./noteHelper.js";
+import {fifths2keysig, keysig_imprint, MAX_D, MIN_D, split_len} from "./noteHelper.js";
 import {saveState} from "../state/history.js";
 import {selected} from "../abc/abchelper.js";
 import { json_stringify_circular, name2filename } from "../core/string.js";
@@ -49,6 +49,7 @@ export class NotesData {
   }
 
   set_note(v, n, d, saveState=true) {
+    if (d < MIN_D || d > MAX_D) return;
     this.voices[v].notes[n].d = d;
     let notes = this.voices[v].notes;
     let note = notes[n];
@@ -522,13 +523,13 @@ export class NotesData {
     for (let n = 0; n < vc.notes.length; ++n) {
       if (!vc.notes[n].d) continue;
       const new_d = vc.notes[n].d + dd
-      if (new_d < 1 || new_d > 74) return;
+      if (new_d < MIN_D || new_d > MAX_D) return;
     }
     // Transpose
     for (let n = 0; n < vc.notes.length; ++n) {
       if (!vc.notes[n].d) continue;
       const new_d = vc.notes[n].d + dd
-      if (new_d < 1 || new_d > 74) continue;
+      if (new_d < MIN_D || new_d > MAX_D) continue;
       vc.notes[n].d = new_d;
     }
   }
