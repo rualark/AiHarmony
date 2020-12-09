@@ -29,6 +29,7 @@ export function dataToAbc(instrument) {
           name += `\\n(sp. ${spec})`;
         }
       }
+      if (instrument) name = name.replace(/\\n/g, ' ');
     }
     if (instrument) name = instrument + '# ' + name;
     abc += `V: V${v} clef=${vc.clef} name="${name}"\n`;
