@@ -19,7 +19,7 @@ window.submitSentryUserFeedback = function(message){
   Sentry.captureMessage(message);
 }
 
-if (!environment.startsWith('prod?')) {
+if (environment.startsWith('prod')) {
   Sentry.init({
     dsn: 'https://ad05883cb9534743b6ca504ece76bba6@sentry.io/1894684',
     environment: environment,
