@@ -39,6 +39,7 @@ import { grow_selection_horizontal, grow_selection_vertical, copy_selection, pas
 import { showPublishModal } from "./modal/publishModal.js";
 import { showNewFileModal } from "./modal/newFileModal.js";
 import { showTempoModal } from "./modal/tempoModal.js";
+import { showFeedbackModal } from "./modal/feedbackModal.js";
 
 let mobileOpt = {
   true: {
@@ -331,8 +332,11 @@ export let commands = [
     toolbar: {type: 'image', toolbar_id: 2, hintText: 'Support'},
     event: 'onclick',
     keys: [],
-    command: () => { openNewUrl('https://github.com/rualark/AiHarmony/issues') },
-    name: 'Create support request',
+    command: () => {
+      showFeedbackModal();
+      //openNewUrl('https://github.com/rualark/AiHarmony/issues');
+    },
+    name: 'Report a problem or ask a question',
   },
   {
     id: 'docs',

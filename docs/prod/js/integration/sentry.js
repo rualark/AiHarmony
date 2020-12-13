@@ -3,7 +3,7 @@ import {environment, pageLoadTime, urlNoParams, mgen_login, mgen_name} from "../
 import {debugError} from "../core/debug.js";
 import {state2url} from "../state/state.js";
 
-window.showReportDialog = function (eventId) {
+window.showReportDialog = function(eventId) {
   try {
     enableKeys(false);
   } catch (e) {
@@ -13,7 +13,13 @@ window.showReportDialog = function (eventId) {
   Sentry.showReportDialog({eventId: eventId, user: {email: mgen_login, name: mgen_name}});
 };
 
-if (environment.startsWith('prod')) {
+class Feedback extends Error {};
+
+window.submitSentryUserFeedback = function(message){
+  Sentry.captureMessage(message);
+}
+
+if (!environment.startsWith('prod?')) {
   Sentry.init({
     dsn: 'https://ad05883cb9534743b6ca504ece76bba6@sentry.io/1894684',
     environment: environment,

@@ -53,6 +53,7 @@ function getEnvironment() {
 }
 
 export const environment = getEnvironment();
+console.log('Environment', environment);
 
 export function getCookie(name) {
   let value = "; " + document.cookie;

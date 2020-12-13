@@ -10,6 +10,11 @@ body {padding-top:10px; background-color:white}
 .btn-outline-white {color: black; background-color: white; border-color: white; transition-duration: 0ms}
 .btn-outline-white:hover { background-color: #eeeeee; transition-duration: 0ms }
 .disabled { opacity:0.3 !important;}
+.form-control::-webkit-input-placeholder{color:#bbb}
+.form-control:-moz-placeholder{color:#bbb}
+.form-control::-moz-placeholder{color:#bbb}
+.form-control:-ms-input-placeholder{color:#bbb}
+.form-control::-ms-input-placeholder{color:#bbb}
 .btn-lgray {color: black; background-color: #dddddd; border-color: #dddddd;}
 .btn-lblue {color: black; background-color: #bbdefb; border-color: #bbdefb; transition-duration: 0ms;}
 .tooltip{pointer-events:none}

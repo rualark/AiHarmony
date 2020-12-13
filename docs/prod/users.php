@@ -32,7 +32,7 @@ $r = query("
   LEFT JOIN users USING (u_id)
   WHERE u_id>0
   GROUP BY u_id
-  ORDER BY u_name
+  ORDER BY u_lastact DESC
 ");
 $n = mysqli_num_rows($r);
 echo "<p><table class='table table-striped table-bordered' style='max-width:1100px'>"; // table-hover
