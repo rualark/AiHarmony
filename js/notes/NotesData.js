@@ -49,7 +49,7 @@ export class NotesData {
   }
 
   set_note(v, n, d, saveState=true) {
-    if (d < MIN_D || d > MAX_D) return;
+    if (d && (d < MIN_D || d > MAX_D)) return;
     this.voices[v].notes[n].d = d;
     let notes = this.voices[v].notes;
     let note = notes[n];
