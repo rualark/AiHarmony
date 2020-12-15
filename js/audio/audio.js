@@ -1,56 +1,39 @@
 import {abcjs} from "../abc/abchelper.js";
-import {dataToAbc} from "../abc/dataToAbc.js";
-import { d2c, d2midi } from "../notes/noteHelper.js";
+import { d2midi } from "../notes/noteHelper.js";
 import { nd } from "../notes/NotesData.js";
 import { settings } from "../state/settings.js";
 
-let synthControl = {};
+let play_state = {
+  state: 'stopped'
+};
+
+function setPlayIcon(img) {
+  if (document.getElementById("playi").src.endsWith(img)) return;
+  document.getElementById("playi").src = img;
+}
 
 export function play() {
-  let synth = new ABCJS.synth.CreateSynth();
-  let AudioContext = window.AudioContext          // Default
-    || window.webkitAudioContext;  // Safari and old versions of Chrome
-  let myContext = new AudioContext();
-  synth.init({
-    audioContext: myContext,
-    visualObj: abcjs[0],
-  }).then(() => {
-    synth.prime(() => {
-    }).then(() => {
-      synth.start();
-    });
-  });
-}
-
-export function play2() {
-  ABCJS.renderMidi("midi1", dataToAbc(),
-    {
-      qpm: 320,
-      program: 52,
-    });
-
-  ABCJS.midi.startPlaying(document.querySelector(".abcjs-inline-midi"));
-}
-
-export function play3() {
-  if (ABCJS.synth.supportsAudio()) {
-    synthControl = new ABCJS.synth.SynthController();
-    synthControl.load("#audio", null, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
+  if (play_state.state === 'playing') {
+    play_state.state = 'stopped';
+    setPlayIcon('img/toolbar/play.png');
+    play_state.synth.stop();
   } else {
-    document.querySelector("#audio").innerHTML = "<div class='audio-error'>Audio is not supported in this browser.</div>";
-  }
-  let midiBuffer = new ABCJS.synth.CreateSynth();
-  midiBuffer.init({ visualObj: abcjs[0] }).then(function (response) {
-    if (synthControl) {
-      synthControl.setTune(abcjs[0], false).then(function (response) {
-        console.log("Audio successfully loaded.")
-      }).catch(function (error) {
-        console.warn("Audio problem:", error);
+    play_state.synth = new ABCJS.synth.CreateSynth();
+    let AudioContext = window.AudioContext          // Default
+      || window.webkitAudioContext;  // Safari and old versions of Chrome
+    let myContext = new AudioContext();
+    play_state.synth.init({
+      audioContext: myContext,
+      visualObj: abcjs[0],
+    }).then(() => {
+      play_state.synth.prime(() => {
+      }).then(() => {
+        play_state.synth.start();
+        setPlayIcon('img/pause.png');
+        play_state.state = 'playing';
       });
-    }
-  }).catch(function (error) {
-    console.warn("Audio problem:", error);
-  });
+    });
+  }
 }
 
 export function play_pitch(pitch, velocity) {
