@@ -48,7 +48,7 @@ function play(fromSelection) {
         seekToSelection();
       }
       play_state.synth.start();
-      setPlayIcon('img/pause.png');
+      setPlayIcon('img/stop.png');
       play_state.state = 'playing';
     });
   });
