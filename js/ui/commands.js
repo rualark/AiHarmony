@@ -11,7 +11,7 @@ import {
 import {showShortcutsModal} from "./modal/shortcutsModal.js";
 import {async_redraw, notation_zoom, selected} from "../abc/abchelper.js";
 import {keyCodes} from './lib/keys.js';
-import {play} from "../audio/audio.js";
+import {togglePlay} from "../audio/audio.js";
 import {nd} from "../notes/NotesData.js";
 import {showTimesigModal} from "./modal/timesig.js";
 import {showKeysigModal} from "./modal/keysig.js";
@@ -242,6 +242,9 @@ export let commandKeyCodes = {};
 export let commandCtrlKeyCodes = {};
 export let commandAltKeyCodes = {};
 export let commandShiftKeyCodes = {};
+
+// Specify id to allow shortcut remapping, add element to toolbar and attach event handler
+// Id is not needed for non-toolbar shortcuts
 
 export let commands = [
   {
@@ -688,8 +691,13 @@ export let commands = [
     toolbar: {type: 'image', toolbar_id: 3},
     event: 'onclick',
     keys: ['Space'],
-    command: () => { play() },
+    command: () => { togglePlay(true) },
     name: 'Playback',
+  },
+  {
+    keys: ['Shift+Space'],
+    command: () => { togglePlay(false) },
+    name: 'Playback from start',
   },
   {
     id: 'up_part',
