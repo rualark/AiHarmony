@@ -9,8 +9,9 @@ export function dataToAbc(instrument) {
   let mlen = nd.timesig.measure_len;
   let abc = '';
   abc += '%%barnumbers 1\n';
+  abc += '%%printtempo 0\n';
   $('#tempo').html(`Tempo: ♩=${nd.tempo}`);
-  if (instrument) abc += `Q:1/4=${nd.tempo}\n`;
+  abc += `Q:1/4=${nd.tempo}\n`;
   abc += 'M:' + nd.timesig.beats_per_measure + '/' + nd.timesig.beat_type + '\n';
   abc += 'K:' + nd.keysig.name + '\n';
   abc += 'L:1/16\n';
