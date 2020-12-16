@@ -19,12 +19,6 @@ function seekToSelection() {
   if (!el) return;
   const notes = nd.voices[el.voice].notes;
   const note = notes[el.note];
-  /*
-  const m = Math.floor(note.step / nd.timesig.measure_len);
-  const last_m = Math.floor(notes[notes.length - 1].step / nd.timesig.measure_len) + 1;
-  console.log('Seek', m/last_m, m, last_m, note, notes);
-  play_state.synth.seek(m / last_m);
-  */
   const s = note.step;
   const last_s = notes[notes.length - 1].step + notes[notes.length - 1].len;
   play_state.synth.seek(s / last_s);
@@ -36,29 +30,35 @@ function stop() {
   play_state.synth.stop();
 }
 
-export function play() {
+function play(fromSelection) {
+  play_state.synth = new ABCJS.synth.CreateSynth();
+  let AudioContext = window.AudioContext          // Default
+    || window.webkitAudioContext;  // Safari and old versions of Chrome
+  let myContext = new AudioContext();
+  play_state.synth.init({
+    audioContext: myContext,
+    visualObj: abcjs[0],
+    options: {
+      onEnded: stop
+    }
+  }).then(() => {
+    play_state.synth.prime(() => {
+    }).then(() => {
+      if (fromSelection) {
+        seekToSelection();
+      }
+      play_state.synth.start();
+      setPlayIcon('img/stop.png');
+      play_state.state = 'playing';
+    });
+  });
+}
+
+export function togglePlay(fromSelection) {
   if (play_state.state === 'playing') {
     stop();
   } else {
-    play_state.synth = new ABCJS.synth.CreateSynth();
-    let AudioContext = window.AudioContext          // Default
-      || window.webkitAudioContext;  // Safari and old versions of Chrome
-    let myContext = new AudioContext();
-    play_state.synth.init({
-      audioContext: myContext,
-      visualObj: abcjs[0],
-      options: {
-        onEnded: stop
-      }
-    }).then(() => {
-      play_state.synth.prime(() => {
-      }).then(() => {
-        seekToSelection();
-        play_state.synth.start();
-        setPlayIcon('img/pause.png');
-        play_state.state = 'playing';
-      });
-    });
+    play(fromSelection);
   }
 }
 
@@ -76,7 +76,6 @@ export function play_pitch(pitch, velocity) {
     [],
     1000 // a measure takes one second
   ).then(function (response) {
-    //console.log("note played");
   }).catch(function (error) {
     console.error("Error playing note:", error);
   });
