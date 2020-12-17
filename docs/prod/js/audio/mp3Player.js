@@ -58,7 +58,7 @@ function show_jplayer() {
   jpData = my_jPlayer.data('jPlayer');
   setInterval(function() {
     let x = jpData.htmlElement.audio.currentTime;
-    let d = jplayer_dur;
+    let d = my_jPlayer.data('jPlayer').status.duration;
     let img_waveform = document.getElementById('jplayer_waveform');
     if (img_waveform == null) return;
     let width = img_waveform.clientWidth;
