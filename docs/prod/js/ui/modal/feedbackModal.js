@@ -25,7 +25,8 @@ export function showFeedbackModal() {
   st += `<div class="input-group mb-3">`;
   st += ` <textarea id=textArea type="text" rows=8 class="form-control"></textarea>`;
   st += `</div>`;
-  st += `<span style='color:#aaaaaa'>A copy of your screen and your last actions will be automatically attached to your report.</span>`
+  st += `<span style='color:#aaaaaa'>A copy of your screen and your last actions will be automatically attached to your report.</span> `
+  st += `<span style='color:#aaaaaa'>If you want to attach files and images, you can report issue on <a target=_blank href="https://github.com/rualark/AiHarmony/issues">Github</a>.</span>`
   let footer = '';
   footer += `<button type="button" class="btn btn-primary" id=modalOk>OK</button>`;
   footer += `<button type="button" class="btn btn-secondary" data-dismiss="modal" id=modalCancel>Cancel</button>`;

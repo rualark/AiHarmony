@@ -229,7 +229,11 @@ async function random_command(test_command_number) {
 async function test_random() {
   await validate_ignore_commands();
   for (let i=1; i<1000; ++i) {
+    const startTime = new Date();
     await random_command(i);
+    const passedTime = new Date() - startTime;
+    // Sleep same time that command took
+    //await sleep(passedTime + 1);
   }
   location.reload();
 }
