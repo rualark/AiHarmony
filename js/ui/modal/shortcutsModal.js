@@ -9,6 +9,7 @@ export function showShortcutsModal() {
   let st = '';
   st += 'Artinfuser Harmony allows to play, edit and <a href=https://artinfuser.com/exercise/docs.php target=_blank>analyse</a> MusicXML files with exercises. ';
   st += 'Limitations: minimal supported note length is 1/16. Tuplets are not supported. Only single clef, key and time signature is supported per staff.<br><br>';
+  st += 'Created by Alexey Arkhipenko and Aleksey Shegolev using abcjs library.<br><br>';
   st += '<table class=table>';
   st += '<tr>';
   st += '<th>Function';
