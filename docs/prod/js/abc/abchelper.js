@@ -167,6 +167,7 @@ function notation_redraw() {
     $('#filename').prop('title', 'File name: ' + nd.fileName);
     start_counter('renderAbc');
     nd.abcString = dataToAbc();
+    console.log('renderAbc params', parserParams, engraverParams);
     abcjs = ABCJS.renderAbc('abc', nd.abcString, parserParams, engraverParams);
     stop_counter();
     apply_abcjs_styles();

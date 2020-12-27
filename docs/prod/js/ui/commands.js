@@ -156,7 +156,7 @@ export function toolbarButtonHtml(command, showHints) {
       st += `<select class="form-control custom-select" style='box-shadow: none; font-size: 0.85em; height: 32px; width: 175px;' id=${command.id}>`;
       st += `<option value='' ${nd.algo === '' ? "selected" : ""}>No analysis</option>`;
       st += `<option value=CA3 ${nd.algo === 'CA3' ? "selected" : ""}>Counterpoint</option>`;
-      st += `<option value=HA1 ${nd.algo === 'HA1' ? "selected" : ""}>Basic</option>`;
+      //st += `<option value=HA1 ${nd.algo === 'HA1' ? "selected" : ""}>Basic</option>`;
       st += `</select></div>`;
     }
     if (command.id === 'instruments') {
