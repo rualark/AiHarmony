@@ -18,7 +18,7 @@ import { publish } from "./integration/publish.js";
 
 function checkBrowserSupported() {
   if (navigator.browserSpecs.name !== 'Chrome' && navigator.browserSpecs.name !== 'Safari') {
-    alertify.warning('Please use latest Chrome or Safari browser for best results on this site', 15);
+    alertify.warning('Please use latest Chrome or Safari browser for best results on this site. Firefox can also work, but unfortunately we do not test on it much.', 15);
   }
 }
 

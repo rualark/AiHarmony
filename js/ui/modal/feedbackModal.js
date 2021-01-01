@@ -13,7 +13,7 @@ function showInputText(id, name, value) {
 
 function submitModal() {
   try {
-    submitSentryUserFeedback($('#textArea').val().trim() + '\n' + $('#input_userName').val().trim() + '\n' + $('#input_userEmail').val().trim());
+    submitSentryUserFeedback($('#textArea').val().trim() + '\n\n' + $('#input_userName').val().trim() + '\n' + $('#input_userEmail').val().trim());
     alertify.notify('Your feedback has been sent! We will try to respond as soon as possible.');
   }
   catch (e) {
