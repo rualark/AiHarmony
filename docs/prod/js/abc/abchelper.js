@@ -167,7 +167,6 @@ function notation_redraw() {
     $('#filename').prop('title', 'File name: ' + nd.fileName);
     start_counter('renderAbc');
     nd.abcString = dataToAbc();
-    console.log('renderAbc params', parserParams, engraverParams);
     abcjs = ABCJS.renderAbc('abc', nd.abcString, parserParams, engraverParams);
     stop_counter();
     apply_abcjs_styles();
@@ -218,7 +217,7 @@ export function init_abcjs(clickListener) {
     selectionColor: SELECTION_COLOR,
     dragColor: "#3399FF",
     staffwidth: window.innerWidth - 60,
-    wrap: {minSpacing: 1.1, maxSpacing: 1.4, preferredMeasuresPerLine: 16},
+    wrap: {minSpacing: 1.1, maxSpacing: 1.4, preferredMeasuresPerLine: 160},
     //showDebug: ['grid', 'box'],
     //responsive: true,
     format: {

@@ -12,12 +12,21 @@ function showInputText(id, name, value) {
 }
 
 function submitModal() {
-  submitSentryUserFeedback($('#textArea').val().trim());
+  try {
+    submitSentryUserFeedback($('#textArea').val().trim() + '\n' + $('#input_userName').val().trim() + '\n' + $('#input_userEmail').val().trim());
+    alertify.notify('Your feedback has been sent! We will try to respond as soon as possible.');
+  }
+  catch (e) {
+    alertify.error('There was an error sending your feedback. This can be result of bad connection or ad blocker. Please try to disable this or send feedback here manually: <a target=_blank href="https://github.com/rualark/AiHarmony/issues">GitHub</a>', 30);
+  }
   $('#Modal1').modal('hide');
-  alertify.notify('Your feedback has been sent! We will try to respond as soon as possible.');
 }
 
 export function showFeedbackModal() {
+  if (typeof Sentry === 'undefined') {
+    alertify.error('Cannot send your feedback. This can be a result of bad connection or ad blocker. Please try to disable this or send feedback here manually: <a target=_blank href="https://github.com/rualark/AiHarmony/issues">GitHub</a>', 30);
+    return;
+  }
   let st = '';
   st += showInputText('userName', 'Your name', mgen_name);
   st += showInputText('userEmail', 'Your email', mgen_login);
