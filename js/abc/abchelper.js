@@ -3,7 +3,7 @@ import {nd} from "../notes/NotesData.js";
 import {start_counter, stop_counter} from "../core/time.js";
 import {update_selection} from "../ui/selection.js";
 import {settings} from "../state/settings.js";
-import {SEVERITY_RED, SEVERITY_RED_COLOR, SEVERITY_YELLOW_COLOR} from "../analysis/AnalysisResults.js";
+import {ares, SEVERITY_RED, SEVERITY_RED_COLOR, SEVERITY_YELLOW_COLOR} from "../analysis/AnalysisResults.js";
 import { future } from "../ui/edit/editNote.js";
 import { trackEvent } from "../integration/tracking.js";
 import { json_stringify_circular } from "../core/string.js";
@@ -21,6 +21,8 @@ export let selected = {
   note: {voice: 0, note: 0},
   voice: 0
 };
+
+const svgNS = "http://www.w3.org/2000/svg";
 
 const SELECTION_COLOR = "#33AAFF";
 //const COLOR_ADVANCING = "#00CC00";
@@ -159,6 +161,74 @@ function apply_abcjs_styles() {
   }
 }
 
+function update_notes_abcelems() {
+  let engraver = abcjs[0].engraver;
+  for (let line = 0; line < engraver.staffgroups.length; line++) {
+    let voices = engraver.staffgroups[line].voices;
+    for (let voice = 0; voice < voices.length; voice++) {
+      let elems = voices[voice].children;
+      for (let elem = 0; elem < elems.length; elem++) {
+        if (!elems[elem].duration) continue;
+        let elStart = elems[elem].abcelem.startChar;
+        if (elStart in nd.abc_charStarts) {
+          const el = nd.abc_charStarts[elStart];
+          nd.voices[el.voice].notes[el.note].abcelem = elems[elem].abcelem;
+        }
+      }
+    }
+  }
+}
+
+function drawLine(attr) {
+  var svg = document.querySelector("#abc svg");
+  var el = document.createElementNS(svgNS, 'line');
+  el.setAttribute("x1", attr.x1);
+  el.setAttribute("x2", attr.x2);
+  el.setAttribute("y1", attr.y1);
+  el.setAttribute("y2", attr.y2);
+  el.setAttribute("stroke", attr.stroke);
+  el.setAttribute("stroke-width", attr.strokeWidth);
+  svg.appendChild(el);
+}
+
+function drawCircle(attr) {
+  var svg = document.querySelector("#abc svg");
+  var el = document.createElementNS(svgNS, 'circle');
+  el.setAttribute("cx", attr.cx);
+  el.setAttribute("cy", attr.cy);
+  el.setAttribute("r", attr.r);
+  el.setAttribute("stroke", attr.stroke);
+  el.setAttribute("stroke-width", attr.strokeWidth);
+  el.setAttribute("stroke-opacity", attr.strokeOpacity);
+  el.setAttribute("fill", "transparent");
+  svg.appendChild(el);
+}
+
+function draw_circle_around_notehead(abselem) {
+  drawCircle({
+    cx: abselem.notePositions[0].x,
+    cy: abselem.notePositions[0].y,
+    r: 7,
+    stroke: 'black',
+    strokeWidth: 1,
+    strokeOpacity: 0.5
+  });
+}
+
+function draw_nht_circles() {
+  for (let v=0; v<nd.voices.length; ++v) {
+    let vc = nd.voices[v];
+    for (let n=0; n<vc.notes.length; ++n) {
+      let nt = vc.notes[n];
+      const s = nt.step;
+      if (nt.d && settings.show_nht && nd.algo === 'CA3') {
+        const msh = ares.getMsh(v, s);
+        if (msh < 0) draw_circle_around_notehead(nt.abcelem.abselem);
+      }
+    }
+  }
+}
+
 function notation_redraw() {
   try {
     parserParams.staffwidth = window.innerWidth - 60;
@@ -169,6 +239,8 @@ function notation_redraw() {
     nd.abcString = dataToAbc();
     abcjs = ABCJS.renderAbc('abc', nd.abcString, parserParams, engraverParams);
     stop_counter();
+    update_notes_abcelems();
+    draw_nht_circles();
     apply_abcjs_styles();
     if (selected.note) {
       highlightNote();

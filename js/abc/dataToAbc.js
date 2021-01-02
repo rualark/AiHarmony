@@ -59,10 +59,6 @@ export function dataToAbc(instrument) {
       nd.abc_charStarts[abc.length] = {voice: v, note: n};
       nt.abc_charStarts = abc.length;
 
-      if (nt.d && settings.show_nht && nd.algo === 'CA3') {
-        const msh = ares.getMsh(v, s);
-        if (msh < 0) abc += `"^ø"`;
-      }
       if (flags.red > 0) abc += '"^🚩"';
       else if (flags.yellow > 0) abc += '"^⚠️"';
       if (ares.harm != null && s in ares.harm && ares.vid != null && v === ares.vid[0] && settings.show_harmony) {
