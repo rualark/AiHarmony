@@ -69,12 +69,12 @@ export function play_pitch(pitch, velocity) {
       "pitch": pitch,
       "volume": velocity,
       "start": 0,
-      "duration": 5,
+      "duration": 1,
       "instrument": 0,
       "gap": 0
     }],
     [],
-    1000 // a measure takes one second
+    100 // a measure takes this number of milliseconds
   ).then(function (response) {
   }).catch(function (error) {
     console.error("Error playing note:", error);

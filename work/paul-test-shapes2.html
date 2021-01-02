@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" href="favicon.ico" type="image/x-icon"/>
 	<title>abcjs: Annotating</title>
-        <script src="../plugin/abcjs-6.0.0/abcjs_basic_6.0.0-beta.21.js" type="text/javascript"></script>
+        <script src="../plugin/abcjs-6.0.0/abcjs_basic_6.0.0-beta.25.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var abc = "T: New Exercise\n" +
 			"M: C\n" +
@@ -76,12 +76,13 @@
 		function setConnectors(list) {
 			for (var i = 0; i < list.length; i++) {
 				var item = list[i];
-				var el1 = item.el1.getBBox();
-				var el2 = item.el2.getBBox();
-				var x1 = el1.x + el1.width + 3;
-				var y1 = item.pos1 === "top" ?  el1.y + 3 : el1.y + el1.height - 6;
-				var x2 = el2.x - 3;
-				var y2 = item.pos2 === "top" ?  el2.y + 3 : el2.y + el2.height;
+				var el1 = item.el1;
+				var el2 = item.el2;
+                                console.log(el1, el2);
+				var x1 = el1.notePositions[0].x;
+				var y1 = el1.notePositions[0].y;
+				var x2 = el2.notePositions[0].x;
+				var y2 = el2.notePositions[0].y;
 				drawLine({ x1: x1, y1: y1, x2: x2, y2: y2, stroke: item.color });
 			}
 		}

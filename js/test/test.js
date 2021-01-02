@@ -82,12 +82,18 @@ async function waitForState(stage, obj, vals, pause, timeout) {
   //await sleep(500);
 }
 
+function showPreviousTestResult(fname) {
+  const fname2 = fname.split('.')[0] + '.png';
+  document.getElementById("testResult2").innerHTML = `<img src=test_data/${fname2} style="border:1px solid red" alt='Previous test result: ${fname2}'>`;
+}
+
 function assert2strings(stage, fname, st1, st2, max_diff=0) {
   if (st1 !== st2) {
     let patch = makePatch(st1, st2);
     let diff = st1.length - patch.p1 - patch.p2 - 1;
     if (diff <= max_diff) return;
     console.log(patch, st1, st2);
+    showPreviousTestResult(fname);
     throw {
       message: `${stage} (${fname}) does not match ${diff} chars`,
       fname: fname,
