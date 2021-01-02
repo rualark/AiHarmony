@@ -82,7 +82,7 @@ export function showSettingsModal() {
   let st = '';
   st += showCheckToolbarHints();
   st += showCheckAlterBeforeNote();
-  st += showCheckBox('check_showNht', settings.show_nht, `Label non-harmonic tones with ø symbol`);
+  st += showCheckBox('check_showNht', settings.show_nht, `Label non-harmonic tones with circles`);
   st += showCheckBox('check_showHarmony', settings.show_harmony, `Show harmony below notes`);
   st += showCheckBox('check_showText', settings.show_text, `Show user text above notes`);
   st += showCheckBox('check_showLyrics', settings.show_lyrics, `Show user lyrics below notes`);
