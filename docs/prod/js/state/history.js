@@ -5,6 +5,7 @@ import {button_enabled} from "../ui/lib/uilib.js";
 import {stop_advancing} from "../ui/edit/editScore.js";
 import {makePatch} from "../core/string.js";
 import {analyse} from "../analysis/musicAnalysis.js";
+import { ares } from "../analysis/AnalysisResults.js";
 
 export let history = [];
 export let history_pos = -1;

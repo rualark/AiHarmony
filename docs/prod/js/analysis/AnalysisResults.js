@@ -20,6 +20,8 @@ export const SEVERITY_YELLOW_COLOR = "#F19900";
 
 const slur_flag_ids = new Set([8,22,58,88,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,140,141,142,143,144,145,146,147,148,149,175,176,177,178,179,180,181,182,183,184,185,186,191,192,203,204,205,206,207,267,268,269,270,271,277,278,279,280,281,296,297,298,299,300,304,315,316,317,318,319,327,328,329,330,331,336,337,338,339,340,348,351,352,353,354,355,386,389,390,391,392,393,394,395,396,397,398,414,415,416,417,418,421,422,423,424,425,438,439,440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,459,460,461,462,463,464,465,466,467,468,469,470,471,472,473,474,475,476,477,478,506,507,508,509,510]);
 
+const glis_flag_ids = new Set([84, 85, 481, 482, 248, 376, 249, 284, 385, 250, 259, 224, 484, 485, 488, 490, 491, 492, 260, 225, 208, 212, 210, 166, 262, 72, 73, 76, 167, 263, 209, 213, 211, 168, 264, 169, 276, 173, 174]);
+
 export const vocra_name = {
   1: 'Bas.',
   2: 'Ten.',
@@ -49,6 +51,11 @@ class AnalysisResults {
     this.mode = null;
     this.pFlag = [];
     this.pFlagCur = -1;
+    this.resetShapes();
+  }
+
+  resetShapes() {
+    this.shapes = [];
   }
 
   import(st) {
@@ -227,7 +234,7 @@ class AnalysisResults {
     let npm = nd.timesig.measure_len;
     let noteClick = [];
     for (let v=this.flag.length - 1; v>=0; --v) {
-      let vi = this.vid[v];
+      const vi = this.vid[v];
       if (vi >= nd.voices.length) continue;
       let n = 0;
       let old_n = -1;
@@ -239,7 +246,8 @@ class AnalysisResults {
         let noteName = d2name(nd.voices[vi].notes[n].d, nd.get_realAlter(vi, n));
         if (noteName !== 'rest') noteName = 'note ' + noteName;
         for (let f in this.flag[v][s]) {
-          let fla = this.flag[v][s][f];
+          const fla = this.flag[v][s][f];
+          const vi2 = this.vid[fla.fvl];
           let col;
           if (fla.accept !== 0) continue;
           if (fla.severity < settings.show_min_severity) continue;
@@ -249,6 +257,19 @@ class AnalysisResults {
           } else {
             col = SEVERITY_YELLOW_COLOR;
             this.stats += 1;
+          }
+          if (glis_flag_ids.has(fla.fl)) {
+            // TODO: Need more effective getClosestNote
+            this.shapes.push({
+              shapeType: 'glis',
+              v1: vi,
+              v2: vi2,
+              n11: n,
+              n12: nd.getClosestNote(vi, fla.fsl, n),
+              n21: nd.getClosestNote(vi2, s),
+              n22: nd.getClosestNote(vi2, fla.fsl),
+              severity: fla.severity
+            });
           }
           if (old_n !== n) {
             old_n = n;
@@ -272,7 +293,7 @@ class AnalysisResults {
           st += `<br>\n`;
           let pf = {
             vi1: vi,
-            vi2: this.vid[fla.fvl],
+            vi2: vi2,
             s1: s,
             s2: fla.fsl,
             f: f,
@@ -378,11 +399,13 @@ class AnalysisResults {
     for (const fla of this.flag[va][pos]) {
       if (fla.accept !== 0) continue;
       if (fla.severity > SEVERITY_RED) {
-        if (slur_flag_ids.has(fla.fl)) red_slur++;
+        if (glis_flag_ids.has(fla.fl)) {}
+        else if (slur_flag_ids.has(fla.fl)) red_slur++;
         else red++;
       }
       else if (fla.severity >= settings.show_min_severity) {
-        if (slur_flag_ids.has(fla.fl)) yellow_slur++;
+        if (glis_flag_ids.has(fla.fl)) {}
+        else if (slur_flag_ids.has(fla.fl)) yellow_slur++;
         else yellow++;
       }
     }

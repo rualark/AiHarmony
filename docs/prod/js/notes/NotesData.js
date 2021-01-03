@@ -459,7 +459,7 @@ export class NotesData {
     return len;
   }
 
-  // TODO: Implement binary search
+  // TODO: Implement binary search or precalculate step_to_note links
   getClosestNote(v, pos, hint=0) {
     if (this.voices.length <= v || !this.voices[v].notes.length) return;
     // Reset hint if it is wrong

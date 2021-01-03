@@ -15,6 +15,8 @@ export function analyse() {
   */
   let debugLevel = 0;
   if (!environment.startsWith('prod')) debugLevel = 10;
+  // Prevent drawing old shapes before analysis, while other analysis data should be drawn to prevent flickering
+  ares.resetShapes();
   if (nd.algo === '') {
     ares.reset();
     $('#mode').html('');
