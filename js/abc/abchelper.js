@@ -188,6 +188,7 @@ function drawLine(attr) {
   el.setAttribute("y2", attr.y2);
   el.setAttribute("stroke", attr.stroke);
   el.setAttribute("stroke-width", attr.strokeWidth);
+  el.setAttribute("stroke-opacity", attr.strokeOpacity);
   svg.appendChild(el);
 }
 
@@ -229,6 +230,62 @@ function draw_nht_circles() {
   }
 }
 
+function draw_glis(v, n1, n2, sev) {
+  const vc = nd.voices[v];
+  if (n1 >= vc.notes.length) return;
+  if (n2 >= vc.notes.length) return;
+  const nt1 = n1 < n2 ? vc.notes[n1] : vc.notes[n2];
+  const nt2 = n1 < n2 ? vc.notes[n2] : vc.notes[n1];
+  if (!('abcelem' in nt1)) return;
+  if (!('abcelem' in nt2)) return;
+  const abselem1 = nt1.abcelem.abselem;
+  const abselem2 = nt2.abcelem.abselem;
+  if (abselem1.counters.line === abselem2.counters.line) {
+    const dy = (abselem2.notePositions[0].y - abselem1.notePositions[0].y) / (abselem2.notePositions[0].x - abselem1.notePositions[0].x) * 8;
+    drawLine({
+      x1: abselem1.notePositions[0].x + 8,
+      y1: abselem1.notePositions[0].y + dy,
+      x2: abselem2.notePositions[0].x - 8,
+      y2: abselem2.notePositions[0].y - dy,
+      stroke: sev > SEVERITY_RED ? SEVERITY_RED_COLOR : SEVERITY_YELLOW_COLOR,
+      strokeWidth: 2,
+      strokeOpacity: sev > SEVERITY_RED ? 0.5 : 0.8,
+    });
+  } else {
+    let dy = 0;
+    if (nt1.d > nt2.d) dy = 10;
+    if (nt1.d < nt2.d) dy = -10;
+    drawLine({
+      x1: abselem1.notePositions[0].x + 8,
+      y1: abselem1.notePositions[0].y,
+      x2: abselem1.notePositions[0].x + 90 + 8,
+      y2: abselem1.notePositions[0].y + dy,
+      stroke: sev > SEVERITY_RED ? SEVERITY_RED_COLOR : SEVERITY_YELLOW_COLOR,
+      strokeWidth: 2,
+      strokeOpacity: sev > SEVERITY_RED ? 0.5 : 0.8,
+    });
+    drawLine({
+      x1: abselem2.notePositions[0].x - 8,
+      y1: abselem2.notePositions[0].y,
+      x2: abselem2.notePositions[0].x - 15 - 8,
+      y2: abselem2.notePositions[0].y - dy/6,
+      stroke: sev > SEVERITY_RED ? SEVERITY_RED_COLOR : SEVERITY_YELLOW_COLOR,
+      strokeWidth: 2,
+      strokeOpacity: sev > SEVERITY_RED ? 0.5 : 0.8,
+    });
+  }
+}
+
+function draw_glisses() {
+  for (const shape of ares.shapes) {
+    if (shape.shapeType === 'glis') {
+      console.log(shape);
+      draw_glis(shape.v1, shape.n11, shape.n12, shape.severity);
+      draw_glis(shape.v2, shape.n21, shape.n22, shape.severity);
+    }
+  }
+}
+
 function notation_redraw() {
   try {
     parserParams.staffwidth = window.innerWidth - 60;
@@ -241,6 +298,7 @@ function notation_redraw() {
     stop_counter();
     update_notes_abcelems();
     draw_nht_circles();
+    draw_glisses();
     apply_abcjs_styles();
     if (selected.note) {
       highlightNote();
@@ -289,7 +347,7 @@ export function init_abcjs(clickListener) {
     selectionColor: SELECTION_COLOR,
     dragColor: "#3399FF",
     staffwidth: window.innerWidth - 60,
-    wrap: {minSpacing: 1.1, maxSpacing: 1.4, preferredMeasuresPerLine: 160},
+    wrap: {minSpacing: 1.6, maxSpacing: 1.6, preferredMeasuresPerLine: 160},
     //showDebug: ['grid', 'box'],
     //responsive: true,
     format: {

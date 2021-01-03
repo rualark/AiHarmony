@@ -39,7 +39,7 @@ export class NotesClipboard {
           this.clear();
           return false;
         }
-        let nt_copy = JSON.parse(JSON.stringify(nt));
+        let nt_copy = JSON.parse(json_stringify_circular(nt));
         if (nt.step + nt.len > s2) {
           nt_copy.startsTie = false;
         }
@@ -89,7 +89,7 @@ export class NotesClipboard {
         notes[n1].len = s1 - notes[n1].step;
         ++n1;
       }
-      let new_notes = JSON.parse(JSON.stringify(this.voices[v - v1].notes));
+      let new_notes = JSON.parse(json_stringify_circular(this.voices[v - v1].notes));
       console.log(`Paste v${v} left_rest:${left_rest}`, json_stringify_circular(new_notes));
       if (left_rest) {
         new_notes.push(...NotesData.make_rests(left_rest));
