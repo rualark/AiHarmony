@@ -10,6 +10,7 @@ export function dataToAbc(instrument) {
   let abc = '';
   abc += '%%barnumbers 1\n';
   abc += '%%printtempo 0\n';
+  abc += '%%stretchlast 0\n';
   $('#tempo').html(`Tempo: ♩=${nd.tempo}`);
   abc += `Q:1/4=${nd.tempo}\n`;
   abc += 'M:' + nd.timesig.beats_per_measure + '/' + nd.timesig.beat_type + '\n';
