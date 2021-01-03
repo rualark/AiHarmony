@@ -179,8 +179,7 @@ function update_notes_abcelems() {
   }
 }
 
-function drawLine(attr) {
-  var svg = document.querySelector("#abc svg");
+function drawLine(attr, svg) {
   var el = document.createElementNS(svgNS, 'line');
   el.setAttribute("x1", attr.x1);
   el.setAttribute("x2", attr.x2);
@@ -192,8 +191,7 @@ function drawLine(attr) {
   svg.appendChild(el);
 }
 
-function drawCircle(attr) {
-  var svg = document.querySelector("#abc svg");
+function drawCircle(attr, svg) {
   var el = document.createElementNS(svgNS, 'circle');
   el.setAttribute("cx", attr.cx);
   el.setAttribute("cy", attr.cy);
@@ -205,7 +203,7 @@ function drawCircle(attr) {
   svg.appendChild(el);
 }
 
-function draw_circle_around_notehead(abselem) {
+function draw_circle_around_notehead(abselem, svg) {
   drawCircle({
     cx: abselem.notePositions[0].x,
     cy: abselem.notePositions[0].y,
@@ -213,10 +211,10 @@ function draw_circle_around_notehead(abselem) {
     stroke: 'black',
     strokeWidth: 1,
     strokeOpacity: 0.5
-  });
+  }, svg);
 }
 
-function draw_nht_circles() {
+function draw_nht_circles(svg) {
   for (let v=0; v<nd.voices.length; ++v) {
     let vc = nd.voices[v];
     for (let n=0; n<vc.notes.length; ++n) {
@@ -224,18 +222,18 @@ function draw_nht_circles() {
       const s = nt.step;
       if (nt.d && settings.show_nht && nd.algo === 'CA3') {
         const msh = ares.getMsh(v, s);
-        if (msh < 0) draw_circle_around_notehead(nt.abcelem.abselem);
+        if (msh < 0) draw_circle_around_notehead(nt.abcelem.abselem, svg);
       }
     }
   }
 }
 
-function draw_glis(v, n1, n2, sev) {
+function draw_glis(v, n1, n2, sev, svg) {
   const vc = nd.voices[v];
   if (n1 >= vc.notes.length) return;
   if (n2 >= vc.notes.length) return;
-  const nt1 = n1 < n2 ? vc.notes[n1] : vc.notes[n2];
-  const nt2 = n1 < n2 ? vc.notes[n2] : vc.notes[n1];
+  const nt1 = vc.notes[n1];
+  const nt2 = vc.notes[n2];
   if (!('abcelem' in nt1)) return;
   if (!('abcelem' in nt2)) return;
   const abselem1 = nt1.abcelem.abselem;
@@ -250,39 +248,74 @@ function draw_glis(v, n1, n2, sev) {
       stroke: sev > SEVERITY_RED ? SEVERITY_RED_COLOR : SEVERITY_YELLOW_COLOR,
       strokeWidth: 2,
       strokeOpacity: sev > SEVERITY_RED ? 0.5 : 0.8,
-    });
+    }, svg);
   } else {
+    const svgBBox = svg.getBBox();
+    let dx = svgBBox.width - abselem1.notePositions[0].x;
     let dy = 0;
-    if (nt1.d > nt2.d) dy = 10;
-    if (nt1.d < nt2.d) dy = -10;
+    if (nt1.d > nt2.d) dy = 4;
+    if (nt1.d < nt2.d) dy = -4;
     drawLine({
       x1: abselem1.notePositions[0].x + 8,
       y1: abselem1.notePositions[0].y,
-      x2: abselem1.notePositions[0].x + 90 + 8,
+      x2: abselem1.notePositions[0].x + dx + 8,
       y2: abselem1.notePositions[0].y + dy,
       stroke: sev > SEVERITY_RED ? SEVERITY_RED_COLOR : SEVERITY_YELLOW_COLOR,
       strokeWidth: 2,
       strokeOpacity: sev > SEVERITY_RED ? 0.5 : 0.8,
-    });
+    }, svg);
     drawLine({
       x1: abselem2.notePositions[0].x - 8,
-      y1: abselem2.notePositions[0].y,
+      y1: abselem2.notePositions[0].y - dy/3,
       x2: abselem2.notePositions[0].x - 15 - 8,
-      y2: abselem2.notePositions[0].y - dy/6,
+      y2: abselem2.notePositions[0].y - dy,
       stroke: sev > SEVERITY_RED ? SEVERITY_RED_COLOR : SEVERITY_YELLOW_COLOR,
       strokeWidth: 2,
       strokeOpacity: sev > SEVERITY_RED ? 0.5 : 0.8,
-    });
+    }, svg);
   }
 }
 
-function draw_glisses() {
+function add_gliss(glisses, v, n1, n2, severity) {
+  const key = `${v}-${n1}-${n2}`;
+  if (!(key in glisses) || glisses[key].severity < severity) {
+    glisses[key] = {
+      v: v,
+      n1: n1,
+      n2: n2,
+      severity: severity
+    };
+  }
+}
+
+function draw_glisses(svg) {
+  let glisses = {};
+  // Order notes
   for (const shape of ares.shapes) {
     if (shape.shapeType === 'glis') {
-      console.log(shape);
-      draw_glis(shape.v1, shape.n11, shape.n12, shape.severity);
-      draw_glis(shape.v2, shape.n21, shape.n22, shape.severity);
+      if (shape.n11 > shape.n12) {
+        const temp = shape.n11;
+        shape.n11 = shape.n12;
+        shape.n12 = temp;
+      }
+      if (shape.n21 > shape.n22) {
+        const temp = shape.n21;
+        shape.n21 = shape.n22;
+        shape.n22 = temp;
+      }
     }
+  }
+  // Deduplicate glisses and show only maximum severity
+  for (const shape of ares.shapes) {
+    if (shape.shapeType === 'glis') {
+      add_gliss(glisses, shape.v1, shape.n11, shape.n12, shape.severity);
+      add_gliss(glisses, shape.v2, shape.n21, shape.n22, shape.severity);
+    }
+  }
+  // Show glisses
+  for (const key in glisses) {
+    const gliss = glisses[key];
+    draw_glis(gliss.v, gliss.n1, gliss.n2, gliss.severity, svg);
   }
 }
 
@@ -296,9 +329,10 @@ function notation_redraw() {
     nd.abcString = dataToAbc();
     abcjs = ABCJS.renderAbc('abc', nd.abcString, parserParams, engraverParams);
     stop_counter();
+    const svg = document.querySelector("#abc svg");
     update_notes_abcelems();
-    draw_nht_circles();
-    draw_glisses();
+    draw_nht_circles(svg);
+    draw_glisses(svg);
     apply_abcjs_styles();
     if (selected.note) {
       highlightNote();
@@ -347,10 +381,11 @@ export function init_abcjs(clickListener) {
     selectionColor: SELECTION_COLOR,
     dragColor: "#3399FF",
     staffwidth: window.innerWidth - 60,
-    wrap: {minSpacing: 1.6, maxSpacing: 1.6, preferredMeasuresPerLine: 160},
+    wrap: {minSpacing: 1.5, maxSpacing: 1.5, preferredMeasuresPerLine: 160},
     //showDebug: ['grid', 'box'],
     //responsive: true,
     format: {
+      stretchlast: 0,
       titlefont: "Verdana 9 italic bold",
       gchordfont: "Verdana 9 italic bold",
       composerfont: "Verdana 9 italic bold",

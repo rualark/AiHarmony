@@ -124,7 +124,6 @@ export function getMistakesPacked() {
     const mistake = mistakes[key];
     st += `${mistake.rid}|${mistake.severity}|${mistake.count}|${mistake.name}~`;
   }
-  console.log(st);
   return st;
 }
 
