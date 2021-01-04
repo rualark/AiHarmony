@@ -10,3 +10,5 @@ Thumbs.db
 /wasm/
 ~$*
 .lnk
+/log/
+/docs/prod/log/

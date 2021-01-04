@@ -84,19 +84,23 @@ if (!$root_eid) {
     $eid = 1;
     query("REPLACE INTO root_exercises VALUES($root_eid, $eid)");
   }
-  // Notify
+  // Notify only if has access
   $r = query("
     SELECT * FROM exercises
+    LEFT JOIN users USING (u_id)
     WHERE root_eid=$root_eid AND eid=1
   ");
   $w2 = mysqli_fetch_assoc($r);
-  if ($w2['u_cookie'] != $uname) {
-    $res = send_mail(array($w2['u_cookie']), array (
-      'From' => "$site_name <noreply@$domain_mail>",
-      'To' => $w2['u_cookie'],
-      'Subject' => "Reply to exercise #$root_eid/$eid. $title",
-    ), "You got reply to your exercise #$root_eid/$eid. $title from $uname:\r\n\r\n".
-      "$url_main/exercise.php?id=$root_eid\r\n\r\nYou are receiving this email because you signed up for $site_name.\r\nPlease do not reply to this email.\r\nVisit $url_main/profile.php to modify your email notification settings.");
+  if ($security < 2 || ($security == 2 && $w2['u_admin'])) {
+    if ($w2['u_login'] != $uname) {
+      file_put_contents('log/sendmail.log', "Mail to $w2[u_login] about exercise $root_eid/$eid. $title\n", FILE_APPEND | LOCK_EX);
+      $res = send_mail(array($w2['u_login']), array (
+        'From' => "$site_name <noreply@$domain_mail>",
+        'To' => $w2['u_login'],
+        'Subject' => "Reply to exercise #$root_eid/$eid. $title",
+      ), "You got reply to your exercise #$root_eid/$eid. $title from $uname:\r\n\r\n".
+        "$url_main/exercise.php?id=$root_eid\r\n\r\nYou are receiving this email because you signed up for $site_name.\r\nPlease do not reply to this email.\r\nVisit $url_main/profile.php to modify your email notification settings.");
+    }
   }
 }
 

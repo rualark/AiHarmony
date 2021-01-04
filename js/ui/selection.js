@@ -143,7 +143,7 @@ export function update_selection() {
 }
 
 export function element_click(abcElem, tuneNumber, classes, pos, move, mouseEvent) {
-  console.log('Click', abcElem, tuneNumber, classes, pos, move, mouseEvent);
+  //console.log('Click', abcElem, tuneNumber, classes, pos, move, mouseEvent);
   if (abcElem['el_type'] !== 'tempo') {
     selected.element = abcElem;
   }
