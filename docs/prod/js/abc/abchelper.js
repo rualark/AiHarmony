@@ -188,7 +188,7 @@ function drawLine(attr, svg) {
   el.setAttribute("stroke", attr.stroke);
   el.setAttribute("stroke-width", attr.strokeWidth);
   el.setAttribute("stroke-opacity", attr.strokeOpacity);
-  svg.appendChild(el);
+  svg.insertBefore(el, svg.firstChild);
 }
 
 function drawCircle(attr, svg) {
@@ -200,7 +200,7 @@ function drawCircle(attr, svg) {
   el.setAttribute("stroke-width", attr.strokeWidth);
   el.setAttribute("stroke-opacity", attr.strokeOpacity);
   el.setAttribute("fill", "transparent");
-  svg.appendChild(el);
+  svg.insertBefore(el, svg.firstChild);
 }
 
 function draw_circle_around_notehead(abselem, svg) {
@@ -238,37 +238,43 @@ function draw_glis(v, n1, n2, sev, svg) {
   if (!('abcelem' in nt2)) return;
   const abselem1 = nt1.abcelem.abselem;
   const abselem2 = nt2.abcelem.abselem;
+  if (!('notePositions' in abselem1)) return;
+  if (!('notePositions' in abselem2)) return;
+  const np1 = abselem1.notePositions[0];
+  const np2 = abselem2.notePositions[0];
   if (abselem1.counters.line === abselem2.counters.line) {
-    const dy = (abselem2.notePositions[0].y - abselem1.notePositions[0].y) / (abselem2.notePositions[0].x - abselem1.notePositions[0].x) * 8;
+    const len = Math.sqrt((np2.y - np1.y)*(np2.y - np1.y) + (np2.x - np1.x)*(np2.x - np1.x))
+    const dy = (np2.y - np1.y) / len;
+    const dx = (np2.x - np1.x) / len;
     drawLine({
-      x1: abselem1.notePositions[0].x + 8,
-      y1: abselem1.notePositions[0].y + dy,
-      x2: abselem2.notePositions[0].x - 8,
-      y2: abselem2.notePositions[0].y - dy,
+      x1: np1.x + 6 * dx,
+      y1: np1.y + 6 * dy,
+      x2: np2.x - 6 * dx,
+      y2: np2.y - 6 * dy,
       stroke: sev > SEVERITY_RED ? SEVERITY_RED_COLOR : SEVERITY_YELLOW_COLOR,
       strokeWidth: 2,
       strokeOpacity: sev > SEVERITY_RED ? 0.5 : 0.8,
     }, svg);
   } else {
     const svgBBox = svg.getBBox();
-    let dx = svgBBox.width - abselem1.notePositions[0].x;
+    let dx = svgBBox.width - np1.x;
     let dy = 0;
     if (nt1.d > nt2.d) dy = 4;
     if (nt1.d < nt2.d) dy = -4;
     drawLine({
-      x1: abselem1.notePositions[0].x + 8,
-      y1: abselem1.notePositions[0].y,
-      x2: abselem1.notePositions[0].x + dx + 8,
-      y2: abselem1.notePositions[0].y + dy,
+      x1: np1.x + 8,
+      y1: np1.y,
+      x2: np1.x + dx + 8,
+      y2: np1.y + dy,
       stroke: sev > SEVERITY_RED ? SEVERITY_RED_COLOR : SEVERITY_YELLOW_COLOR,
       strokeWidth: 2,
       strokeOpacity: sev > SEVERITY_RED ? 0.5 : 0.8,
     }, svg);
     drawLine({
-      x1: abselem2.notePositions[0].x - 8,
-      y1: abselem2.notePositions[0].y - dy/3,
-      x2: abselem2.notePositions[0].x - 15 - 8,
-      y2: abselem2.notePositions[0].y - dy,
+      x1: np2.x - 8,
+      y1: np2.y - dy/3,
+      x2: np2.x - 15 - 8,
+      y2: np2.y - dy,
       stroke: sev > SEVERITY_RED ? SEVERITY_RED_COLOR : SEVERITY_YELLOW_COLOR,
       strokeWidth: 2,
       strokeOpacity: sev > SEVERITY_RED ? 0.5 : 0.8,
@@ -330,6 +336,7 @@ function notation_redraw() {
     abcjs = ABCJS.renderAbc('abc', nd.abcString, parserParams, engraverParams);
     stop_counter();
     const svg = document.querySelector("#abc svg");
+    console.log(svg);
     update_notes_abcelems();
     draw_nht_circles(svg);
     draw_glisses(svg);
