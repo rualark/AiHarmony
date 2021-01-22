@@ -6,19 +6,34 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" href="favicon.ico" type="image/x-icon"/>
 	<title>abcjs: Basic Editor Demo</title>
-<script src="../plugin/abcjs-6.0.0/abcjs_basic_6.0.0-beta.16.js" type="text/javascript"></script>
+<script src="../plugin/abcjs-6.0.0/abcjs_basic_6.0.0-beta.25.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		window.onload = function() {
 			new ABCJS.Editor("abc", { canvas_id: "paper",
 				warnings_id: "warnings",
-				abcjsParams: {}
+				abcjsParams: {
+    staffwidth: window.innerWidth - 80,
+    wrap: {minSpacing: 1.5, maxSpacing: 1.5, preferredMeasuresPerLine: 160},
+}
 			});
 		}
 
 	</script>
 </head>
 <body>
-<textarea id="abc" cols="80" rows="15">X: 1
+<textarea id="abc" cols="80" rows="15">%%barnumbers 1
+M:4/4
+K:C
+L:1/16
+V: V0 clef=treble name="Piano"
+V: V1 clef=bass name="Piano"
+[V: V0]z16|z4A4B4^c4|d12g4|^f4e4d4e4|d8^c8|B8^c4d4|^c8e8-|e12d4|^c4B4^c4d4|d16|z16|z8c8-|c4_A4_B4G4|F8_E8-|_E4D2C2D4F4|_E8F4G4|_A8d8-|d8c8-|c4=B2=A2B8|c16|z16|z8A8-|A4^F4G4D4|E8D4E4|A8D8|B8^c4B4|A8^F8|D4E4^F4D4|G8^C8|D16|z16|C16|D16|E16|G16|F16|A16|G16|F16|E16|D16|C16|z16|z4A4G4^F4|E4D4^C4D4|E8^C8-|^C4D2E2D8|B8^c4d4|^c4B4A4G4|A8D8|E4^F4G8-|G4^F2E2^F8|z16|z8E8-|E4A,4B,4C4|D4C4B,4D4|C4A,4A8-|A4G4F4D4|E4F4G8-|G8c8-|c4B2A2B8-|B4E4A8-|A8^G8|A16|z16|z4G4e4c4|B4A4G4F4|G8c8-|c4B2A2B8|A8d8-|d4c2B2c4A4|B4g4f4e4|d8A8|G8c8-|c4B2A2B8|c16|z16|z4A4G4^F4|G8^F4E4|^F12G4|A4^F2E2^F4A4|B4A4G4B4|^c8B4A4|d4^c4B4A4|G4e4d4^c4|d16|z16|z4G4e4c4|B4A4G4F4|G8c8-|c4B2A2B4G4|A8d8-|d4c2B2c4A4|B4g4f4e4|d8A8|G8c8-|c4B2A2B8|c16|z16|C16|D16|E16|G16|F16|A16|G16|F16|E16|D16|C16|z16|D16|B16|A16|^F16|G16|A16|^F16|E16|D16|z16|D16|B16|A16|^F16|G16|A16|^F16|E16|D16|z16|z8d8-|d4B4^c4d4|^c8e8-|e8d4^c4|B8G8|^F8A8|A12G2^F2|G8^C8|D16|z16|z8A8|d8e8|^f4e4d4^c4|A8B4^c4|B8E8|^F8G8|A4B4^c4^F4|G4A4B4^c4|d16|z16|z4c4d4_e4|d8_B8-|_B4_A2_B2_A8|c8d8|_e12d2_e2|f8_e4d4|c8g8|f8=A4=B4|c16|z16|z4E4G4A4|B8c4d2e2|f8A4B4|A4B2c2d8-|d4e4f8-|f4e2f2g8-|g4f4c8-|c4d2c2B8|c16|z16|z8c8-|c4B2c2d4G4|c4d4e8-|e8d4e4|f12a4|g4f4e8-|e8d4e4|d8c4B4|c16|z16|z4e4G4A4|B8d8-|d4c2B2A4B4|c8a4g4|f4e4f4d4|c8G8|d8c8-|c4B2A2B8|c16|z16|C16|G16|A16|F16|D16|E16|F16|D16|C16|z16|C16|_E16|F16|_A16|G16|c16|d16|=B16|c16|z16|z4c4d4c4|_B8g4f2_e2|d8c8-|c4_B4_A8|_B8d8-|d4c4_B4_A4|F12G2F2|G8d8|c16|z16|z4G4e4c4|f8d8-|d4B4c4d4|e8B8-|B4A2B2c4A4|f8c4d4|e8g4a4|g4f4d4e4|f8A4B4|c16|z16|C16|D16|_E16|G16|F16|_A16|G16|_E16|D16|C16|
+[V: V1]z16|D,16|B,16|A,16|^F,16|G,16|A,16|^F,16|E,16|D,16|z16|C,16|G,16|_A,16|F,16|G,16|F,16|_E,16|D,16|C,16|z16|D,16|B,16|A,16|^F,16|G,16|A,16|^F,16|E,16|D,16|z16|z8C8-|C4G,4B,8-|B,4A,2G,2A,4F,4|E,8C4B,4|A,4G,4F,4E,4|F,8D8|E4D4C4B,4|A,8F,8|G,8C,4E,4|F,4A,4G,4B,,4|C,16|z16|D,16|B,16|A,16|^F,16|G,16|A,16|^F,16|E,16|D,16|z16|A,,16|C,16|B,,16|A,,16|D,16|C,16|E,16|D,16|C,16|B,,16|A,,16|z16|C,16|D,16|E,16|G,16|F,16|A,16|G,16|F,16|E,16|D,16|C,16|z16|D,16|B,16|A,16|^F,16|G,16|A,16|^F,16|E,16|D,16|z16|C,16|D,16|E,16|G,16|F,16|A,16|G,16|F,16|E,16|D,16|C,16|z16|z8C8-|C4G,4B,8-|B,4A,2G,2A,4F,4|E,8C4B,4|A,4G,4F,4E,4|F,8D8|E4D4C4B,4|A,8F,8|G,4C,4D,4E,4|F,8G,8|C,16|z16|z4D,4E,4^F,4|G,8E4D4|^C4B,4A,4G,4|A,8D,8|E,8G,8-|G,4E,4^F,4A,4|B,4^C4D8-|D4^C2B,2^C4A,4|D16|z16|z8D,8|G,8^F,4E,4|^F,8E,8|D,4^F,4G,4A,4|B,8^C4D4|^C8B,8|A,4D,4E,4^F,4|G,8A,4A,,4|D,16|z16|D,16|B,16|A,16|^F,16|G,16|A,16|^F,16|E,16|D,16|z16|D,16|B,16|A,16|^F,16|G,16|A,16|^F,16|E,16|D,16|z16|C,16|G,16|_A,16|F,16|G,16|F,16|_E,16|D,16|C,16|z16|C,16|G,16|A,16|F,16|D,16|E,16|F,16|G,16|C,16|z16|C,16|G,16|A,16|F,16|D,16|E,16|F,16|G,16|C,16|z16|C,16|G,16|A,16|F,16|D,16|E,16|F,16|G,16|C,16|z16|z4C,4E,4D,4|E,4F,4G,8-|G,4F,2E,2F,4D,4|A,8G,4F,4|G,4A,4B,8-|B,4C4A,4B,2C2|D4D,4E,4F,4|G,8B,8|C16|z16|z8C,8|G,8_E,8-|_E,8D,4_E,4|F,4_E,4D,4C,4|=B,,8C,4D,4|_E,8G,8|F,8G,4_A,4|G,4F,4_E,4D,4|C,16|z16|C,16|_E,16|F,16|_A,16|G,16|C16|D16|=B,16|C16|z16|C,16|D,16|E,16|G,16|F,16|A,16|G,16|E,16|D,16|C,16|z16|z8C,8-|C,4=B,,2=A,,2B,,4G,,4|C,4D,4_E,4C,4|_B,,8_B,8-|_B,4G,4_A,4_B,4|_A,4G,4F,8-|F,4_E,2D,2_E,4G,4|_A,4C,4D,4_E,4|F,8G,4G,,4|C,16|
+
+</textarea>
+
+<!--
+<textarea id="abc2" cols="80" rows="15">X: 1
 T: Cooley's
 M: 4/4
 L: 1/8
@@ -29,6 +44,7 @@ EBBA B2 EB|B2 AB defg|afe^c dBAF|DEFD E2:|@
 |:gf|eB B2 efge|eB B2 gedB|A2 FA DAFA|A2 FA defg|
 eB B2 eBgB|eB B2 defg|afe^c dBAF|DEFD E2:|
 </textarea>
+-->
 
 <div id="warnings"></div>
 <hr>
