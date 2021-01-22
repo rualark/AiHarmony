@@ -388,7 +388,7 @@ export function init_abcjs(clickListener) {
     selectionColor: SELECTION_COLOR,
     dragColor: "#3399FF",
     staffwidth: window.innerWidth - 60,
-    wrap: {minSpacing: 1.5, maxSpacing: 1.5, preferredMeasuresPerLine: 160},
+    wrap: {minSpacing: 1.8, maxSpacing: 1.8, preferredMeasuresPerLine: 160},
     //showDebug: ['grid', 'box'],
     //responsive: true,
     format: {
