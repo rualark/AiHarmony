@@ -98,5 +98,10 @@ export function showMp3Player() {
   $('#aisFileLink').attr('href', `https://artinfuser.com/studio/file.php?f_id=${ais.f_id}`);
   $('#jplayer_waveform').attr('src', ais.j_url_png);
   my_jPlayer.jPlayer('setMedia', {mp3: ais.j_url});
-  my_jPlayer.jPlayer("play", 0);
+  try {
+    my_jPlayer.jPlayer("play", 0);
+  }
+  catch (e) {
+    console.log('Cannot start playback automatically. Some browsers prevent automatic start of playback.')
+  }
 }

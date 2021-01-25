@@ -175,6 +175,7 @@ export function element_click(abcElem, tuneNumber, classes, pos, move, mouseEven
     nclip.mode = 'standby';
   }
   if (selected.element && selected.element.duration != null) {
+    // Allow range selection only if there is already a selected.note
     if ((nclip.mode === 'select' || mouseEvent.shiftKey) && selected.note) {
       let el = nd.abc_charStarts[selected.element.startChar];
       if (el) {
