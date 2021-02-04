@@ -286,7 +286,7 @@ class AnalysisResults {
           let alertText = this.getRuleString(fla, settings.rule_verbose, false, false);
           let tooltipText = AnalysisResults.getRuleTooltip(fla);
           let htmlText = this.getRuleString(fla, settings.rule_verbose, true, false);
-          st += `<a data-toggle=tooltip data-html=true data-container=body data-bondary=window data-placement=bottom title="${encodeHtmlSpecialChars(tooltipText)}" href=# class='ares ares_${vi}_${s}_${f}' style='color: ${col}'>\n`;
+          st += `<a data-html=true data-container=body data-bondary=window data-placement=bottom title="${encodeHtmlSpecialChars(tooltipText)}" href=# class='ares ares_${vi}_${s}_${f}' style='color: ${col}'>\n`;
           st += '- ' + encodeHtmlSpecialChars(htmlText);
           st += `</a> `;
           st += paragraph_link;
