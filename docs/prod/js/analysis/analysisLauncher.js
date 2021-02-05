@@ -47,7 +47,7 @@ async function workerMessageReceiver(event) {
       worker.firstResultReceived = true;
     }
     //debugLog(10, 'Debug result:' + b256_debug(data), data.length);
-    ares.import(data);
+    ares.import(data, modName);
     ares.printFlags();
     if (mgen_login === 'rualark@gmail.com' && nd.eid) {
       // Update in database

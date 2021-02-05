@@ -336,7 +336,6 @@ function notation_redraw() {
     abcjs = ABCJS.renderAbc('abc', nd.abcString, parserParams, engraverParams);
     stop_counter();
     const svg = document.querySelector("#abc svg");
-    console.log(svg);
     update_notes_abcelems();
     draw_nht_circles(svg);
     draw_glisses(svg);
