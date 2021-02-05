@@ -35,6 +35,7 @@ class AnalysisResults {
   }
 
   reset() {
+    this.modName = '';
     this.errors = [];
     this.harm = [];
     this.msh = [];
@@ -58,8 +59,9 @@ class AnalysisResults {
     this.shapes = [];
   }
 
-  import(st) {
+  import(st, modName) {
     this.reset();
+    this.modName = modName;
     let pos = [0];
     let received_encoding_version = b256_ui(st, pos, 1);
     if (received_encoding_version !== ARES_ENCODING_VERSION) {
@@ -89,7 +91,7 @@ class AnalysisResults {
       this.msh[v] = {};
       this.flag[v] = {};
       let dstep = 1;
-      if (nd.algo === 'CA3') dstep = 2;
+      if (this.modName === 'CA3') dstep = 2;
       for (let s = 0; s < this.c_len; s += dstep) {
         this.msh[v][s + this.s_start] = b256_ui(st, pos, 1) - 128;
         let fcnt = b256_ui(st, pos, 1);
@@ -215,7 +217,7 @@ class AnalysisResults {
     this.pFlagCur = -1;
     this.stats = 0;
     let st = '';
-    if (this.mode == null || this.mode === 13 || nd.algo !== 'CA3') {
+    if (this.mode == null || this.mode === 13 || this.modName !== 'CA3') {
       $('#mode').html('');
     }
     else if (nd.keysig.mode === this.mode) {
