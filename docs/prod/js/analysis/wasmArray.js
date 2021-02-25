@@ -61,7 +61,7 @@ function ccallArrays (func, returnType, paramTypes, params, {heapIn="HEAPF32", h
     error = e;
   } finally {
     for (let b=0; b<bufs.length; b++) {
-      Module._free(bufs[b])
+      //Module._free(bufs[b]);
     }
   }
 
