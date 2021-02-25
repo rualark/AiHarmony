@@ -2,9 +2,8 @@ import {debugLog} from "../core/debug.js";
 import {async_redraw} from "../abc/abchelper.js";
 import {ares} from "./AnalysisResults.js";
 import {trackEvent} from "../integration/tracking.js";
-import { environment, mgen_login } from "../core/remote.js";
+import { mgen_login } from "../core/remote.js";
 import { nd } from "../notes/NotesData.js";
-import { publish } from "../integration/publish.js";
 
 let workers = {};
 
@@ -47,15 +46,18 @@ async function workerMessageReceiver(event) {
       worker.firstResultReceived = true;
     }
     //debugLog(10, 'Debug result:' + b256_debug(data), data.length);
-    ares.import(data, modName);
-    ares.printFlags();
-    if (mgen_login === 'rualark@gmail.com' && nd.eid) {
-      // Update in database
-      //publish(0, true);
-      //nd.eid = 0;
+    // Show analysis results only if analysis mode did not change
+    if (modName === nd.algo) {
+      ares.import(data, modName);
+      ares.printFlags();
+      if (mgen_login === 'rualark@gmail.com' && nd.eid) {
+        // Update in database
+        //publish(0, true);
+        //nd.eid = 0;
+      }
+      //console.log(ares);
+      async_redraw();
     }
-    //console.log(ares);
-    async_redraw();
   }
   //console.log('Event from worker:', event.data.type, event.data.modName);
 }
