@@ -137,7 +137,6 @@ class AnalysisResults {
     let subName = fla.subName;
     // Always hide hidden subrule names starting with /
     if (subName.charAt(0) === '/') subName = '';
-    if (subName.charAt(0) === '/') subName = '';
     // If minimum verbosity, hide all subrule names except starting with :
     if (!verbosity) {
       if (subName.charAt(0) !== ':') subName = '';
