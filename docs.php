@@ -2,9 +2,11 @@
 require_once "lib/mlib.php";
 require_once "lib/config.php";
 require_once "lib/doclib.php";
+require_once "lib/auth.php";
 
 $d = strtolower(secure_variable("d"));
 if ($d == "") $d = "cp_start";
+$login_result = login();
 
 //parse_docs();
 load_docs_titles();
