@@ -40,6 +40,7 @@ export function set_note(dc) {
   if (state.state !== 'ready') return;
   if (!selected.note) return;
   const el = selected.note;
+  if (check_voice_locked(el)) return;
   //if (check_voice_locked(el)) return;
   const voice = nd.voices[el.voice];
   const notes = voice.notes;
