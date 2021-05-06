@@ -372,12 +372,15 @@ class AnalysisResults {
             if (value == null) return;
             nd.rules_whitelist = Object.create(null);
             for (const st of value.split(',')) {
-              const rid = st.trim();
-              if (rid === "") continue;
-              if (rid < 0) {
-                nd.rules_blacklist[-rid] = true;
-              } else {
-                nd.rules_whitelist[rid] = true;
+              const word = st.trim();
+              if (word === "") continue;
+              let list = nd.rules_whitelist;
+              if (word[0] === "-") {
+                word = word.slice(1);
+                list = nd.rules_blacklist;
+              }
+              if (/^\d+$/.test(word)) {
+                list[word] = true;
               }
             }
             saveState(true);
