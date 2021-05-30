@@ -128,7 +128,7 @@ self.addEventListener('message', async function(event) {
       if (workerState.state !== 'ready') {
         throw "Error worker state: " + workerState.state;
       }
-      Module['__Z11set_optionsi'](options.debugLevel);
+      Module['__Z11set_optionsii'](options.debugLevel, options.harmNotation);
       const res = ccallArrays(funcName, "string", ["string"], [data], {
         heapIn: "HEAPU8",
         heapOut: "HEAPU8"
