@@ -3,7 +3,7 @@ import {engraverParams} from "../abc/abchelper.js";
 import {applyShortcutsLayout} from "../ui/shortcutsLayouts.js";
 
 const MIN_SETTINGS_ENCODING_VERSION = 9;
-const MAX_SETTINGS_ENCODING_VERSION = 10;
+const MAX_SETTINGS_ENCODING_VERSION = 11;
 
 class Settings {
   constructor() {
@@ -50,6 +50,7 @@ class Settings {
     st += ui_b256(this.autoLegato, 1);
     st += safeString_b256(this.shortcutsLayout, 1);
     st += ui_b256(this.editPlayVelocity, 1);
+    st += ui_b256(this.harm_notation, 1);
     return st;
   }
 
@@ -75,6 +76,9 @@ class Settings {
     this.setShortcutsLayout(b256_safeString(st, pos, 1));
     if (saved_encoding_version >= 10) {
       this.editPlayVelocity = b256_ui(st, pos, 1);
+    }
+    if (saved_encoding_version >= 11) {
+      this.harm_notation = b256_ui(st, pos, 1);
     }
   }
 

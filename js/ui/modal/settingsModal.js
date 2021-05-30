@@ -9,6 +9,7 @@ import {initCommands} from "../commands.js";
 import { update_selection } from "../selection.js";
 import { showModal, showSelectWithLabel } from "../lib/modal.js";
 import { showCheckBox } from "../lib/uilib.js";
+import { analyse } from "../../analysis/musicAnalysis.js";
 
 function showCheckToolbarHints() {
   let st = '';
@@ -69,6 +70,22 @@ function showSelectRuleVerbose() {
   return st;
 }
 
+function showSelectHarmNotation() {
+  let st = '';
+  st += `<div class="form-group">`;
+  st += `<label for="sel_harmNotation"><b><a target=_blank href=docs.php?d=cp_harm_notations>Harmonic notation:</a></b></label>`;
+  st += `<select class="form-control custom-select" id=sel_harmNotation name=sel_harmNotation>`;
+  st += `<option value='0' ${settings.harm_notation === 0 ? "selected" : ""}>Russian notation (Sposobin)</option>`;
+  st += `<option value='1' ${settings.harm_notation === 1 ? "selected" : ""}>Russian notation (detailed)</option>`;
+  st += `<option value='2' ${settings.harm_notation === 2 ? "selected" : ""}>Russian notation (detailed MAJOR / minor)</option>`;
+  st += `<option value='3' ${settings.harm_notation === 3 ? "selected" : ""}>International notation (Walter Piston)</option>`;
+  st += `<option value='4' ${settings.harm_notation === 4 ? "selected" : ""}>International notation (MAJOR / minor)</option>`;
+  st += `<option value='5' ${settings.harm_notation === 5 ? "selected" : ""}>International notation (detailed MAJOR / minor)</option>`;
+  st += `</select>`;
+  st += `</div>`;
+  return st;
+}
+
 function makeAutoLegatoOptions() {
   let res = [];
   for (let i=0; i<100; i += 10) {
@@ -89,6 +106,7 @@ export function showSettingsModal() {
   st += showCheckBox('check_editPlay', settings.editPlayVelocity, `Play notes as you edit`);
   st += showSelectShortcutsLayout();
   st += showSelectRuleVerbose();
+  st += showSelectHarmNotation();
   st += showSelectWithLabel('Add legato when playing:', 'selectAddSlurs', settings.autoLegato, makeAutoLegatoOptions(), (val) => {
     settings.autoLegato = Number(val);
     settings.settings2storage();
@@ -154,5 +172,10 @@ export function showSettingsModal() {
     settings.settings2storage();
     ares.printFlags();
     async_redraw();
+  });
+  $('#sel_harmNotation').change(() => {
+    settings.harm_notation = Number($("#sel_harmNotation option:selected" ).val());
+    settings.settings2storage();
+    analyse();
   });
 }
