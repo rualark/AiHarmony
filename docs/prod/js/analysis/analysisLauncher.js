@@ -26,7 +26,7 @@ async function workerMessageReceiver(event) {
       worker.firstResultReceived = true;
     }
     debugLog(5, modName, funcName, data);
-    if (data.startsWith('Timeout ')) {
+    if (typeof data.startsWith === 'function' && data.startsWith('Timeout ')) {
       trackEvent('AiHarmony', 'analysis_timeout', modName, new Date() - worker.startedTime);
       alertify.warning(`Please check your internet connection and reload page. Error loading music analysis module.`, 60);
     } else {
